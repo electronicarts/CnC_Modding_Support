@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" xmlns:balance="uri:ea.com:eala:balance" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="InitialPayload">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Name" balance:field="PayloadType" type="GameObjectWeakRef" />
+		<xs:attribute name="Count" balance:field="PayloadCount" type="SageInt" />
+		<xs:attribute name="ExperienceLevel" balance:field="PayloadExperienceLevel" type="SageInt" default="0" />
+		<xs:attribute name="RequiredUpgrade" type="UpgradeTemplateWeakRef" />
+	</xs:complexType>
+
+	<xs:complexType name="UpgradeCreation">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Upgrade" type="UpgradeTemplateRef" />
+		<xs:attribute name="Template" type="GameObjectWeakRef" />
+		<xs:attribute name="Num" type="SageUnsignedInt" />
+	</xs:complexType>
+
+	<xs:simpleType name="TransportContainFlag">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PASSENGERS_CAN_SHOOT_FROM_GARRISON_POINTS" />
+      <xs:enumeration value="TELEPORT_PASSENGERS_ON_CAPTURE" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="TransportContainBitFlags">
+		<xs:list itemType="TransportContainFlag"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="TransportContainModuleData">
+		<xs:complexContent>
+			<xs:extension base="OpenContainModuleData">
+				<xs:sequence>
+					<xs:element name="InitialPayload" balance:category="InitialPayload" type="InitialPayload" minOccurs="0" maxOccurs="5" />
+					<xs:element name="ThrowOutPassengersVelocity" type="Vector3" minOccurs="0" maxOccurs="1" />
+					<xs:element name="UpgradeCreationTrigger" type="UpgradeCreation" minOccurs="0" maxOccurs="4" />
+					<xs:element name="FadeFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="ScatterNearbyOnExit" type="SageBool" default="true" />
+				<xs:attribute name="OrientLikeContainerOnExit" type="SageBool" default="false" />
+				<xs:attribute name="DestroyRidersWhoAreNotFreeToExit" type="SageBool" default="false" />
+				<xs:attribute name="ExitBone" type="xs:string" />
+				<!-- stored as 0-100 value (divide by 100 in code at runtime) -->
+				<xs:attribute name="HealthRegenPercentPerSec" type="SageReal" default="0" />
+				<xs:attribute name="ExitDelay" type="DurationUnsignedInt" default="0" />
+				<xs:attribute name="TypeOneForWeaponState" type="KindOfBitFlags" />
+				<xs:attribute name="TypeTwoForWeaponState" type="KindOfBitFlags" />
+				<xs:attribute name="TypeThreeForWeaponState" type="KindOfBitFlags" />
+				<xs:attribute name="ForceOrientationContainer" type="SageBool" default="true" />
+				<xs:attribute name="ConditionForEntry" type="ModelConditionFlagType" />
+				<xs:attribute name="ShouldThrowOutPassengers" type="SageBool" default="false" />
+				<xs:attribute name="ThrowOutPassengersDelay" type="DurationUnsignedInt" default="0" />
+				<xs:attribute name="ThrowOutPassengersLandingWarhead" type="WeaponRef" />
+				<xs:attribute name="FadePassengerOnEnter" type="SageBool" default="false" />
+				<xs:attribute name="FadePassengerOnExit" type="SageBool" default="false" />
+				<xs:attribute name="EnterFadeTime" type="SageReal" default="0" />
+				<xs:attribute name="ExitFadeTime" type="SageReal" default="0" />
+				<xs:attribute name="FadeReverse" type="SageBool" default="false" />
+				<xs:attribute name="ReleaseSnappyness" type="SageReal" default="0.7" />
+				<xs:attribute name="ExtendedExitContainerChecks" type="SageBool" default="false" />
+				<xs:attribute name="MaxPassengersCount" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="Flags" type="TransportContainBitFlags"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+</xs:schema>

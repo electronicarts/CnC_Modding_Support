@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="us-ascii"?>
+
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags/>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:SP_Torpedo.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseProjectile.xml" />
+	</Includes>
+	<GameObject
+		id="SovietAntiNavyShipTech2SuperTorpedoProjectile"
+		inheritFrom="BaseProjectile"
+		Side="Soviet"
+		KindOf="-NO_COLLIDE"
+		EditorName="SovietAntiNavyShipTech2SuperTorpedoProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="SP_Torpedo" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="SPTorpedoMoveBubbles"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="SovietTorpedoTrail"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="SovietTorpedoTrailGlow"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TorpedoWaterWake"
+						FollowBone="false" />
+        </ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FireWeaponCollide
+				id="ModuleTag_FireWeaponCollide"
+				CollideWeapon="SovietAntiNavyShipTech2SuperTorpedoWarhead"
+				FireOnce="true"
+				Flags="DESTROY_SELF_ON_COLLIDE DO_NOT_COLLIDE_WITH_PRODUCER" 
+				WhereToFire="TARGET_POSITION"/>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_SovietAntiNavyShipTech2SuperTorpedoWarhead" />
+			</FXListBehavior>
+			<ProjectileUpdate
+				id="ModuleTag_ProjectileUpdate"
+				StateMachine="StraightLineProjectile">
+				<Movement>
+					<MoveInStraightLine
+						MuzzleVelocity="0.01" 
+						Acceleration="0.50"
+						TerminalVelocity="1000.0"/>
+				</Movement>
+			</ProjectileUpdate>
+			<!-- Determines how long the projectile will live before it runs out of fuel and detonates-->
+			<LifetimeUpdate
+				id="ModuleTag_Lifetime"
+				DeathType="EXPLODED"
+				MinLifetime="30s"
+				MaxLifetime="30s" />
+		</Behaviors>
+		<Body>
+			<PropBody
+				xai:joinAction="Remove" xmlns:xai="uri:ea.com:eala:asset:instance"
+				id="ModuleTag_Body" />
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="100.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="20.0"
+				Height="100.0">
+				<Offset z="-50.0"/>
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="SOV_AkulaSub_WeaponFire_UltraTorpedoPassByLoop" AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+</AssetDeclaration>

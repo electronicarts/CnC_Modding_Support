@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:AUSeeker_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:AUSeeker_FP.w3x" />			
+		<Include
+			type="all"
+			source="ART:AUSeekerR.w3x" />
+		<Include
+			type="all"
+			source="ART:FXShldSeekerTank.w3x" />			
+		<Include
+			type="all"
+			source="ART:FXAspotlight.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="AlienSeekerTank"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_ALIENSeeker"
+		ButtonImage="Portrait_ALIENSeeker"
+		Side="ALIEN"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildCost="800"
+		BuildTime="8"
+		CommandSet="AlienSeekerTankCommandSet"
+		CommandPoints="100" 
+		KindOf="PRELOAD SELECTABLE CAN_ATTACK ATTACK_NEEDS_LINE_OF_SIGHT CAN_CAST_REFLECTIONS SCORE VEHICLE CAN_REVERSE_MOVE CAN_BE_FAVORITE_UNIT"
+		RadarPriority="UNIT"
+		ProductionQueueType="VEHICLE"
+		UnitCategory="VEHICLE"
+		WeaponCategory="GUN"
+		VoicePriority="180"
+		EditorName="AlienSeekerTank"
+		Description="Desc:AlienSeekerTank"
+		WorldMapArmoryUpgradesAllowed="Upgrade_AlienMinorForcefieldGenerator Upgrade_AlienShardLaunchers"
+		TypeDescription="Type:AlienSeekerTank">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:ALIENSeekerTank</DisplayName>
+		<DisplayUpgrade
+			id="Tag_DisplayUpgrade1">Upgrade_AlienMinorForcefieldGenerator</DisplayUpgrade>		
+		<DisplayUpgrade>Upgrade_AlienShardLaunchers</DisplayUpgrade>
+		<ArmorSet
+			Armor="AlienSeekerTankArmor"
+			DamageFX="InfantryAlienDamageFX" />
+		<ArmorSet
+			Armor="AlienSeekerTankArmorShieldBodyEnabled"
+			DamageFX="VehicleDamageFX"
+			Conditions="SHIELDBODY_ENABLED" />		
+		<LocomotorSet
+			Locomotor="AlienSeekerTankLocomotor"
+			Condition="NORMAL"
+			Speed="90.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TankDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AUSeeker_SKN" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="40"
+						SizeY="30"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="AUDronShipDecalIdle" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="MuzzleFX" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="MuzzleFX" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretID="1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="AUSeeker_FP" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="AUSeeker_SKN" />
+					<Texture
+						Original="AUSeeker"
+						New="AUSeeker_D" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="40"
+						SizeY="30"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="AUDronShipDecalIdle" />
+					<ParticleSysBone
+						BoneName="FX_Fire"
+						FXParticleSystemTemplate="AlienDamageFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Fire"
+						FXParticleSystemTemplate="AlienDamageFireGlow01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Fire"
+						FXParticleSystemTemplate="AlienDamageFireGlow02"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="AUSeekerR" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="AUSeekerR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</TankDraw>
+			<SpotlightDraw
+				id="ModuleTag_Spotlight"
+				AttachToBoneInAnotherModule="B_SPOTLIGHT"
+				RefreshTime="2.0s"
+				SweepTime="1.0s">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXAspotlight" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<!-- Draw nothing when in Formation Preview -->
+					<Model
+						Name="" />
+				</ModelConditionState>				
+			</SpotlightDraw>
+			<!-- draw a nice 'combined' effect, PLACEHOLDER -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawCombined">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT" />
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="COMBINED_PARENT">
+					<ParticleSysBone
+						BoneName="NONE"
+						FollowBone="true"
+						FXParticleSystemTemplate="AUBuzzerCombine" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FollowBone="true"
+						FXParticleSystemTemplate="AUBuzzerCombineGlow" />						
+				</ModelConditionState>
+			</ScriptedModelDraw>
+<!-- Forcefield Generator -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawForcefield"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT"></ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="" />
+				</ModelConditionState>					
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="FXShldSeekerTank" />
+				</ModelConditionState>
+			</ScriptedModelDraw>			
+			
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="AlienSeekerTankPlasmaDiskLauncher" />
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="AlienSeekerTankShardLauncherWeapon"
+						ObjectStatus="WEAPON_UPGRADED_01" />						
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="40"
+						AllowsPitch="true"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<StatusBitsUpgrade
+				id="ModuleTag_Weapon_Upgrade_01"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_AlienShardLaunchers</TriggeredBy>
+			</StatusBitsUpgrade>	
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowShardWeapon"
+				ShowSubObjects="UG_SHARDWEAPON AUSHARDWEAPON_C_G">
+				<TriggeredBy>Upgrade_AlienShardLaunchers</TriggeredBy>
+			</SubObjectsUpgrade>			
+			<Physics
+				id="ModuleTag_Physics" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="5s"
+				SinkRate="1.0"
+				DestructionDelay="15s">
+				<OCL
+					Type="INITIAL">
+					<OCL>OCL_ALIENSeekerDebris</OCL>
+				</OCL>
+				<Sound Type="INITIAL" List="ALI_SeekerTank_Die" />
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="TOPPLED" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_ALIENVehicleExplodeScorch" />
+			</FXListBehavior>
+			<UncombineSpecialPower
+				id="ModuleTag_SpecialPowerUncombine"
+				SpecialPowerTemplate="SpecialPowerUncombineWithUnit" />
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="400" />
+			<StatusBitsUpgrade
+				id="ModuleTag_VeterancyUpgrade"
+				StatusToSet="WEAPON_UPGRADED_03">
+				<TriggeredBy>Upgrade_Veterancy_HEROIC</TriggeredBy>
+			</StatusBitsUpgrade>	
+			
+<!-- Forcefield Generator -->
+			<StatusBitsUpgrade
+				id="ModuleTag_StatusBitUpgrade"
+				StatusToSet="SHIELDBODY_ENABLED">
+				<TriggeredBy>Upgrade_AlienMinorForcefieldGenerator</TriggeredBy>
+			</StatusBitsUpgrade>
+			<ShieldBodyUpdate
+				id="ModuleTag_ShieldBodyUpdate" />
+     <!--	<AudioLoopUpgrade 
+				id="ForceFieldUpgradeSound" 
+				SoundToPlay="ALI_ForceField_Begin">
+        	<TriggeredBy>Upgrade_AlienReactorForcefieldGenerator</TriggeredBy>
+     		</AudioLoopUpgrade>	
+     	-->
+			<AudioLoopUpgrade id="ShardLauncherUpgrade" SoundToPlay="ALI_Stalker_ShardLauncherUpgrade">
+				<TriggeredBy>Upgrade_AlienShardLaunchers</TriggeredBy>
+			</AudioLoopUpgrade>
+			<AudioLoopUpgrade id="ALI_AttenudatedForcefield_Upgrade" SoundToPlay="ALI_AttenudatedForcefield_Upgrade">
+				<TriggeredBy>Upgrade_AlienMinorForcefieldGenerator</TriggeredBy>
+			</AudioLoopUpgrade>   			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				AILuaEventsList="AlienSeekerTankFunctions">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					SympathyRange="25.0" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ShieldBody
+				id="ModuleTag_Body"
+				MaxHealth="2100"
+				ShieldAmount="500"
+				ShieldArmor="ForcefieldFilterDamageArmor"
+				ShieldRechargeIdleTime="100s"
+        ShieldEnabledFX="FX_AlienShieldEnabled" 
+				ShieldTakeDamageFX="FX_AlienShieldHit"
+        ShieldDepleteFX="FX_AlienShieldDeplete"
+				ShieldActiveModelCondition="USER_1" />				
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="10.0"
+				Height="10.0"
+				ContactPointGeneration="VEHICLE" />
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="ALI_SeekerTank_SoundAttack"
+				AudioType="voiceAttack" />
+			<AudioEntry
+				Sound="ALI_SeekerTank_SoundCreate"
+				AudioType="voiceCreated" />
+			<AudioEntry
+				Sound="ALI_SeekerTank_SoundMove"
+				AudioType="voiceMove" />
+			<AudioEntry
+				Sound="ALI_SeekerTank_SoundMove"
+				AudioType="voiceGuard" />
+			<AudioEntry
+				Sound="ALI_SeekerTank_SoundSelectMS"
+				AudioType="voiceSelect" />
+			<NamedEntry
+				Sound="ALI_Buzzers_SoundSplit"
+				Name="UncombineWithUnit" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry
+				Sound="ALI_SeekerTank_MoveStart"
+				AudioType="soundMoveStart" />
+			<!--			<AudioEntry Sound="ALI_SeekerTank_MoveLoop" AudioType="soundMoveLoop" /> -->
+			<AudioEntry
+				Sound="ALI_SeekerTank_IdleLoop"
+				AudioType="soundAmbient" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="500" />
+		<CrusherInfo
+			CrusherLevel="0"
+			CrushableLevel="2"
+			CrushEqualLevelProps="true"
+			CrushDecelerationPercent="40%" />
+	</GameObject>
+</AssetDeclaration>

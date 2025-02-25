@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NUNukeTruck.w3x" />
+		<Include
+			type="all"
+			source="ART:NUNukeTruckR.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="NukeTransport"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_NukeTransport"
+		ButtonImage="Portrait_NukeTransport"
+		Side="Neutral"
+		TransportSlotCount="1"
+		BuildTime="120"
+		CommandSet="EmptyCommandSet"
+		KindOf="+FS_FACTORY -CAN_BE_FAVORITE_UNIT"
+		EditorName="NeutralNukeTransport"
+		Description="Desc:NODMCV">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="2500"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NeutralNukeTransport</DisplayName>
+		<ArmorSet
+			Armor="NODMCVArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			Locomotor="NODLTTLocomotor"
+			Condition="NORMAL"
+			Speed="60.0" />
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				TireRotationMultiplier="0.2"
+				PowerslideRotationAddition="1.25"
+				MaximumWheelExtension="-2.3"
+				MaximumWheelCompression="1.4">
+				<TireBoneGroup
+					TireGroupSettings="FRONT"
+					LeftTireBone="Bone_Tire_FL"
+					RightTireBone="Bone_Tire_FR"
+					WheelTurnAngle="35d"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="Bone_Tire_ML"
+					RightTireBone="Bone_Tire_MR"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="Bone_Tire_RL"
+					RightTireBone="Bone_Tire_RR"/>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUNukeTruck" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NUNukeTruckR" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUNukeTruck" />
+					<Texture
+						Original="NUNuke"
+						New="NUNuke_D" />
+					<Texture
+						Original="NUNukeTruck"
+						New="NUNukeTruck_D" />
+				</ModelConditionState>
+			</TruckDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_04" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				DeathObjectStatusBits="DONT_CLEAR_FOR_BUILD"
+				SinkDelay="3s"
+				SinkRate="2.0"
+				DestructionDelay="8s">
+				<OCL
+					Type="INITIAL">
+					<OCL>GDI_Generic_Medium_Die_OCL</OCL>
+				</OCL>
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="TOPPLED" />
+				<Sound
+					Type="INITIAL"
+					List="GDI_Generic_VoiceDieMS" />
+			</SlowDeath>
+			<FireWeaponWhenDead
+				id="ModuleTag_FireWeaponWhenDead"
+				InitiallyActive="true"
+				DeathWeapon="NuclearMissile">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<WeaponFireProbability
+					DeathType="ALL"
+					ChancePercentage="100" />
+			</FireWeaponWhenDead>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplode" />
+			</FXListBehavior>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_03"
+				AutoAcquireEnemiesWhenIdle="YES"></AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_02"
+				MaxHealth="10000.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="BOX"
+				MajorRadius="24.375"
+				MinorRadius="12.0"
+				Height="22.5"
+				ContactPointGeneration="VEHICLE">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+    <AudioArrayVoice>
+      <AudioEntry
+       Sound="GDI_NukeTruck_UnitResponse"
+       AudioType="voiceMove" />
+      <AudioEntry
+				Sound="GDI_NukeTruck_UnitResponse"
+				AudioType="voiceSelect" />
+    </AudioArrayVoice>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+		<CrusherInfo
+			CrusherLevel="2"
+			CrushableLevel="2" />
+	</GameObject>
+</AssetDeclaration>

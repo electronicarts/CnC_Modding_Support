@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="LogicCommandType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE"/>
+			<xs:enumeration value="SPECIAL_POWER"/>
+			<xs:enumeration value="STOP"/>
+			<xs:enumeration value="OBJECT_UPGRADE"/>
+			<xs:enumeration value="PLAYER_UPGRADE"/>
+			<xs:enumeration value="DOZER_CONSTRUCT"/>
+			<xs:enumeration value="UNIT_BUILD"/>
+			<xs:enumeration value="EVACUATE"/>
+			<xs:enumeration value="EXIT_CONTAINER"/>
+			<xs:enumeration value="SET_STANCE"/>
+			<xs:enumeration value="ATTACK_MOVE"/>
+			<xs:enumeration value="SELL"/>
+			<xs:enumeration value="CANCEL_UNIT_BUILD"/>
+			<xs:enumeration value="CANCEL_UPGRADE"/>
+			<xs:enumeration value="CONSTRUCTION_YARD_CONSTRUCT"/>
+			<xs:enumeration value="HORDE_TOGGLE_FORMATION"/>
+			<xs:enumeration value="GARRISON_BUILDING"/>
+
+			<!-- these are xenon specific types -->
+			<xs:enumeration value="DRILL_DOWN"/>
+			<xs:enumeration value="DRILL_UP"/>
+			<xs:enumeration value="TOGGLE_POWER"/>
+			<xs:enumeration value="SELF_REPAIR"/>
+			<xs:enumeration value="DEFAULT_BUILDING"/>
+      <xs:enumeration value="RALLY"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="LogicCommandOptions">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NEED_TARGET_ENEMY_OBJECT"/>
+			<xs:enumeration value="NEED_TARGET_NEUTRAL_OBJECT"/>
+			<xs:enumeration value="NEED_TARGET_ALLY_OBJECT"/>
+			<xs:enumeration value="FIRED_BY_SCRIPT"/>
+			<xs:enumeration value="OPTION_ONE"/>
+			<xs:enumeration value="OPTION_TWO"/>
+			<xs:enumeration value="OPTION_THREE"/>
+			<xs:enumeration value="AUTO_ABILITY_TRIGGERED"/>
+			<xs:enumeration value="NEED_TARGET_POS"/>
+			<xs:enumeration value="OK_FOR_MULTI_EXECUTE"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="LogicCommandOptionsBitFlags">
+		<xs:list itemType="LogicCommandOptions"/>
+	</xs:simpleType>
+
+	<xs:complexType name="LogicCommand" xas:runtimeWrapper="::LogicCommand">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="SpecialPower" type="SpecialPowerTemplateRef" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="Upgrade" type="UpgradeTemplateRef" minOccurs="0" maxOccurs="1" />
+					<xs:element name="Object"  type="GameObjectRef" minOccurs="0" maxOccurs="1" />
+					<!-- This is now specified in the SpecialPowerTemplate, UpgradeTemplate, or GameObject as appropriate  - asc 11/06 -->
+					<!--	<xs:element name="GameDependency" type="GameDependencyType" minOccurs="0" maxOccurs="1" /> -->
+				</xs:sequence>
+				<xs:attribute name="Type" type="LogicCommandType" default="NONE"/>
+				<xs:attribute name="Options" type="LogicCommandOptionsBitFlags" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

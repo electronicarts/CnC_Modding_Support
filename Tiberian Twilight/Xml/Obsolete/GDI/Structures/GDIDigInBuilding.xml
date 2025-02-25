@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:GBDugOut.w3x" />
+		<Include type="all"	source="ART:GBDugOut_ASN.w3x" />
+		<Include type="all"	source="ART:GBDugOut_AAN.w3x" />
+		<Include type="all"	source="ART:GBDugOut_D2SN.w3x" />
+		<Include type="all"	source="ART:GBDugOut_D2AN.w3x" />
+		<Include type="all"	source="ART:GBDugOut_D3SN.w3x" />
+		<Include type="all"	source="ART:GBDugOut_D3AN.w3x" />
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GDIDigInBuilding"
+		inheritFrom="BaseStructure" 
+		SelectPortrait="Portrait_GDIDigInBuilding"
+		ButtonImage="Portrait_GDIDigInBuilding"
+		Side="GDI"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="0"
+		BuildTime="10.0"
+		CommandSet="GDIDigInGarrisonCommandSet"
+		KindOf="+GARRISON +AUTO_ACQUIRABLE_BY_AI +CIVILIAN_BUILDING +NOT_SELLABLE +CAN_SEE_THROUGH_STRUCTURE +AUTO_RALLYPOINT +IGNORE_FOR_VICTORY +CRUSHABLE_BUILDING"
+		RadarPriority="STRUCTURE"
+		EditorName="GDIDigInBuilding"
+		Description="Desc:GDIDigInBuilding">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIDigInBuilding</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="=$GDI_DIGIN_BUILDING_PRICE"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="GDIDigInBuildingArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBDugOut" />
+				</ModelConditionState>
+				<!-- BUILD UP -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="GBDugOut_ASN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBDugOut_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBDugOut_D2SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBDugOut" />
+					<Texture
+						Original="GBDugOut"
+						New="GBDugOutD" />
+				</ModelConditionState>				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="GBDugOut_AAN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true" />
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBDugOut_D3AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBDugOut_D2AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GBDugOut_D2AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBDugOut_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>											
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<HordeGarrisonContain
+				id="ModuleTag_HordeGarrison"
+				ObjectStatusOfContained="UNSELECTABLE CAN_ATTACK"
+				ContainMax="2"
+				EnterSound="GenericBuilding_Garrison"
+				ExitSound="GenericBuilding_Ungarrison"
+				AllowEnemiesInside="true"
+				AllowAlliesInside="true"
+				AllowNeutralInside="true"
+				AllowOwnPlayerInsideOverride="true"
+				ShowPips="true"
+				KillPassengersOnDeath="false"
+				AllowedBodyDamageTypes="PRISTINE DAMAGED REALLY_DAMAGED">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY">
+					<ExcludeThing>ScrinInfantryCSquad</ExcludeThing>
+				</PassengerFilter>
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="BONEGARRISON">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</PassengerData>
+				<ExitOffset
+					x="0"
+					y="-80"
+					z="0" />
+			</HordeGarrisonContain>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			<!--xi:include
+				href="../../Includes/GenericBuildingRepair.xml" /-->
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="10000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="25.0"
+				Height="20.0"/>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="GDI_FoxHole_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="400" />
+	</GameObject>
+</AssetDeclaration>

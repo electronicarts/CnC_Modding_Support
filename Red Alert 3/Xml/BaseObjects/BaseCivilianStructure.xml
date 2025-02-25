@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:AU_Garrison_Flag_Small.w3x" />
+		<Include type="all"	source="ART:SU_Garrison_Flag_Small.w3x" />
+		<Include type="all"	source="ART:JU_Garrison_Flag_Small.w3x" />
+		<Include type="all"	source="ART:AU_Garrison_Flag.w3x" />
+		<Include type="all"	source="ART:SU_Garrison_Flag.w3x" />
+		<Include type="all"	source="ART:JU_Garrison_Flag.w3x" />
+		<Include type="all"	source="ART:AU_Garrison_Flag_Large.w3x" />
+		<Include type="all"	source="ART:SU_Garrison_Flag_Large.w3x" />
+		<Include type="all"	source="ART:JU_Garrison_Flag_Large.w3x" />
+		<Include type="all"	source="ART:Garrison_Wall_Tiny.w3x" />
+		<Include type="all"	source="ART:Garrison_Wall_Small.w3x" />
+		<Include type="all"	source="ART:Garrison_Wall.w3x" />
+		<Include type="all"	source="ART:Garrison_Wall_Large.w3x" />
+		<Include type="all"	source="ART:Garrison_Wall_XLarge.w3x" />
+		<Include
+				type="all"
+				source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+	</Includes>
+	<GameObject
+		id="BaseCivilianStructure"
+		inheritFrom="BaseObject" 
+		SelectPortrait="Portrait_NeutralGarrisonableStructure"
+		ButtonImage="Button_NeutralGarrisonableStructure"
+		CommandSet="GarrisonableNeutralBuildingCommandSet"
+		Side="Civilian"
+		EditorSorting="STRUCTURE"
+		KindOf="SELECTABLE STRUCTURE IMMOBILE CAN_CAST_REFLECTIONS GARRISON COVER KEEP_CLASSIFIED_WHEN_DEAD IGNORE_FOR_VICTORY CIVILIAN_BUILDING NOT_SELLABLE CRUSHABLE_BUILDING ALWAYS_VISIBLE_IN_RADAR"
+		RadarPriority="STRUCTURE" Description="Desc:CivilianBuildingGarrisonable" TypeDescription="Type:CivilianBuildingGarrisonable">
+		<DisplayName>Name:CivilianBuildingGarrisonable</DisplayName>
+
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="StructureArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<ArmorSet
+			Armor="CryoBeamFrozenArmor"
+			DamageFX="VehicleDamageFX"
+			Conditions="SECONDARY_DAMAGE"/>	
+
+
+
+		<Behaviors>
+			<ProductionUpdate
+				id="ModuleTag_Production" />
+			<ModelConditionUpgrade
+				id="ModuleTag_AlliesFaction"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_AlliesFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_SovietFaction"
+				AddConditionFlags="USER_2">
+				<TriggeredBy>Upgrade_SovietFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_JapanFaction"
+				AddConditionFlags="USER_3">
+				<TriggeredBy>Upgrade_JapanFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+
+
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_AttributeModifierAura" 
+				InitiallyActive="true"
+				AttributeModifierName="AttributeModifier_Garrisoned"
+				RefreshDelay="0.5s"
+				AllowSelf="false"
+				AffectContainedOnly="true">
+				<ObjectFilter
+					Rule="ALL"
+					Exclude="SURPRISE_ATTACKER"/>
+			</AttributeModifierAuraUpdate>
+
+			<ContestableGarrisonContain
+				id="ModuleTag_Garrison"
+				ObjectStatusOfContained="UNSELECTABLE ENCLOSED CAN_ATTACK"
+				ContainMax="5"
+				EnterSound="GenericBuilding_Garrison"
+				ExitSound="GenericBuilding_Ungarrison"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="false"
+				AllowNeutralInside="true"
+				AllowOwnPlayerInsideOverride="true"
+				PassDisabilityToRiders="true"
+				ShowPips="true"
+				KillPassengersOnDeath="false"
+				RequiredClearingObjectStatus="CAN_CONTEST_GARRISON"
+				EjectSpeed="3">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY">
+					<ExcludeThing>AlliedScoutInfantry</ExcludeThing>
+					<ExcludeThing>SovietScoutInfantry</ExcludeThing>
+					<ExcludeThing>SovietScoutVehicle</ExcludeThing>
+				</PassengerFilter>
+				<PassengerData
+					BonePrefix="BONEGARRISON">
+					<Filter
+						Rule="ANY"
+						Include="INFANTRY"/>					
+				</PassengerData>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</ContestableGarrisonContain>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_ScorchMedium" />
+			</FXListBehavior>
+
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01"
+				GlowWindowObject="NIGHT_GLOW"/>
+
+			<!-- Garrisoned units with the STEALTH_GARRISON kindof are invisible when they are inside a building, this InvisibilityUpdate is the module that contols it. -->
+			<InvisibilityBehavior
+				id="ModuleTag_Invisibility"
+				InvisibilityTemplate="StealthGarrisonInvisibilityTemplate"
+			/>
+
+			<!-- civ buildings should have a CreateObjectDie to make a collapse version. -->
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<SquishCollide
+					id ="DefaultSquishCollide"/>
+			<Physics
+				id="ModuleTag_Physics" />
+				
+			<SecondaryDamageTracker
+				id="ModuleTag_SecondaryDamageTracker"
+				UpdateDuration="1s"
+				DissipateAmount="25"
+				MaxDamageClampScaler="=$MAX_SECONDARY_DAMAGE_SCALER">
+				<Color R="1.0" G="1.0" B="1.75"/>
+				<EffectInfo
+					Fraction="0.2"
+					AttributeModifier="AttributeModifer_CryoBeam_02"
+				/>
+				<EffectInfo
+					Fraction="0.4"
+					AttributeModifier="AttributeModifer_CryoBeam_04"
+				/>
+				<EffectInfo
+					Fraction="0.6"
+					AttributeModifier="AttributeModifer_CryoBeam_06"
+				/>
+				<EffectInfo
+					Fraction="0.8"
+					AttributeModifier="AttributeModifer_CryoBeam_08"
+				/>
+				<EffectInfo
+					Fraction="1.0"
+					SetUpgradedArmor="true"
+					OnEnterDisable="true"
+					OnEnterCancelSpecialAbilities="true"
+					AttributeModifier="AttributeModifer_CryoBeam_10"
+				/>
+				<ObjectStatusValidation
+					ForbiddenStatus="UNDER_IRON_CURTAIN" />
+			</SecondaryDamageTracker>				
+		</Behaviors>
+	
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_IronCurtain">
+				<ModelConditionSound Sound="SOV_IronCurtain_LoopMS" RequiredFlags="IRONCURTAIN" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="GenericBuilding_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="600"
+			ShroudClearingRange="600" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrusherLevel="0"
+			CrushableLevel="40">
+			<ExtraCrushLevels CrusherLevel="0" CrushableLevel="1" ModelConditionMatch="SHRINK_EFFECT" />
+		</CrusherInfo>
+	</GameObject>
+
+</AssetDeclaration>

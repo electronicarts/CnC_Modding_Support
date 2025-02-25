@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="uri:ea.com:eala:XmlEdit">
+
+	<xs:complexType name="AudioVoiceEntry">
+		<xs:complexContent>
+			<xs:extension base="SoundOrEvaEvent">
+				<xs:attribute name="AudioType" type="ThingTemplateVoiceType" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- This is a unit response played when the object of an action is a specific type of GameObject
+	     e.g. an override for VoiceEnter played only when entering a GDI Ox, but not any other type of
+	     enterable object. -->
+	<xs:complexType name="AudioObjectSpecificVoiceEntry">
+		<xs:complexContent>
+			<xs:extension base="SoundOrEvaEvent">
+				<xs:attribute name="AudioType" type="ThingTemplateObjectSpecificVoiceType" use="required"/>
+				<xs:attribute name="TargetObject" type="GameObjectWeakRef" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- A voice which, instead of being reference by a fixed enum value within the code, is instead 
+		  referenced by name from another XML file. E.g. an upgrade like the old Generals' Battle Done
+		  might tell the unit which receives it to play "VoiceGainBattleDrone" when that unit finishes
+		  building the battle drone. Each upgrade could ask the units to play a different voice while 
+		  each unit could play a different voice for the same upgrade. -->
+	<xs:complexType name="AudioVoiceReferentialEntry" >
+		<xs:complexContent>
+			<xs:extension base="SoundOrEvaEvent">
+				<xs:attribute name="Name" type="StringHash" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AudioSoundEntry">
+		<xs:attribute name="Sound" type="AudioEventInfoRef" use="required" />
+		<xs:attribute name="AudioType" type="ThingTemplateSoundType" use="required" />
+	</xs:complexType>
+	<xs:complexType name="AudioArrayVoice">
+		<xs:sequence>
+			<xs:element name="AudioEntry" type="AudioVoiceEntry" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="ObjectSpecificEntry" type="AudioObjectSpecificVoiceEntry" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="NamedEntry" type ="AudioVoiceReferentialEntry" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AudioArraySound">
+		<xs:sequence>
+			<xs:element name="AudioEntry" type="AudioSoundEntry" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>

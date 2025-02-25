@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	
+	<xs:simpleType name="FXListBehaviorType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="onDeath" />
+			<xs:enumeration value="onDamaged" />
+			<xs:enumeration value="onCreate" />
+			<xs:enumeration value="onTransitionToDamaged" />
+			<xs:enumeration value="onTransitionToReallyDamaged" />
+			<xs:enumeration value="onTransitionToRubble" />
+			<xs:enumeration value="onBecomingTemporarySlave" />
+			<xs:enumeration value="onBecomingTemporaryOwner" />
+			<xs:enumeration value="onEndingTemporarySlave" />
+			<xs:enumeration value="onEndingTemporaryOwner" />
+			<xs:enumeration value="onTerrainCollision" />
+			<xs:enumeration value="onShieldSphereCollision" />
+			<xs:enumeration value="onSurfacing" />
+			<xs:enumeration value="onSubmerging" />
+			<xs:enumeration value="onUpgraded" />
+			<xs:enumeration value="onVeterancyCrateLevelUp" />
+			<xs:enumeration value="onUpgradeCrateLevelUp" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="FXListBehaviorDirection">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Front" />
+			<xs:enumeration value="Rear" />
+			<xs:enumeration value="Side" />
+			<xs:enumeration value="Top" />
+			<xs:enumeration value="Default" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="FXListBehaviorEventFlag">
+		<xs:restriction base="xs:string">
+			<!-- optionally reversing the role of primary and secondary FXList objects -->
+			<!-- this is needed in cases where the primary object belongs to the neutral player 
+				and any embedded sound nuggets can't get any relationship information to know if to play -->
+			<xs:enumeration value="REVERSE_PRIMARY_SECONDARY" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="FXListBehaviorEventBitFlags">
+		<xs:list itemType="FXListBehaviorEventFlag"></xs:list>
+	</xs:simpleType>
+			
+
+	<xs:complexType name="FXListBehaviorEvent">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:pipelineOnly="true"/>
+		<xs:attribute name="Index" type="FXListBehaviorType" />
+		<xs:attribute name="FX" type="FXListRef" />
+		<xs:attribute name="MinThreshold" type="SageReal" default="0" />
+		<xs:attribute name="MaxThreshold" type="SageReal" default="0" />
+		<xs:attribute name="Direction" type="FXListBehaviorDirection" default="Default" />
+		<xs:attribute name="Flags" type="FXListBehaviorEventBitFlags" default="" />
+		<xs:attribute name="AllowableLocalPlayerClasses" type="PlayerClassTypeBitFlags" use="optional" />
+	</xs:complexType>
+	
+	<xs:complexType name="FXListBehaviorModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpgradeModuleData">
+				<xs:sequence>
+					<xs:element name="DieMuxData" type="DieMuxDataType" minOccurs="0" maxOccurs="1" />
+					<xs:element name="Event" type="FXListBehaviorEvent" minOccurs="1" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+</xs:schema>

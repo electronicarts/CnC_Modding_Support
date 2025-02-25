@@ -1,0 +1,116 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// Scrape script for Water
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_WATER_SCRAPEH
+#define SCRAPE_SCRIPT_WATER_SCRAPEH
+
+//
+// Water
+//
+
+#define WaterReflectionSize 512
+
+var texture WaterReflectionTexture WaterReflectionSize WaterReflectionSize $WW3D.FrameRenderTargetTextureFormat
+
+#if defined(EA_PLATFORM_WINDOWS)
+	#define WaterReflectionRenderTarget WaterReflectionTexture
+#elif defined(EA_PLATFORM_XENON)
+	var surface WaterReflectionRenderTarget edram WaterReflectionSize WaterReflectionSize $WW3D.FrameRenderTargetSurfaceFormat
+#endif
+
+var camera Reflection
+
+proc updateWaterReflection
+	if Water IsReflectionVisible
+		beginevent UpdateWaterReflection
+		
+		// We shouldn't render the soft particles when doing the reflection because we don't 
+		// have a depth buffer from the water's perspective.
+		setbool Particle ReallyRenderSoftParticles false
+		
+		setdepth DepthBuffer	// Set depth buffer before render target, as RNA derives the current viewport size from the last render target/depth buffer set, and we want to use the RT size as viewport
+		settarget 0 WaterReflectionRenderTarget
+		
+		setclearcolor		0 0 0 1
+		setcleardepth       1.0
+		clear
+
+		setcamera Reflection
+		visibleobjects Reflection
+		
+		if DebugToggle BaselineRendering.IsEnabled
+			if DebugToggle TerrainReflection.IsEnabled
+				renderTerrain
+			endif
+
+			// Render cliffs, sea walls, road segments over terrain but below scorch marks
+			renderbin TerrainLikeGroundObject
+		endif
+
+		renderbin Bridge
+		
+        beginevent RenderCasters_Units
+		    callproc renderBinsUnit
+		    callproc renderBinsUnitOutline
+        endevent RenderCasters_Units
+
+		if DebugToggle BaselineRendering.IsEnabled
+			renderbin Solid
+		endif
+
+		if DebugToggle BaselineRendering.IsEnabled
+			if DebugToggle StructureReflection.IsEnabled
+				beginevent RenderCasters_Structures
+					renderbin Structure
+					callproc renderBinsStructureOutline
+				endevent RenderCasters_Structures
+			endif
+		endif
+
+		renderbin PartiallyTransparentWall
+
+		renderbin StaticSort5 // Underwater Sorting
+		callproc renderBinsStaticSort
+		renderbin Transparent
+		renderParticles
+		renderTracers
+		renderLasers
+		renderStreams
+		renderConnectionLines
+				
+#if defined(EA_PLATFORM_XENON)
+		resolve WaterReflectionTexture
+#endif
+
+		settexture Water ReflectionTexture WaterReflectionTexture
+		
+		setbool Particle ReallyRenderSoftParticles true
+		
+		endevent UpdateWaterReflection
+	else
+		//settexture Water ReflectionTexture <a black texture>
+	endif
+endproc
+
+proc updateWaterRefraction
+	if Water IsRefractionVisible
+		// Copy current contents of frame buffer into a screen sized texture
+#if defined(EA_PLATFORM_XENON)
+		resolve PostEffectFrameBufferTexture
+#else
+		if WW3D IsUsingFrameRenderTarget
+			stretchrect FrameRenderTarget PostEffectFrameBufferTexture
+		else
+			stretchrect FrameBuffer PostEffectFrameBufferTexture
+		endif
+#endif
+		
+		settexture Water RefractionTexture PostEffectFrameBufferTexture
+	else
+		//settexture Water RefractionTexture <a black texture>
+	endif
+endproc
+
+#endif // SCRAPE_SCRIPT_WATER_SCRAPEH

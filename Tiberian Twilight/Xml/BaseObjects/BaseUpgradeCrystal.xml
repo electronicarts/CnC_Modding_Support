@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<GameObject
+		id="BaseUpgradeCrystal"
+		Side="Neutral"
+		EditorSorting="MISC_MAN_MADE"
+		TransportSlotCount="1"
+		BuildTime="0"
+		CommandSet="EmptyCommandSet"
+		KindOf="SELECTABLE IMMOBILE NOT_AUTOACQUIRABLE CAN_CAST_REFLECTIONS NO_DRAW_PLAYER_NAME CRATE IGNORES_SELECT_ALL CLEARED_BY_BUILD UPGRADE_CRYSTAL RESIST_EMP REVEAL_TO_ALL HAS_HEALTH_BAR CAN_HAVE_BUILDABILITY"
+		RadarPriority="GOAL_STRUCTURE">
+		<DisplayName>NAME:BaseUpgradeCrystal</DisplayName>
+		<ArmorSet
+			Armor="AssaultArmor"/>
+		<Draws>
+		</Draws>
+		<Behaviors>
+			<AttachUpdate
+				id="ModuleTag_AttachUpdate"
+				ParentStatus="UPGRADE_CRYSTAL_ATTACHED"
+				CloseEnoughRange="5"
+				Range="50"
+				AttachedObjectStatus="NON_AUTOACQUIRABLE UNATTACKABLE UNSELECTABLE NO_HEALTH_BAR CARRIED_UPGRADE_CRYSTAL"
+				ParentDeathTypeToListenFor="CRYSTAL_DETONATED"
+				Flags="ONE_ATTACH_PER_PARENT STICK_TO_PARENT TELEPORT USE_PARENT_POSITION_ELEVATION_ABOVE_GEOMETRY DIE_WHEN_DETACHED_IN_DROP_OFF_ZONE DROP_TO_GROUND_WHEN_DETACHED DIE_WHEN_PARENT_DIES_FROM_NOT_ME RADAR_EVENT_ON_ATTACH DETACHED_KILLER_IS_PARENT DETACH_WHEN_PARENT_IN_SPAWN_ZONE INHERIT_PARENT_DEATH_TYPE"
+				ParentPositionElevation="50.0"
+				ParentCommandSet="DropOffUpgradeCrystalCommandSet"
+				ParentModifierToSet="Modifier_UpgradeCrystalCarrier"
+				ParentLocomotorSet="UPGRADE_CRYSTAL_ATTACHED"
+				AttachFXList="FX_TibCrystalCapture"
+				DetachFXList="FX_TibCrystalDrop">
+				<ObjectFilter
+					Rule="ANY"
+					Include="VEHICLE INFANTRY"
+					Exclude="AIRCRAFT STRUCTURE CRAWLER"
+					Relationship="ENEMIES ALLIES NEUTRAL" />
+			</AttachUpdate>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+			<ProjectedBuildabilityOverrideBehavior
+				id="ModuleTag_BuildabilityOverride" >
+				<Override
+					StatusToReject="CARRIED_UPGRADE_CRYSTAL">
+					<ProjectedBuildabilityInfo
+						Radius="20"
+						BuildPlacementTypes="BLOCKED">
+						<AllowedObjectFilter
+								Rule="NONE"/>
+					</ProjectedBuildabilityInfo>
+				</Override>
+				<Override>
+					<!-- Otherwise, we have no buildability - not even the default DISPLAY_ONLY buildability 
+							 (e.g. we don't want to display a buildability box when we are full) -->
+				</Override>
+			</ProjectedBuildabilityOverrideBehavior>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type= "CYLINDER"
+				MajorRadius = "30"
+				MinorRadius = "30"
+				Height = "45" >
+			</Shape>
+		</Geometry>
+		<VisionInfo
+			VisionRange="1"
+			ShroudClearingRange="100" />
+		<ProjectedBuildabilityInfo
+			Radius="20"
+			BuildPlacementTypes="DISPLAY_ONLY" />
+	</GameObject>
+
+	<AttributeModifier
+		id="Modifier_UpgradeCrystalCarrier"
+		Category="NONE">
+		<Modifier Type="ARMOR" Value="200%"/>
+		<Modifier Type="SPEED" Value="50%"/>
+	</AttributeModifier>
+	
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_DropOffUpgradeCrystal">
+		<SpecialPower>SpecialPower_DropOffUpgradeCrystal</SpecialPower>
+	</LogicCommand>
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_DetonateUpgradeCrystal">
+		<SpecialPower>SpecialPower_DetonateUpgradeCrystal</SpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="DropOffUpgradeCrystalCommandSet">
+		<Cmd>Command_DropOffUpgradeCrystal</Cmd>
+		<Cmd>Command_DetonateUpgradeCrystal</Cmd>
+	</LogicCommandSet>
+
+</AssetDeclaration>

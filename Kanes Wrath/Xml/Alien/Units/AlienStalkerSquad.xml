@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:SquadMarkGUMis.w3x" />
+		<Include
+			type="all"
+			source="ART:AUStalker_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:AUStalker_FP.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseSquad.xml" />
+	</Includes>
+	<GameObject
+		id="AlienStalkerSquad"
+		inheritFrom="BaseSquad"
+		SelectPortrait="Portrait_StalkerSquad"
+		ButtonImage="Portrait_StalkerSquad"
+		Side="ALIEN"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildCost="1200"
+		BuildTime="12"
+		CommandSet="AlienStalkerSquadCommandSet"
+		CommandPoints="100" 
+		KindOf="SELECTABLE CAN_ATTACK ATTACK_NEEDS_LINE_OF_SIGHT INFANTRY HORDE ARMY_SUMMARY LARGE_RECTANGLE_PATHFIND PATH_THROUGH_INFANTRY SKIRMISH_AI_DONT_GARRISON CAN_CAPTURE CAN_BE_FAVORITE_UNIT SCORE"
+		IsTrainable="true"
+		FormationWidth="2"
+		FormationDepth="1"
+		ThreatLevel="0"
+		ProductionQueueType="INFANTRY"
+		UnitCategory="INFANTRY"
+		WeaponCategory="GUN"
+		EditorName="AlienStalkerSquad"
+		Description="Desc:AlienStalker"
+		TypeDescription="Type:AlienStalker"
+		UnitTypeIcon="ScrinStalkerPip">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:ALIENStalker</DisplayName>
+		<GameDependency>
+			<RequiredObject>AlienStatisChamber</RequiredObject>
+			<RequiredObject>AlienControlCenter</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="NoArmor" />
+		<LocomotorSet
+			Locomotor="NormalRangedSquadLocomotor"
+			Condition="NORMAL"
+			Speed="75.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				DependencySharedModelFlags="EMOTION_TAUNTING EMOTION_ALERT EMOTION_MORALE_HIGH EMOTION_MORALE_LOW EMOTION_AFRAID EMOTION_COWER SELECTED  EMOTION_TERROR EMOTION_LOOK_TO_SKY">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="AUStalker_FP" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="WORLD_BUILDER">
+					<Model
+						Name="SquadMarkGUMis" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="StalkerRangefinder" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+
+			<Physics
+				id="ModuleTag_Physics"></Physics>
+			<HordeContain
+				id="ModuleTag_HordeContain"
+				FrontAngle="4.7123"
+				FlankedDelaySeconds="2.0"
+				ShowPips="false"
+				Formation="MAIN"
+				MeleeAttackLeashDistance="1"
+				Slots="3"
+				ObjectStatusOfContained=""
+				ConditionForEntry="INVALID">
+				<PassengerFilter
+					Rule="NONE"
+					Include="INFANTRY" />
+				<DieMuxData />
+				<InitialPayload
+					Name="AlienStalker"
+					Count="3" />
+				<MeleeBehavior
+					Type="AMOEBA" />
+				<RankInfo
+					RankID="1"
+					UnitType="AlienStalker">
+					<Position
+						X="20"
+						Y="-20" />
+					<Position
+						X="0"
+						Y="0" />
+					<Position
+						X="-20"
+						Y="20" />
+				</RankInfo>
+				<RankToReleaseWhenAttacking>1</RankToReleaseWhenAttacking>
+			</HordeContain>
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				GiveNoXP="true" />
+			
+			<xi:include
+				href="DATA:Includes/CaptureBehavior.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:Behaviors/child::*)" />
+<!--Tiberium Agitation-->
+
+			<SpecialPower
+				id="ModuleTag_AgitationGetInRange"
+				SpecialPowerTemplate="TiberiumAgitationGetInRange"
+				UpdateModuleStartsAttack="true"/>
+			<SpecialAbilityUpdate
+				id="ModuleTag_AgitationGetInRangeUpdate"
+				SpecialPowerTemplate="TiberiumAgitationGetInRange"
+				UnpackTime="0s"
+				PackTime="0s"
+				StartAbilityRange="350.0"
+				ChainedButton="Command_FireTiberiumAgitation" />
+			<HordeDispatchSpecialPower
+				id="ModuleTag_TibAgitation"
+				SpecialPowerTemplate="SpecialPower_UseTiberiumAgitation" 
+				MaxMembersToDispatchTo="3"/>
+			<AISpecialPowerUpdate
+				id="ModuleTag_AlienTiberiumAgitationAI"
+				CommandButtonName="Command_UseTiberiumAgitation"
+				SpecialPowerAIType="SPECIAL_POWER_CAPTURE_BUILDING" />
+<!--End Tiberium Agitation-->
+			<AimWeapon
+				id="ModuleTag_AimWeapon"
+				AimHighThreshold="0.5"/>
+		</Behaviors>
+		<AI>
+			<HordeAIUpdate
+				id="ModuleTag_HordeAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES ATTACK_BUILDINGS"
+				MaxCowerTime="5.0s"
+				MinCowerTime="3.0s"
+				CanAttackWhileContained="true">
+				<UnitAITargetChooserData
+					SympathyRange="25.0" />
+			</HordeAIUpdate>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				MaxHealth="1.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="30.0"
+				Height="13.0" />
+		</Geometry>
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="400"
+			MaxVisionBonusPercent="300"
+			VisionBonusTestRadius="200"
+			VisionBonusPercentPerFoot="1" />
+		<CrusherInfo
+			UseCrushAttack="false"
+			CrushableLevel="0"
+			CrusherLevel="0" />
+	</GameObject>
+</AssetDeclaration>

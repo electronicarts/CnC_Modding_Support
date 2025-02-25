@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+   
+  </Includes>
+
+  <!-- Opening Move -->
+
+  <SkirmishOpeningMove
+    id="EP01_J03_AlliedOpeningMove"
+    Side="PlayerTemplate:Allies">
+      <Order Build="AlliedPowerPlant" />
+      <Order Build="AlliedRefinery" />
+      <Order Build="AlliedRefinery" />
+      <Order Build="AlliedPowerPlant" />
+      <Order Build="AlliedNavalYard" />
+      <Order Build="AlliedNavalYard" />
+      <Order Time="90s" />
+  </SkirmishOpeningMove>
+  
+  <!-- Water Harassment & Assault -->
+
+  <AIStrategicStateDefinition
+    id="EP01_J03_Allied_BalancedAttackWater_MEDIUM"
+    MaxTargets="2">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="CloseToShoreStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" DisbandAfterRetreatTeamSize="4">
+      <TeamTemplate MinUnits="6" MaxUnits="12" MaxTypesOfUnits="2"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="StandardMicroManager_MEDIUM">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+          <ExcludeThing>SovietBomberAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+  id="EP01_J03_Allied_FighterAircraft_MEDIUM"
+  MaxTargets="3">
+    <Heuristic>
+      <IntervalHeuristic IntervalTime="1s" ActiveTime="15s" CountFrom="AI_START"/>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedFighterAircraft</IncludeThing>
+          <IncludeThing>SovietFighterAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestFriendlyVehicleHeuristic"/>
+    <Tactic id="Attack" Tactic="StaticDefense" Distance="400" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK FIGHTER_AIRCRAFT" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MicroManager="FighterAircraftMicroManager_MEDIUM" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+  id="EP01_J03_Allied_VindicatorAttack_MEDIUM"
+  MaxTargets="2">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic_NonUnique" Priority="5"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="2" MaxUnits="4"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="VindicatorMicroManager_MEDIUM" >
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+  id="EP01_J03_Allied_CenturyBomberAttack"
+  MaxTargets="4">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedBomberAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirSurfaceVehicleHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirPowerPlantHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic_NonUnique" Priority="5"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="2" MinPowerAdvantage="0.5"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="CenturyBomberMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedBomberAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+</AssetDeclaration>
+

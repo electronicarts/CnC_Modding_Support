@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+<!--  During the conversion from INI to XML, there were a lot of parameters discovered
+	 which are no longer in use, but which are not slated for removal from the code base.
+	 To make sure that these parameters are not misused or used by accident without anybody
+	 knowing what's going on, these are not available in XSD. 
+	 Contact an engineer for investigation, I would say that some of these items probably do
+	 not belong directly on the Player anymore. - asc 4/19/07
+	 List pruned - 5/24/07
+	 Items:
+		SpecialPowerShortcutCommandSet
+		SpecialPowerShortcutWinName
+		SpecialPowerShortcutButtonCount
+		InitialUpgrades
+		
+	Now, there were items removed completely, because they were implemented in
+	an unnecessarily complex way, imho:
+	ProductionModifiers: That functionality would fit nicely as an attribute modifier
+					 that is hooked to the faction upgrade.  Its own system directly
+					 on the Player is a bit overkill.
+	Evil: This should be driven by faction type, NOT its own boolean
+-->
+	<xs:include schemaLocation="Includes/AIBeaconType.xsd"/>
+
+	<xs:simpleType name="PlayerTemplateType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONPLAYABLE"/>
+			<xs:enumeration value="PLAYABLE"/>
+			<xs:enumeration value="OBSERVER"/>
+			<xs:enumeration value="RANDOM"/>
+			<xs:enumeration value="COMMENTATOR"/>
+			<!-- ARENA -->
+			<xs:enumeration value="TEAMMANAGER"/>
+			<xs:enumeration value="NULL"/>	<!-- Glue for UI, do NOT use with other options, and ONLY use for ONE template -->
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="StartingUnitInfoType">
+		<xs:sequence>
+			<xs:element name="Object" type="GameObjectRef" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Position" type="Vector3" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TechProductionBonusInfo">
+		<xs:attribute name="RequiredTech" type="PlayerTechRef" use="required"/>
+		<xs:attribute name="BuildCostBonus" type="Percentage" default="0"/>
+		<xs:attribute name="BuildCostBonusAllies" type="Percentage" default="0"/>
+		<xs:attribute name="BuildTimeBonus" type="Percentage" default="0"/>
+		<xs:attribute name="BuildTimeBonusAllies" type="Percentage" default="0"/>
+		<xs:attribute name="HarvesterBonus" type="Percentage" default="0"/>
+		<xs:attribute name="HarvesterBonusAllies" type="Percentage" default="0"/>
+	</xs:complexType>
+
+	<xs:complexType name="PlayerTemplate" xas:runtimeWrapper="::PlayerTemplate" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="ParticipationTracker" type="PlayerParticipationTrackerTemplateRef" minOccurs="0" maxOccurs="1" />
+					<xs:element name="HouseColorTwo" type="Color3" minOccurs="1" maxOccurs="1" />
+					<xs:element name="PreferredColor" type="Color3" minOccurs="1" maxOccurs="1" />
+					<xs:element name="PreferredCampaignRadarColor" type="Color3" minOccurs="1" maxOccurs="1" />
+					<xs:element name="InitialUpgrade" type="UpgradeTemplateRef" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="ResourceModifierObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="StartingUnitInfo" type="StartingUnitInfoType" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="StartingMoney"	type="MoneyTransaction" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="MoneyCap"		type="MoneyTransaction" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="TechRank" type="PlayerTechRankRef" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="TechProductionBonuses" type="TechProductionBonusInfo" minOccurs="0" maxOccurs="unbounded"/>
+					<!-- OutlineAttackColor is used only if we the game can't logically determine the oppositing team -->
+					<xs:element name="OutlineAttackColor" type="Color3" minOccurs="1" maxOccurs="1" />
+					<xs:element name="OutlineSelectedColor" type="Color3" minOccurs="1" maxOccurs="1" />
+					<!-- Team-based housecolor for versus multiplayer games- radar colors
+					are in SettingsCommon.xml UIRadarObjectsLayer::IconColor and should match these -->
+					<xs:element name="PlayerHouseColor" type="Color3" minOccurs="1" maxOccurs="1" />
+					<xs:element name="TeamHouseColor" type="Color3" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+				
+				<xs:attribute name="Type" type="PlayerTemplateType" default="NONPLAYABLE"/>
+
+				<!-- UI Options -->
+				<xs:attribute name="DisplayNameToken" type="xs:string" />
+				<xs:attribute name="FactionIconImageName" type="xs:string" />
+
+				<!-- Audio Options -->
+				<xs:attribute name="LoadScreenMusic" type="AudioEventInfoRef"/>
+				<xs:attribute name="SkirmishMPVictoryMusic" type="AudioEventInfoRef"/>
+				<xs:attribute name="SkirmishMPDefeatMusic" type="AudioEventInfoRef"/>
+				<xs:attribute name="FactionDataPathMusicEvent" type="PathMusicEventRef"/>
+				<xs:attribute name="MatchVictoryPathMusicEvent" type="PathMusicEventRef"/>
+				<xs:attribute name="MatchDefeatPathMusicEvent" type="PathMusicEventRef"/>
+
+				<!-- Logic Options -->
+				<xs:attribute name="BeaconTemplate" type="GameObjectWeakRef"/>
+				<xs:attribute name="CommandPointLimit" type="SageUnsignedInt" default="100" />
+				<!-- When (MaxCP - UsedCP) is less or equal to CommandPointLimitWarningDelta, the player will be warned -->
+				<xs:attribute name="CommandPointLimitWarningDelta" type="SageUnsignedInt" default="2" />
+				<xs:attribute name="SecondaryResourcePointDivisor" type="SageUnsignedInt" default="500" />
+				<xs:attribute name="ScriptedHuntTactic" type="AIStrategicStateDefinitionWeakRef" default="" />
+				<xs:attribute name="Side" type="FactionType" default="Neutral" />
+				<xs:attribute name="StartingBuilding"  type="GameObjectWeakRef"/>
+				<xs:attribute name="SpellBookSP" type="GameObjectWeakRef"/>
+				<xs:attribute name="SpellBookMP" type="GameObjectWeakRef"/>
+				<xs:attribute name="ResourceModifierValueList" type="SageUnsignedIntList" />
+				<xs:attribute name="MaxMpBeacons" type="SageUnsignedInt" default="0"/>
+				<xs:attribute name="BeaconLifeTime" type="Time" default="30s"/>
+
+				<xs:attribute name="NumberOfResourceAccounts" type="SageUnsignedInt" default="1"/>
+				<xs:attribute name="DefaultTech" type="PlayerTechRef"/>
+				<xs:attribute name="PlayerTechUpgradeBinding" type="PlayerTechUpgradeBindingRef"/>
+				<xs:attribute name="TechRankPointsPerSecond" type="SageUnsignedInt" default="0"/>
+				<xs:attribute name="InitialTechPoints" type="SageUnsignedInt" default="0"/>
+
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GBLabRad.W3X" />
+		<Include
+			type="all"
+			source="ART:GBLabRad_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:GBLabRad_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:GBLabRad_D3.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructureNoGarrison.xml" />
+	</Includes>
+	<GameObject
+		id="GDI_LabRadarBuilding"
+		inheritFrom="BaseCivilianStructureNoGarrison"
+		SelectPortrait="Portrait_GDILabRadarBuilding"
+		ButtonImage="Portrait_GDILabRadarBuilding"
+		Side="GDI"
+		Browser="REGION GDI_Structures STRUCTURE"
+		BuildCost="400"
+		BuildTime="15"
+		CommandSet="EmptyCommandSet"
+		KindOf="PRELOAD SELECTABLE CAN_CAST_REFLECTIONS SCORE STRUCTURE IMMOBILE AUTO_ACQUIRABLE_BY_AI KEEP_CLASSIFIED_WHEN_DEAD"
+		RadarPriority="STRUCTURE"
+		ThreatLevel="10"
+		ProductionQueueType="MAIN_STRUCTURE"
+		EditorName="GDI_LabRadarBuilding">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODLabRadarBuilding</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBLabRad" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBLabRad_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBLabRad_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBLabRad_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBLabRad_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBLabRad_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GBLabRad_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBLabRad_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+<!--		
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="8s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+-->			
+<!--
+			<DestroyDie
+				id="ModuleTag_12">
+				<DieMuxData
+					DeathTypes="NONE CRUSHED SPLATTED" />
+			</DestroyDie>
+-->			
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_ScorchMedium" />
+			</FXListBehavior>			
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="../../Includes/GenericGDIBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/GenericGDIBuildingSuicide.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_02"
+				MaxHealth="650.0"
+				InitialHealth="650.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="15.0"
+				MinorRadius="19.0"
+				Height="80.0">
+				<Offset
+					x="-0.580678"
+					y="-3.86252"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="51.6"
+				MinorRadius="19.0"
+				Height="20.0">
+				<Offset
+					x="4.68904"
+					y="25.0778"
+					z="33.109" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="31.5"
+				MinorRadius="19.0"
+				Height="6.4">
+				<Offset
+					x="-0.580677"
+					y="-3.86252"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-17.7951"
+					y="-19.9777"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="16.0236"
+					y="-19.9777"
+					z="76.7727" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="16.0236"
+					y="13.8409"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-17.7951"
+					y="13.841"
+					z="76.7727" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-17.7951"
+					y="-19.9777"
+					z="76.7727" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="16.0236"
+					y="-19.9777"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="16.0236"
+					y="13.841"
+					z="76.7727" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-17.7951"
+					y="13.8409"
+					z="0.0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_ResearchLab_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="320" />
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Tags></Tags>
+  <Includes>
+    <Include
+			type="all"
+			source="ART:TBTibSpk_AN.w3x" />
+    <Include
+			type="all"
+			source="ART:TBTibSpk_SK.w3x" />
+    <Include
+			type="all"
+			source="ART:TBTibSpk_SN.w3x" />
+    <Include
+			type="all"
+			source="ART:TBTibSpk_D1.w3x" />
+    <Include
+			type="all"
+			source="ART:TBTibSpk_D2.w3x" />
+    <Include
+			type="all"
+			source="ART:TBTibSpk_D3.w3x" />
+    <Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+  </Includes>
+  <GameObject
+		id="TiberiumSpike"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_NeutralTiberiumSpike"
+		ButtonImage="Portrait_NeutralTiberiumSpike"
+		Side="Neutral"
+		BuildTime="15"
+		EditorSorting="STRUCTURE"
+		CommandSet="TibSpikeCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH TIBERIUM_BASED"
+		RadarPriority="STRUCTURE"
+		EditorName="TiberiumSpike"
+		Description="Desc:TechBuildingTiberiumSpike">
+    <DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechBuildingTiberiumSpike</DisplayName>
+    <ArmorSet
+			Armor="TechStructureArmor"
+			DamageFX="GenericStructureDamageFX" />
+    <Draws>
+      <ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="TBTibSpk_SN" />
+        </ModelConditionState>
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+          <Model
+						Name="TBTibSpk_D3" />
+        </ModelConditionState>
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+          <Model
+						Name="TBTibSpk_D2" />
+        </ModelConditionState>
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+          <Model
+						Name="TBTibSpk_D1" />
+        </ModelConditionState>
+        <AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE DO_NOT_PLAY_WHEN_UNPOWERED"
+					StateName="STATE_bored">
+          <Animation
+						AnimationName="TBTibSpk_AN"
+						AnimationMode="ONCE"
+						AnimationPriority="10" />
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+          <Animation
+						AnimationName="TBTibSpk_D3"
+						AnimationMode="MANUAL" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+          <Animation
+						AnimationName="TBTibSpk_D2"
+						AnimationMode="MANUAL" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+          <Animation
+						AnimationName="TBTibSpk_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+          <Animation
+						AnimationName="TBTibSpk_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+        </AnimationState>
+      </ScriptedModelDraw>
+    </Draws>
+    <Behaviors>
+      <CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="TiberiumSpikeOCL">
+        <DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+      </CreateObjectDie>
+      <AutoDepositUpdate
+				InitialCaptureBonus="750"
+				DepositInterval="1s"
+				DepositAmount="25"
+				GiveNoXP="true"
+				Flags="ACTIVE_WHEN_REPAIRING"/>
+      <SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+			<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" /> 
+        <DieMuxData
+					DeathTypes="ALL" />
+      </SlowDeath>
+      <xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+      <xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+    </Behaviors>
+    <AI>
+      <AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"
+				AILuaEventsList="BuildingPowerFunctions">
+      </AIUpdate>
+    </AI>
+    <Body>
+      <ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="10000.0" />
+    </Body>
+    <Geometry
+			IsSmall="false">
+      <Shape
+				Type="CYLINDER"
+				MajorRadius="10.3081"
+				MinorRadius="10.3081"
+				Height="124.951">
+        <Offset
+					x="-0.102257"
+					y="0.291839"
+					z="0.0" />
+      </Shape>
+      <Shape
+				Type="CYLINDER"
+				MajorRadius="25.7703"
+				MinorRadius="25.7703"
+				Height="20.2843">
+        <Offset
+					x="-0.102257"
+					y="0.29184"
+					z="0.0" />
+      </Shape>
+      <ContactPoint>
+        <Pos
+					x="-5.92092"
+					y="-6.06962"
+					z="0.0" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="4.93066"
+					y="-6.06961"
+					z="119.205" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="4.93066"
+					y="4.78196"
+					z="0.0" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="-5.92092"
+					y="4.78197"
+					z="119.205" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="-5.92092"
+					y="-6.06961"
+					z="119.205" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="4.93066"
+					y="-6.06962"
+					z="0.0" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="4.93066"
+					y="4.78197"
+					z="119.205" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="-5.92092"
+					y="4.78196"
+					z="0.0" />
+      </ContactPoint>
+    </Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="TiberiumSpike_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+    <ShadowInfo
+			Type="VOLUME" />
+    <VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+    <ProjectedBuildabilityInfo
+			Radius="0.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+  </GameObject>
+</AssetDeclaration>

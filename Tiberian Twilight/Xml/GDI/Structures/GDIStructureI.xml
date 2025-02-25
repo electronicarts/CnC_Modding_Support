@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<!-- GDI Bubble Defense Shield Tier 3 -->
+	<Tags></Tags>
+	<!-- Local Object Status Bits:
+		USER_1: upgraded with Advanced Shield
+	-->
+	<Includes>
+		<Include type="all"	source="ART:GSL_StructureI_SKN.w3x" />
+		<Include type="all"	source="ART:GSL_StructureI_BLDA.w3x" />
+		<Include type="all"	source="ART:GSL_StructureI_SHLD2.w3x" />
+		<Include type="all"	source="ART:GSL_StructureI_SHLD3.w3x" />
+		<Include type="all"	source="ART:GSL_StructureI_STAS.w3x" />
+		<Include type="all"	source="ART:GSL_StructureI_DMG.xml" />
+		<Include type="all"	source="ART:FXTracerGDI.xml" />
+		<Include type="all"	source="ART:FXInvisBone.w3x" />
+		<Include type="all"	source="ART:FXShieldLargeB.w3x" />
+		<Include type="all"	source="ART:FXShieldLarge.w3x" />
+		<Include type="all" source="DATA:GDI/Structures/GDIStructureIProps.xml" />
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+	</Includes>
+
+	<GameObject
+		id="GDIStructureI"
+		inheritFrom="BaseDefensiveStructure" 
+		SubGroupPriority="406"
+		HealthBoxHeightOffset="70"
+		HealthBar="Structure"
+		SelectPortrait="Portrait_GDI_Structure_I_tech1"
+		ButtonImage="Btn_GDI_Structure_I_tech1"
+		Side="GDI"
+		ParticipationValue="=$GDISTRUCTUREI_PARTICIPATION_VALUE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildTime="20.0"
+		EnergyProduction="=$GDI_STRUCTURE_I_COMMANDPOINT_COST"
+		CommandSet="GDIStructureICommandSet"
+		KindOf="+CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING -CAN_ATTACK"
+		RadarPriority="STRUCTURE"
+		EditorName="GDI_D3_Struct_Shield(Crystal Shield)"
+		EditorSorting="STRUCTURE"
+		Description="Desc:GDIStructureI"
+		TypeDescription="Type:GDIStructureI">
+
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIStructureI</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+		
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+
+		<SkirmishAIInformation
+			BuildingPlacementType="CenterDefault" />
+
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				ExtraPublicBone="Sconce"
+				OkToChangeModelColor="true"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GSL_StructureI_SKN" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="GSL_StructureI_SKN" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$GDI_CRAWLER_A_SHIELD_DECAL_SIZE - 100"
+						SizeY="=$GDI_CRAWLER_A_SHIELD_DECAL_SIZE - 100"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GSL_StructureI_SKN" />
+					<Texture
+						Original="GSL_StructureI"
+						New="GSL_StructureI_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GSL_StructureI_SKN" />
+					<Texture
+						Original="GSL_StructureI"
+						New="GSL_StructureI_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="DO_NOT_PLAY_WHEN_UNPOWERED">
+					<Animation
+						AnimationName="GSL_StructureI_SHLD2"
+						AnimationBlendTime="0"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="GSL_StructureI_BLDA"
+						AnimationBlendTime="0"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true"	/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="INVULNERABLE PARALYZED">
+					<Animation
+						AnimationName="GSL_StructureI_STAS"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="GSL_StructureI_SHLD3"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				
+			</ScriptedModelDraw>
+			
+			<!-- Shield Geometry -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawShield"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name=""/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPHERE_MODULE_ACTIVE USER_1">
+					<Model
+						Name="FXShieldLargeBUpgrade"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPHERE_MODULE_ACTIVE">
+					<Model
+						Name="FXShieldLargeB"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<!-- Shield Geometry -->
+
+			
+		</Draws>
+
+		<Behaviors>
+			<LUAEventList
+				id="ModuleTag_LUA"
+				EventListName="GDIStructureIFunctions"/>
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_GDIDefenseAdvancedShields</TriggeredBy>
+				<Nugget
+					ShowSubObjects="GSL_StructureI_UPG"
+					Upgrade="Upgrade_GDIDefenseAdvancedShields"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDIStructureI_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_GDIArtilleryHitBIG"/>
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_ArmorAura"
+				AttributeModifierName="AttributeModifier_GDIStructureIAuraModifier"
+				Range="=$GDI_STRUCTURE_I_STASIS_FIELD_RANGE"
+				InitiallyActive="true"
+				RefreshDelay="2s">
+				<UpdateStatusValidation
+					ForbiddenStatus="DISABLED_FOR_RECYCLE" />
+				<ObjectFilter Relationship="ALLIES" Rule="ALL" />
+			</AttributeModifierAuraUpdate>
+
+			<ShieldSphereUpdate
+				id="ModuleTag_Shield"
+				SphereModuleOptions="INITIALLY_ACTIVE"
+				RadiusMin="=$GDI_STRUCTURE_I_EFFECT_RANGE"
+				RadiusMax="=$GDI_STRUCTURE_I_EFFECT_RANGE"
+				ScanFrequency="2s"
+				MaxDamage="750"
+				DamageChangePerSecond="-5"
+				DamageTypesToAbsorb="LASER CANNON GUN BLAST ROCKET"
+				ShieldRegenerateThresholdPercent="90%"
+				SphereBoneName="Sconce"
+				Options="ALLOW_ALLIES_PROJECTILE_GOTHROUGH ABSORB_ALL_DAMAGE_ON_KILLING_BLOW">
+				<ObjectStatusValidation
+					ForbiddenStatus="DISABLED_FOR_RECYCLE" />
+				<ObjectFilter
+					Rule="ALL"/>
+				<DamageTypeFXMap
+					DamageType="LASER"
+					DamageFX="FX_GDILaser_Medium_Hit">
+				</DamageTypeFXMap>
+				<DamageTypeFXMap
+					DamageType="GUN"
+					DamageFX="FX_GDIMachineGun_Medium_Hit">
+				</DamageTypeFXMap>
+				<DamageTypeFXMap
+					DamageType="BLAST"
+					DamageFX="FX_GDIArtilleryMiss_Medium">
+				</DamageTypeFXMap>
+				<DamageTypeFXMap
+					DamageType="ROCKET"
+					DamageFX="FX_GDIRocketMedium_CrystalShieldDamage">
+				</DamageTypeFXMap>
+			</ShieldSphereUpdate>
+
+			<ShieldSphereDamageUpgrade
+				id="ModuleTag_ShieldSphereDamageUpgrade"
+				MaxDamageModifier="750">
+				<TriggeredBy>Upgrade_GDIDefenseAdvancedShields</TriggeredBy>
+			</ShieldSphereDamageUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_AdvancedShieldUpgrade"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_GDIDefenseAdvancedShields</TriggeredBy>
+			</ModelConditionUpgrade>
+			<FXListBehavior
+				id="ModuleTag_FXListAdvancedShields">
+				<TriggeredBy>Upgrade_GDIDefenseAdvancedShields</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeGDIEnhancedShields" />
+			</FXListBehavior>
+			
+			<!-- stasis field power -->
+			<OCLSpecialPower
+				id="ModuleTag_OCLSpecialPower"
+				SpecialPowerTemplate="SpecialPowerTemplate_StasisField"
+				OCL="OCL_GDIStructureIStasisField"/>
+		</Behaviors>
+
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ShieldLoop">
+				<ModelConditionSound Sound="GDI_CrystalShield_StrI_ShieldLoop" RequiredFlags="SPHERE_MODULE_ACTIVE" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_CrystallineShieldDisablesSelect" xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<Override RequiredFlags="INVULNERABLE PARALYZED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="GDI_CrystalShield_StrI_SelectParalyzed" AudioType="voiceSelect"/>
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="GDI_CrystalShield_StrI_Deploy1" Animation="GSL_StructureI_BLDA" Frame="6" />
+				<Sound Sound="GDI_CrystalShield_StrI_EndImpactMS" Animation="GSL_StructureI_BLDA" Frame="25" />
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>	
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_CrystalShield_StrI_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice> 
+		<AudioArraySound>
+			<!-- <AudioEntry Sound="Fire1_StructureMedium_LoopMS" AudioType="soundAmbientReallyDamaged" /> -->
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+
+		<Geometry>
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "15.9956"
+					 MinorRadius = "15.0839"
+					 Height = "26.5145"
+					 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+						x = "2.33981"
+						y = "0.0"
+						z = "45.1995" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-14.26"
+					y="21.55"
+					z="42.38" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-27.82"
+					y="-1.01"
+					z="19.63" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="0.55"
+					y="15.66"
+					z="92.95" />
+			</ContactPoint>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "50.0"
+					 MinorRadius = "50.0"
+					 Height = "25.8">
+			</Shape>
+
+		</Geometry>
+
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_GDIDefenseAdvancedShields</DisplayUpgrade>
+	</GameObject>
+
+<!-- ================================== -->
+
+	<LogicCommand
+		id="Command_StatisField"
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPowerTemplate_StasisField</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo
+				Heuristic="REACT_TO_SUPERWEAPON_FIRING">
+				<ReactToSuperWeaponInfo
+					MinValueAffectedByPower="20.0">
+					<SuperWeaponsData
+						RadiusOfEffect="=$GDISTRUCTUREJ_EFFECT_RADIUS">
+						<ObjectFilter
+							Rule="NONE"
+							Relationship="ENEMIES">
+							<IncludeThing>GDIStructureJSuperweaponObjectSeed</IncludeThing>
+							<IncludeThing>GDIStructureJSuperweaponObject</IncludeThing>
+						</ObjectFilter>
+						<WeaponTemplateUsed>GDIStructureJSuperweaponEffectWeaponLevel1</WeaponTemplateUsed>
+						<WeaponTemplateUsed>GDIStructureJSuperweaponEffectWeaponLevel2</WeaponTemplateUsed>
+						<WeaponTemplateUsed>GDIStructureJSuperweaponEffectWeaponLevel3</WeaponTemplateUsed>
+						<WeaponTemplateUsed>GDIStructureJSuperweaponEffectWeaponLevel4</WeaponTemplateUsed>
+						<WeaponTemplateUsed>GDIStructureJSuperweaponEffectWeaponLevel5</WeaponTemplateUsed>
+						<WeaponTemplateUsed>GDIStructureJSuperweaponEffectWeaponLevel6</WeaponTemplateUsed>
+					</SuperWeaponsData>
+					<SuperWeaponsData
+						RadiusOfEffect="=$NODSTRUCTUREJ_SUPERWEAPON_AOE_RADIUS">
+						<ObjectFilter
+							Rule="NONE"
+							Relationship="ENEMIES">
+							<IncludeThing>NODStructureJSuperweaponObjectSeed</IncludeThing>
+							<IncludeThing>NODStructureJSuperweaponObject</IncludeThing>
+						</ObjectFilter>
+						<WeaponTemplateUsed>NODStructureJSuperweaponEffectWeaponLevel1</WeaponTemplateUsed>
+						<WeaponTemplateUsed>NODStructureJSuperweaponEffectWeaponLevel1</WeaponTemplateUsed>
+						<WeaponTemplateUsed>NODStructureJSuperweaponEffectWeaponLevel3</WeaponTemplateUsed>
+						<WeaponTemplateUsed>NODStructureJSuperweaponCloudEffectWeapon</WeaponTemplateUsed>
+						<WeaponTemplateUsed>NODStructureJSuperweaponScatterEffectNode_Weapon</WeaponTemplateUsed>						
+					</SuperWeaponsData>
+				</ReactToSuperWeaponInfo>
+			</AISpecialPowerInfo>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="GDIStructureICommandSet">
+		<Cmd>Command_StatisField</Cmd>
+		<Cmd>Command_SellSelf</Cmd>
+	</LogicCommandSet>
+
+	<SpecialPowerTemplate
+		id="SpecialPowerTemplate_StasisField"
+		ReloadTime="120s"
+		TargetType="NONE"
+		RadiusCursorRadius="=$GDI_STRUCTURE_I_STASIS_FIELD_RANGE">
+		<ObjectFilter
+			Rule="ANY"
+			Include="=$STASIS_OBJECT_KINDOFS"/>
+	</SpecialPowerTemplate>
+
+	<ObjectCreationList
+		id="OCL_GDIStructureIStasisField">
+		<CreateObject
+			Disposition="ON_GROUND_ALIGNED"
+			Count="1"
+			Options="IGNORE_ALL_OBJECTS DO_NOT_TREAT_AS_STRUCTURE">
+			<CreateObject>GDIStructureIStasisField</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="GDIStructureI_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectTemplate>GDIDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<ObjectOffset x="10.0" y="10.0" z="20.0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<AttributeModifier
+		 id="AttributeModifier_GDIStructureIAuraModifier"
+		 Category="NONE"
+		 Duration="2.5s">
+		<Modifier Type="ARMOR" Value="100%" />
+	</AttributeModifier>
+
+	<ExperienceLevelTemplate
+		id="ExperienceTemplate_GDIStructureI"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="10"
+		BountyValue="10">
+		<Target>GDIStructureI</Target>
+		<Decal>
+			<Component
+				Texture="decal_S_level1"
+				Texture2="Decal_Struct_CO"
+				Style="MERGE_DECAL"
+				OpacityMin="80"
+				OpacityMax="100"
+				MinRadius="100"
+				MaxRadius="200">
+			</Component>
+		</Decal>
+	</ExperienceLevelTemplate>
+
+</AssetDeclaration>

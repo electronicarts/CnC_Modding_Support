@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags/>
+	<Includes>
+		<Include type="all" source="ART:NPHalGrenadeGeo.w3x" />
+		<Include type="all" source="ART:Decal_Rig_CO.xml" />
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseFirestormObject.xml" />
+	</Includes>
+
+	<Defines>
+		<Define name="FLAME_DECAL_LENGTH" value="=($NOD_CRAWLER_B_FLAME_WEAPON_DOT_RADIUS * 2)+10"/>
+	</Defines>
+	
+	<GameObject
+		id="NODCrawlerBFlameWeaponProjectile"
+		Side="NOD"
+		EditorSorting="SYSTEM"
+		KindOf="PROJECTILE UNATTACKABLE INERT DEFLECT_BY_SPECIAL_POWER NO_COLLIDE HIDE_IF_FOGGED"
+		EditorName="NODCrawlerBFlameWeaponProjectile">
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NPHalGrenadeGeo" />
+					<!-- old trail 
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="NPHalTrail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="NPHalTrail"
+						FollowBone="true" />
+									-->
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="NODFireball01"
+						FollowBone="True" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="NODFireball02"
+						FollowBone="True" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="NODFireball_Light"
+						FollowBone="True" />
+					
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimNickName="IDL"
+						AnimationName="NPHalGrenadeGeo"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NOD_FireballHit" />
+				<Event Index="onDeath" FX="FX_NOD_CrawlerBOffense_FireballWeaponImpactExplosion_AudioOnly"/> <!-- audio only, please add visuals to another Event, thanks! -->
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="100"
+				FirstHeightMax="100"
+				SecondHeightMin="100"
+				SecondHeightMax="100"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				Flags="DETONATE_CALLS_KILL DONT_TRACK_TARGET" />
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="100.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0.8"/>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_CrawlerBOffense_FireballIncoming" AudioType="soundAmbient"/>
+		</AudioArraySound>
+
+	</GameObject>
+
+	<!-- limited lifetime egg that pulses damage to nearby enemies -->
+	<GameObject
+		id="NODCrawlerBWeaponWarheadEgg"
+		inheritFrom="BaseFirestormAOEObject"
+		KindOf="+GRANT_PLAYER_THREAT" 
+		EditorName="NODCrawlerBWeaponWarheadEgg">
+		<DisplayName>NODCrawlerBWeaponWarheadEgg</DisplayName>
+		<Draws>
+			<!-- temporary drawable to denote AOE. -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				StaticModelLODMode="true"
+				xai:joinAction="Replace">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$FLAME_DECAL_LENGTH"
+						SizeY="=$FLAME_DECAL_LENGTH"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Rig_CO"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>		
+		</Draws>
+		<Behaviors>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateNODCrawlerBFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+			
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="5.0s"
+				MaxLifetime="5.0s" />
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<FireWeaponUpdate
+				id="NODCrawlerBFlameWeaponWarheadDOTWeapon"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="NODCrawlerBFlameWeaponWarheadDOTWeapon" />
+			</FireWeaponUpdate>
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate_02">
+				<RequiredObject
+					Range="=$NOD_CRAWLER_B_FLAME_WEAPON_DOT_RADIUS">
+					<ObjectFilter
+						Rule="ANY"
+						Include="FIRESTORM"
+						Relationship="SAME_PLAYER"/>
+				</RequiredObject>
+				<FireWeaponNugget
+					WeaponName="GenericKillOwnerFirestormWeapon" 
+					OneShot="true"/>
+			</FireWeaponUpdate>
+
+			<FireGroupCenterUpdate
+				id="ModuleTag_FirestormWeapon"
+				WeaponName="GenericKillOwnerFirestormWeapon"
+				Range="100"
+				RequiredCount="3">
+				<ObjectFilter
+					Rule="NONE"
+					Relationship="SAME_PLAYER"
+					Include="HAS_FIRE_GROUP_CENTER_UPDATE"/>
+			</FireGroupCenterUpdate>
+
+		</Behaviors>	
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<!-- geometry is necessary for FireGroupCenterUpdate to be accurate -->
+		<!-- DO_NOT_CLASSIFY prevents it from affecting the pathfinder -->
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="100.0"
+				Height="1.0"></Shape>
+		</Geometry>
+	</GameObject>
+
+	<GameObject
+		id="NODCrawlerBFirestormDamager"
+		inheritFrom="BaseFirestormObject"
+		KindOf="+PRELOAD +GRANT_PLAYER_THREAT +SKIRMISH_AI_ATTEMPT_TO_DODGE"
+		EditorName="NODCrawlerBFirestormDamager">
+		<DisplayName>NODCrawlerBFirestormDamager</DisplayName>
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NOD_CRAWLER_B_FLAME_WEAPON_DOT_RADIUS + $AI_DODGE_SAFETY_BUFFER">
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"				
+				StatusBitFlagsExclude="AIRBORNE_TARGET">
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				xai:joinAction="Replace">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="NODFirestorm01"
+						FollowBone="True" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="NODFirestorm02"
+						FollowBone="True" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="2s"
+				MaxLifetime="2s"/>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateNODCrawlerBFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+			
+			<FireWeaponUpdate
+				id="ModuleTag_FirestormWeapon"
+				FireInterval="2.0s">
+				<FireWeaponNugget
+					WeaponName="Weapon_NODCrawlerBFirestormWeapon"
+					SlotID="1"/>
+				<FireWeaponNugget
+					OneShot="true"
+					WeaponName="Weapon_NODCrawlerBOneShotFirestormWeapon" />
+			</FireWeaponUpdate>
+		</Behaviors>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="100.0"
+				Height="1.0"/>
+		</Geometry>
+		<!-- no worky 
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_CrawlerBOffense_FireballWeaponImpactExplosion" AudioType="soundAmbient"/>
+		</AudioArraySound> -->
+	</GameObject>
+
+
+</AssetDeclaration>

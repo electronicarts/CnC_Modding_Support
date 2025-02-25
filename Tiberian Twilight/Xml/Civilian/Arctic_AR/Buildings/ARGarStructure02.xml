@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		
+		<Include
+			type="all"
+			source="ART:ARGarStructure02.w3x" />
+		<Include
+			type="all"
+			source="ART:ARGarStructure02_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:ARGarStructure02_D3.w3x" />
+			
+		<Include
+			type="all"
+			source="ART:ARGarStructure02_D.xml" />
+
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructure.xml" />
+	</Includes>
+	<GameObject
+		id="ARGarStructure02"
+		inheritFrom="BaseCivilianStructure"
+		CommandSet="GarrisonableNeutralBuildingCommandSet"
+		EditorName="ARGarStructure02"
+        EditorSorting="STRUCTURE"
+		Browser="REGION ARCTIC_AR STRUCTURE">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				AffectedByStealth="false"
+				ExtraPublicBone="BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ARGarStructure02" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="ARGarStructure02_D3" />
+				</ModelConditionState>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ARGarStructure02_D2" />
+				</ModelConditionState>
+
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ARGarStructure02" />
+					<Texture
+						Original="ARGarStructure02"
+						New="ARGarStructure02_D" />
+
+				</ModelConditionState>
+								
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ARGarStructure02_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+          <Animation
+						AnimationName="ARGarStructure02_D2"
+						AnimationMode="MANUAL" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+            end
+          </Script>
+        </AnimationState>
+        
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="ARGarStructure02_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="ARGarStructure02_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="false" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="false" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<!--
+			<xi:include
+				href="../../../Includes/GarrisonFlagArmorDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonArmorDraws/child::*)" />
+			-->
+		</Draws>
+		<!-- The following Geometry was altered manually on 01/06/10 -->
+		<Geometry>
+			<Shape
+				Type = "CYLINDER"
+				MajorRadius = "30.0"
+				MinorRadius = "30.0"
+				Height = "141.668"
+				ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+			<Shape
+				Type = "BOX"
+				MajorRadius = "56.34513"
+				MinorRadius = "65.06176"
+				Height = "141.668"
+				ContactPointGeneration = "NONE" >
+				<Offset
+					x = "-12.61385"
+					y = "0.0"
+					z = "0.707961" />
+			</Shape>
+		</Geometry>
+		<Behaviors>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NeutralGarrisonableBuildingFunctions"
+			/>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_MEDIUM" />
+		</Body>
+	</GameObject>
+</AssetDeclaration>

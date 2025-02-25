@@ -1,0 +1,993 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- GDI Vehicle AD / Light Laser / Striker -->
+	<!-- WEAPON_UPGRADED_01 ObjectStatus is for the VFX on the crate pickup damage buff -->
+	<Includes>
+		<Include type="all" source="ART:GUS_VehicleAD_SKN.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_AIDA.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_AIFA.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_AIFB.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_ATKA.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_ATKB.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_BATA.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_BIDA.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_BIFA.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_BIFB.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_DIEA.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_DIEB.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_DSEL.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_EMPA.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_JMP1.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_JMP2.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_JMP3.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_MOVA.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_MOVD.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_TRNL.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_TRNR.w3x" />
+		<Include type="all" source="ART:GUS_VehicleAD_DMG.xml" />
+
+<!--
+		<Include type="all" source="ART:GUGar_Rifl.w3x" />
+		<Include type="all" source="ART:FXTracerGDI.xml" />
+		<Include type="all" source="ART:FXTracerHeroic.xml" />
+-->
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="all" source="DATA:GDI/Props/GDIVehicleADProps.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+
+		<Include type="instance" source="ART:FXGDILaser.xml" />
+		<Include type="instance" source="ART:FXGDILaser_Veteran.xml" />
+		<Include type="instance" source="ART:FXEnergyBeam.xml" />
+		<Include type="instance" source="ART:FXGDILaser_Secondary.xml" />
+		<Include type="instance" source="ART:FXGDILaser_Veteran_Secondary.xml" />
+		<Include type="instance" source="DATA:FXParticleSystems/GDIVehicleAD_PrefireGlow.xml" />
+		<Include type="instance" source="ART:FXRailDistort02.xml" />
+
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseLightVehicle.xml" />
+	</Includes>
+
+	<GameObject
+		id="GDIVehicleAD"
+		inheritFrom="BaseLightVehicle"
+		HealthBoxHeightOffset="19"
+		HealthBar="Small"
+		SubGroupPriority="387"
+		SelectPortrait="Portrait_GDI_Vehicle_AD_tech1"
+		ButtonImage="Btn_GDI_Vehicle_AD_tech1"
+		Side="GDI"
+		ParticipationValue="=$GDIVEHICLEAD_PARTICIPATION_VALUE"
+		TransportSlotCount="1"
+		BuildTime="10"
+		CommandSet="GDIVehicleADCommandSet"
+		CommandPoints="=$GDI_VEHICLE_AD_COMMANDPOINT_COST"
+		ThreatLevel="10"
+		WeaponCategory="LASER"
+		VoicePriority="104"
+		EditorName="GDI_O1_Light_Laser(Striker)"
+		EditorSorting="UNIT"
+		Description="Desc:GDIVehicleAD"
+		TypeDescription="Type:GDIVehicleAD">
+
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIVehicleAD</DisplayName>
+
+		<LocomotorSet
+			Locomotor="GDIVehicleADLocomotor"
+			Condition="NORMAL"
+			Speed="140" />
+		<LocomotorSet
+			Locomotor="GDIVehicleADUpgradeCrystalLocomotor"
+			Condition="UPGRADE_CRYSTAL_ATTACHED"
+			Speed="140" />
+
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="GAD_Turret GAD_Gun GAD_hatch GAD_hull FXWeapon01 FXDamage01 FXDamage02"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUS_VehicleAD_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<Turret
+						TurretNameKey="GAD_Turret"
+						TurretPitch=""
+						TurretID="1" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUS_VehicleAD_SKN" />
+					<Texture
+						Original="GUS_VehicleAD"
+						New="GUS_VehicleAD_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUS_VehicleAD_SKN" />
+					<Texture
+						Original="GUS_VehicleAD"
+						New="GUS_VehicleAD_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GUS_VehicleAD_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+						<Script>
+									CurDrawableHideSubObjectPermanently( "GUS_VEHICLEAD_UPG" )
+						</Script>
+				</AnimationState>
+        
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_bored"
+					AllowRepeatInRandomPick="true"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GUS_VehicleAD_BIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="80"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Animation
+						AnimationName="GUS_VehicleAD_BIFA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="10"
+						AnimationPriority="45"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Animation
+						AnimationName="GUS_VehicleAD_BIFB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="10"
+						AnimationPriority="45"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "" or Prev == "STATE_bored" or Prev == "STATE_Deselected" then
+							-- do nothing, pick next bored anim
+						else
+							CurDrawableSetTransitionAnimState("STATE_Deselected")
+						end
+					</Script>
+				</AnimationState>
+				
+				<!-- Cliff Transition animations -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIFF_TRANSITION_STARTUP">
+					<Animation
+						AnimationName="GUS_VehicleAD_JMP1"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIFF_TRANSITION_MID">
+					<Animation
+						AnimationName="GUS_VehicleAD_JMP2"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIFF_TRANSITION_LAND">
+					<Animation
+						AnimationName="GUS_VehicleAD_JMP3"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="GUS_VehicleAD_DIEA"
+						AnimationMode="ONCE" >
+					</Animation>
+					<Animation
+						AnimationName="GUS_VehicleAD_DIEB"
+						AnimationMode="ONCE" >
+					</Animation>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="TURN_LEFT">
+					<Animation
+						AnimationName="GUS_VehicleAD_TRNL"
+						AnimationMode="LOOP" />
+						
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="TURN_RIGHT">
+					<Animation
+						AnimationName="GUS_VehicleAD_TRNR"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING REALLYDAMAGED"
+					Flags="MAINTAIN_FRAME_ACROSS_STATES">
+					<Animation
+						AnimationName="GUS_VehicleAD_MOVD"
+						AnimationMode="LOOP"
+						Distance="79"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+					Flags="MAINTAIN_FRAME_ACROSS_STATES">
+					<Animation
+						AnimationName="GUS_VehicleAD_MOVA"
+						AnimationMode="LOOP"
+						Distance="66"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A AIM_HIGH">
+					<Animation
+						AnimationName="GUS_VehicleAD_ATKB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="6" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="GUS_VehicleAD_ATKA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="6" />	
+				</AnimationState>
+				<!-- PRE ATTACK  -->
+<!--
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_A">
+					<Animation
+						AnimationName="GUS_VehicleAD_ATKA"
+						AnimationMode="MANUAL" />
+					<ParticleSysBone
+						BoneName="fxweapon01"
+						FXParticleSystemTemplate="GDILaser_MedChargeup_Light" 
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="fxweapon01"
+						FXParticleSystemTemplate="GDILaser_MedChargeup_Rings" 
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="fxweapon01"
+						FXParticleSystemTemplate="GDILaser_MedChargeup_Sparks" 
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_B">
+					<Animation
+						AnimationName="GUS_VehicleAD_ATKA"
+						AnimationMode="MANUAL" />
+					<ParticleSysBone
+						BoneName="fxweapon02"
+						FXParticleSystemTemplate="GDILaser_MedChargeup_Rings" />
+					<ParticleSysBone
+						BoneName="fxweapon02"
+						FXParticleSystemTemplate="GDILaser_MedChargeup_Sparks" />
+				</AnimationState>
+-->
+			  <!-- SELECTED -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					StateName="STATE_Selected">
+					<Animation
+						AnimationName="GUS_VehicleAD_AIDA"
+						AnimationMode="ONCE"
+						AnimationPriority="85"
+						AnimationBlendTime="10"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+					<Animation
+						AnimationName="GUS_VehicleAD_AIFA"
+						AnimationMode="ONCE"
+						AnimationPriority="25"
+						AnimationBlendTime="10"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+					<Animation
+						AnimationName="GUS_VehicleAD_AIFB"
+						AnimationMode="ONCE"
+						AnimationPriority="25"
+						AnimationBlendTime="10"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" or Prev == "STATE_Deselected" then
+							CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="STATE_Deselected">
+					<Animation
+						AnimationName="GUS_VehicleAD_DSEL"
+						AnimationMode="ONCE"
+						AnimationBlendTime="10" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IdleToSelected">
+					<Animation
+						AnimationName="GUS_VehicleAD_BATA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw1"
+				Texture1_UTile="1"
+				Texture1_VTile=".8"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="0"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="0"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="20"
+				LightMin="20"
+				LightMax="40"
+				LaserStateID="1">
+				<LightColor R="0.15" G="0.15" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+			<!-- Secondary laser draw -->
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile="3"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="0.75"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile="1"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="0"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="10"
+				WeaponSlotID="1"
+				LightMin="10"
+				LightMax="20"
+				LaserStateID="1">
+				<LightColor R="0.15" G="0.15" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser_Secondary</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXRailDistort02</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+			<!-- todo: make lasers inheritable -->
+			<LaserDraw
+				id="ModuleTag_LaserDraw_StrongCounter"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="20"
+				LightMin="20"
+				LightMax="40" 
+				CombatChainCounter="STRONG"
+				WeaponSlotID="1"
+				LaserStateID="1">
+				<LightColor R="0.15" G="0.07" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXObeliskLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+				<ObjectStatusValidation
+					RequiredStatus="WEAPON_UPGRADED_01" />
+			</LaserDraw>
+
+			<ScriptedModelDraw
+				id="ModuleTag_LaserButt"
+				AttachToBoneInAnotherModule="FXWeapon01"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="GDIVehicleAD_PrefireGlow"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_OR_RELOADING_A">
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<!-- When in Formation Preview do not show -->
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>			
+		</Draws>
+
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehicleADLaser"
+						ForbiddenObjectStatus="WEAPON_UPGRADED_01"/>
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehicleADScatterLaser"
+						ObjectStatus="WEAPON_UPGRADED_01" />
+
+					<TurretSettings
+						MaxDeflectionAntiClockwise="45d"
+						MaxDeflectionClockwise="45d"
+						TurretTurnRate="200"
+						TurretPitchRate="40"
+						AllowsPitch="false"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0"
+						IdleRequiresModelConditions="SELECTED MOVING">
+						<TurretAITargetChooserData
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+
+			<LaserState
+				id="ModuleTag_DefaultLaserState"
+				LaserId="1" />
+
+			<AimWeapon
+				id="ModuleTag_AimWeapon"
+				AimHighThreshold="0.00001"/>
+
+			<SlowDeath
+				id="ModuleTag_NormalDeath"
+				SinkDelay="0.0s"
+				SinkRate="0.0"
+				DestructionDelay="2.0s">
+				<Sound Type="FINAL" List="VehicleSmall_DieExplosionMS"/>
+				<DieMuxData
+					DeathTypes="ALL"/>
+				<FX Type="FINAL">
+					<FX>FX_GDIVehicleADDeath</FX>
+				</FX>
+				<!-- <Sound Type="INITIAL" List="NOD_Generic_VoiceDieMS" /> -->
+			</SlowDeath>
+			<FXListBehavior id="ModuleTag_FXList">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_GDIVehicleACExplode" />
+				<Event Index="onDeath" FX="FX_VehicleSmall_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleADCrateUpgrade"
+				AttributeModifier="Modifier_GDIVehicleADCrateUpgrade">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Reload Boost upgrade. -->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleA_ReloadUpgrade"
+				AttributeModifier="Modifier_Generic_GDIReloadUpgrade">
+				<TriggeredBy>Upgrade_GDI_Offense_Reload</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Range Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleA_WeaponRangeUpgrade"
+				AttributeModifier="Modifier_Generic_GDIWeaponRange_T1">
+				<TriggeredBy>Upgrade_GDI_Offense_Range</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Speed Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleA_SpeedBoostUpgrade"
+				AttributeModifier="Modifier_Generic_GDISpeedBoostUpgrade">
+				<TriggeredBy>Upgrade_GDI_Offense_Speed</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIVehicleADFunctions"/>
+      
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+				<Nugget
+					ShowSubObjects="GUS_VehicleAD_UPG"
+					Upgrade="Upgrade_Crate_Level1"
+          FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>          
+			</SubObjectsUpgrade>
+
+			<xi:include
+				href="DATA:Includes/GenericReflectedWeaponTracker.xml" />
+
+			<xi:include
+				href="DATA:Includes/FXListBehaviorCrateUpgrade.xml" />
+
+			<CliffTransitionUpdate
+				id="ModuleTag_CliffTransition"
+				StartupFX="FX_DirtHit"
+				LandFX="FX_DirtHit"
+				LandFXOffsetDistance="12.0"
+				JumpWeaponSlot="TERTIARY_WEAPON">
+				<Transition
+					Type="UPWARD"
+					WeaponTemplate="CliffJumpingWeaponTemplate"
+					TravelDistance="150"
+					StartupDuration="0.3s"
+					LandDuration="0.37s"
+					ProjectileUpdateModuleId="ModuleTag_CliffTransitionProjectile"/>
+				<Transition
+					Type="DOWNWARD"
+					WeaponTemplate="CliffJumpingWeaponTemplate"
+					TravelDistance="150"
+					StartupDuration="0.3s"
+					LandDuration="0.37s"
+					ProjectileUpdateModuleId="ModuleTag_CliffTransitionProjectile"/>
+			</CliffTransitionUpdate>
+
+			<BezierProjectile
+				id="ModuleTag_CliffTransitionProjectile"
+				Flags="NO_DETONATE"
+				FirstHeightMin="40"
+				FirstHeightMax="40"
+				SecondHeightMin="30"
+				SecondHeightMax="30"
+				FirstPercentIndent="20%"
+				SecondPercentIndent="66%"
+				BounceCount="0"/>
+			
+		</Behaviors>    
+    
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					SympathyRange="200.0"
+					RotateToTargetWhenAiming="false" />
+			</AIUpdate>
+		</AI>
+
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="450.0" />
+		</Body>
+
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+
+				<Sound Sound="GDI_VehicleAD_FootstepMaxRanged" Animation="GUS_VehicleAD_BATA" ExcludedMC="RECYCLED" Frame="6 14" />
+				<Sound Sound="GDI_VehicleAD_FootstepMaxRanged" Animation="GUS_VehicleAD_BIFB" ExcludedMC="RECYCLED" Frame="59 119 162 189 192 208 210" />				
+
+				<Sound Sound="GDI_VehicleAD_Animation_DIEA3" Animation="GUS_VehicleAD_DIEA" ExcludedMC="RECYCLED" Frame="28" />				
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUS_VehicleAD_DIEA" ExcludedMC="RECYCLED" Frame="10 16 40" />		
+				<Sound Sound="GDI_VehicleAD_Animation_DIEC4" Animation="GUS_VehicleAD_DIEB" ExcludedMC="RECYCLED" Frame="16" />
+								
+				<Sound Sound="GDI_VehicleAD_FootstepMaxRanged" Animation="GUS_VehicleAD_DSEL" ExcludedMC="RECYCLED" Frame="181 199" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUS_VehicleAD_MOVA" ExcludedMC="RECYCLED" Frame="6 12" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUS_VehicleAD_MOVD" ExcludedMC="RECYCLED" Frame="8 13" />
+				<Sound Sound="GDI_VehicleAD_DamagedMovement" Animation="GUS_VehicleAD_MOVD" ExcludedMC="RECYCLED" Frame="4" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUS_VehicleAD_TRNL" ExcludedMC="RECYCLED" Frame="19 35" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUS_VehicleAD_TRNR" ExcludedMC="RECYCLED" Frame="19 31" />
+<!-- old animations
+				<Sound Sound="GDI_VehicleAD_Animation_ABTA1" Animation="GUInfantryB_ABTA" Frame="5" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_ABTA" Frame="19 30" />
+				<Sound Sound="GDI_VehicleAD_Footstep_Pre15Frames" Animation="GUInfantryB_ABTA" Frame="7 18" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_AIDA" Frame="90 208" />
+				<Sound Sound="GDI_VehicleAD_Footstep_Pre15Frames" Animation="GUInfantryB_AIDA" Frame="77 199" />
+				<Sound Sound="GDI_VehicleAD_MoveShort_Turret" Animation="GUInfantryB_AIDA" Frame="41 46 100 157 162" />
+				<Sound Sound="GDI_VehicleAD_MoveLong_Turret" Animation="GUInfantryB_AIDA" Frame="21 74 138 185 233" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFA4" Animation="GUInfantryB_AIDA" Frame="27 32 157 162" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_AIDB" Frame="40 326" />
+				<Sound Sound="GDI_VehicleAD_Footstep_Pre15Frames" Animation="GUInfantryB_AIDB" Frame="30 313" />
+				<Sound Sound="GDI_VehicleAD_MoveShort_Turret" Animation="GUInfantryB_AIDB" Frame="191 233" />
+				<Sound Sound="GDI_VehicleAD_MoveLong_Turret" Animation="GUInfantryB_AIDB" Frame="25 119 306 369" />
+				<Sound Sound="GDI_VehicleAD_Growl" Animation="GUInfantryB_AIDB" Frame="22" />
+				<Sound Sound="GDI_VehicleAD_MetalFlap_Impact" Animation="GUInfantryB_AIDB" Frame="143" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_AIFA" Frame="27 205" />
+				<Sound Sound="GDI_VehicleAD_Footstep_Pre15Frames" Animation="GUInfantryB_AIFA" Frame="14 192" />
+				<Sound Sound="GDI_VehicleAD_MoveLong_Turret" Animation="GUInfantryB_AIFA" Frame="108 186" />
+				<Sound Sound="GDI_VehicleAD_Growl" Animation="GUInfantryB_AIFA" Frame="184" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFA1" Animation="GUInfantryB_AIFA" Frame="10" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFA2" Animation="GUInfantryB_AIFA" Frame="33" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFA3" Animation="GUInfantryB_AIFA" Frame="37" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFA4" Animation="GUInfantryB_AIFA" Frame="144" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFA5" Animation="GUInfantryB_AIFA" Frame="159" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_AIFB" Frame="7 83" />
+				<Sound Sound="GDI_VehicleAD_Footstep_Pre15Frames" Animation="GUInfantryB_AIFB" Frame="1 70" />
+				<Sound Sound="GDI_VehicleAD_MoveShort_Turret" Animation="GUInfantryB_AIFB" Frame="2 25 32 44 52" />
+				<Sound Sound="GDI_VehicleAD_MoveLong_Turret" Animation="GUInfantryB_AIFB" Frame="73" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFA4" Animation="GUInfantryB_AIFB" Frame="23 29 42 50" />
+				<Sound Sound="GDI_VehicleAD_MoveShort_Turret" Animation="GUInfantryB_AIFC" Frame="3" />
+				<Sound Sound="GDI_VehicleAD_MoveLong_Turret" Animation="GUInfantryB_AIFC" Frame="100" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFC1" Animation="GUInfantryB_AIFC" Frame="34" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFC2" Animation="GUInfantryB_AIFC" Frame="40" />
+				<Sound Sound="GDI_VehicleAD_MetalFlap_Impact" Animation="GUInfantryB_AIFC" Frame="42" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_BATA" Frame="14 24" />
+				<Sound Sound="GDI_VehicleAD_Footstep_Pre15Frames" Animation="GUInfantryB_BATA" Frame="1 11" />
+				<Sound Sound="GDI_VehicleAD_MoveShort_Turret" Animation="GUInfantryB_BATA" Frame="25" />
+				<Sound Sound="GDI_VehicleAD_MoveLong_Turret" Animation="GUInfantryB_BATA" Frame="3 7" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFA4" Animation="GUInfantryB_BATA" Frame="3 7" />
+				<Sound Sound="GDI_VehicleAD_Animation_DSEL1" Animation="GUInfantryB_BATA" Frame="2" />
+				<Sound Sound="GDI_VehicleAD_MetalFlap_Impact" Animation="GUInfantryB_BATA" Frame="11 17" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_BATB" Frame="20 29" />
+				<Sound Sound="GDI_VehicleAD_Footstep_Pre15Frames" Animation="GUInfantryB_BATB" Frame="5 15" />
+				<Sound Sound="GDI_VehicleAD_Growl" Animation="GUInfantryB_BATB" Frame="26" />
+				<Sound Sound="GDI_VehicleAD_MoveLong_Turret" Animation="GUInfantryB_BATB" Frame="4 10" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFA4" Animation="GUInfantryB_BATB" Frame="4 10" />
+				<Sound Sound="GDI_VehicleAD_Animation_DSEL1" Animation="GUInfantryB_BATB" Frame="1" />
+				<Sound Sound="GDI_VehicleAD_MetalFlap_Impact" Animation="GUInfantryB_BATB" Frame="16 22" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_BATC" Frame="14 21" />
+				<Sound Sound="GDI_VehicleAD_Footstep_Pre15Frames" Animation="GUInfantryB_BATC" Frame="1 7" />
+				<Sound Sound="GDI_VehicleAD_MoveShort_Turret" Animation="GUInfantryB_BATC" Frame="20" />
+				<Sound Sound="GDI_VehicleAD_MoveLong_Turret" Animation="GUInfantryB_BATC" Frame="8" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFA4" Animation="GUInfantryB_BATC" Frame="18 21" />
+				<Sound Sound="GDI_VehicleAD_Animation_DSEL1" Animation="GUInfantryB_BATC" Frame="2" />
+				<Sound Sound="GDI_VehicleAD_MetalFlap_Impact" Animation="GUInfantryB_BATC" Frame="17" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_BIDA" Frame="125 239" />
+				<Sound Sound="GDI_VehicleAD_Footstep_Pre15Frames" Animation="GUInfantryB_BIDA" Frame="112 125" />
+				<Sound Sound="GDI_VehicleAD_MoveShort_Turret" Animation="GUInfantryB_BIDA" Frame="217 338" />
+				<Sound Sound="GDI_VehicleAD_MoveLong_Turret" Animation="GUInfantryB_BIDA" Frame="16 82 168 268 352" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_DIEA" Frame="7 15" />
+				<Sound Sound="GDI_VehicleAD_Footstep_Pre15Frames" Animation="GUInfantryB_DIEA" Frame="1 5" />
+				<Sound Sound="GDI_VehicleAD_Animation_DIEA1" Animation="GUInfantryB_DIEA" Frame="1" />
+				<Sound Sound="GDI_VehicleAD_Animation_DIEA2" Animation="GUInfantryB_DIEA" Frame="11" />
+				<Sound Sound="GDI_VehicleAD_Animation_DIEA3" Animation="GUInfantryB_DIEA" Frame="13" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_DIEB" Frame="7 18" />
+				<Sound Sound="GDI_VehicleAD_Footstep_Pre15Frames" Animation="GUInfantryB_DIEB" Frame="1 5" />
+				<Sound Sound="GDI_VehicleAD_Animation_DIEB1" Animation="GUInfantryB_DIEB" Frame="1" />
+				<Sound Sound="GDI_VehicleAD_Animation_DIEB2" Animation="GUInfantryB_DIEB" Frame="13" />
+				<Sound Sound="GDI_VehicleAD_Animation_DIEB3" Animation="GUInfantryB_DIEB" Frame="41" />
+				<Sound Sound="GDI_VehicleAD_Animation_DIEC1" Animation="GUInfantryB_DIEC" Frame="1" />
+				<Sound Sound="GDI_VehicleAD_Animation_DIEC2" Animation="GUInfantryB_DIEC" Frame="11" />
+				<Sound Sound="GDI_VehicleAD_Animation_DIEC3" Animation="GUInfantryB_DIEC" Frame="29" />
+				<Sound Sound="GDI_VehicleAD_Animation_DIEC4" Animation="GUInfantryB_DIEC" Frame="65" />
+				<Sound Sound="GDI_VehicleAD_MoveShort_Turret" Animation="GUInfantryB_DSEL" Frame="5 9 195" />
+				<Sound Sound="GDI_VehicleAD_MoveLong_Turret" Animation="GUInfantryB_DSEL" Frame="15 19 69 140" />
+				<Sound Sound="GDI_VehicleAD_Animation_AIFA4" Animation="GUInfantryB_DSEL" Frame="5 9" />
+				<Sound Sound="GDI_VehicleAD_Animation_DSEL1" Animation="GUInfantryB_DSEL" Frame="1" />
+				<Sound Sound="GDI_VehicleAD_MetalFlap_Impact" Animation="GUInfantryB_DSEL" Frame="23" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_RUNA" Frame="7 19" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_RUNB" Frame="7 19" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_RUNC" Frame="7 19" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_RUND" Frame="9 24" />
+				<Sound Sound="GDI_VehicleAD_Footstep" Animation="GUInfantryB_RUNE" Frame="7 19 30 42 53 65 76 88 99 111 122 134 145 157 168 180" />
+-->
+			</AnimationSoundClientBehavior>
+
+			<!-- Laser Chargeup -->
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_LaserChargeUp">
+				<ModelConditionSound Sound="GDI_Striker_VehAD_LaserWeaponFire_ChargeUp" RequiredFlags="PREATTACK_A" ExcludedFlags="RECYCLED DYING" />
+				<ModelConditionSound Sound="GDI_Striker_VehAD_LaserWeaponFire_ChargeUp" RequiredFlags="PREATTACK_B" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "10.0"
+					 MinorRadius = "10.0"
+					 Height = "40.0"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+
+		</Geometry>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_VehADStriker_VoiceAttack" AudioType="voiceAttack" />
+			<AudioEntry Sound="GDI_VehADStriker_VoiceAttackMismatch" AudioType="voiceAttackMismatchLight" />
+			<AudioEntry Sound="GDI_VehADStriker_VoiceCreate" AudioType="voiceCreated" />
+			<AudioEntry Sound="GDI_VehADStriker_VoiceMove" AudioType="voiceGuard" />
+			<AudioEntry Sound="GDI_VehADStriker_VoiceMove" AudioType="voiceMove" />
+			<AudioEntry Sound="GDI_VehADStriker_VoiceMoveAttack" AudioType="voiceAttackAfterMoving" />
+			<AudioEntry Sound="GDI_VehADStriker_VoiceRetreat" AudioType="voiceRetreatToCastle" />
+			<AudioEntry Sound="GDI_VehADStriker_VoiceSelectMS" AudioType="voiceSelect" />
+			<AudioEntry Sound="GDI_VehADStriker_VoiceSelectBattleMS" AudioType="voiceSelectBattle" />
+			<AudioEntry Sound="GDI_VehADStriker_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" />
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleMedium_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="GDI_VehicleAD_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="GDI_VehicleAD_IdleLoop" AudioType="soundAmbient" />
+		</AudioArraySound>
+
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_GDI_Offense_Reload</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDI_Offense_Range</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDI_Offense_Speed</DisplayUpgrade>
+	</GameObject>
+
+	<WeaponTemplate
+		id="GDIVehicleADLaser"
+		inheritFrom="BaseLaserWeapon" 
+		AttackRange="250.0"
+		ClipSize="1"
+		WeaponSpeed="999999.0"
+		AcceptableAimDelta="22.5d"
+		FireFX="FX_GDILaser_Medium_Fire"
+		FireStrongCounterFX="FX_GDILaser_Medium_Fire_Veteran"
+		FireSound="GDI_Striker_VehAD_LaserWeaponFire">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<ClipReloadTime
+			MinSeconds="2.5s"
+			MaxSeconds="2.5s" />
+		<WeaponAiHintInfo
+			UseKitingBehavior="true"
+			UseLongLockOnTimeCode="true" 
+			HoldFireWhileKiting="true"
+			ActivateKitingAmmoPercentage="10%"
+			DeactivateKitingAmmoPercentage="90%" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.5s"
+				LaserId="1"
+				HitGroundFX="FX_GDILaser_Light_Miss"/>
+			<LineDamageNugget
+				Damage="12.0"
+				DamageType="LASER"
+				DamageFXType="GDI_LASER"
+				DeathType="LASERED"
+				LineWidth="10.0"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter">
+			</LineDamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIVehicleADScatterLaser"
+		inheritFrom="GDIVehicleADLaser">
+		<Nuggets>
+			<WeaponScatterEffectNugget
+				WeaponOCL="OCL_GDIVehicleADCannonNodeRegular"
+				ModuleId="Base_ScatterEffect"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIVehicleADCannonNode"
+		inheritFrom="BaseLaserWeapon" 
+		AttackRange="50.0"
+		AcceptableAimDelta="180d"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="2.5s"
+			MaxSeconds="2.5s" />
+		<Nuggets>
+			<LineDamageNugget
+				Damage="6"
+				LineWidth="5.0"
+				DamageType="LASER"
+				DamageFXType="GDI_LASER"
+				DeathType="LASERED"
+				OverShootDistance="10.0"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<LocomotorTemplate
+		id="GDIVehicleADLocomotor"
+		Surfaces="GROUND CLIFF CRUSHABLE_OBSTACLE"
+		JumpsCliffs="true"
+		TurnTimeSeconds="0.5s"
+		TurnTimeDamagedSeconds="0.5s"
+		FastTurnRadius="9.0"
+		SlowTurnRadius="1.0"
+		AccelerationSeconds="0.21s"
+		FormationPriority="NO_FORMATION"
+		BrakingSeconds="0.11s"
+		MinTurnSpeed="0%"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="TWO_LEGS"
+		StickToGround="true"
+		BackingUpSpeed="33%"
+		/>
+	
+	<LocomotorTemplate
+		id="GDIVehicleADUpgradeCrystalLocomotor"
+		inheritFrom="GDIVehicleADLocomotor"
+		Surfaces="-CLIFF"
+		JumpsCliffs="false"/>
+	
+	<AttributeModifier
+		id="Modifier_GDIVehicleADCrateUpgrade"
+		Category="NONE"
+		ObjectStatusToSet="WEAPON_UPGRADED_01">
+		<Modifier Type="DAMAGE_MULT" Value="100%" />
+	</AttributeModifier>
+
+	<LogicCommandSet
+		id="GDIVehicleADCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+	</LogicCommandSet>
+
+	<ExperienceLevelTemplate
+		id="GDIVehicleADExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="3">
+		<Target>GDIVehicleAD</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleADExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIVehicleADExperienceLevel_1"
+		RequiredExperience="6"
+		ExperienceAward="4">
+		<Target>GDIVehicleAD</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleADExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIVehicleADExperienceLevel_2"
+		RequiredExperience="15"
+		ExperienceAward="5">
+		<Target>GDIVehicleAD</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleADExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIVehicleADExperienceLevel_3"
+		RequiredExperience="27"
+		ExperienceAward="6">
+		<Target>GDIVehicleAD</Target>
+	</ExperienceLevelTemplate>
+
+	<!-- This effect loops when the laser is ready to fire. -->
+	<FXParticleSystemTemplate
+		id="GDIVehicleAD_PrefireGlow"
+		inheritFrom="GDIVehicleAD_PrefireGlow"
+		SystemLifetime="0" />
+
+</AssetDeclaration>

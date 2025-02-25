@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NUSUV_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NUSUV_FP.w3x" />			
+		<Include
+			type="all"
+			source="ART:NBMCV_A.w3x" />
+		<Include
+			type="all"
+			source="ART:NUSUVR_SN.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="NODEmissary"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_NODEmissary"
+		ButtonImage="Portrait_NODEmissary"
+		Side="NOD"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildCost="1500"
+		BuildTime="15"
+		CommandSet="NODEmissaryCommandSet"
+		KindOf="PRELOAD SELECTABLE CAN_CAST_REFLECTIONS SCORE VEHICLE FS_FACTORY CAN_REVERSE_MOVE EXPANSION_UNIT CAN_BE_FAVORITE_UNIT"
+		RadarPriority="UNIT"
+		PlacementViewAngle="315d"
+		ProductionQueueType="OTHER_STRUCTURE"
+		UnitCategory="VEHICLE"
+		VoicePriority="44"
+		EditorName="NODEmissary"
+		Description="Desc:NODEmissary"
+		TypeDescription="Type:NODEmissary">
+		<DisplayName
+			xai:joinAction="Replace">Name:NODEmissary</DisplayName>
+		<GameDependency>
+			<RequiredObject>NODConstructionYard</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="NODEmissaryArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			Locomotor="NODEmissaryLocomotor"
+			Condition="NORMAL"
+			Speed="50.0" />
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_01"
+				OkToChangeModelColor="true"
+				LeftFrontTireBone="Bone_TireLF"
+				RightFrontTireBone="Bone_TireRF"
+				MidLeftRearTireBone="Bone_TireLM"
+				MidRightRearTireBone="Bone_TireRM"
+				LeftRearTireBone="Bone_TireLR"
+				RightRearTireBone="Bone_TireRR"
+				TireRotationMultiplier="0.2"
+				PowerslideRotationAddition="1.25">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUSUV_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="NUSUV_FP" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NUSUVR_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUSUV_SN" />
+					<Texture
+						Original="NUSuv"
+						New="NUSuv_D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"></AnimationState>
+			</TruckDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_04" />
+			<ProductionUpdate
+				id="ModuleTag_08" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				DeathObjectStatusBits="DONT_CLEAR_FOR_BUILD"
+				SinkDelay="3s"
+				SinkRate="2.0"
+				DestructionDelay="7s">
+				<OCL
+					Type="INITIAL">
+					<OCL>OCL_NODSurveyorDebris</OCL>
+				</OCL>
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="TOPPLED" />
+				<Sound Type="INITIAL" List="NOD_Generic_VoiceDieMS" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplodeNoScorch" />
+			</FXListBehavior>
+			<xi:include
+				href="DATA:Includes/GenericUnpackPower.xml" />
+			<xi:include
+				href="DATA:Includes/GenericUnpackUpdate.xml" />
+			<ReplaceSelfUpgrade
+				id="ModuleTag_ReplaceSelf"
+				CheckBuildAssistant="true">
+				<TriggeredBy>Upgrade_UnPack</TriggeredBy>
+				<ReplacementTemplate>NODMiniMCVOutpost</ReplacementTemplate>
+			</ReplaceSelfUpgrade>
+			<AISpecialPowerUpdate
+				id="ModuleTag_EmissaryDeployOutpost"
+				CommandButtonName="Command_UnPackEmissary"
+				SpecialPowerAIType="SPECIAL_POWER_BUILD_CONYARD" />
+			<!-- No stances because there's no weapon -->
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				xai:joinAction="Remove" />
+			<xi:include
+				href="DATA:Includes/NodCallForTransportForVehicle.xml" />
+			<xi:include
+				href="DATA:Includes/NodCallForTransportVehicleAI.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_03"
+				AutoAcquireEnemiesWhenIdle="YES"></AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_02"
+				MaxHealth="2000.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="BOX"
+				MajorRadius="14.0"
+				MinorRadius="7.0"
+				Height="11.5"></Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_Emissary_VoiceCreate"
+				AudioType="voiceCreated" />
+			<AudioEntry
+				Sound="NOD_Emissary_VoiceMove"
+				AudioType="voiceMove" />
+			<AudioEntry
+				Sound="NOD_Emissary_VoiceRetreat"
+				AudioType="voiceRetreatToCastle" />
+			<AudioEntry
+				Sound="NOD_Emissary_VoiceSelectMS"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry
+				Sound="NOD_Emissary_MoveStart"
+				AudioType="soundMoveStart" />
+			<AudioEntry
+				Sound="NOD_Emissary_IdleLoop"
+				AudioType="soundAmbient" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+	</GameObject>
+</AssetDeclaration>

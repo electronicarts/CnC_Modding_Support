@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:GUL_VehicleAG_DMG.xml" />
+		<Include type="all"	source="ART:GUL_VehicleAG_SKN.w3x" />
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+    <Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseHusk.xml" />
+	</Includes>
+	<Defines>
+		<Define name="GDIVEHICLEAG_HUSK_NONBUILD_RADIUS" value="50.0" />
+	</Defines>
+	<GameObject
+		id="GDIVehicleAGHusk"
+		inheritFrom="BaseHusk"
+		HealthBoxHeightOffset="30"
+		SelectPortrait="Portrait_GDI_Vehicle_AG_Husk"
+		ButtonImage="Btn_GDI_Vehicle_AG_Husk"
+		Side="GDI"
+		EditorName="GDI_D3_Heavy_Blast(Rhino)"
+		EditorSorting="UNIT"
+		Description="Desc:GDIVehicleAGHusk">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIVehicleAGHusk</DisplayName>
+
+    <Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUL_VehicleAG_SKN" />
+					<Texture
+						Original="GUL_VehicleAG"
+						New="GUL_VehicleAG_DMG" />
+					<ParticleSysBone
+						BoneName="FXTracksRF"
+						FXParticleSystemTemplate="GDIPPDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTracksLR"
+						FXParticleSystemTemplate="GDIMammothDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTracksLR"
+						FXParticleSystemTemplate="GDIMammothDamagedFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTracksLR"
+						FXParticleSystemTemplate="GDIMammothDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					ConditionsYes="DYING"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GUL_VehicleAG_GTPA"
+						AnimationBlendTime="0"
+						AnimationMode="ONCE_BACKWARDS" />
+					<FXEvent
+						Frame="40"
+						FireWhenSkipped="true"
+						Bone="FXTracksRF"
+						Effect="FX_NODDamageSmoke"/>
+					<FXEvent
+						Frame="40"
+						FireWhenSkipped="true"
+						Bone="FXTracksLR"
+						Effect="FX_NODDamageSmoke"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+	  <Behaviors>
+
+      <SlowDeath
+      id="ModuleTag_Death"
+      SinkRate="0.0"
+      DestructionDelay="0s">
+        <DieMuxData
+					DeathTypes="ALL" />
+        <OCL
+					Type="INITIAL">
+          <OCL>GDI_Generic_Large_Die_OCL</OCL>
+        </OCL>
+      </SlowDeath>   
+
+      <FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleLRG_Explode" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<!-- Override base capture functionality with revive specific OCL -->
+			<CaptureContain
+				id="ModuleTag_CaptureHusk"
+				OnCaptureOCL="OCL_GDIVehicleAGHuskReplace"
+				/>
+
+
+      <LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIVehicleAGHuskFunctions"/>
+      
+      <SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+        <TriggeredBy>Upgrade_GDIDefenseDozerBlades</TriggeredBy>
+        <Nugget
+					ShowSubObjects="GUL_VehicleAG_UPG UPG_SHIELD_FX"
+					Upgrade="Upgrade_GDIDefenseDozerBlades"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+      </SubObjectsUpgrade>
+
+
+      <CreateObjectOnHealed
+				id="ModuleTag_CreateObjectOnHealed"
+				CreationList="OCL_GDIVehicleAGHuskReplace"/>
+			
+			<AutoHealBehavior
+				id="ModuleTag_BackupSystemsHeal"
+				HealingAmount="=$MECH_HUSK_HEAL_PER_SECOND"/>
+
+			<ProjectedBuildabilityOverrideBehavior
+				id="ModuleTag_BuildabilityOverride" >
+				<Override
+					id="ProjectedBuildability_OverrideBlock">
+					<ProjectedBuildabilityInfo
+						id="ProjectedBuildability_Blocked"
+						Radius="=$GDIVEHICLEAG_HUSK_NONBUILD_RADIUS" />
+				</Override>
+			</ProjectedBuildabilityOverrideBehavior>
+			
+		</Behaviors>
+    
+    <Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$MECH_HUSK_HEALTH" />
+		</Body>
+    <Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "50.0"
+					 MinorRadius = "32.5"
+					 Height = "40.0">
+				<Offset
+						x = "0.0"
+						y = "0.0"
+						z = "-0.792542" />
+			</Shape>
+			
+		</Geometry>
+
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_MammothTank_VehDHusk_Select" AudioType="voiceSelect"/>
+		</AudioArrayVoice>
+		<!-- <AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleMedium_LoopMS" AudioType="soundAmbient"/>
+		</AudioArraySound> -->
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<ProjectedBuildabilityInfo
+			id="ProjectedBuildability_DisplayOnly"
+			Radius="=$GDIVEHICLEAG_HUSK_NONBUILD_RADIUS" />
+	</GameObject>
+
+    </AssetDeclaration>

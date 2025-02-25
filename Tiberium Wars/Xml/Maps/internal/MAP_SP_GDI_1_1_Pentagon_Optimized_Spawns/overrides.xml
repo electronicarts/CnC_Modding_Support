@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xai="uri:ea.com:eala:asset:instance">
+		
+	<Tags/>
+	<Includes>
+	<Include source="DATA:GDI/Structures/GDIWatchTower.xml" type="instance"/>
+	<Include source="DATA:GDI/Structures/GDIPowerPlant.xml" type="instance"/>
+	<Include source="DATA:GDI/Units/GDIEngineer.xml" type="instance"/>
+	<Include source="DATA:GDI/Units/GDIFirehawk.xml" type="instance"/>
+	<Include source="DATA:NOD/Units/NODVertigo.xml" type="instance"/>
+	<Include source="DATA:NOD/Units/NODVenom.xml" type="instance"/>
+	<Include source="DATA:NOD/Units/NODShadow.xml" type="instance"/>
+	<Include source="DATA:NOD/Units/NODCarryallInfantry.xml" type="instance"/>
+	<Include source="DATA:NOD/units_singleplayercampaign/nodcarryall_sp_militants.xml" type="instance"/>
+	<Include source="DATA:NOD/units_singleplayercampaign/nodcarryall_sp_rockets.xml" type="instance"/>
+	<Include source="DATA:Neutral/Crates/HealCrate.xml" type="instance"/>
+	<Include source="DATA:Civilian/Washington_DC_DC/Buildings/DCBPenta01.xml" type="instance"/>
+	<Include source="DATA:Civilian/Washington_DC_DC/Buildings/DCBPentaEn.xml" type="instance"/>
+	<Include source="DATA:GlobalData/Weapon.xml" type="instance"/>
+	</Includes>
+
+  <!--- Structure Over rides -->
+	<GameObject
+		id="GDIPowerPlant" inheritFrom="GDIPowerPlant"
+		EnergyProduction="20"
+		EnergyBonus="0">
+	</GameObject>
+	
+	<GameObject
+		id="GDIWatchTower" inheritFrom="GDIWatchTower"
+		EnergyProduction="-5">
+	</GameObject>
+	
+	<!-- Magical Garrison Schtuff -->
+	
+	<GameObject
+		id="DCBPentaEn"
+		inheritFrom="DCBPentaEn">
+		<Behaviors>
+		
+		<!-- if alow allies is true it will break the engineers-->
+		<HordeGarrisonContain
+				id="ModuleTag_HordeGarrison"
+				ObjectStatusOfContained="UNSELECTABLE CAN_ATTACK"
+				ContainMax="10"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="false" 
+			    AllowNeutralInside="true"
+				AllowOwnPlayerInsideOverride="true"
+				ShowPips="true"
+				KillPassengersOnDeath="false">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY">
+					<ExcludeThing>GDIZoneTrooperSquad</ExcludeThing>
+					<ExcludeThing>AlienShockTrooperSquad</ExcludeThing>
+					<ExcludeThing>AlienRazorDroneSquad</ExcludeThing>
+				</PassengerFilter>
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="BONEGARRISON">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</PassengerData>
+				<MemberTemplateStatusInfo
+					ThingTemplate="GDISniperSquad"
+					ObjectStatus="CAN_SPOT_FOR_BOMBARD" />
+				<ExitOffset
+					x="150" />
+			</HordeGarrisonContain>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="DCBPenta01"
+		inheritFrom="DCBPenta01"
+		RadarPriority="NOT_ON_RADAR">
+		<Behaviors>
+			<!-- if alow allies is true it will break the engineers-->
+			<HordeGarrisonContain
+					id="ModuleTag_HordeGarrison"
+					ObjectStatusOfContained="UNSELECTABLE CAN_ATTACK"
+					ContainMax="6"
+					AllowEnemiesInside="false"
+					AllowAlliesInside="false"
+					AllowNeutralInside="true"
+					AllowOwnPlayerInsideOverride="true"
+					ShowPips="true"
+					KillPassengersOnDeath="false">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY">
+					<ExcludeThing>GDIZoneTrooperSquad</ExcludeThing>
+					<ExcludeThing>AlienShockTrooperSquad</ExcludeThing>
+					<ExcludeThing>AlienRazorDroneSquad</ExcludeThing>
+				</PassengerFilter>
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="BONEGARRISON">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</PassengerData>
+				<MemberTemplateStatusInfo
+					ThingTemplate="GDISniperSquad"
+					ObjectStatus="CAN_SPOT_FOR_BOMBARD" />
+				<ExitOffset
+					y="-200"
+					x="-200" />
+		</HordeGarrisonContain>
+			</Behaviors>
+	</GameObject>
+	
+
+<!-- Weapons -->
+	<WeaponTemplate
+		id="NODVertigoBombWarhead"
+		inheritFrom = "NODVertigoBombWarhead"
+		xai:joinAction="Overwrite"
+		Name="NODVertigoBombWarhead"
+		ProjectileCollidesWith  = "ALLIES ENEMIES NEUTRAL STRUCTURES WALLS" 
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+ 		>
+		
+		<Nuggets>
+			<DamageNugget 
+				Damage="500.0" 
+				Radius="25.0" 
+				DamageType="GRENADE" 
+				DamageFXType="NOD_BOMB" 
+				DeathType="NORMAL">
+			<DamageScalarDetails
+                 Scalar= "5000%">
+                 <Filter
+                     Rule="NONE" >
+                     <IncludeThing>GDIPowerPlant</IncludeThing>
+				 </Filter>
+                 </DamageScalarDetails>
+             </DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="GDIWatchTowerGun"
+		inheritFrom = "GDIWatchTowerGun"
+		ClipSize="24">
+		<Nuggets>
+			<DamageNugget 
+				Damage="30.0" 
+				Radius="0.0" 
+				DelayTimeSeconds="0.0s" 
+				DamageType="GUN" 
+				DamageFXType="GDI_MACHINEGUN"		
+				DeathType="NORMAL">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+<WeaponTemplate
+		id="GDIRifleSoldierRifle"
+		inheritFrom = "GDIRifleSoldierRifle"
+		AttackRange="300.0">
+</WeaponTemplate>
+
+<WeaponTemplate
+		id="GDIRifleSquadGunRangefinder"
+		inheritFrom = "GDIRifleSquadGunRangefinder"
+		AttackRange="290" >
+		
+</WeaponTemplate>
+
+
+<!-- UNITs -->	
+	<GameObject
+		id="NODVertigo"
+		inheritFrom = "NODVertigo" >
+		<Behaviors>
+			<InvisibilityUpdate
+			id="ModuleTag_Invisibility_Intrinsic" xai:joinAction="Remove">
+			</InvisibilityUpdate>
+		</Behaviors>
+		<LocomotorSet
+			Locomotor="NODVertigoLocomotor"
+			Condition="NORMAL"
+			Speed="375" />
+	</GameObject>		
+	
+	<GameObject
+		id="NODCarryallInfantry"
+		inheritFrom="NODCarryallInfantry">
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="5000" />
+		</Body>
+		<LocomotorSet
+			Locomotor="NODCarryallLocomotor"
+			Condition="NORMAL"
+			Speed="275.0" 
+			id="Locomotor_Normal"/>
+		<LocomotorSet
+			Locomotor="BasicHelicopterTaxiLocomotor"
+			Condition="TAXIING"
+			Speed="250" 
+			id="Locomotor_Taxi"/>
+		<Behaviors>
+			<HordeTransportContain
+				xai:joinAction="Overwrite"
+				id="ModuleTag_Contain"
+				ObjectStatusOfContained="UNSELECTABLE ENCLOSED"
+				ContainMax="6"
+				Slots="6"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="false"
+				AllowNeutralInside="false"
+				AllowOwnPlayerInsideOverride="true"
+				ShowPips="true"
+				KillPassengersOnDeath="true"
+				FlyOffMapOnEmpty="true">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY" />
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="BONEGARRISON">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</PassengerData>
+			</HordeTransportContain>
+		</Behaviors>
+	</GameObject>	
+	
+	<GameObject
+		id="NODShadow"
+		inheritFrom = "NODShadow" >
+		<Behaviors>
+			<InvisibilityUpdate
+			id="ModuleTag_Invisibility" xai:joinAction="Remove">
+			</InvisibilityUpdate>
+		</Behaviors>
+	</GameObject>
+	
+	<GameObject
+		id="GDIEngineer"
+		inheritFrom="GDIEngineer">
+		<LocomotorSet
+			Locomotor="HumanLocomotor"
+			Condition="NORMAL"
+			Speed="35" />
+	</GameObject>
+
+	<GameObject
+		id="HealCrate"
+		inheritFrom = "HealCrate">
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="400"
+			MaxVisionBonusPercent="300"
+			VisionBonusTestRadius="200"
+			VisionBonusPercentPerFoot="1" />
+	</GameObject>
+	
+	<GameObject
+		id="GDIFireHawk"
+		inheritFrom="GDIFireHawk">
+		<LocomotorSet
+			Locomotor="FirehawkLocomotor"
+			Condition="NORMAL"
+			Speed="350.0" />
+		<LocomotorSet
+			Locomotor="BasicHelicopterTaxiLocomotor"
+			Condition="TAXIING"
+			Speed="250" />
+		</GameObject>
+	
+	<GameObject
+		id="NODVenom"
+		inheritFrom="NODVenom">
+		<LocomotorSet
+			Locomotor="BasicHelicopterTaxiLocomotor"
+			Condition="TAXIING"
+			Speed="250" />
+		<LocomotorSet
+			Locomotor="NODVenomLocomotor"
+			Condition="NORMAL"
+			Speed="350" />	
+	</GameObject>
+			   
+   <MissionObjectiveList
+    id="MissionObjectives">
+		<!--  1 Power Plants-->
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_TOW_1_1_Objective_1"
+			Description="SCRIPT:GDI_TOW_1_1_Obj_1_Detail">
+			 <PresentationSettings
+				ID = "GDI_1_1OBJ1"
+				Dialog = "MG11_GDIEVA04">
+				<Duration>3s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>5d</CameraEndAngle>
+				<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_1_1OBJ1b">
+				<Duration>2s</Duration>
+				<CameraStartAngle>5d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+				<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_1_1OBJ1c">
+				<Duration>3s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>5d</CameraEndAngle>
+				<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		
+		<!-- 2 Repair Pentagon -->
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_TOW_1_1_Objective_2"
+			Description="SCRIPT:GDI_TOW_1_1_Obj_2_Detail">
+			<PresentationSettings
+				ID = "GDI_1_1OBJ2"
+				Dialog = "MG11_GDIEVA05">
+				<Duration>5s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+				<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		
+		<!-- 3 Garrison Towers -->
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_TOW_1_1_Objective_2a"
+			Description="SCRIPT:GDI_TOW_1_1_Obj_2a_Detail">
+			 <PresentationSettings
+				ID = "GDI_1_1OBJ2a"
+				Dialog = "MG11_GDIEVA25">
+				<Duration>4s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>3d</CameraEndAngle>
+				<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_1_1OBJ2b">
+				<Duration>3s</Duration>
+				<CameraStartAngle>3d</CameraStartAngle>
+				<CameraEndAngle>6d</CameraEndAngle>
+				<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_1_1OBJ2c">
+				<Duration>3s</Duration>
+				<CameraStartAngle>6d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+				<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		
+		<!-- 4 take out the base -->
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_TOW_1_1_Objective_3" 
+			Description="SCRIPT:GDI_TOW_1_1_Obj_3_Detail">
+			 <PresentationSettings
+				ID = "GDI_1_1OBJ3"
+				Dialog = "MG11_GDIEVA27"
+				UseDynamicZoom="false">
+				<Duration>5s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>5d</CameraEndAngle>
+				<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_1_1OBJ3b">
+				<Duration>5s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>15d</CameraEndAngle>
+				<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+	
+	<!-- 5 take out the mini base -->
+	<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:GDI_TOW_1_1_BonObjective_1" 
+			Description="SCRIPT:GDI_TOW_1_1_BonObj_1_Detail">
+			 <PresentationSettings
+				ID = "GDI_1_1BonOBJ1"
+				Dialog = "MG11_GDIEVA06">
+				<Duration>5s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>5d</CameraEndAngle>
+				<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_1_1BonOBJ1b">
+				<Duration>5s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>15d</CameraEndAngle>
+				<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+			</MissionObjectiveTag>
+	
+	<!-- 6 take out the garrisons in town -->
+	<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:GDI_TOW_1_1_BonObjective_2" 
+			Description="SCRIPT:GDI_TOW_1_1_BonObj_2_Detail">
+			 <PresentationSettings
+				ID = "GDI_1_1BonOBJ2"
+				Dialog = "MG11_GDIEVA07">
+				<Duration>2s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>5d</CameraEndAngle>
+				<CameraFieldOfView>55d</CameraFieldOfView>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_1_1BonOBJ2b">
+				<Duration>2s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>15d</CameraEndAngle>
+				<CameraFieldOfView>55d</CameraFieldOfView>
+			</PresentationSettings>
+			</MissionObjectiveTag>
+	</MissionObjectiveList>
+
+</AssetDeclaration>

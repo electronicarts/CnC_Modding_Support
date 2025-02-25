@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="all" source="ART:FXYurikoShield.w3x" />
+		<Include type="all"	source="ART:AUAntiStructureVehicle_FX.w3x" />
+
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseInfantry.xml" />
+	</Includes>
+
+	<GameObject
+		id="YurikoShieldProp"
+		Side="Japan"
+		SubGroupPriority="230"
+		EditorSorting="UNIT"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE INERT INERT_SHROUD_REVEALER"
+		ThreatLevel="10"
+		WeaponCategory="GUN"
+		VoicePriority="120"
+		HealthBoxHeightOffset="0">
+		<ArmorSet
+			id="DefaultArmorSet"
+			Armor="BaseYurikoArmor"
+			DamageFX="InfantryDamageFX" />
+		<Draws>
+			<!-- MODELCONDITION USAGE: 					 
+					USER_4 - Set while Lvl 1 YurikoShield is active
+					USER_5 - Set while Lvl 2/3 YurikoShield is active
+			  -->
+
+			<!--Shield Draw Module-->
+			<ScriptedModelDraw
+				id="ModuleTag_Shield"
+				NoRotate="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXYurikoShield" />
+					
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">					
+					<Script>
+						CurDrawableHideSubObjectPermanently("ShieldSmall")
+						CurDrawableHideSubObjectPermanently("ShieldLarge")
+					</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<!-- Do nothing until activated -->
+					<Script>
+						CurDrawableHideSubObjectPermanently("ShieldSmall")
+						CurDrawableHideSubObjectPermanently("ShieldLarge")
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4">
+					<!-- unhide SMALL shield when activated -->
+					<Script>
+						CurDrawableShowSubObjectPermanently("ShieldSmall")
+					</Script>
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+			<!-- DRAW FX FOR ATTRIBUTE MODIFIERS -->
+			<!-- SPEED PARTICLES -->
+			<ScriptedModelDraw
+				id="ModuleTag_Speed_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						 Name="AUAntiStructureVehicle_FX" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+			<!-- HEALTH PARTICLES -->
+			<ScriptedModelDraw
+				id="ModuleTag_Health_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						 Name="AUAntiStructureVehicle_FX" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+			<!-- DAMAGE PARTICLES -->
+			<ScriptedModelDraw
+				id="ModuleTag_Damage_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						 Name="AUAntiStructureVehicle_FX" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="10s"
+				MaxLifetime="10s"/>
+			
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<YurikoShieldSphereUpdate
+				id="ModuleTag_YurikoShieldRank1"
+				InitiallyActive="true"
+				RadiusMin="24"
+				RadiusMax="24"
+				ScanFrequency="0.25s"
+				Duration="10s"
+				MaxDamage="9999999999"
+				DamageTypesNotToAbsorb="HEALING RADIATION"
+				ObjectStatus="GENERIC_TOGGLE_STATE IGNORING_STEALTH"
+				ModelCondition="USER_4"
+				SphereBoneName="SHIELDSMALL"
+				MajorShieldHitFX="FX_YurikoShieldHitSmallMajor"
+				MinorShieldHitFX="FX_YurikoShieldHitSmallMinor"
+				MinorShieldDamageTypes="GUN CANNON LASER UNDEFINED MAGIC PIERCE">
+				<ObjectFilter Rule="ANY" Relationship="ALLIES" Include="INFANTRY VEHICLE STRUCTURE" />
+				<!-- Damage from a unit inside the shield going to a unit inside the shield is 
+						 not absorbed because it doesn't pass through the shield. -->
+				<IgnoreInsideToInsideCheck
+							Rule="ALL" >
+				</IgnoreInsideToInsideCheck>
+			</YurikoShieldSphereUpdate>
+
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL"
+				/>
+			</DestroyDie>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					IdleScanDelay="=$SLOW_IDLE_SCAN_DELAY"/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="350" />
+		</Body>
+		<ClientBehaviors>
+
+		</ClientBehaviors>
+		
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="400" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrusherLevel="0"
+			CrushableLevel="50" />
+	</GameObject>
+
+</AssetDeclaration>

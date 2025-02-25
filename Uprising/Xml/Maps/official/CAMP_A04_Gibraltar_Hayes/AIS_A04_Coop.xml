@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+    <Include type="instance" source="DATA:SkirmishAI\States\SovietShockSpecialistStates.xml" />
+  </Includes>
+
+
+<!-- Part 1 - Sink Ships -->
+
+   <AIStrategicStateDefinition
+   id="AIState_A04_SinkShipS01"
+   MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/AIFLAG_SinkShips"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="50"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" UseTransports="false" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="99"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER AIRCRAFT"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    AllowRecruitUnitsInCombat="true"
+                    MicroManager="FearlessMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+<!-- Part 2 - Follow Tanya -->
+
+   <AIStrategicStateDefinition
+    id="AIState_A04_FollowTanya01"
+    MaxTargets="1"
+    PathfindingCheckType="None">
+    <Heuristic>
+          <ScriptedFlagHeuristic FlagName="Player_2/AIFLAG_FollowTanya"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A04_Tanya" Priority="20"/>
+    <Tactic id="Defend" Tactic="StaticDefense"  EndBehavior="DISBAND" Distance="150" CombatLeashSlack="2.0" UseAestheticsManager="false" UpdateTime="0.1s" UseTransports="false" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" 
+      							MaxUnits="99" 
+      							IncludeKindOf="CAN_ATTACK" 
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER" 
+      							AllowedLocomotorTypes="AIR LAND WATER AMPHIBIOUS"
+                    Priority="HIGH" 
+                    AlwaysRecruit="true"
+                    MicroManager="A04_FollowPlayerMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+<!-- Part 3 - Fight Enemy -->
+
+  <AIStrategicStateDefinition
+    id="AIState_A04_Commando_Controller"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="/FLAG - Commando Only"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToWaterUnitHeuristicAllEnemies" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristicAllEnemies" Priority="9"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundUnitHeuristicAllEnemies" Priority="8"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristicAllEnemies" Priority="7"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndIfStateTurnsOff="true" EndBehavior="RETURN_HOME_AND_DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="3"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND WATER AMPHIBIOUS"
+	    	        Priority="STANDARD" AlwaysRecruit="true"
+       	            MicroManager="A04CommandoMicroManager">
+        <CreateUnits UnitName="SovietCommandoTech1" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+ 
+  <AIStrategicStateDefinition
+   id="AIState_A04_Soviet_Expansion">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/FLAG - P2 - Expantion GO"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A04_Expansion_Point"/>
+    <Tactic id="Expand" Tactic="SimpleExpansion" Distance="100" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="1" 
+					          IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+					          AllowedLocomotorTypes="LAND AIR AMPHIBIOUS"
+                    Priority="SCRIPTED"
+                    ReleaseType="NEVER_RELEASE" 
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager">
+                    <CreateUnits UnitName="SovietSurveyor" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_A04_Hotspot1_Attack"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/FLAG - Hotspot 1 enabled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A04_NavalYard1" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="AITarget_A04_NavalYard2" Priority="20"/>
+    <Tactic id="Attack" Tactic="SimpleAttack">
+    	<TeamTemplate MinUnits="5" MaxUnits="20"
+    		            IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER" 
+    		            AllowedLocomotorTypes="WATER AMPHIBIOUS"
+	    	            Priority="STANDARD" AlwaysRecruit="true"
+       	            MicroManager="FearlessMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A04_CoopAttack_Water"
+    MaxTargets="2">
+    <Heuristic>
+      <TimerHeuristic StartTime="60s" EndTime="-1s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristicAllEnemies" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterNonDefenseStructureHeuristicAllEnemies" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="8" MaxUnits="16"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+      				      AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="HIGH" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_A04_CoopAttack_Land"
+    MaxTargets="2">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+      <ScriptedFlagHeuristic FlagName="Player_2/AIFLAG_LandAttack"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristicAllEnemies" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundNonDefenseStructureHeuristicAllEnemies" Priority="10"/>  
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="10" MaxUnits="20"
+      				      IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+      				      AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_A04_Coop_NavalYardBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="SovietAntiAirShip" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="SovietAntiNavyShipTech1" Heuristic="FEWEST_UNIT" CountModifier="3.0"/>
+  </AIBuildStateDefinition>
+
+</AssetDeclaration>

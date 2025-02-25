@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes></Includes>
+
+	<AIStrategicStateDefinition
+		id="JapanCaptureTechAggressive"
+		MaxTargets="2">
+		<Heuristic>
+			<TimerHeuristic StartTime="15s" EndTime="-1s" CountFrom="AI_START"/>
+			<EnemyNearbyHeuristic Distance="500.0" EnemyNearby="false"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestTechBuildingHeuristic"/>
+		<Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1">
+			<TeamTemplate MinUnits="1" MaxUnits="4"
+						RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+						Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false"
+						AllowedLocomotorTypes="LAND WATER AMPHIBIOUS"
+						MicroManager="CaptureTechMicroManager">
+			<CreateUnits UnitName="JapanEngineer" MinUnits="1" MaxUnits="1"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="JapanArcherAttack"
+		MaxTargets="2">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<TimerHeuristic StartTime="120s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="10"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true">
+			<TeamTemplate MinUnits="4" MaxUnits="12"
+						RegisteredObjectSet="INFANTRY"
+						IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="LAND AMPHIBIOUS"
+						Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false" SortByDistance="false"
+						MicroManager="FearlessMicroManager">
+				<CreateUnits UnitName="JapanArcherInfantry" MinUnits="4" MaxUnits="4"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="JapanTenguNoPathAttack"
+		MaxTargets="1">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<TimerHeuristic StartTime="300s" EndTime="-1s" CountFrom="AI_START"/>
+			<PathToTargetHeuristic PathExists="false" ObjectTypeToUseForTest="JapanAntiInfantryInfantry" LocomotorConditionToUseForTest="NORMAL" />
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="10"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="false">
+			<TeamTemplate MinUnits="2" MaxUnits="8"
+						RegisteredObjectSet="INFANTRY"
+						IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="AMPHIBIOUS AIR"
+						Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false" SortByDistance="false"
+						MicroManager="StandardMicroManager">
+				<CreateUnits UnitName="JapanAntiInfantryVehicle" MinUnits="2" MaxUnits="2"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="TenguAircraftHunt"
+		MaxTargets="1">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestAirborneTargetHeuristic" Priority="10"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" UseAestheticsManager="false">
+			<TeamTemplate MinUnits="1" MaxUnits="8"
+						RegisteredObjectSet="INFANTRY"
+						IncludeKindOf="CAN_ATTACK AIRCRAFT" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="AMPHIBIOUS AIR"
+						Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="true" SortByDistance="false"
+						MicroManager="StandardMicroManager">
+					<ObjectFilter Rule="ANY">
+						<IncludeThing>JapanAntiInfantryVehicleTech1</IncludeThing>
+					</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="YurikoSpamAttack"
+		MaxTargets="2">
+		<Heuristic>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+				<ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+					<IncludeThing>JapanCommandoTech1</IncludeThing>
+				</ObjectFilter>
+			</ObjectOfTypeExistsHeuristic>
+			<TimerHeuristic StartTime="150s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic"/>
+		<TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic"/>
+		<Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+		  <TeamTemplate MinUnits="2" MaxUnits="3"
+						RegisteredObjectSet="INFANTRY"
+						Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="true" SortByDistance="false"
+						MicroManager="YurikoSpamMicroManager">
+			<ObjectFilter Rule="ANY">
+			  <IncludeThing>JapanCommandoTech1</IncludeThing>
+			</ObjectFilter>
+		  </TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="SeaWingAttack"
+		MaxTargets="2">
+		<Heuristic>
+		  <ObjectOfTypeExistsHeuristic
+			PassIfExists="true">
+			<ObjectFilter
+				Relationship="SAME_PLAYER"
+				Rule="ANY" >
+				<IncludeThing>JapanAntiAirShip</IncludeThing>
+			</ObjectFilter>
+		  </ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic"/>
+		<Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+		  <TeamTemplate MinUnits="2" MaxUnits="10"
+						RegisteredObjectSet="VEHICLES"
+						Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="true" SortByDistance="false"
+						MicroManager="StandardMicroManager_MEDIUM">
+			<ObjectFilter Rule="ANY">
+			  <IncludeThing>JapanAntiAirShip</IncludeThing>
+			</ObjectFilter>
+		  </TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="KingOniStampede"
+		MaxTargets="2">
+		<Heuristic>
+		  <ObjectOfTypeExistsHeuristic
+			PassIfExists="true">
+			<ObjectFilter
+				Relationship="SAME_PLAYER"
+				Rule="ANY" >
+				<IncludeThing>JapanAntiVehicleVehicleTech3</IncludeThing>
+			</ObjectFilter>
+		  </ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+		  <TeamTemplate MinUnits="4" MaxUnits="8"
+						RegisteredObjectSet="VEHICLES"
+						Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false" SortByDistance="false"
+						MicroManager="FearlessMicroManager">
+			<ObjectFilter Rule="ANY">
+			  <IncludeThing>JapanAntiVehicleVehicleTech3</IncludeThing>
+			</ObjectFilter>
+		  </TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="GigaFortressAttack"
+		MaxTargets="2">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<IntervalHeuristic IntervalTime="127s" ActiveTime="30s"/>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+				<ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+					<IncludeThing>JapanFortressShip</IncludeThing>
+				</ObjectFilter>
+		  </ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="10"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+			<TeamTemplate MinUnits="4" MaxUnits="7"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER UNIT_BUILT_LIKE_STRUCTURE"
+						AllowedLocomotorTypes="AMPHIBIOUS AIR"
+						Priority="STANDARD" AlwaysRecruit="false"
+						MicroManager="FearlessMicroManager">
+				<CreateUnits UnitName="JapanFortressShip" MinUnits="0" MaxUnits="1"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="HeavySuddenTransportHarrassment"
+		MaxTargets="2">
+		<Heuristic>
+			<TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+			<EnemyNearbyHeuristic Distance="350.0" EnemyNearby="false"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="10"/>
+		<Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND">
+			<TeamTemplate MinUnits="4" MaxUnits="6"
+						RegisteredObjectSet="INFANTRY"
+						IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="LAND AMPHIBIOUS"
+						Priority="STANDARD" AlwaysRecruit="false"
+						MicroManager="FearlessMicroManager">
+				<CreateUnits UnitName="JapanLightTransportVehicle" MinUnits="1" MaxUnits="1"/>
+				<CreateUnits UnitName="JapanAntiVehicleInfantry" MinUnits="3" MaxUnits="5"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="JapanHeavyCaptureLandHusks"
+		MaxTargets="8"
+		PathfindingCheckType="QuickDoesAttackPathExist"
+		CannotAttackTargetReaction="Ignore">
+		<Heuristic>
+			<EnemyNearbyHeuristic Distance="300.0" EnemyNearby="false"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="LandHuskHeuristic"/>
+		<Tactic id="Garrison" Tactic="GarrisonBuilding" EndBehavior="DISBAND">
+			<TeamTemplate MinUnits="1" MaxUnits="1" MinPowerAdvantage="0.5"
+						RegisteredObjectSet="INFANTRY"
+						AllowedLocomotorTypes="LAND AMPHIBIOUS"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+						Priority="STANDARD" AlwaysRecruit="false"
+						MicroManager="CaptureHuskMicroManager">
+				<CreateUnits UnitName="JapanAntiInfantryInfantry" MinUnits="1" MaxUnits="1"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	  
+	<AIStrategicStateDefinition
+		id="CC17_BossAttack"
+		MaxTargets="2">
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="BOSS_ATTACK"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" DisbandAfterRetreatTeamSize="999">
+		<TeamTemplate MinUnits="14" MaxUnits="24"
+					RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+					IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+					AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+					Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false" SortByDistance="false"
+					MicroManager="StandardMicroManager">
+		<ObjectFilter Rule="ALL">
+		  <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+		  <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+		  <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+		  <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+		  <ExcludeThing>SovietBomberAircraft</ExcludeThing>
+		</ObjectFilter>
+		</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="CC_35_SteelAttack_1"
+		MaxTargets="2">
+		<Heuristic>
+			<TimerHeuristic StartTime="120s" EndTime="-1s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic"/>
+		<Tactic id="Attack" Tactic="DefenseAvoidanceAttack" DisbandAfterRetreatTeamSize="999">
+			<TeamTemplate MinUnits="2" MaxUnits="4" MaxTypesOfUnits="2"
+						RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="LAND AMPHIBIOUS"
+						Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+						MicroManager="FearlessMicroManager_MEDIUM">
+			<ObjectFilter Rule="ALL">
+				<ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+				<ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+				<ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+				<ExcludeThing>SovietFighterAircraft</ExcludeThing>
+				<ExcludeThing>SovietBomberAircraft</ExcludeThing>
+			</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="CC_35_SteelAttack_2"
+		MaxTargets="2">
+		<Heuristic>
+			<TimerHeuristic StartTime="240s" EndTime="-1s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic"/>
+		<Tactic id="Attack" Tactic="DefenseAvoidanceAttack" DisbandAfterRetreatTeamSize="999">
+			<TeamTemplate MinUnits="3" MaxUnits="6" MaxTypesOfUnits="2"
+						RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="LAND AMPHIBIOUS"
+						Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+						MicroManager="FearlessMicroManager_MEDIUM">
+			<ObjectFilter Rule="ALL">
+				<ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+				<ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+				<ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+				<ExcludeThing>SovietFighterAircraft</ExcludeThing>
+				<ExcludeThing>SovietBomberAircraft</ExcludeThing>
+			</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="CC_35_SteelAttack_3"
+		MaxTargets="2">
+		<Heuristic>
+			<TimerHeuristic StartTime="600s" EndTime="-1s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic"/>
+		<Tactic id="Attack" Tactic="DefenseAvoidanceAttack" DisbandAfterRetreatTeamSize="999">
+			<TeamTemplate MinUnits="4" MaxUnits="7" MaxTypesOfUnits="2"
+						RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="LAND AMPHIBIOUS"
+						Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+						MicroManager="FearlessMicroManager_MEDIUM">
+			<ObjectFilter Rule="ALL">
+				<ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+				<ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+				<ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+				<ExcludeThing>SovietFighterAircraft</ExcludeThing>
+				<ExcludeThing>SovietBomberAircraft</ExcludeThing>
+			</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="CC_04_Attack"
+		MaxTargets="2">
+		<Heuristic>
+			<TimerHeuristic StartTime="120s" EndTime="-1s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" DisbandAfterRetreatTeamSize="999">
+			<TeamTemplate MinUnits="3" MaxUnits="7" MaxTypesOfUnits="2"
+						RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="LAND AMPHIBIOUS"
+						Priority="HIGH" AlwaysRecruit="false" SortByDistance="false"
+						MicroManager="FearlessMicroManager_MEDIUM">
+			<ObjectFilter Rule="ALL">
+				<ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+				<ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+				<ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+				<ExcludeThing>SovietFighterAircraft</ExcludeThing>
+				<ExcludeThing>SovietBomberAircraft</ExcludeThing>
+			</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="CC_29_Defense"
+		MaxTargets="1">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestFriendlyConyardHeuristic"/>
+		<Tactic id="Defense" Tactic="StaticDefense" Distance="500" EndBehavior="DISBAND" EndIfStateTurnsOff="true" UseAestheticsManager="true">
+			<TeamTemplate MinUnits="1" MaxUnits="12"
+							RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+							IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+							AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+							Priority="HIGH" AlwaysRecruit="true"
+							MicroManager="DefenseMicroManager_MEDIUM">
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>	
+	
+	<AIBuildStateDefinition
+		id="JapanTier2OnlyTechBuildState">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<EnemyNearbyHeuristic Distance="700.0" EnemyNearby="false" MinEnemyValue="1000">
+				<EnemyFilter
+					Relationship="ENEMIES"
+					Rule="ANY"
+					Include="CAN_ATTACK ENGINEER INFILTRATOR">
+				</EnemyFilter>
+			</EnemyNearbyHeuristic>
+		</Heuristic>
+		<BuildEntry Upgrade="Upgrade_JapanBarracksTech2" Heuristic="UPGRADE_TECH" MinTime="180s"/>
+		<BuildEntry Upgrade="Upgrade_JapanWarFactoryTech2" Heuristic="UPGRADE_TECH" MinTime="180s"/>
+		<BuildEntry Upgrade="Upgrade_JapanNavalYardTech2" Heuristic="UPGRADE_TECH" MinTime="180s"/>
+	</AIBuildStateDefinition>	
+	
+	<AIBuildStateDefinition
+		id="JapanForceTechStructure4Minutes">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+		</Heuristic>
+		<BuildEntry Build="JapanTechStructureEgg" Heuristic="TECH" ForceTime="240s"/>
+	</AIBuildStateDefinition>
+	
+	<AIBuildStateDefinition
+		id="JapanForceTechStructure7Minutes">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+		</Heuristic>
+		<BuildEntry Build="JapanTechStructureEgg" Heuristic="TECH" ForceTime="420s"/>
+	</AIBuildStateDefinition>
+	
+	<AIBuildStateDefinition
+		id="AIP_CC_02_JapanTechBuildState">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<EnemyNearbyHeuristic Distance="700.0" EnemyNearby="false" MinEnemyValue="1000">
+				<EnemyFilter
+					Relationship="ENEMIES"
+					Rule="ANY"
+					Include="CAN_ATTACK ENGINEER INFILTRATOR">
+				</EnemyFilter>
+			</EnemyNearbyHeuristic>
+		</Heuristic>
+		<BuildEntry Upgrade="Upgrade_JapanBarracksTech2" Heuristic="UPGRADE_TECH" MinTime="180s"/>
+		<BuildEntry Upgrade="Upgrade_JapanWarFactoryTech2" Heuristic="UPGRADE_TECH" MinTime="180s"/>
+	</AIBuildStateDefinition>
+	
+	<AIBuildStateDefinition
+		id="AIP_CC_13_JapanTechBuildState">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<EnemyNearbyHeuristic Distance="700.0" EnemyNearby="false" MinEnemyValue="1000">
+				<EnemyFilter
+					Relationship="ENEMIES"
+					Rule="ANY"
+					Include="CAN_ATTACK ENGINEER INFILTRATOR">
+				</EnemyFilter>
+			</EnemyNearbyHeuristic>
+		</Heuristic>
+		<BuildEntry Upgrade="Upgrade_JapanNavalYardTech2" Heuristic="UPGRADE_TECH" MinTime="180s"/>
+	</AIBuildStateDefinition>
+	
+	<AIBuildStateDefinition
+		id="AIP_CC_36_JapanTechBuildState">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<EnemyNearbyHeuristic Distance="400.0" EnemyNearby="false" MinEnemyValue="1000">
+				<EnemyFilter
+					Relationship="ENEMIES"
+					Rule="ANY"
+					Include="CAN_ATTACK ENGINEER INFILTRATOR">
+				</EnemyFilter>
+			</EnemyNearbyHeuristic>
+		</Heuristic>
+		<BuildEntry Upgrade="Upgrade_JapanNavalYardTech2" Heuristic="UPGRADE_TECH" ForceTime="180s"/>
+		<BuildEntry Build="JapanTechStructureEgg" Heuristic="TECH" ForceTime="240s"/>
+		<BuildEntry Upgrade="Upgrade_JapanNavalYardTech3" Heuristic="UPGRADE_TECH" ForceTime="300s"/>
+	</AIBuildStateDefinition>
+	
+	<AIBuildStateDefinition
+		id="JapanForceNavalYard">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="false">
+				<ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+					<IncludeThing>JapanNavalYardEgg</IncludeThing>
+					<IncludeThing>JapanNavalYard</IncludeThing>
+				</ObjectFilter>
+			</ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<BuildEntry Build="JapanNavalYardEgg" Heuristic="CONSTANT" Score="100"/>
+	</AIBuildStateDefinition>
+
+</AssetDeclaration>

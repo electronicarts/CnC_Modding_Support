@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="LightingSet">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Sun" />
+			<xs:enumeration value="Accent1" />
+			<xs:enumeration value="Accent2" />
+		</xs:restriction>
+	 </xs:simpleType>
+
+	<xs:complexType name="LightingInfo">
+		<xs:sequence>
+			<xs:element name="Ambient" type="RGBColor" />
+			<xs:element name="Diffuse" type="RGBColor" />
+			<xs:element name="LightPos" type="Vector3" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="LightingTime">
+		<xs:sequence>
+			<xs:element name="Lighting" type="LightingInfo" minOccurs="3" maxOccurs="3"/>
+		</xs:sequence>
+		<xs:attribute name="TimeOfDay" type="TimeOfDayType" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="LightingGroup">
+		<xs:sequence>
+			<xs:element name="LightingTimeGroup" type="LightingTime" minOccurs="6" maxOccurs="6"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="LightingSettings" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseSubsystemSettings">
+				<xs:sequence>
+					<xs:element name="LightingMultiplierIfNoClouds" type="RGBColor" />
+					
+					<xs:element name="CurrentLightingSettings" type="LightingTime" />
+					
+					<xs:element name="TerrainLighting" type="LightingGroup" />					
+				</xs:sequence>
+				<xs:attribute name="TimeOfDay" type="TimeOfDayType" use="required" />
+				<xs:attribute name="OccludedLuminanceScale" type="SageReal" default="0.5" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

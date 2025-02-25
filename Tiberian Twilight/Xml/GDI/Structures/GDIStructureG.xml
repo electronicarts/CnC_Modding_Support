@@ -1,0 +1,849 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- GDI Directional Laser T2 / GDI Structure G -->
+	<!-- 
+		'USER_1' object status/model condition set when at level 1 weapon charge up
+		'USER_2' object status/model condition set when at level 2 weapon charge up
+		'USER_3' object status/model condition set when at level 3 weapon charge up
+	-->
+	<!-- Tier 3 crawler upgrade enables armor+HP attribmods and EMP upgrade options -->
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="all" source="ART:GSM_StructureG_SKN.w3x" />
+		<Include type="all" source="ART:GSM_StructureG_AIDA.w3x" />
+		<Include type="all" source="ART:GSM_StructureG_BLDA.w3x" />
+		<Include type="all" source="ART:GSM_StructureG_PCKA.w3x" />
+		<Include type="all" source="ART:GSM_StructureG_DMG.xml" />
+
+		<Include type="instance" source="ART:FXGDILaser.xml" />
+		<Include type="instance" source="ART:FXLaserOverlay.xml" />
+		<Include type="instance" source="ART:FXObeliskLaserHeroic.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+	</Includes>
+	<Defines>
+		<Define name="GDISTRUCTUREG_ATTACK_RANGE" value="450.0" />
+		<Define name="GDISTRUCTUREG_EMP_RADIUS" value="100.0" />
+		<Define name="GDISTRUCTUREG_LASER_WIDTH" value="5.0" />
+		<Define name="GDISTRUCTUREG_LASER_WIDTH_INCREMENT" value="0.22222" />
+		<Define name="GDISTRUCTUREG_LASER_WIDTH_INCREMENT_MAX" value="60.0" />
+	</Defines>
+	<GameObject
+		id="GDIStructureG"
+		inheritFrom="BaseDefensiveStructure"
+		SubGroupPriority="418"
+		HealthBoxHeightOffset="40"
+		HealthBar="Structure"
+		SelectPortrait="Portrait_GDI_Structure_G_tech1"
+		ButtonImage="Btn_GDI_Structure_G_tech1"
+		Side="GDI"
+		ParticipationValue="=$GDISTRUCTUREG_PARTICIPATION_VALUE"
+		BuildTime="20"
+		EnergyProduction="=$GDI_STRUCTURE_G_COMMANDPOINT_COST"
+		CommandSet="GDIStructureGCommandSet"
+		KindOf="+CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING +ENERGY_CHANGES_ON_UPGRADE"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="GDI_D2_Struct_Laser(Focus Beam)"
+		EditorSorting="STRUCTURE"
+		WeaponCategory="LASER"
+		TypeDescription="Type:GDIStructureG"
+		Description="Desc:GDIStructureG">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIStructureG</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="GG_Hull GG_Axes"
+				InitialRecoilSpeed="16.0"
+				MaxRecoilDistance="10.0"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GSM_StructureG_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon" />
+					<WeaponRecoilBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GG_Turret" />
+					<Turret
+						TurretNameKey="GG_Hull"
+						TurretPitch="GG_Axes"
+						TurretID="1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GSM_StructureG_SKN" />
+				</ModelConditionState>
+				<!-- BUILD UP -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="GSM_StructureG_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GSM_StructureG_SKN" />
+					<Texture
+						Original="GSM_StructureG"
+						New="GSM_StructureG_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GSM_StructureG_SKN" />
+					<Texture
+						Original="GSM_StructureG"
+						New="GSM_StructureG_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+						<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Animation
+						AnimationName="GSM_StructureG_AIDA"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObjectPermanently( "GSM_STRUCTUREG_UPG01" )
+					</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="GSM_StructureG_AIDA"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "" or Prev == "STATE_Idle" or Prev == "TRANS_PackingEMP" then
+						--Do Nothing and Re-Pick Animation
+						else
+						CurDrawableSetTransitionAnimState("TRANS_PackingEMP")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4"
+					StateName="STATE_UnPackingEMP">
+					<Animation
+						AnimationName="GSM_StructureG_PCKA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="GSM_StructureG_BLDA"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Large"
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					Flags="START_FRAME_LAST"
+					StateName="TRANS_PackingEMP">
+					<Animation
+						AnimationName="GSM_StructureG_PCKA"
+						AnimationMode="ONCE_BACKWARDS" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+			<!-- Laser 1 equal/weak laser draw-->
+			<LaserDraw
+				id="ModuleTag_LaserDraw1"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="0"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="=$GDISTRUCTUREG_LASER_WIDTH"
+				LaserWidthIncrement="=$GDISTRUCTUREG_LASER_WIDTH_INCREMENT"
+				LaserWidthIncrementMax="=$GDISTRUCTUREG_LASER_WIDTH_INCREMENT_MAX"
+				LaserStateID="1"
+				CombatChainCounter="EQUAL WEAK">
+				<LightColor R="0.15" G="0.07" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+			<!-- Laser 1 strong laser draw -->
+			<LaserDraw
+				id="ModuleTag_LaserDraw1Strong"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="0"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="=$GDISTRUCTUREG_LASER_WIDTH"
+				LaserWidthIncrement="=$GDISTRUCTUREG_LASER_WIDTH_INCREMENT"
+				LaserWidthIncrementMax="=$GDISTRUCTUREG_LASER_WIDTH_INCREMENT_MAX"
+				LaserStateID="1"
+				CombatChainCounter="STRONG">
+				<LightColor R="0.75" G="0.00" B="1.0" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXObeliskLaserHeroic</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+
+
+			<!-- Laser 2 equal/weak laser draw-->
+			<LaserDraw
+				id="ModuleTag_LaserDraw2"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="0"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="=$GDISTRUCTUREG_LASER_WIDTH"
+				LaserWidthIncrement="=$GDISTRUCTUREG_LASER_WIDTH_INCREMENT"
+				LaserWidthIncrementMax="=$GDISTRUCTUREG_LASER_WIDTH_INCREMENT_MAX"
+				LaserStateID="2"
+				CombatChainCounter="EQUAL WEAK">
+				<LightColor R="0.15" G="0.07" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+			<!-- Laser 2 strong laser draw -->
+			<LaserDraw
+				id="ModuleTag_LaserDraw2Strong"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="0"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="=$GDISTRUCTUREG_LASER_WIDTH"
+				LaserWidthIncrement="=$GDISTRUCTUREG_LASER_WIDTH_INCREMENT"
+				LaserWidthIncrementMax="=$GDISTRUCTUREG_LASER_WIDTH_INCREMENT_MAX"
+				LaserStateID="2"
+				CombatChainCounter="STRONG">
+				<LightColor R="0.75" G="0.00" B="1.0" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXObeliskLaserHeroic</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_Weapon01SetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIStructureGLaserWeapon"
+						ForbiddenObjectStatus="GENERIC_TOGGLE_STATE"/>
+					<TurretSettings
+						TurretTurnRate="150"
+						TurretTurnRateOutsideArcOfFire="150"
+						TurretPitchRate="200"
+						AllowsPitch="true"
+						MinimumPitch="-30d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="180.0"
+						MaxFiringArcClockwise="45d"
+						MaxFiringArcAntiClockwise="45d"
+						InvalidIdleScanObjectStatus="USER_4">
+						<TurretAITargetChooserData/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<LaserState
+				id="ModuleTag_LaserState1"
+				LaserId="1"/>
+			<LaserState
+				id="ModuleTag_LaserState2"
+				LaserId="2"/>
+
+			<xi:include
+				href="DATA:Includes/GenericDefenseStructureProductionUpdate.xml" />
+			<EnergyPointsUpgrade
+				id="ModuleTag_EnergyPointsUpgrade"
+				EnergyPointsToChange="=$ENERGY_DEDUCTED_UPGRADED_STRUCTURE">
+				<TriggeredBy>UpgradeGDIStructureG</TriggeredBy>
+			</EnergyPointsUpgrade>
+
+			<!-- EMP weapon -->
+			<SpecialPower
+				id="ModuleTag_ToggleEMP"
+				SpecialPowerTemplate="SpecialPower_GDIStructureGToggleEMP"
+				UpdateModuleStartsAttack="true"/>
+
+			<FireWeaponUpdate
+				id="ModuleTag_EMPFireWeaponUpdate"
+				FireInterval="0.5s"
+				AliveOnly="true">
+				<FireWeaponNugget
+					WeaponName="GDIStructureGEMPWeapon"
+					OneShot="false" />
+				<ObjectStatusValidation
+					RequiredStatus="GENERIC_TOGGLE_STATE" />
+			</FireWeaponUpdate>
+
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleEMPUpdate"
+				SpecialPowerTemplate="SpecialPower_GDIStructureGToggleEMP"
+				Options="RECONSTITUTE_STORED_COMMAND">
+				<ToggleState
+					EnterStateSound="GDI_FocusBeam_StrG_ArmorUpOff"
+					ReloadAllWeaponsOnToggle="false">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_DEFAULT"/>
+				</ToggleState>
+				<ToggleState
+					ObjectStatus="GENERIC_TOGGLE_STATE IMMOBILE IGNORING_STEALTH"
+					AttributeModifier="AttributeModifer_GDIStructureGArmorUp"
+					EnterStateSound="GDI_FocusBeam_StrG_ArmorUpOnMS"
+					ReloadAllWeaponsOnToggle="false">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_AOE_ATTACK">
+						<StateWeapon
+							Weapon="GDIStructureGEMPWeapon"
+							AoeAttackEmanationLocation="EMANATE_FROM_SELF"
+							AffectsFriendlies="false"
+							AffectsSelf="false"/>
+					</SkirmishAiInfo>
+					<ObjectStatusValidation
+						RequiredStatus="WEAPON_UPGRADED_01"/>
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+
+			<!-- Enables EMP weapon toggle -->
+			<StatusBitsUpgrade
+				id="ModuleTag_GDIVehicleGStatusBitsUpgrade"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>UpgradeGDIStructureG</TriggeredBy>
+			</StatusBitsUpgrade>
+
+			<!-- Unit Upgrade -->
+			<AttributeModifierUpgrade
+				id="ModuleTag_GDIStructureGCrawlerTechup"
+				AttributeModifier="AttributeModifer_GDIStructureGUpgrade">
+				<TriggeredBy>UpgradeGDIStructureG</TriggeredBy>
+			</AttributeModifierUpgrade>			
+			<MaxHealthUpgrade
+				id="ModuleTag_HealthUpgrade"
+				AddMaxHealth="250"
+				ChangeType="ADD_CURRENT_HEALTH_TOO">
+				<TriggeredBy>UpgradeGDIStructureG</TriggeredBy>
+			</MaxHealthUpgrade>
+			<FXListBehavior
+				id="ModuleTag_FXListUpgradeG">
+				<TriggeredBy>UpgradeGDIStructureG</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeGDIStructureG" />
+			</FXListBehavior>
+
+      		<!-- This will hide the upgraded model -->
+      		<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIStructureGFunctions"/>
+
+      		<!-- This will unhide the upgraded model -->
+      		<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>UpgradeGDIStructureG</TriggeredBy>
+				<Nugget
+					ShowSubObjects="GSM_StructureG_UPG01"
+					Upgrade="UpgradeGDIStructureG"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>          
+			</SubObjectsUpgrade>
+      
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDIStructureG_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>		
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIArtilleryHitBIG" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			<xi:include href="DATA:Includes/GenericReflectedWeaponTracker.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					TargetingCompareList="BaseDefenseTargetingCompareList" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="850" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<PlacementShape 
+				Type= "BOX"
+				MajorRadius = "45.0"
+				MinorRadius = "45.0"
+				Height = "20.0" >
+			</PlacementShape>
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "30.1"
+					 MinorRadius = "30.1"
+					 Height = "46.2"
+					 ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="30.64"
+					y="-9.63"
+					z="45.24" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-14.26"
+					y="-20.83"
+					z="42.38" />
+			</ContactPoint>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "45.0"
+					 MinorRadius = "45.0"
+					 Height = "40.0">
+			</Shape>
+		</Geometry>
+		
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="GDI_FocusBeam_StrG_Deploy1" Animation="GSM_StructureG_BLDA" Frame="1" />
+				<Sound Sound="GDI_FocusBeam_StrG_EndImpactMS" Animation="GSM_StructureG_BLDA" Frame="18" />
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_FocusBeam_StrG_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<!-- <AudioEntry Sound="Fire1_StructureMedium_LoopMS" AudioType="soundAmbientReallyDamaged" /> -->
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			UIWeaponRangePreview="=$GDISTRUCTUREG_ATTACK_RANGE - 5.0" 
+			VisionRange="500"
+			ShroudClearingRange="500" />
+
+	</GameObject>
+
+	<UpgradeTemplate
+		id="UpgradeGDIStructureG"
+		Type="OBJECT"
+		DisplayName="UPGRADE:UpgradeGDIStructureG"
+		Description="UPGRADE:UpgradeGDIStructureG"
+		ResearchSound="Upgrade_ArmorUp"
+		BuildCost="0"
+		BuildTime="15s">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+	</UpgradeTemplate>
+
+	<LogicCommand
+		Type="OBJECT_UPGRADE"
+		id="Command_UpgradeGDIStructureG">
+		<Upgrade>UpgradeGDIStructureG</Upgrade>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo	Heuristic="STRUCTURE_UPGRADE" Distance="400.0"/>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_GDIStructureGToggleEMP">
+		<SpecialPower>SpecialPower_GDIStructureGToggleEMP</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo Heuristic="TOGGLE"/>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="GDIStructureGCommandSet">
+		<Cmd>Command_GDIStructureGToggleEMP</Cmd>
+		<Cmd>Command_UpgradeGDIStructureG</Cmd>
+		<Cmd>Command_SellSelf</Cmd>
+	</LogicCommandSet>
+
+	<AttributeModifier
+		id="AttributeModifer_GDIStructureGUpgrade"
+		Category="NONE">
+		<Modifier Type="ARMOR" Value="100%"/>
+	</AttributeModifier>
+	
+	<!-- Heat laser weapon related -->
+	<AttributeModifier
+		id="Modifier_GDIStructureGLHeatDamageMult1"
+		ObjectStatusToSet="USER_1"
+		ModelConditionsSet="USER_1"		
+		Category="NONE">
+		<Modifier Type="DAMAGE_MULT" Value="200%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_GDIStructureGLHeatDamageMult2"
+		ObjectStatusToSet="USER_2"
+		ModelConditionsSet="USER_2"		
+		Category="NONE">
+		<Modifier Type="DAMAGE_MULT" Value="300%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_GDIStructureGLHeatDamageMult3"
+		ObjectStatusToSet="USER_3"
+		ModelConditionsSet="USER_3"		
+		Category="NONE">
+		<Modifier Type="DAMAGE_MULT" Value="400%"/>
+	</AttributeModifier>
+	
+	<!-- this is ReAcquireDetailType PER_CLIP w/ unlimited clip size on purpose
+	so it never picks a new contact point unless changing targets -->
+	<WeaponTemplate
+		id="GDIStructureGLaserWeapon"
+		inheritFrom="BaseLaserWeapon" 
+		AttackRange="=$GDISTRUCTUREG_ATTACK_RANGE"
+		FireFX="FX_GDILaser_Medium_Fire"
+		FireStrongCounterFX="FX_GDILaser_Medium_Fire_Veteran"
+		FireSound="GDI_FocusBeam_StrG_LaserWeaponFire2"
+		FiringLoopSound="GDI_FocusBeam_StrG_LaserWeaponLoopMS"
+		FiringLoopSoundContinuesDuringReload="false"
+		Flags="RELOAD_WHEN_ATTACK_STOPS ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_ENEMY_BUILDINGS"
+		ShotsPerBarrel="1"
+		ReAcquireDetailType="PER_CLIP"
+		PreAttackType="PER_TARGET"
+		FinishAttackOnceStarted="true"
+		CanBeDodged="false">
+		<!-- WARNING WARNING WARNING 
+		If you're changing these timings, you must also change the achievement condition count
+		in GameplayConditionData.xml id "GC_GettingWarmer". Failure to do so will break that 
+		achievement and make millions of gamers all over the world very sad. See Mike Kuehl
+		for specifics. -->
+		<PreAttackDelay
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<WeaponAiHintInfo
+			UseLongLockOnTimeCode="true"/>
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.55s"
+				LaserId="1"
+				ForcedBarrel="0"
+				HitGroundFX="FX_GDILaser_Medium_Miss_FocusBeam"/>
+			<ActivateLaserNugget
+				Lifetime="0.55s"
+				LaserId="2"
+				ForcedBarrel="1"/>
+			<LineDamageNugget
+				Damage="9"
+				DamageType="LASER"
+				DamageFXType="GDI_LASER"
+				DeathType="LASERED"
+				LineWidth="=$GDISTRUCTUREG_LASER_WIDTH"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter"
+				AttributeModifierName="AttributeModifier_GDIStructureGLaserVictimEffect"/>
+		</Nuggets>
+		<SpinUpInfo
+			SpinUpDuration="9.0s"
+			SpinDownDuration="0.0s"
+			SpinStartPercentage="0%"
+			Flags="DO_NOT_MODIFY_FIRING_DURATION">
+			<SpinUpAttributeModifier
+				PercentageSetAt="33%"
+				AttributeModifierToSet="Modifier_GDIStructureGLHeatDamageMult1"/>
+			<SpinUpAttributeModifier
+				PercentageSetAt="66%"
+				AttributeModifierToSet="Modifier_GDIStructureGLHeatDamageMult2"/>
+			<SpinUpAttributeModifier
+				PercentageSetAt="100%"
+				AttributeModifierToSet="Modifier_GDIStructureGLHeatDamageMult3"/>
+		</SpinUpInfo>
+	</WeaponTemplate>
+
+	<!-- EMP related -->
+	<AttributeModifier
+		id="AttributeModifer_GDIStructureGArmorUp"
+		ModelConditionsSet="USER_4"
+		ObjectStatusToSet="USER_4"
+		Category="NONE">
+		<Modifier Type="ARMOR" Value="50%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_GDIStructureGLaserVictimEffect"
+		Category="NONE"
+		Duration="0.15s"/>
+
+	<AttributeModifier
+		id="AttributeModifer_GDIStructureGEMP"
+		Category="NONE"
+		Duration="10s"
+		StartFX="FX_GDI_StructureG_EMP">
+		<Modifier Type="SPEED" Value="50%"/>
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-50%"/>
+	</AttributeModifier>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDIStructureGToggleEMP"
+		TargetType="NONE"
+		ReloadTime="2s"
+		Flags="CAN_NOT_BE_SCRAMBLED"
+		WaypointModeTerminal="false" />
+
+	<WeaponTemplate
+		id="GDIStructureGEMPWeapon"
+		AttackRange="50.0"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE"
+		AcceptableAimDelta="180d"
+		CanFireWhileMoving="true"
+		FireFX="FX_GDI_StructureG_Resonator"
+		>
+		<FiringDuration
+			MinSeconds=".1s"
+			MaxSeconds=".1s" />
+		<Nuggets>
+			<DamageNugget
+				Damage="5.0"
+				Radius="=$GDISTRUCTUREG_EMP_RADIUS"
+				DamageType="BLAST"
+				DamageFXType="GDI_SHOCKWAVE"
+				DeathType="NORMAL" >
+			</DamageNugget>
+			<AttributeModifierNugget
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifer_GDIStructureGEMP"
+				Radius="=$GDISTRUCTUREG_EMP_RADIUS" >
+			</AttributeModifierNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<ExperienceLevelTemplate
+		id="GDIStructureGExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="10">
+		<Target>GDIStructureG</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIStructureGExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIStructureGExperienceLevel_1"
+		RequiredExperience="20"
+		ExperienceAward="12">
+		<Target>GDIStructureG</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIStructureGExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIStructureGExperienceLevel_2"
+		RequiredExperience="50"
+		ExperienceAward="14">
+		<Target>GDIStructureG</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIStructureGExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIStructureGExperienceLevel_3"
+		RequiredExperience="90"
+		ExperienceAward="16">
+		<Target>GDIStructureG</Target>
+	</ExperienceLevelTemplate>	
+
+	<!-- OCL -->
+	<ObjectCreationList
+		id="GDIStructureG_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+</AssetDeclaration>

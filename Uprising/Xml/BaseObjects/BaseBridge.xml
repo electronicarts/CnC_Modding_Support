@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+	</Includes>
+
+	<GameObject
+		id="BaseBridge"
+		inheritFrom="BaseObject"
+		KindOf="STRUCTURE SELECTABLE BRIDGE IMMOBILE DO_NOT_CLASSIFY RESIST_EMP"
+		CommandSet="EmptyCommandSet"
+		SelectPortrait="Portrait_Neutral_Bridge"
+		ButtonImage="Button_Neutral_Bridge"
+		Side="Civilian"
+		EditorSorting="STRUCTURE"
+		TypeDescription="TYPE:BridgeSection"
+		Description="DESC:BridgeSection">
+		<DisplayName>Name:BridgeSection</DisplayName>
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="StructureArmor" />
+
+		<!-- This is a proxy module and is used for the selection and the outlining of the bridge as a whole -->
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		
+		<Body>
+			<ManagerBody
+				id="ModuleTag_ManagerBody"
+				InitialHealth="1.0" 
+				MaxHealth="1.0"/>
+		</Body>
+	</GameObject>
+
+	<GameObject
+		id="BaseCivilianBridge"
+		inheritFrom="BaseBridge"
+		KindOf="STRUCTURE BRIDGE IMMOBILE DO_NOT_CLASSIFY RESIST_EMP ALWAYS_VISIBLE_IN_RADAR"
+	/>
+
+	<GameObject
+		id="BaseBridgeSegment"
+		inheritFrom="BaseObject"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS NOT_AUTOACQUIRABLE NO_COLLIDE BRIDGE_SEGMENT RESIST_EMP CAN_BUILD_ON_WATER CAN_BUILD_ON_DEEP_WATER"
+		CommandSet="EmptyCommandSet"
+		Side="Civilian"
+		SelectPortrait="Portrait_NeutralBridgeSection"
+		ButtonImage="Portrait_NeutralBridgeSection"
+		RadarPriority="NOT_ON_RADAR"
+		EditorSorting="SYSTEM">
+		<DisplayName>Name:BridgeSection</DisplayName>
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="StructureArmor"/>
+		<Behaviors>
+			<FXListBehavior id="ModuleTag_FXList">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_Bridge_Die" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<ManagedActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1000.0" />
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="BuildingBoneContactPointExplosion" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="BuildingBoneContactPointExplosion" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+	</GameObject>
+
+	<GameObject
+		id="BaseIndestructableBridgeSegment"
+		inheritFrom="BaseBridgeSegment"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS UNATTACKABLE NOT_AUTOACQUIRABLE NO_COLLIDE BRIDGE_SEGMENT RESIST_EMP CAN_BUILD_ON_WATER CAN_BUILD_ON_DEEP_WATER ALWAYS_VISIBLE_IN_RADAR">
+		<DisplayName>Name:BridgeSection</DisplayName>
+		<Body>
+			<ManagedImmortalBody
+				id="ModuleTag_Body"
+				MaxHealth="1000.0" />
+		</Body>
+	</GameObject>
+
+	<GameObject
+		id="BaseBridgeEnd"
+		inheritFrom="BaseObject"
+		KindOf="STRUCTURE IMMOBILE CAN_CAST_REFLECTIONS RESIST_EMP NOT_AUTOACQUIRABLE NO_COLLIDE BRIDGE_ENDCAP CAN_BUILD_ON_WATER CAN_BUILD_ON_DEEP_WATER"
+		Side="Civilian"
+		SelectPortrait="Portrait_NeutralBridgeSection"
+		ButtonImage="Portrait_NeutralBridgeSection"
+		RadarPriority="NOT_ON_RADAR"
+		EditorSorting="SYSTEM"
+		CommandSet="EmptyCommandSet">
+		<DisplayName>Name:BridgeSection</DisplayName>
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="StructureArmor"/>
+		<Behaviors>
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+				
+			<FXListBehavior id="ModuleTag_FXList">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_Bridge_Die" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<ManagedImmortalBody
+				id="ModuleTag_ImmortalBody"
+				MaxHealth="1000.0">
+				<DamageRangeModifier 
+					Min="0.0"
+					Max="0.1"
+					AttributeModifier="AttributeModifier_BridgeImmortalDeath" />
+			</ManagedImmortalBody>
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="BuildingBoneContactPointExplosion" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="BuildingBoneContactPointExplosion" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+	</GameObject>
+
+	<GameObject
+		id="BaseBridgeGateHouse"
+		inheritFrom="BaseObject"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS RESIST_EMP NOT_AUTOACQUIRABLE BRIDGE_GATEHOUSE"
+		Side="Civilian"
+		TransportSlotCount="1"
+		CommandSet="EmptyCommandSet"
+		SelectPortrait="Portrait_Neutral_BridgeGateHouse"
+		ButtonImage="Button_Neutral_BridgeGateHouse"
+		EditorSorting="SYSTEM"
+		RadarPriority="STRUCTURE"
+		Description="Desc:BridgeGatehouse">
+		<DisplayName>Name:BridgeGatehouse</DisplayName>
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="StructureArmor"/>
+		<Behaviors>
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+
+			<xi:include
+				href="../Includes/BridgeEngineerContain.xml" />
+			<FXListBehavior id="ModuleTag_FXList">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_Bridge_Die" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<ManagedImmortalBody
+				id="ModuleTag_ImmortalBody"
+				MaxHealth="1000.0">
+				<DamageRangeModifier 
+					Min="0.0"
+					Max="0.1"
+					AttributeModifier="AttributeModifier_BridgeImmortalDeath" />
+			</ManagedImmortalBody>			
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+
+</AssetDeclaration>

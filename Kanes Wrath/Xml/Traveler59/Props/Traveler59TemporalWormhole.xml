@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:FXTemporalWormhole.w3x" />			
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="Traveler59TemporalWormhole"
+		Side="Traveler59"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="0"
+		CommandSet="EmptyCommandSet"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE IMMOBILE CAN_CAST_REFLECTIONS STRUCTURE RESIST_EMP IGNORED_IN_FINDPOSITIONAROUND"
+		RadarPriority="NOT_ON_RADAR"
+		EditorName="Traveler59TemporalWormhole">
+		<DisplayName>Traveler59TemporalWormhole</DisplayName>
+		<ArmorSet
+			Armor="StructureArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXTemporalWormhole" />
+					<ParticleSysBone
+						BoneName="roottransform"
+						FXParticleSystemTemplate="AlienTemporalWormholeBase"
+						FollowBone="true" />
+
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="FXTemporalWormhole"
+						AnimationMode="ONCE" />
+				</AnimationState>				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<!-- the slow death is for being blown up -->
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0.5s"
+				SinkRate="2.4"
+				DestructionDelay="5s">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="FADED" />
+			</SlowDeath>
+			<!-- destroy is for timed out -->
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="FADED" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_ALI_TemporalWormhole_Die" />
+			</FXListBehavior>
+			<!-- fire a weapon that adds an attribute mod and paralyze which lasts for a short time. -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate">
+				<FireWeaponNugget
+					WeaponName="TemporalWormholeWeaponTrigger"
+				/>
+			</FireWeaponUpdate>
+			<LifetimeUpdate
+				id="ModuleTag_Lifetime"
+				DeathType="FADED"
+				MinLifetime="30s"
+				MaxLifetime="30s" />
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0"/>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry
+				Sound="ALI_TemporalWormholeLoop"
+				AudioType="soundAmbient" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="125"
+			ShroudClearingRange="150" />
+	</GameObject>
+</AssetDeclaration>

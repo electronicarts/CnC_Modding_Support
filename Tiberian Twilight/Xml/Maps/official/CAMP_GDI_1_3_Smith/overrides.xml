@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags/>
+
+    <Includes>
+        <Include type="instance" source="DATA:System/PlayerSpellBook.xml" />
+        <Include type="instance" source="DATA:GlobalData/PlayerClassTemplates.xml" />
+        <Include type="instance" source="DATA:GlobalData/PlayerThreatTracker.xml" />
+        <Include type="instance" source="DATA:GDI/Units/GDIInfantryJ.xml" />
+        <Include type="instance" source="DATA:GDI/Units/GDIVehicleV.xml" />
+        <Include type="instance" source="DATA:GDI/Units/GDIVehicleAB.xml" />
+        <Include type="instance" source="DATA:GDI/Units/GDIAircraftO.xml" />
+        <Include type="instance" source="DATA:GDI/Units/GDIAircraftA.xml" />
+        <Include type="instance" source="DATA:GDI/Structures/GDIStructureB.xml" />
+        <Include type="instance" source="DATA:Neutral/Structures/TechStructureI.xml" />
+        <Include type="instance" source="ART:EXTnkTrack.xml" />
+    </Includes>
+
+    <Defines>
+        <!-- these threats should add up to MaxAllowedThreat in the player threat tracker template -->
+        <Define name="SUPPORT_POWER_RANK1_THREAT_REQUIRED" value="60"/>
+        <Define name="SUPPORT_POWER_RANK2_THREAT_REQUIRED" value="60"/>
+        <Define name="SUPPORT_POWER_RANK3_THREAT_REQUIRED" value="60"/>
+        <Define name="SUPPORT_POWER_RANK4_THREAT_REQUIRED" value="60"/>
+        <Define name="SUPPORT_POWER_RANK5_THREAT_REQUIRED" value="60"/>
+    </Defines>
+
+    <GameObject
+		id="GDIStructureB"
+		inheritFrom="GDIStructureB"
+        MaxSimultaneousOfType="4">
+
+        <Behaviors>
+            <HordeGarrisonContain
+                    id="ModuleTag_HordeGarrison"
+                    AllowAlliesInside="true"
+                    AllowOwnPlayerInsideOverride="false"/>                
+        </Behaviors>
+
+        <Body>
+            <ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="5000" />
+        </Body>
+    </GameObject>
+
+    <GameObject
+		id="TechStructureI"
+		inheritFrom="TechStructureI">
+        <Body>
+            <ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				InitialHealth="1.0"
+				MaxHealth="5001.0"/>
+        </Body>
+    </GameObject>
+
+    <GameObject
+		id="GDIVehicleV"
+		inheritFrom="GDIVehicleV"
+        BuildTime="10"/>
+
+    <GameObject
+		id="GDIVehicleAB"
+		inheritFrom="GDIVehicleAB"
+        BuildTime="10"/>
+
+    <GameObject
+		id="GDIAircraftO"
+		inheritFrom="GDIAircraftO"
+        BuildTime="5"
+        MaxSimultaneousOfType="3"/>
+
+    <GameObject
+		id="GDIAircraftA"
+		inheritFrom="GDIAircraftA"
+        BuildTime="7"
+        MaxSimultaneousOfType="3"/>
+
+    <GameObject
+		id="GDIInfantryJ"
+		inheritFrom="GDIInfantryJ"
+        MaxSimultaneousOfType="1"/>
+
+    <PlayerThreatTrackerTemplate
+		id="BasePlayerThreatTracker"
+		MaxAllowedThreat="50"
+		BaseThreatChangePerSecond="5"
+		Options="REQUIRE_PLAYER_CRAWLER_FOR_THREAT_GAIN CLEAR_THREAT_ON_CRAWLER_DEATH"
+		HealingThreatMultiplier=".0025">
+        <ThreatDecayRate CommandPointPercentage="0%" ThreatDecay="0" />
+        <AllowedThreatGiverObjectsFilter
+			Rule="ANY"
+			StatusBitFlagsExclude="CLONED NO_PLAYER_THREAT"
+			Include="VEHICLE INFANTRY AIRCRAFT CRAWLER GRANT_PLAYER_THREAT"/>
+        <AllowedThreatObjectsFilter
+			Rule="ANY"
+			Include="VEHICLE INFANTRY AIRCRAFT CRAWLER">
+            <ExcludeThing>GDIConquerVehicle</ExcludeThing>
+            <ExcludeThing>NODConquerVehicle</ExcludeThing>
+        </AllowedThreatObjectsFilter>
+        <ThreatChangePerSecondModifier RequiredUpgrade="Upgrade_GDI_Support_CrawlerTech3" ThreatChangePerSecond="2" />
+        <ThreatChangePerSecondModifier RequiredUpgrade="Upgrade_NOD_Support_CrawlerTech3" ThreatChangePerSecond="2" />
+    </PlayerThreatTrackerTemplate>
+
+        <PlayerEntitlement
+			id="mapPlayerProgressionTest"
+			PlayerEntitlementEnabled="false">
+        </PlayerEntitlement>
+
+        <PlayerClassTemplate
+                    id="PlayerClass_GDISupport"
+                    DisplayName="PlayerClass:GDISupport"
+                    PlayerClassType="SUPPORT"
+                    PlayerTechDependencies="PlayerTechDependencyGroup_GDISupport"
+                    Faction="GDI">
+            <!-- Tier 1 -->
+            <PlayerThreatTracker>BasePlayerThreatTracker</PlayerThreatTracker>
+            <UpkeepState MinimumCP="0" MaximumCP="50" BuildCostMultiplier="100%" BuildSpeedMultiplier="100%" />
+            <UpkeepState MinimumCP="50" MaximumCP="100" BuildCostMultiplier="100%" BuildSpeedMultiplier="100%" />
+            <UpkeepState MinimumCP="100" MaximumCP="120" BuildCostMultiplier="100%" BuildSpeedMultiplier="100%" />
+            <GameObjectAllowed>GDIInfantryJ</GameObjectAllowed>
+            <GameObjectAllowed>GDIAircraftA</GameObjectAllowed>
+            <GameObjectAllowed>GDIAircraftO</GameObjectAllowed>
+
+            <StartingUpgrade>Upgrade_SupportClass</StartingUpgrade>
+
+            <PlayerPowerInfo>
+                <Rank ThreatRequired="=$SUPPORT_POWER_RANK1_THREAT_REQUIRED">
+                    <Power>SpecialPower_GDI_ScoutDrone</Power>
+                    <Power>SpecialPower_GDI_Restoration</Power>
+                    <Power>SpecialPower_GDI_RapidFire</Power>
+                </Rank>
+                <Rank ThreatRequired="=$SUPPORT_POWER_RANK2_THREAT_REQUIRED">
+                    <Power>SpecialPower_GDI_EngineerElite</Power>
+                    <Power>SpecialPower_GDI_RepairZone</Power>
+                    <Power>SpecialPower_GDI_EnhanceConstruction</Power>
+                </Rank>
+                <Rank ThreatRequired="=$SUPPORT_POWER_RANK3_THREAT_REQUIRED">
+                    <Power>SpecialPower_GDI_SupplyDrop</Power>
+                    <Power>SpecialPower_GDI_PersonalShields</Power>
+                    <Power>SpecialPower_GDI_EMPMineDrop</Power>
+                </Rank>
+                <Rank ThreatRequired="=$SUPPORT_POWER_RANK4_THREAT_REQUIRED">
+                    <Power>SpecialPower_GDI_MirrorCoat</Power>
+                    <Power>SpecialPower_GDI_SonicArtillery</Power>
+                    <Power>SpecialPower_GDI_MassPromotion</Power>
+                </Rank>
+                <Rank ThreatRequired="=$SUPPORT_POWER_RANK5_THREAT_REQUIRED">
+                    <Power>SpecialPower_GDI_SeismicDisturbance</Power>
+                    <Power>SpecialPower_GDI_Resonance</Power>
+                    <Power>SpecialPower_GDI_FirehawkStrike</Power>
+                </Rank>
+                <Power>SpecialPower_GDI_ScoutDrone</Power>
+                <Power>SpecialPower_GDI_Restoration</Power>
+                <Power>SpecialPower_GDI_RapidFire</Power>
+                <Power>SpecialPower_GDI_EngineerElite</Power>
+                <Power>SpecialPower_GDI_RepairZone</Power>
+                <Power>SpecialPower_GDI_EnhanceConstruction</Power>
+                <Power>SpecialPower_GDI_SupplyDrop</Power>
+                <Power>SpecialPower_GDI_PersonalShields</Power>
+                <Power>SpecialPower_GDI_EMPMineDrop</Power>
+                <Power>SpecialPower_GDI_MirrorCoat</Power>
+                <Power>SpecialPower_GDI_SonicArtillery</Power>
+                <Power>SpecialPower_GDI_MassPromotion</Power>
+                <Power>SpecialPower_GDI_SeismicDisturbance</Power>
+                <Power>SpecialPower_GDI_Resonance</Power>
+                <Power>SpecialPower_GDI_FirehawkStrike</Power>
+            </PlayerPowerInfo>
+        </PlayerClassTemplate>
+
+        <PlayerClassTemplate
+                id="PlayerClass_GDIDefense"
+                DisplayName="PlayerClass:GDIDefense"
+                PlayerClassType="DEFENSE"
+                AllowProjectBuildabilityForAllies="true"
+                PlayerTechDependencies="PlayerTechDependencyGroup_GDIDefense"
+                Faction="GDI">
+            <!-- Tier 1 -->
+            <PlayerThreatTracker>BasePlayerThreatTracker</PlayerThreatTracker>
+            <UpkeepState MinimumCP="0" MaximumCP="50" BuildCostMultiplier="100%" BuildSpeedMultiplier="33%" />
+            <UpkeepState MinimumCP="50" MaximumCP="100" BuildCostMultiplier="50%" BuildSpeedMultiplier="33%" />
+            <UpkeepState MinimumCP="100" MaximumCP="120" BuildCostMultiplier="100%" BuildSpeedMultiplier="33%" />
+            <GameObjectAllowed>GDIInfantryJ</GameObjectAllowed>
+            <GameObjectAllowed>GDIStructureB</GameObjectAllowed>
+            
+            <StartingUpgrade>Upgrade_DefenseClass</StartingUpgrade>
+        </PlayerClassTemplate>
+
+        <GameObject
+			id="PlayerSpellBook"
+			inheritFrom="PlayerSpellBook"
+			CommandSet="PlayerSpellBookCommandSetFull"/>
+
+    <!-- Minimap Data -->
+
+    <Texture id="GDI_1_3_Art_Orange" File="CAMP_GDI_1_3_Smith_orange.tga"  GenerateMipMaps="false" AllowAutomaticResize="false"/>
+
+    <Texture id="GDI_1_3_Art_Green" File="CAMP_GDI_1_3_Smith_green.tga"  GenerateMipMaps="false" AllowAutomaticResize="false"/>
+    
+    <Texture id="GDI_1_3_Art_Blue" File="CAMP_GDI_1_3_Smith_blue.tga"  GenerateMipMaps="false" AllowAutomaticResize="false"/>
+
+    <RadarTerrainImage
+        id="OrangeBorderTerrain"
+        MapBorder="Orange"
+        Texture="GDI_1_3_Art_Orange">
+            <ImageSize x="256" y="256"/>
+            <ImagePosition x="0" y="0"/>
+            <TextureSize x="256" y="256"/>
+    </RadarTerrainImage>
+
+    <RadarTerrainImage
+        id="GreenBorderTerrain"
+        MapBorder="Green"
+        Texture="GDI_1_3_Art_Green">
+            <ImageSize x="256" y="256"/>
+            <ImagePosition x="0" y="0"/>
+            <TextureSize x="256" y="256"/>
+    </RadarTerrainImage>
+
+    <RadarTerrainImage
+        id="BlueBorderTerrain"
+        MapBorder="Blue"
+        Texture="GDI_1_3_Art_Blue">
+        <ImageSize x="256" y="256"/>
+        <ImagePosition x="0" y="0"/>
+        <TextureSize x="256" y="256"/>
+    </RadarTerrainImage>
+
+	<Weather id="Weather">		
+		<Lightning			
+			LightningDuration = "30"
+			LightningChance = "0.1">
+			<LightningFactor 
+				Type = "UNIFORM"
+				Low = "0.5"
+				High = "3.0"/>
+		</Lightning>		
+		<Cloud>
+			<CloudTextureSize x="660.0" y="660.0"/>
+      <CloudOffsetPerSecond x="-0.05" y="0.00"/>
+		</Cloud>
+		<WeatherData id="LIGHT_RAIN">
+			<WeatherParticle 
+				DiffuseTexture = "FXRainDrop"
+				NumParticlesPerBox="1000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="1.0" High="4.0"/>
+				<Height			Low="10.0" High="50.0"/>
+				<Alpha			Low="0.2" High="0.5"/>
+				<MotionSpeed	Low="250.0" High="450.0"/>
+				<MotionDir		x="0.0" y="0.0" z="-1.0"/>
+				<RandomDir      x="0.0" y="0.0" z="0.0"/>
+				<Stretch>1.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="HEAVY_RAIN">
+			<WeatherParticle 
+				DiffuseTexture = "FXRainDrop"
+				NumParticlesPerBox="2000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="1.0" High="4.0"/>
+				<Height			Low="25.0" High="100.0"/>
+				<Alpha			Low="0.2" High="0.5"/>
+				<MotionSpeed	Low="250.0" High="450.0"/>
+				<MotionDir		x="0.0" y="0.0" z="-1.0"/>
+				<RandomDir      x="0.0" y="0.0" z="0.0"/>
+				<Stretch>1.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="STORM" HasLightning="true" >
+			<WeatherParticle 
+				DiffuseTexture = "FXRainDrop"
+				NumParticlesPerBox="1024"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="1.0" High="4.0"/>
+				<Height			Low="25.0" High="100.0"/>
+				<Alpha			Low="0.4" High="0.7"/>
+				<MotionSpeed	Low="250.0" High="450.0"/>
+				<MotionDir		x="1.0" y="0.0" z="-1.0"/>
+				<RandomDir      x="0.0" y="0.0" z="0.0"/>
+				<Stretch>1.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="LIGHT_SNOW">
+			<WeatherParticle 
+				DiffuseTexture = "FXSnowflake"
+				NumParticlesPerBox="1000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="4.0" High="4.0"/>
+				<Height			Low="4.0" High="4.0"/>
+				<Alpha			Low="0.2" High="0.6"/>
+				<MotionSpeed	Low="10.0" High="100.0"/>
+				<MotionDir		x="0.5" y="0.5" z="-0.5"/>
+				<RandomDir      x="0.2" y="0.2" z="0.2"/>
+				<Stretch>0.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="HEAVY_SNOW">
+			<WeatherParticle 
+				DiffuseTexture = "FXSnowflake"
+				NumParticlesPerBox="2000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="5.0" High="5.0"/>
+				<Height			Low="5.0" High="5.0"/>
+				<Alpha			Low="0.2" High="0.6"/>
+				<MotionSpeed	Low="10.0" High="100.0"/>
+				<MotionDir		x="1.0" y="1.0" z="-1.0"/>
+				<RandomDir      x="0.5" y="0.5" z="0.5"/>
+				<Stretch>0.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="BLIZZARD">
+			<WeatherParticle 
+				DiffuseTexture = "FXSnowflake"
+				NumParticlesPerBox="3000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="3.0" High="6.0"/>
+				<Height			Low="3.0" High="6.0"/>
+				<Alpha			Low="0.4" High="0.8"/>
+				<MotionSpeed	Low="10.0" High="150.0"/>
+				<MotionDir		x="2.5" y="0.4" z="-1.0"/>
+				<RandomDir      x="1.4" y="1.3" z="0.7"/>
+				<Stretch>0.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="ASH">
+			<WeatherParticle
+				DiffuseTexture = "FXAsh"
+				NumParticlesPerBox="1000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="1.0" High="4.0"/>
+				<Height			Low="1.0" High="4.0"/>
+				<Alpha			Low="0.2" High="0.5"/>
+				<MotionSpeed	Low="1.0" High="3.0"/>
+				<MotionDir		x="2" y="2" z="-2"/>
+				<RandomDir      x="4" y="4" z="3.0"/>
+				<Stretch>0.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+
+	</Weather>
+
+
+</AssetDeclaration>

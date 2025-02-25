@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+    <Include
+        type="all"
+        source="ART:AUSweeperDrone.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="AlliedSatelliteSweepShroudRevealer"
+		inheritFrom="BaseVehicle"
+		Side="Allies"
+		CommandSet="EmptyCommandSet"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE SUMMONED NO_COLLIDE INERT INERT_SHROUD_REVEALER DRONE"
+		IsTrainable="false"
+		RadarPriority="NOT_ON_RADAR"
+		EditorName="AlliedSatelliteSweepShroudRevealer"
+		Description="Desc:AlliedSatelliteSweepShroudRevealer"
+		EditorSorting="SYSTEM">
+		<DisplayName
+			xai:joinAction="Replace">Name:AlliedSatelliteSweepShroudRevealer</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<LocomotorSet
+			id="Locomotor_Normal"
+			Locomotor="AlliedSatelliteSweepLocomotor"
+			Condition="NORMAL"
+			Speed="500.0" />
+
+    <Draws>
+      <ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="AUSweeperDrone" />
+          <ParticleSysBone
+						BoneName="FX_JetGlow01"
+						FXParticleSystemTemplate="AlliedJetTrail"
+						FollowBone="true" />
+          <ParticleSysBone
+           BoneName="FX_JetGlow02"
+           FXParticleSystemTemplate="AlliedJetTrail"
+           FollowBone="true" />
+          <ParticleSysBone
+           BoneName="FX_JetGlow03"
+           FXParticleSystemTemplate="AlliedJetTrail"
+           FollowBone="true" />
+        </ModelConditionState>
+
+        <AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Animation
+						AnimationName="AUSweeperDrone"
+						AnimationMode="LOOP"
+            AnimationBlendTime="5"/>
+          
+        </AnimationState>
+        
+        
+      </ScriptedModelDraw>
+    </Draws>
+
+		<Behaviors>			
+			<StrafeAreaUpdate
+				id="ModuleTag_StrafeAreaUpdate"
+				WeaponName=""
+				SweepFrequency="0.2"
+				SweepAmplitude="5"
+				DivingFloor="50"
+				PreattackDistance="100"
+				Radius="150"
+				MinRadius="25"
+				Options="FLEE_STRAIGHT_AHEAD"/>
+			<RunOffMapBehavior
+				id="ModuleTag_RunOffMapBehavior"
+				xai:joinAction="Replace"
+				FlyingOffMap="true"
+				RequiresSpecificTrigger="true" />
+			<Physics
+				id="ModuleTag_Physics" />		
+			<DestroyDie
+				id="ModuleTag_DeathFaded">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<!-- No stances because it's summoned -->
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				xai:joinAction="Remove" />
+			<!-- No DynamicsUpdate because it shouldn't collide with anything -->
+			<DynamicsUpdate
+				id="ModuleTag_DefaultDynamicsUpdate"
+				xai:joinAction="Remove" />
+      <FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+        FireInterval=".5s">
+        <FireWeaponNugget
+					WeaponName="AlliedSweepReveal"
+					FireDelay="0s"
+					OneShot="false" />
+      </FireWeaponUpdate>
+      
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="UnitAIStateMachine"/>
+		</AI>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body"/>
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MagneticSatelliteSuckedAway">
+				<ModelConditionSound Sound="" RequiredFlags="SUCKED_UP_HIGH" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<EvaEventArray>
+			<EvaEntry EvaEvent="" EvaType="dieOwner" />
+			<EvaEntry EvaEvent="" EvaType="productionStarted" />
+			<EvaEntry EvaEvent="" EvaType="damagedOwner" />
+			<EvaEntry EvaEvent="" EvaType="damagedFromShroudedSourceOwner" />
+			<EvaEntry EvaEvent="" EvaType="damagedByFireOwner" />
+			<EvaEntry EvaEvent="" EvaType="damagedAlly" />
+			<EvaEntry EvaEvent="" EvaType="ambushed" />
+			<EvaEntry EvaEvent="" EvaType="enemyObjectSighted" />
+			<EvaEntry EvaEvent="" EvaType="detectedEnemy" />
+			<EvaEntry EvaEvent="" EvaType="availableForProduction" />
+			<EvaEntry EvaEvent="" EvaType="buildOnHold" />
+			<EvaEntry EvaEvent="" EvaType="buildCancelled" />
+			<EvaEntry EvaEvent="" EvaType="promotedOwner" />
+		</EvaEventArray>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="2.0"
+				Height="2.0"/>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="ALL_SurveillanceSweep_FlyByLoopMS" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="300" />
+	</GameObject>
+</AssetDeclaration>

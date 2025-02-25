@@ -1,0 +1,1029 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="BalancedStates.xml"/>
+	</Includes>
+	
+	<!-- This is a state that provides an early game escort to crawlers to make sure that everyone shows up in a group -->
+	<AIStrategicStateDefinition
+		id="DefensiveClass_EarlyGameGoalStructureCapture_EscortTeam"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="100s"
+		MaxTargets="1">
+		<Heuristic>
+			<ConstantHeuristic/>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="0s" EndTime="120s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="DefensiveFriendlyAIGoalCaptureTeam" Priority="30" />
+		<Tactic
+			id="EarlyGameGoalStructureCapture_EscortTeam"
+			Tactic="SimpleMovement"
+			EndBehavior="DISBAND">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MaxCommandPoints="150"
+				RegisteredObjectSet="UNITS"
+				ExcludeKindOf="ENGINEER CRAWLER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="false"
+				Priority="HIGH"
+				MaxUnits="8">
+				<MicroManager
+					MicroManager="DeterminedFocusedMicroManager"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+
+	<!-- /////////////////////////// -->
+	<!--         OPEN STATES         -->
+	<!-- /////////////////////////// -->
+	<AIStrategicStateDefinition
+		id="DefensiveClass_OpenGoalStructureCapture_EarlyGame"
+		inheritFrom="OpenGoalStructureCapture_EarlyGame">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="0s" EndTime="120s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="DefensiveFriendlyAIStrikeTeamTarget" Priority="30" />
+		<Tactic
+			id="OpenGoalStructureCapture_EarlyGame"
+			Tactic="SimpleMovement"
+			EndIfStateTurnsOff="true">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				RegisteredObjectSet="CRAWLERS"
+				MinPowerAdvantage="0.5"
+				MinCommandPointAdvantage="0.5"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="OverwhelmCrawlerScuttleFocusedMicroManager" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedCrawlerScuttleFocusedMicroManager"
+					MaximumRange="600"/>
+				<AdditionalForcesInfo
+					id="Tag_UnitHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Exclude="STRUCTURE"/>
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_OpenGoalStructureCapture_EarlyGame_MEDIUM"
+		inheritFrom="OpenGoalStructureCapture_EarlyGame_MEDIUM">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="0s" EndTime="120s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="DefensiveFriendlyAIStrikeTeamTarget" Priority="30" />
+		<Tactic
+			id="OpenGoalStructureCapture_EarlyGame"
+			Tactic="SimpleMovement"
+			EndIfStateTurnsOff="true">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				RegisteredObjectSet="CRAWLERS"
+				MinPowerAdvantage="0.5"
+				MinCommandPointAdvantage="0.5"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="OverwhelmFocusedMicroManager_MEDIUM" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager_MEDIUM"
+					MaximumRange="600"/>
+				<AdditionalForcesInfo
+					id="Tag_UnitHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Exclude="STRUCTURE"/>
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="DefensiveClass_OpenGoalStructureCapture_EarlyGame_EASY"
+		inheritFrom="OpenGoalStructureCapture_EarlyGame_EASY">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="0s" EndTime="120s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="DefenseClassTarget" Priority="30" />
+		<Tactic
+			id="OpenGoalStructureCapture_EarlyGame"
+			Tactic="SimpleMovement"
+			EndIfStateTurnsOff="true">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="1.0"
+				MinCommandPointAdvantage="1.0"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<!-- Early Game, we want strike teams sprinting to the target to establish a beach head-->
+	<AIStrategicStateDefinition
+		id="DefensiveClass_OpenGoalStructureCapture_StrikeTeam_EarlyGame"
+		inheritFrom="DefensiveClass_OpenGoalStructureCapture_EarlyGame"
+		MaxTargets="1"
+		MaxInactiveCopies="1">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="0s" EndTime="120s" CountFrom="AI_START"/>
+		</Heuristic>
+		<!-- Note that this target heuristic is called again every few seconds in case the defense
+			   coordinator decides we should be at a different target -->
+		<TargetHeuristic TargetHeuristic="DefenseClassTarget" Priority="30" />
+		<Tactic
+			id="OpenGoalStructureCapture_EarlyGame"
+			Tactic="SimpleMovement"
+			EndIfStateTurnsOff="true">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				IncludeKindOf="CAN_ATTACK"
+				ReleaseType="NEVER_RELEASE"
+				RegisteredObjectSet="UNITS"
+				AlwaysRecruit="true"
+				MinPowerAdvantage="0.4"
+				MinCommandPointAdvantage="0.4"
+				Priority="DEFENSE_CRITICAL">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager"
+					MaximumRange="600"/>
+				<AdditionalForcesInfo
+					id="Tag_CrawlerHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="CRAWLERS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Include="CRAWLER" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="DefensiveClass_OpenGoalStructureCapture_StrikeTeam_EarlyGame_MEDIUM"
+		inheritFrom="DefensiveClass_OpenGoalStructureCapture_EarlyGame_MEDIUM"
+		MaxTargets="1"
+		MaxInactiveCopies="1">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="0s" EndTime="120s" CountFrom="AI_START"/>
+		</Heuristic>
+		<!-- Note that this target heuristic is called again every few seconds in case the defense
+			   coordinator decides we should be at a different target -->
+		<TargetHeuristic TargetHeuristic="DefenseClassTarget" Priority="30" />
+		<Tactic
+			id="OpenGoalStructureCapture_EarlyGame"
+			Tactic="SimpleMovement"
+			EndIfStateTurnsOff="true">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				IncludeKindOf="CAN_ATTACK"
+				ReleaseType="NEVER_RELEASE"
+				RegisteredObjectSet="UNITS"
+				AlwaysRecruit="true"
+				MinPowerAdvantage="0.3"
+				MinCommandPointAdvantage="0.3"
+				Priority="DEFENSE_CRITICAL">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager_MEDIUM"
+					MaximumRange="600"/>
+				<AdditionalForcesInfo
+					id="Tag_CrawlerHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="CRAWLERS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Include="CRAWLER" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_OpenGoalStructureCapture"
+		inheritFrom="OpenGoalStructureCapture">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="120s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+		<Tactic
+			id="OpenGoalStructureCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate" 
+				MaxCommandPoints="30"
+				MinPowerAdvantage="0.7"
+				MinCommandPointAdvantage="0.7"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FocusedMicromanager"/>
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedCrawlerScuttleFocusedMicroManager"
+					MaximumRange="600" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_OpenGoalStructureCapture_MEDIUM"
+		inheritFrom="DefensiveClass_OpenGoalStructureCapture">
+		<Tactic
+			id="OpenGoalStructureCapture"
+			AvoidTargetDistance="200">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MaxCommandPoints="20"
+				MinPowerAdvantage="0.6"
+				MinCommandPointAdvantage="0.6">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="OverwhelmFocusedMicroManager_MEDIUM" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager_MEDIUM"
+					MaximumRange="600" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_OpenGoalStructureCapture_EASY"
+		inheritFrom="DefensiveClass_OpenGoalStructureCapture">
+		<Tactic
+			id="OpenGoalStructureCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MaxCommandPoints="10"
+				MinPowerAdvantage="1.1"
+				MinCommandPointAdvantage="1.1">
+				<MicroManager
+					id="Tag_MicroManager"
+					xai:joinAction="Replace"
+					MicroManager="StandardMicroManager_EASY" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					xai:joinAction="Remove" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<!-- //////////////////////////// -->
+	<!--        LOSING STATES         -->
+	<!-- //////////////////////////// -->
+	<AIStrategicStateDefinition
+		id="DefensiveClass_LosingGoalStructureCaptureEarlyGame"
+		inheritFrom="LosingGoalStructureCaptureEarlyGame">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="30s" EndTime="120s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="DefensiveFriendlyAIStrikeTeamTarget" Priority="30" />
+		<Tactic
+			id="LosingGoalStructureCaptureEarlyGame"
+			Tactic="SimpleMovement"
+			EndIfStateTurnsOff="true">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="0.7"
+				MinCommandPointAdvantage="0.5"
+				RegisteredObjectSet="CRAWLERS"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="OverwhelmCrawlerScuttleFocusedMicroManager" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedCrawlerScuttleFocusedMicroManager"
+					MaximumRange="600"/>
+				<AdditionalForcesInfo
+					id="Tag_UnitHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Exclude="STRUCTURE"/>
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_LosingGoalStructureCaptureEarlyGame_MEDIUM"
+		inheritFrom="LosingGoalStructureCaptureEarlyGame_MEDIUM">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="0s" EndTime="120s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="DefensiveFriendlyAIStrikeTeamTarget" Priority="30" />
+		<Tactic
+			id="LosingGoalStructureCaptureEarlyGame"
+			EndIfStateTurnsOff="true">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				RegisteredObjectSet="CRAWLERS"
+				MinPowerAdvantage="0.6"
+				MinCommandPointAdvantage="0.4"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="OverwhelmFocusedMicroManager_MEDIUM" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager_MEDIUM"
+					MaximumRange="600"/>
+				<AdditionalForcesInfo
+					id="Tag_UnitHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Exclude="STRUCTURE"/>
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_LosingGoalStructureCaptureEarlyGame_EASY"
+		inheritFrom="LosingGoalStructureCaptureEarlyGame_EASY">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="0s" EndTime="120s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="DefenseClassTarget" Priority="30" />
+		<Tactic
+			id="LosingGoalStructureCaptureEarlyGame"
+			Tactic="SimpleMovement"
+			EndIfStateTurnsOff="true">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="0.7"
+				MinCommandPointAdvantage="0.7"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>	
+	
+	
+	<!-- Early Game, we want strike teams sprinting to the target to establish a beach head-->
+	<AIStrategicStateDefinition
+		id="DefensiveClass_LosingGoalStructureCapture_StrikeTeam_EarlyGame"
+		inheritFrom="DefensiveClass_LosingGoalStructureCaptureEarlyGame"
+		MaxTargets="1"
+		MaxInactiveCopies="1">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="30s" EndTime="120s" CountFrom="AI_START"/>
+		</Heuristic>
+		<!-- Note that this target heuristic is called again every few seconds in case the defense
+			   coordinator decides we should be at a different target -->
+		<TargetHeuristic TargetHeuristic="DefenseClassTarget" Priority="30" />
+		<Tactic
+			id="LosingGoalStructureCaptureEarlyGame"
+			Tactic="SimpleMovement"
+			EndIfStateTurnsOff="true">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				IncludeKindOf="CAN_ATTACK"
+				ReleaseType="NEVER_RELEASE"
+				RegisteredObjectSet="UNITS"
+				MinPowerAdvantage="0.6"
+				MinCommandPointAdvantage="0.4"
+				AlwaysRecruit="true"
+				Priority="HIGH">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="OverwhelmNoEngageMicroManager" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager"
+					MaximumRange="600"/>
+				<AdditionalForcesInfo
+					id="Tag_UnitHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="UNITS_AND_CRAWLERS" >
+					<AdditionalForcesObjectFilter
+						Rule="ALL" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_LosingGoalStructureCapture_StrikeTeam_EarlyGame_MEDIUM"
+		inheritFrom="DefensiveClass_LosingGoalStructureCaptureEarlyGame_MEDIUM"
+		MaxTargets="1"
+		MaxInactiveCopies="1">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="0s" EndTime="120s" CountFrom="AI_START"/>
+		</Heuristic>
+		<!-- Note that this target heuristic is called again every few seconds in case the defense
+			   coordinator decides we should be at a different target -->
+		<TargetHeuristic TargetHeuristic="DefenseClassTarget" Priority="30" />
+		<Tactic
+			id="LosingGoalStructureCaptureEarlyGame"
+			Tactic="SimpleMovement"
+			EndIfStateTurnsOff="true">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				IncludeKindOf="CAN_ATTACK"
+				ReleaseType="NEVER_RELEASE"
+				RegisteredObjectSet="UNITS"
+				AlwaysRecruit="true"
+				MinPowerAdvantage="0.5"
+				MinCommandPointAdvantage="0.4"
+				Priority="DEFENSE_CRITICAL">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager_MEDIUM"
+					MaximumRange="600"/>
+				<AdditionalForcesInfo
+					id="Tag_UnitHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="UNITS_AND_CRAWLERS" >
+					<AdditionalForcesObjectFilter
+						Rule="ALL" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_LosingGoalStructureCapture_Units"
+		inheritFrom="LosingGoalStructureCapture_WithCrawler">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="120s" EndTime="-1s" CountFrom="AI_START"/>
+			<PlayerLevelUpgradeHeuristic id="Tag_PlayerLevelUpgradeHeuristic" xai:joinAction="Remove"/>
+		</Heuristic>
+		<Tactic
+			id="LosingGoalStructureCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="0.7"
+				MinCommandPointAdvantage="0.6"
+				IncludeKindOf="CAN_ATTACK"
+				RegisteredObjectSet="UNITS"
+				ExcludeKindOf="ENGINEER"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="OverwhelmMicroManager" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager"/>
+				<AdditionalForcesInfo
+					id="Tag_CrawlerHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="CRAWLERS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Include="CRAWLER" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_LosingGoalStructureCapture_Crawlers"
+		inheritFrom="LosingGoalStructureCapture_WithCrawler">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="120s" EndTime="-1s" CountFrom="AI_START"/>
+			<PlayerLevelUpgradeHeuristic id="Tag_PlayerLevelUpgradeHeuristic" xai:joinAction="Remove"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="DefenseClassTargetCaptureTeams" Priority="30"/>
+		<Tactic
+			id="LosingGoalStructureCapture"
+			Tactic="SimpleMovement">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="0.5"
+				MinCommandPointAdvantage="0.4"
+				RegisteredObjectSet="CRAWLERS"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="OverwhelmCrawlerScuttleFocusedMicroManager" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedCrawlerScuttleFocusedMicroManager"/>
+				<AdditionalForcesInfo
+					id="Tag_UnitHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Exclude="STRUCTURE"/>
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_LosingGoalStructureCapture_Units_MEDIUM"
+		inheritFrom="LosingGoalStructureCapture_WithCrawler_MEDIUM">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="120s" EndTime="-1s" CountFrom="AI_START"/>
+			<PlayerLevelUpgradeHeuristic id="Tag_PlayerLevelUpgradeHeuristic" xai:joinAction="Remove"/>
+		</Heuristic>
+		<Tactic
+			id="LosingGoalStructureCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="0.6"
+				MinCommandPointAdvantage="0.6"
+				IncludeKindOf="CAN_ATTACK"
+				RegisteredObjectSet="UNITS"
+				ExcludeKindOf="ENGINEER"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="OverwhelmFocusedMicroManager_MEDIUM" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager_MEDIUM"/>
+				<AdditionalForcesInfo
+					id="Tag_CrawlerHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="CRAWLERS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Include="CRAWLER" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="DefensiveClass_LosingGoalStructureCapture_Crawlers_MEDIUM"
+		inheritFrom="LosingGoalStructureCapture_WithCrawler_MEDIUM">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="120s" EndTime="-1s" CountFrom="AI_START"/>
+			<PlayerLevelUpgradeHeuristic id="Tag_PlayerLevelUpgradeHeuristic" xai:joinAction="Remove"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="DefenseClassTargetCaptureTeams" Priority="30"/>
+		<Tactic
+			id="LosingGoalStructureCapture"
+			Tactic="SimpleMovement">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="0.3"
+				MinCommandPointAdvantage="0.3"
+				RegisteredObjectSet="CRAWLERS"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="OverwhelmFocusedMicroManager_MEDIUM" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager_MEDIUM"/>
+				<AdditionalForcesInfo
+					id="Tag_UnitHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Exclude="STRUCTURE"/>
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="DefensiveClass_LosingGoalStructureCapture_EASY"
+		inheritFrom="LosingGoalStructureCapture_WithCrawler_EASY">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="120s" EndTime="-1s" CountFrom="AI_START"/>
+			<PlayerLevelUpgradeHeuristic id="Tag_PlayerLevelUpgradeHeuristic" xai:joinAction="Remove"/>
+		</Heuristic>
+		<Tactic
+			id="LosingGoalStructureCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="1.0"
+				MinCommandPointAdvantage="1.0"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<!-- //////////////////////////// -->
+	<!--       DESPERATE STATES       -->
+	<!-- //////////////////////////// -->
+	<AIStrategicStateDefinition
+			id="DefensiveClass_DesperateGoalStructureCapture_Units"
+			inheritFrom="DesperateGoalStructureCapture">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="240s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+		<Tactic
+			id="DesperateGoalStructureCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="0.5"
+				MinCommandPointAdvantage="0.5"
+				IncludeKindOf="CAN_ATTACK"
+				RegisteredObjectSet="UNITS"
+				ExcludeKindOf="ENGINEER"
+				Priority="DEFENSE_CRITICAL"
+				AlwaysRecruit="true">
+				<!-- Fight tooth and nail if needed to push forward-->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager"
+					MaximumRange="600"/>
+				<AdditionalForcesInfo
+					id="Tag_CrawlerHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="CRAWLERS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Include="CRAWLER" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="DefensiveClass_DesperateGoalStructureCapture_Crawlers"
+			inheritFrom="DesperateGoalStructureCapture">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="240s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="DefenseClassTargetCaptureTeams" Priority="30"/>
+		<Tactic
+			id="DesperateGoalStructureCapture"
+			Tactic="SimpleMovement">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="0.4"
+				MinCommandPointAdvantage="0.4"
+				RegisteredObjectSet="CRAWLERS"
+				Priority="DEFENSE_CRITICAL"
+				AlwaysRecruit="true">
+				<!-- Fight tooth and nail if needed to push forward-->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedCrawlerScuttleFocusedMicroManager"
+					MaximumRange="600"/>
+				<AdditionalForcesInfo
+					id="Tag_UnitHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Exclude="STRUCTURE"/>
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_DesperateGoalStructureCapture_Units_MEDIUM"
+		inheritFrom="DesperateGoalStructureCapture_MEDIUM">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="120s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+		<Tactic
+			id="DesperateGoalStructureCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="0.6"
+				MinCommandPointAdvantage="0.6"
+				IncludeKindOf="CAN_ATTACK"
+				RegisteredObjectSet="UNITS"
+				ExcludeKindOf="ENGINEER"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="OverwhelmFocusedMicroManager_MEDIUM" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager_MEDIUM"/>
+				<AdditionalForcesInfo
+					id="Tag_CrawlerHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="CRAWLERS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Include="CRAWLER" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_DesperateGoalStructureCapture_Crawlers_MEDIUM"
+		inheritFrom="DesperateGoalStructureCapture_MEDIUM">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="240s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="DefenseClassTargetCaptureTeams" Priority="30"/>
+		<Tactic
+			id="DesperateGoalStructureCapture"
+			Tactic="SimpleMovement">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="0.3"
+				MinCommandPointAdvantage="0.3"
+				RegisteredObjectSet="CRAWLERS"
+				Priority="DEFENSE_CRITICAL"
+				AlwaysRecruit="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="OverwhelmFocusedMicroManager_MEDIUM" />
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager_MEDIUM"/>
+				<AdditionalForcesInfo
+					id="Tag_UnitHelp"
+					OwningPlayer="SAME_PLAYER"
+					RecruitingType="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ANY"
+						Exclude="STRUCTURE"/>
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+
+	<AIStrategicStateDefinition
+		id="DefensiveClass_DesperateGoalStructureCapture_EASY"
+		inheritFrom="DesperateGoalStructureCapture_EASY">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="120s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+		<Tactic
+			id="DesperateGoalStructureCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="1.0"
+				MinCommandPointAdvantage="1.0"
+				Priority="HIGH"
+				AlwaysRecruit="true">
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<!-- Winning States to get the AI to press its advantage a bit more -->
+
+
+	<!-- //////////////////////////////////////// -->
+	<!-- States for other Defense class behaviors -->
+	<!-- //////////////////////////////////////// -->
+	<AIStrategicStateDefinition
+		id="DefensiveClass_TechStructureCapture"
+		inheritFrom="TechStructureCapture">
+		<Tactic
+			id="TechStructureCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				Priority="DEFENSE_HIGH"
+				RegisteredObjectSet="UNITS">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FocusedMicromanager"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="DefensiveClass_TechStructureCapture_Medium"
+		inheritFrom="DefensiveClass_TechStructureCapture">
+		<Tactic
+			id="TechStructureCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FocusedMicromanager_MEDIUM"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="DefensiveClass_TechStructureCapture_Easy"
+		inheritFrom="DefensiveClass_TechStructureCapture">
+		<Tactic
+			id="TechStructureCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="StandardMicroManager_EASY"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<!-- /////////////////////////////////////// -->
+	<!-- Defense Class Building Placement States -->
+	<!-- /////////////////////////////////////// -->
+
+	<AIBuildingPlacementStateDefinition
+		id="DefensiveClass_BuildingPlacementDefault"
+		inheritFrom="BuildingPlacementDefault">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.5"/>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+	
+	<AIBuildingPlacementStateDefinition
+		id="DefensiveClass_BuildingPlacementDefense"
+		inheritFrom="BuildingPlacementDefense"
+		MaxPlacementDistanceFromDefenseClassTarget="600">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.6"/>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition
+		id="DefensiveClass_BuildingPlacementDefense_Medium"
+		inheritFrom="DefensiveClass_BuildingPlacementDefense"
+		MaxPlacementDistanceFromDefenseClassTarget="550">
+		<ConstructionBaseSelectionCriteria />
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition
+		id="DefensiveClass_BuildingPlacementDefense_Easy"
+		inheritFrom="DefensiveClass_BuildingPlacementDefense"
+		MaxPlacementDistanceFromDefenseClassTarget="500">
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition
+		id="DefensiveClass_BuildingPlacementSpread"
+		inheritFrom="BuildingPlacementSpread"
+		MaxPlacementDistanceFromDefenseClassTarget="600">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.7"/>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition
+		id="DefensiveClass_BuildingPlacementCenter"
+		inheritFrom="BuildingPlacementCenter"
+		MaxPlacementDistanceFromDefenseClassTarget="600">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.7"/>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition
+		id="DefensiveClass_BuildingPlacementBack"
+		inheritFrom="BuildingPlacementBack"
+		MaxPlacementDistanceFromDefenseClassTarget="600">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.7"/>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition
+		id="DefensiveClass_BuildingPlacementFront"
+		inheritFrom="BuildingPlacementFront"
+		MaxPlacementDistanceFromDefenseClassTarget="600">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.7"/>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition
+		id="DefensiveClass_BuildingPlacement_Reactive_NearCrawler"
+		BuildingPlacementType="DefenseDefault"
+		CenterAroundDefenseClassTarget="false"
+		BaseBuildingLocation="DEFENSE">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="1.5"/>
+			<EnemyValueNearBaseHeuristic
+				id="HeuristicTag_EnemyValue"
+				Distance="350.0"
+				MinEnemyValue="225">
+				<!-- We want enemy units, crawlers, and structures but we don't care about engineers and builders-->
+				<EnemyFilter
+							Rule="ANY"
+							Include="CAN_ATTACK CRAWLER"
+							Exclude="ENGINEER CAN_ASSEMBLE_STRUCTURE" />
+				<BaseSelectionCriteria
+						RequiredBaseTypes="CRAWLER_BASE"
+						PreferredBaseTypes="UNDER_ATTACK"
+						ExcludedBaseTypes="SPAWN_ZONE"
+						RequireOwner="OWNER_THIS_PLAYER"/>
+			</EnemyValueNearBaseHeuristic>
+		</Heuristic>
+		<ConstructionBaseSelectionCriteria
+				RequiredBaseTypes="CRAWLER_BASE"
+				PreferredBaseTypes="UNDER_ATTACK"
+				ExcludedBaseTypes="SPAWN_ZONE"
+				RequireOwner="OWNER_THIS_PLAYER"
+				SortOrder="PREFER_CLOSEST"/>
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition
+		id="DefensiveClass_BuildingPlacement_Reactive_NearCrawler_Easy"
+		inheritFrom="DefensiveClass_BuildingPlacement_Reactive_NearCrawler">
+		<Heuristic>
+			<EnemyValueNearBaseHeuristic
+				id="HeuristicTag_EnemyValue"
+				Distance="400.0"
+				MinEnemyValue="300">
+			</EnemyValueNearBaseHeuristic>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+	
+</AssetDeclaration>

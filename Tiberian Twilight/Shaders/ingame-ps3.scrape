@@ -1,0 +1,1017 @@
+
+ 
+ 
+ 
+// $todo (WSK): Some of these come from settings in GameLodManager.cpp like pc/xenon
+#define FrameRenderTargetTextureFormat A16B16G16R16F_TILED 
+#define WaterReflectionSize 512
+#define WaterReflectionFormat A16B16G16R16F_TILED
+#define EnvironmentDestinationTextureSize 128
+#define EnvironmentDestinationTextureFormat A8R8G8B8_TILED
+#define CompressedTextureFormat DXT1
+#define OceanDisplacementSize 512
+#define OneOverOceanDisplacementSize 0.001953125
+#define OceanDisplacementFormat A16B16G16R16F_TILED
+#define SasShadowMapSize 1024
+#define BLOOM_HIGH_X $PostEffect.Bloom.TextureSizeHigh.x
+#define BLOOM_HIGH_Y $PostEffect.Bloom.TextureSizeHigh.y
+#define BLOOM_MEDIUM_X $PostEffect.Bloom.TextureSizeMedium.x
+#define BLOOM_MEDIUM_Y $PostEffect.Bloom.TextureSizeMedium.y
+#define BLOOM_LOW_X $PostEffect.Bloom.TextureSizeLow.x
+#define BLOOM_LOW_Y $PostEffect.Bloom.TextureSizeLow.y
+#define BLOOM_TEXTURE_FORMAT A16B16G16R16F_TILED
+
+#define BinCommand_Default 0
+#define BinCommand_RenderParticles 1
+
+// use these defines to turn on/off shadow features
+#define USE_SCREENSPACE_SHADOW 1
+#define USE_HARDWARE_SHADOW 1
+#define USE_SCREENSPACE_SHADOW_BLURRING 1
+
+var camera Viewer
+
+///////////////////////////////////////////////
+// Reference the backbuffer that is allocated
+///////////////////////////////////////////////
+var surface FrameBuffer color0
+var surface FrameBufferDepth currentdepth
+
+/////////////////////////////////
+// Depth Buffers (being shared)
+/////////////////////////////////
+// $todo (WSK) - We need to find a way to reuse/alias the depth between the depth and main pass
+//				  We could try to save about 2mb by using a 1280x1024 D24S8 and use that for all 3 passes (done in Dead Space)
+var texture ZBufferTexture currentdepth
+
+var surface ShadowMapDepthBuffer edramdepth SasShadowMapSize SasShadowMapSize D24S8_TILED
+#if defined(USE_HARDWARE_SHADOW)
+var texture		ShadowMapTexture fromsurface ShadowMapDepthBuffer
+#else // #if defined(USE_HARDWARE_SHADOW)
+var texture		ShadowMapTexture						SasShadowMapSize					SasShadowMapSize					R32F_LINEAR
+#endif // #if defined(USE_HARDWARE_SHADOW)
+
+// source redirects, files can change
+var texturecube EnvironmentSourceTextureObjects fromscope Terrain EnvironmentTexture
+var texturecube EnvironmentSourceTextureWater fromscope WW3D FXOceanCubeMap 
+
+// Bound a scope texture to the OceanDisplaceVertexTexture so we can render into it
+var texture OceanDisplaceVertexTexture fromscope static DisplaceVertexTexture
+
+////////////////////////////
+// Textures (not shareble)
+////////////////////////////
+//				Variable Name							Width								Height								Texture Format
+//				=============							=====								======								==============
+var texture		FrameRenderTarget						$WW3D.FrameBufferSize.x				$WW3D.FrameBufferSize.y				FrameRenderTargetTextureFormat
+var texturecube	EnvironmentDestinationTexture	EnvironmentDestinationTextureSize	EnvironmentDestinationTextureSize	EnvironmentDestinationTextureFormat autogenmipmap
+var texturecube	CompressedEnvironmentDestinationTextureObjects	EnvironmentDestinationTextureSize	EnvironmentDestinationTextureSize	CompressedTextureFormat autogenmipmap
+var texturecube	CompressedEnvironmentDestinationTextureWater	EnvironmentDestinationTextureSize	EnvironmentDestinationTextureSize	CompressedTextureFormat autogenmipmap
+var texture		BloomTextureHigh0						BLOOM_HIGH_X						BLOOM_HIGH_Y						BLOOM_TEXTURE_FORMAT
+var texture		BloomTextureMedium0						BLOOM_MEDIUM_X						BLOOM_MEDIUM_Y 						BLOOM_TEXTURE_FORMAT
+var texture		BloomTextureLow0						BLOOM_LOW_X							BLOOM_LOW_Y							BLOOM_TEXTURE_FORMAT
+var texture		BloomTextureHigh1						BLOOM_HIGH_X						BLOOM_HIGH_Y						BLOOM_TEXTURE_FORMAT
+var texture		BloomTextureMedium1						BLOOM_MEDIUM_X						BLOOM_MEDIUM_Y 						BLOOM_TEXTURE_FORMAT
+var texture		BloomTextureLow1						BLOOM_LOW_X							BLOOM_LOW_Y							BLOOM_TEXTURE_FORMAT
+var texture     ScreenSpaceShadowTexture				$WW3D.FrameBufferSize.x				$WW3D.FrameBufferSize.y				L8_LIN
+#if defined(USE_SCREENSPACE_SHADOW_BLURRING)
+var texture     ScreenSpaceShadowTextureBlurred			$WW3D.FrameBufferSize.x				$WW3D.FrameBufferSize.y				L8_LIN
+#endif // #if defined(USE_SCREENSPACE_SHADOW_BLURRING)
+
+/////////////////////////////
+// Textures (can be shared)
+/////////////////////////////
+//				Variable Name							Width								Height								Texture Format
+//				=============							=====								======								==============
+var texture		PostEffectFrameBufferTexture			$PostEffect.FrameBufferSize.x		$PostEffect.FrameBufferSize.y		FrameRenderTargetTextureFormat
+// $note (WSK) 2008/12/17 - we can save a transferimage of 1280x720 64bit floating point texture by simply re-arranging the render target PostEffectFrameBufferTexture, using #define of PostEffectFrameRenderTarget to make it less confusing
+#define PostEffectFrameRenderTarget PostEffectFrameBufferTexture
+var texture		WaterReflectionTexture					WaterReflectionSize					WaterReflectionSize					WaterReflectionFormat
+var texture		OceanDisplacementTexture				OceanDisplacementSize				OceanDisplacementSize				OceanDisplacementFormat
+// $note (WSK) 2008/10/08 - We can share between the water reflection texture and the ocean displacement texture during the blurring process because the size and format is exactly the same.
+#define	OceanDisplacementTexture2 WaterReflectionTexture
+var texture DistortionOffsetTexture fromsurface FrameBuffer
+var texture OutlineTextureFill fromsurface FrameBuffer
+#define OutlineTextureFillBlur PostEffectFrameBufferTexture
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Define textures that are not in the normal art pipeline
+//////////////////////////////////////////////////////////////////////////////
+
+var texture FXDistortionFractal FXDistortionFractal01
+var texturecube FXOceanCubeMap FXOceanCubeMap
+var texture FXJapanBuildMask FXJapanBuildMask
+var texture FXChronoRift FXChronoRift
+var texture FXIronCurtain FXIronCurtain
+var texture FXLightningTeslaHit FXLightningTeslaHit
+var texture FXFilmLut FXFilmLut
+
+proc initCustomTextures
+	settexture WW3D FXDistortionFractal FXDistortionFractal // SasBindAddress = "WW3D.FXDistortionFractal"
+	settexture WW3D FXOceanCubeMap FXOceanCubeMap // SasBindAddress = "WW3D.FXOceanCubeMap"
+	settexture WW3D FXJapanBuildMask FXJapanBuildMask // SasBindAddress = "WW3D.FXJapanBuildMask"
+	settexture WW3D FXChronoRift FXChronoRift // SasBindAddress = "WW3D.FXChronoRift"
+	settexture WW3D FXIronCurtain FXIronCurtain // SasBindAddress = "WW3D.FXIronCurtain"
+	settexture WW3D FXLightningTeslaHit FXLightningTeslaHit // SasBindAddress = "WW3D.FXLightningTeslaHit"
+	settexture PostEffect LookupTable.FilmTonemapping FXFilmLut
+endproc
+
+//////////////////////
+// Common render bin
+//////////////////////
+
+// Helper functions for rendering bin collections
+proc renderBinsUnit
+	renderbin UnitPlayer0
+	renderbin UnitPlayer1
+	renderbin UnitPlayer2
+	renderbin UnitPlayer3
+	renderbin UnitPlayer4
+	renderbin UnitPlayer5
+	renderbin UnitPlayer6
+	renderbin UnitPlayer7
+	renderbin UnitPlayer8
+	renderbin UnitPlayer9
+	renderbin UnitPlayer10
+	renderbin UnitPlayer11
+	renderbin UnitPlayer12
+	renderbin UnitPlayer13
+	renderbin UnitPlayer14
+	renderbin UnitPlayer15
+	renderbin UnitPlayer16
+	renderbin UnitPlayer17
+	renderbin UnitPlayer18
+	renderbin UnitPlayer19
+endproc
+
+proc renderBinsStaticSort
+	// Static sorting rendering goes from high to low, so that the lower numbers are in-front of the higher ones
+//	renderbin StaticSort5  //This is now used for underwater sorting - MJ
+	renderbin StaticSort4
+	renderbin StaticSort3
+	renderbin StaticSort2
+	renderbin StaticSort1
+endproc
+
+proc renderBinsStructureOutline
+	renderbin StructureOutlineSelected
+	renderbin StructureOutlineHoverAttack
+	renderbin StructureOutlineHoverSelect
+endproc
+	
+proc renderBinsUnitOutline
+	renderbin UnitOutlineSelected
+	renderbin UnitOutlineHoverAttack
+	renderbin UnitOutlineHoverSelect
+endproc	
+
+
+////////////////////////////
+// Rotated Environment Map
+////////////////////////////
+var shader RotateEnvironmentMapShader RotateEnvironmentMap.fx
+
+proc doRotateEnvironmentMapWater
+
+	beginevent DoRotateEnvironmentMapWater
+
+		// set source
+		settexture Environment SourceTexture EnvironmentSourceTextureWater
+
+		setdepth NULL
+
+		// iterate over all cubemap faces
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 0
+		setshader RotateEnvironmentMapShader CubeFace0
+		renderquad
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 1
+		setshader RotateEnvironmentMapShader CubeFace1
+		renderquad
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 2
+		setshader RotateEnvironmentMapShader CubeFace2
+		renderquad
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 3
+		setshader RotateEnvironmentMapShader CubeFace3
+		renderquad
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 4
+		setshader RotateEnvironmentMapShader CubeFace4
+		renderquad
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 5
+		setshader RotateEnvironmentMapShader CubeFace5
+		renderquad
+
+	endevent DoRotateEnvironmentMap
+
+endproc
+
+proc doRotateEnvironmentMapObjects
+
+	beginevent DoRotateEnvironmentMapObjects
+
+		// set source
+		settexture Environment SourceTexture EnvironmentSourceTextureObjects
+
+		setdepth NULL
+
+		// iterate over all cubemap faces
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 0
+		setshader RotateEnvironmentMapShader CubeFace0
+		renderquad
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 1
+		setshader RotateEnvironmentMapShader CubeFace1
+		renderquad
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 2
+		setshader RotateEnvironmentMapShader CubeFace2
+		renderquad
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 3
+		setshader RotateEnvironmentMapShader CubeFace3
+		renderquad
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 4
+		setshader RotateEnvironmentMapShader CubeFace4
+		renderquad
+
+		settarget 0 EnvironmentDestinationTexture EnvironmentDestinationTexture 5
+		setshader RotateEnvironmentMapShader CubeFace5
+		renderquad
+
+	endevent DoRotateEnvironmentMap
+
+endproc
+
+proc doRotateEnvironmentMaps
+
+	// This is slow, but environmental refresh only happens at the beginning of a level, or when the time of day changes.
+	// This procdure is done in 3 passes, to save memory (needs only 1 uncompressed buffer)
+	// 1st pass - set up rendering of the water env map
+	// 2nd pass - compress the rendered water env map, set up rendering of the object env map
+	// 3rd pass - compress the rendered obj env map
+
+	// 3rd pass
+	if WW3D EnvironmentMapCompressionStep2Ready
+		compresstexture EnvironmentDestinationTexture CompressedEnvironmentDestinationTextureObjects
+		setbool WW3D EnvironmentMapCompressionStep2Ready false
+	endif
+
+	// 2nd pass
+	if WW3D EnvironmentMapCompressionStep1Ready
+		compresstexture EnvironmentDestinationTexture CompressedEnvironmentDestinationTextureWater
+		setbool WW3D EnvironmentMapCompressionStep1Ready false
+
+		setcamera Viewer
+		callproc doRotateEnvironmentMapObjects
+		setbool WW3D EnvironmentMapCompressionStep2Ready true
+	endif
+	
+	// 1st pass
+	// only refresh when changing
+	if WW3D MustRefreshEnvironment
+		setbool WW3D MustRefreshEnvironment false
+		setcamera Viewer
+		callproc doRotateEnvironmentMapWater
+			
+		// do the compression pass on the next frame
+		setbool WW3D EnvironmentMapCompressionStep1Ready true
+	endif
+
+	settexture Objects LightSpaceEnvironmentMap CompressedEnvironmentDestinationTextureObjects
+	settexture Water LightSpaceEnvironmentMap CompressedEnvironmentDestinationTextureWater
+endproc
+
+///////////////////////
+// Ocean Displacement
+///////////////////////
+var shader OceanDisplacementShader OceanDisplacement.fx
+var shader Render2D Render2D.fx
+var texture StaticOceanDisplacementTexture Octave3_NRM
+var camera OceanDisplacement
+
+proc updateOceanDisplacement
+
+    settexture Water StaticDisplacementTexture StaticOceanDisplacementTexture
+
+	if Water IsReflectionVisible
+		beginevent UpdateWaterDisplacement
+		
+			setfloat Water DisplacementTextureSize OceanDisplacementSize
+			setfloat Water OneOverDisplacementTextureSize OneOverOceanDisplacementSize
+			
+			// Render the ocean displacement texture
+			settarget 0 OceanDisplacementTexture OceanDisplacementTexture
+			setdepth NULL
+
+			// Clear the color surface			
+			setshader Render2D Black
+			renderquad
+
+			setcamera OceanDisplacement
+			
+			renderWaterDisplacement
+			
+			renderbin OceanDisplacement
+			renderbin OceanDisplacement BinCommand_RenderParticles
+
+			beginevent StaticDisplacement
+				setshader OceanDisplacementShader StaticDisplacement
+				renderquad
+			endevent StaticDisplacement
+
+			beginevent WaterDisplacementBlurU
+				// Blurring in the U direction
+				settexture Water DisplacementTexture OceanDisplacementTexture
+				settarget 0 OceanDisplacementTexture2 OceanDisplacementTexture2
+				setshader OceanDisplacementShader BlurU
+				renderquad
+			endevent WaterDisplacementBlurU
+
+			beginevent WaterDisplacementBlurV
+				// Blurring in the V direction
+				settexture Water DisplacementTexture OceanDisplacementTexture2
+				settarget 0 OceanDisplacementTexture OceanDisplacementTexture
+				setshader OceanDisplacementShader BlurV
+				renderquad
+			endevent WaterDisplacementBlurV
+
+			// Set the resulting texture as our displacement texture
+			settexture Water DisplacementTexture OceanDisplacementTexture
+
+			beginevent UpdateDisplacementVertexTexture
+				// Downsample the texture into vertex stream
+				settarget 0 OceanDisplaceVertexTexture OceanDisplaceVertexTexture
+				setshader OceanDisplacementShader Downsample
+				renderquad
+			endevent UpdateDisplacementVertexTexture
+
+		endevent UpdateWaterDisplacement
+
+	endif
+
+endproc
+
+
+////////////////
+// Shadow pass
+////////////////
+var camera ShadowMap
+
+proc renderShadowCasters
+	if DebugToggle BaselineRendering.IsEnabled
+		if DebugToggle TerrainCaster.IsEnabled
+ 			renderTerrain 
+		endif
+	endif
+
+	// Render cliffs, sea walls, road segments over terrain but below scorch marks
+	// $note (WSK) 2008/11/24 - Disable rendering of TerrainLikeGroundObject during shadowmap pass because
+	//							1) Create the bias pattern on the ground, we could raise the z-bias, but then objects would appeared to be more floating
+	//							2) For cliffs, the shadow it casted right now looks wierd anyway, because we don't render the terrain during the shadowmap, 
+	//								the shadow it created has "holes", for an exmaple of this, check CAMP_S06_Iceland_Bass on 360. I think it look a little
+	//								less wrong when the cliff also doesn't cast shadow.
+	//							3) Less objects to draw during shadow pass = faster FPS
+//	renderbin TerrainLikeGroundObject
+
+	renderbin Bridge
+	
+	if DebugToggle BaselineRendering.IsEnabled
+		renderProps
+	endif
+
+	beginevent RenderCasters_Units
+		callproc renderBinsUnit
+		callproc renderBinsUnitOutline
+	endevent RenderCasters_Units
+
+	renderbin Solid
+
+	if DebugToggle StructureCaster.IsEnabled
+		beginevent RenderCasters_Structures
+			renderbin Structure
+			callproc renderBinsStructureOutline
+		endevent RenderCasters_Structures
+	endif
+
+	renderbin StaticSort5 					// Underwater Sorting
+	callproc renderBinsStaticSort
+	renderbin Transparent
+	renderTransparentOutlineObjects
+
+endproc
+
+proc updateShadowTexture
+	if Sas ShadowMappingEnabled
+
+		beginevent UpdateShadowMap
+
+			shadowMap.beginUpdate
+			beginShadowOverrideTechnique
+
+				// Setup the color rendertarget
+				settarget 0 ShadowMapTexture ShadowMapTexture
+
+				// Setup the shadowmap depth buffer
+				setdepth ShadowMapDepthBuffer
+				setcleardepth       1.0
+				clearz
+
+#if defined(USE_HARDWARE_SHADOW)
+				// $note (WSK) 2008/12/16 - RNA rely on using settarget 0 for a lot of the rendering setup, 
+				//							would be nice if we can skip this setting and clearing or replace with some custom commands
+				cleartarget 0
+#else // #if defined(USE_HARDWARE_SHADOW)
+				// Clear the 32F render target
+				setshader Render2D White
+				renderquad
+#endif // #if defined(USE_HARDWARE_SHADOW)
+				
+				setcamera ShadowMap
+				visibleobjects ShadowMap
+				
+				callproc renderShadowCasters
+
+			endShadowOverrideTechnique
+			shadowMap.endUpdate
+
+			// Bind the texture to the scope variable		
+			settexture Sas Shadow[0].ShadowMap ShadowMapTexture
+	
+		endevent UpdateShadowMap
+	endif // Sas ShadowMappingEnabled
+endproc
+
+
+///////////////
+// Depth pass
+///////////////
+proc renderDepthCasters
+	renderTerrain 
+#if defined(USE_SCREENSPACE_SHADOW)
+	// We need accurate depth info so we need to render road that cover the terrains
+	renderbin TerrainLikeGroundObject
+#endif // #if defined(USE_HARDWARE_SHADOW)
+
+	renderbin Bridge
+	renderProps
+
+	beginevent RenderCasters_Units
+		callproc renderBinsUnit
+		callproc renderBinsUnitOutline
+	endevent RenderCasters_Units
+
+	renderbin Solid
+
+	beginevent RenderCasters_Structures
+		renderbin Structure
+		callproc renderBinsStructureOutline
+	endevent RenderCasters_Structures
+
+	renderbin StaticSort5 					// Underwater Sorting
+	callproc renderBinsStaticSort
+	renderbin Transparent
+	renderTransparentOutlineObjects
+endproc
+
+
+proc updateDepthMap
+	beginevent UpdateDepthMap
+		beginDepthOverrideTechnique
+
+			settarget 0 FrameRenderTarget FrameRenderTarget
+			setdepth FrameBufferDepth
+			// $note (WSK) 2008/12/16 - RNA rely on using settarget 0 for a lot of the rendering setup, 
+			//							would be nice if we can skip this setting and clearing or replace with some custom commands
+			cleartarget 0
+
+			// Clear the depth buffer			
+			setcleardepth       1.0
+			clearz
+			
+			// Setting up the the camera (should be same as main pass)
+			setcamera Viewer
+			visibleobjects DepthMap
+			
+			// Render all the objects in depth pass
+			callproc renderDepthCasters
+
+		endDepthOverrideTechnique
+
+		// $note (WSK) 2008/09/25 - On PS3, we could simply point our depth texture to where the depth buffer is and resample it as A8R8G8B8_LIN with texDepth2D()
+		settexture WW3D DepthTexture ZBufferTexture
+
+	endevent UpdateDepthMap
+endproc
+
+/////////////////////
+// Water Reflection
+/////////////////////
+var camera Reflection
+
+proc updateWaterReflection
+	if Water IsReflectionVisible
+		// Set visible objects to Reflection (without this since debug build crash without setting this first prior to the very first update ocean displacement
+		setcamera Reflection
+		visibleobjects Reflection
+
+		// Update ocean displacement map
+		callproc updateOceanDisplacement
+		
+		beginevent UpdateWaterReflection
+			
+			// We shouldn't render the soft particles when doing the reflection because we don't 
+			// have a depth buffer from the water's perspective.
+			setbool Particle ReallyRenderSoftParticles false
+
+			// Note: we can re-use the frame buffer depth (1280x720) since it's bigger than the reflection size (512x512)
+			setdepth FrameBufferDepth
+			settarget 0 WaterReflectionTexture WaterReflectionTexture
+
+			// Clear the color surface			
+			setshader Render2D Black
+			renderquad
+			
+			// Clear the depth
+			setcleardepth       1.0
+			clearz
+
+			// We need to set the camera again, because updateOceanDisplacement set a different camera
+			setcamera Reflection
+			
+			if DebugToggle BaselineRendering.IsEnabled
+				if DebugToggle TerrainReflection.IsEnabled
+					renderTerrain
+				endif
+
+				// Render cliffs, sea walls, road segments over terrain but below scorch marks
+				renderbin TerrainLikeGroundObject
+			endif
+
+			renderbin Bridge
+			
+	        beginevent RenderCasters_Units
+			    callproc renderBinsUnit
+			    callproc renderBinsUnitOutline
+	        endevent RenderCasters_Units
+
+			if DebugToggle BaselineRendering.IsEnabled
+				renderbin Solid
+			endif
+
+			if DebugToggle BaselineRendering.IsEnabled
+				if DebugToggle StructureReflection.IsEnabled
+					beginevent RenderCasters_Structures
+						renderbin Structure
+						callproc renderBinsStructureOutline
+					endevent RenderCasters_Structures
+				endif
+			endif
+
+			renderbin StaticSort5 // Underwater Sorting
+			callproc renderBinsStaticSort
+			renderbin Transparent
+			renderParticles
+			renderTracers
+			renderLasers
+			renderStreams
+			renderConnectionLines
+					
+			settexture Water ReflectionTexture WaterReflectionTexture
+			
+			setbool Particle ReallyRenderSoftParticles true
+			
+		endevent UpdateWaterReflection
+	endif // if Water IsReflectionVisible
+endproc
+
+proc updateWaterRefraction
+	if Water IsRefractionVisible
+		// Copy current contents of frame buffer into a screen sized texture
+		transferimage PostEffectFrameBufferTexture FrameRenderTarget local2local
+		settexture Water RefractionTexture PostEffectFrameBufferTexture
+	endif
+endproc
+
+///////////////
+// Underwater
+///////////////
+var shader UnderwaterDeferredShader UnderwaterDeferred.fx
+var texture DepthLutTexture FXDepthLut
+var texture CausticsTexture FXCaustics
+
+proc renderUnderwaterDeferred
+	settexture Water DepthLutTexture DepthLutTexture
+	settexture Water CausticsTexture CausticsTexture
+
+	if Water IsReflectionVisible
+		beginevent RenderUnderwaterDeferred
+		
+		setshader UnderwaterDeferredShader Tint
+		renderquad
+
+		// $todo (WSK) 2008/09/25 - Caustics required Directional Light
+//		if DebugToggle RenderCaustics.IsEnabled
+//			setshader UnderwaterDeferredShader Caustics
+//			renderquad
+//		endif
+
+		endevent RenderUnderwaterDeferred
+	endif
+endproc
+
+
+////////////////
+// PostEffects
+////////////////
+var shader PostEffectDistortionShader PostFX_Distortion.fx
+
+proc PostEffectDistortion
+		beginevent UpdatePostFXDistortion
+
+		settarget 0 DistortionOffsetTexture DistortionOffsetTexture
+
+		setclearcolor 0.5 0.5 1 1
+		clearcolor // leave z unchanged!
+		
+		renderbin Distorter
+	
+		renderbin Distorter BinCommand_RenderParticles
+
+		renderDistortionLasers
+		//TODO: renderDistortionStreams
+
+		settarget 0 PostEffectFrameRenderTarget PostEffectFrameRenderTarget
+
+		settexture PostEffect FrameBufferTexture FrameRenderTarget
+		settexture PostEffect Distortion.DistortionOffsetTexture DistortionOffsetTexture
+		
+		setshader PostEffectDistortionShader Default
+		renderquad
+		
+		endevent UpdatePostFXDistortion
+endproc
+
+var shader PostEffectMSAAShader PostFX_MSAA.fx
+
+proc PostEffectMSAA
+	beginevent UpdatePostFXMSAA
+		settarget 0 PostEffectFrameBufferTexture PostEffectFrameBufferTexture
+
+		settexture PostEffect FrameBufferTexture FrameRenderTarget
+		setshader PostEffectMSAAShader AntiAlias
+		renderquad
+		transferimage FrameRenderTarget PostEffectFrameBufferTexture local2local
+
+		settarget 0 FrameRenderTarget FrameRenderTarget
+	endevent UpdatePostFXMSAA
+endproc
+
+var shader PostEffectLookupTableShader PostFX_LookupTable.fx
+
+proc PostEffectLookupTable
+	beginevent UpdatePostFXLookupTable
+		// Set render target back to back buffer
+		settarget 0 FrameBuffer
+
+		settexture PostEffect FrameBufferTexture PostEffectFrameRenderTarget
+
+		// Setup the shader depending whether lookup table is enabled
+		if PostEffect LookupTable.IsEnabled
+			setshader PostEffectLookupTableShader Default
+		else
+			setshader PostEffectLookupTableShader ResolveOnly
+		endif
+
+		renderquad
+	endevent UpdatePostFXLookupTable
+endproc
+
+var shader PostEffectBloomShader PostFX_Bloom.fx
+
+proc PostEffectBloom
+	if PostEffect Bloom.IsEnabled
+		beginevent UpdatePostFXBloom
+
+		// Turn off depth
+		setdepth NULL
+
+		// Downsample to high res texture
+		settexture PostEffect Bloom.SourceTexture PostEffectFrameRenderTarget
+		settosize PostEffect Bloom.SourceTextureSize PostEffectFrameRenderTarget
+
+		settarget 0 BloomTextureHigh0 BloomTextureHigh0
+		settosize PostEffect Bloom.TargetTextureSize BloomTextureHigh0
+
+		setshader PostEffectBloomShader DownsampleInitial
+		renderquad
+
+		// Downsample to medium res texture
+		settexture PostEffect Bloom.SourceTexture BloomTextureHigh0
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureHigh0
+
+		settarget 0 BloomTextureMedium0 BloomTextureMedium0
+		setshader PostEffectBloomShader Downsample4x4
+		renderquad
+
+		// Downsample to low res texture
+		settexture PostEffect Bloom.SourceTexture BloomTextureMedium0
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureMedium0
+
+		settarget 0 BloomTextureLow0 BloomTextureLow0
+		setshader PostEffectBloomShader Downsample4x4
+		renderquad
+
+		// Blur low res texture
+		settexture PostEffect Bloom.SourceTexture BloomTextureLow0
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureLow0
+
+		settarget 0 BloomTextureLow1 BloomTextureLow1
+
+		setshader PostEffectBloomShader BlurGaussian11x11U
+		renderquad
+
+		settarget 0 BloomTextureLow0 BloomTextureLow0
+
+		settexture PostEffect Bloom.SourceTexture BloomTextureLow1
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureLow1
+
+		setshader PostEffectBloomShader BlurGaussian11x11V
+		renderquad
+
+		// Accumulate low and medium res texture
+		settexture PostEffect FrameBufferTexture BloomTextureMedium0
+		settexture PostEffect Bloom.SourceTexture BloomTextureLow0
+
+		settarget 0 BloomTextureMedium1 BloomTextureMedium1
+
+		setshader PostEffectBloomShader Accumulate
+		renderquad
+
+		// Blur medium res texture
+		settexture PostEffect Bloom.SourceTexture BloomTextureMedium1
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureMedium1
+
+		settarget 0 BloomTextureMedium0 BloomTextureMedium0
+		setshader PostEffectBloomShader BlurGaussian11x11U
+		renderquad
+
+		settexture PostEffect Bloom.SourceTexture BloomTextureMedium0
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureMedium0
+
+		settarget 0 BloomTextureMedium1 BloomTextureMedium1
+		setshader PostEffectBloomShader BlurGaussian11x11V
+		renderquad
+
+		// Accumulate medium and high res texture
+		settexture PostEffect FrameBufferTexture BloomTextureHigh0
+		settexture PostEffect Bloom.SourceTexture BloomTextureMedium1
+
+		settarget 0 BloomTextureHigh1 BloomTextureHigh1
+		setshader PostEffectBloomShader Accumulate
+		renderquad
+
+		// Blur high res texture
+		settexture PostEffect Bloom.SourceTexture BloomTextureHigh1
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureHigh1
+
+		settarget 0 BloomTextureHigh0 BloomTextureHigh0
+		setshader PostEffectBloomShader BlurGaussian11x11U
+		renderquad
+
+		settexture PostEffect Bloom.SourceTexture BloomTextureHigh0
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureHigh0
+
+		settarget 0 BloomTextureHigh1 BloomTextureHigh1
+		setshader PostEffectBloomShader BlurGaussian11x11V
+		renderquad
+
+		// Reset render target to screen
+		// $note (WSK) - We are using additive blend from the smaller buffer and draw it on screen, 
+		//					this avoid the need to blend with the full framebuffer as done on PC/Xenon
+		settarget 0 PostEffectFrameRenderTarget PostEffectFrameRenderTarget
+		settexture PostEffect Bloom.SourceTexture BloomTextureHigh1
+		setshader PostEffectBloomShader AccumulateFinalAdditive
+		renderquad
+
+		// Restore the depth buffer
+		setdepth FrameBufferDepth
+
+		endevent UpdatePostFXBloom
+	endif
+endproc
+
+proc renderPostEffects
+    beginevent RenderPostEffects
+//		callproc PostEffectMSAA
+	    callproc PostEffectDistortion
+	    callproc PostEffectBloom
+	    callproc PostEffectLookupTable
+    endevent RenderPostEffects
+endproc
+
+////////////
+// Outline
+////////////
+var shader OutlinesShader	Outlines.fx
+
+proc renderOutlines
+	if WW3D Outline.IsEnabled
+		beginevent RenderOutlines
+
+		// Clear the OutlineTextureFill to black
+		setdepth FrameBufferDepth
+		settarget 0 OutlineTextureFill OutlineTextureFill
+
+		setclearcolor 0 0 0 0
+		clearcolor
+
+		setcamera Viewer
+		
+		// fill all of the outline areas
+		if WW3D Outline.IsSelectedBinPopulated
+			setshader OutlinesShader FillSelected
+			renderquad
+		endif
+		if WW3D Outline.IsHoverSelectBinPopulated
+			setshader OutlinesShader FillHoverSelect
+			renderquad
+		endif		
+		if WW3D Outline.IsHoverAttackBinPopulated
+			setshader OutlinesShader FillHoverAttack
+			renderquad
+		endif
+
+		// Blur the selection texture
+		setdepth NULL
+		settarget 0 OutlineTextureFillBlur OutlineTextureFillBlur
+
+        settexture WW3D Outline.Texture OutlineTextureFill
+		setshader OutlinesShader BlurBox
+		renderquad
+
+		// restore the frame buffer target
+		setdepth FrameBufferDepth
+		settarget 0 FrameRenderTarget FrameRenderTarget
+
+		// Draw outlines over the frame buffer, filtering out all the interior areas 
+		settexture WW3D Outline.Texture OutlineTextureFillBlur
+		setshader OutlinesShader DrawWithStencil
+		renderquad
+
+		endevent RenderOutlines
+	endif
+endproc
+
+////////////////////////
+// Screen Space Shadow
+////////////////////////
+var shader ScreenSpaceShadowShader Shadow.fx
+proc updateScreenSpaceShadow
+#if defined(USE_SCREENSPACE_SHADOW)
+	beginevent UpdateScreenSpaceShadow
+		setdepth FrameBufferDepth
+		settarget 0 ScreenSpaceShadowTexture ScreenSpaceShadowTexture
+
+		setshader ScreenSpaceShadowShader ScreenSpaceShadow
+		renderquad
+
+#if defined(USE_SCREENSPACE_SHADOW_BLURRING)
+		// Blur the screenspace shadow
+		settarget 0 ScreenSpaceShadowTextureBlurred ScreenSpaceShadowTextureBlurred
+        settexture WW3D ScreenSpaceShadowTexture ScreenSpaceShadowTexture
+		setshader ScreenSpaceShadowShader ScreenSpaceShadowBlurBox
+		renderquad
+
+		settexture Sas ScreenSpaceShadow ScreenSpaceShadowTextureBlurred
+#else // #if defined(USE_SCREENSPACE_SHADOW_BLURRING)
+		settexture Sas ScreenSpaceShadow ScreenSpaceShadowTexture
+#endif // #if defined(USE_SCREENSPACE_SHADOW_BLURRING)
+	endevent UpdateScreenSpaceShadow
+#endif // #if defined(USE_SCREENSPACE_SHADOW)
+endproc
+
+////////////
+// Shroud
+////////////
+#include "ShroudEffect.scrapeh"
+ 
+///////////////////////
+// InGame main script
+///////////////////////
+proc InGame
+	// $note (WSK) - uncomment this if you need to launch from command line.
+	setbool Sas ShadowMappingEnabled true
+
+	callproc initCustomTextures
+	callproc updateShroudTexture
+
+	setGlobalLightInfo
+
+	setfragmentshader ON
+	callproc updateShadowTexture
+	callproc doRotateEnvironmentMaps
+	callproc updateWaterReflection
+	callproc updateDepthMap
+	callproc updateScreenSpaceShadow
+	setfragmentshader OFF
+
+	beginevent UpdateFrameBuffer
+	
+		setcamera Viewer
+		visibleobjects Frame
+
+		// Set render target to offscreen buffer
+		setdepth FrameBufferDepth
+		settarget 0 FrameRenderTarget FrameRenderTarget
+
+		// Since we are using a floating point target, we have to clear the screen manually
+		setshader Render2D Black
+		renderquad
+
+		setfragmentshader ON
+		renderTerrain
+		GPUFLUSH
+
+		renderRoads
+
+		// Render cliffs, sea walls, road segments over terrain but below scorch marks
+		renderbin TerrainLikeGroundObject
+		setfragmentshader OFF
+
+		renderScorchMarks
+
+   	   	renderTerrainTracks
+		
+		// Bridges go above terrain, but below decals
+		renderbin Bridge
+
+		renderProps
+		
+		setfragmentshader ON
+		renderUnits
+
+		// Regular unassigned objects
+		renderbin Solid
+
+		renderStructures
+		setfragmentshader OFF
+
+		renderbin StaticSort5 // Underwater Sorting
+
+		beginevent RenderUnderwater
+			// Apply underwater deferred shading, based on screen-depth texture
+			callproc renderUnderwaterDeferred
+
+			// Render transparent objects and particles that should be under water and apply non-deferred underwater-like shading themselves
+			renderbin Underwater
+			renderbin Underwater BinCommand_RenderParticles
+		endevent RenderUnderwater
+
+		callproc updateWaterRefraction
+		renderWater
+
+		renderDecals
+
+		renderbin Transparent
+
+		renderTransparentOutlineObjects
+
+		callproc renderOutlines	// render outlines onto the screen
+
+//		renderBehindBuildingMarkers
+
+		callproc renderBinsStaticSort
+
+		renderParticles
+
+		renderTerrainUI
+		renderTracers
+		renderLasers
+		renderConnectionLines
+		renderRain
+
+		callproc renderShroudEffect						
+
+		callproc renderPostEffects // PostEffects will change current render target to be FrameBuffer
+
+//		renderDebugSystems
+//		renderTileFeedback
+
+		renderIconLayers
+		renderUI
+
+		renderDebugDisplays
+
+	
+	endevent UpdateFrameBuffer
+
+endproc
+

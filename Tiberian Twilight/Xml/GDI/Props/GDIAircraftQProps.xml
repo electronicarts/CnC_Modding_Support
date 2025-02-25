@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Art Includes -->
+		<Include type="all"	source="ART:GUM_AircraftQ_SKN.w3x" />
+		<Include type="all"	source="ART:GUM_AircraftQ_AIDD.w3x" />
+		<!-- Data Includes -->
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+	</Includes>
+
+	<Defines>
+		<Define
+			name="GDIAIRCRAFTQ_DAMAGE_BONE_NAMES"
+			value="
+				BONE_CONTACT_POINT_01
+				BONE_CONTACT_POINT_02
+				BONE_CONTACT_POINT_03
+				BONE_CONTACT_POINT_04
+				BONE_CONTACT_POINT_05
+				BONE_CONTACT_POINT_06
+				BONE_CONTACT_POINT_07
+				"/>
+	</Defines>
+	
+	<!-- //////////////////////////////////////	-->
+	<!--		GAME OBJECTS												-->
+	<!-- //////////////////////////////////////	-->
+
+	<!--    /////////////////////////////////////   -->
+	<!--		The Collapsing ship which falls					-->
+	<!--		from the sky when the unit is killed		-->
+	<GameObject
+		id="GDIAircraftQ_Dying"
+		EditorName="GDIAircraftQ_Dying"
+		Description="Desc:GDIAircraftQ_Dying"
+		Side="GDI"
+		KindOf="=$BASE_DYING_AIRCRAFT_KINDOF">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				ExtraPublicBone="=$GDIAIRCRAFTQ_DAMAGE_BONE_NAMES">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUM_AircraftQ_SKN" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GUM_AircraftQ_AIDD"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.2"
+						AnimationSpeedFactorMax="0.2" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+				
+			<Physics
+				id="ModuleTag_Physics"
+				TumbleRandomly="true"
+				MaxXRotationVelocity="25"
+				MaxYRotationVelocity="5"
+				MaxZRotationVelocity="0"
+				KillWhenRestingOnGround="true"/>
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_GDIVehicleLRG_Explode" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Aircraft_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			
+			<FireWeaponWhenDead
+				id="ModuleTag_DeathWeapon"
+				DeathWeapon="GDIDyingAircraft_DeathWeapon_Large"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<!-- Needed to copy damage from the original object during a swap -->
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				AssociatedModule="ModuleTag_MainDrawModule">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="100.0"
+					FX="FX_GDIVehicleL_Damage"/>
+			</BuildingDestructionBehavior>
+			
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="Tag_PropBody"/>
+		</Body>
+
+		<xi:include	href="DATA:GDI/Includes/GDIAircraftQGeometry.xml" />
+
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+	<!--		The Rocket Projectile for the aircraft		-->
+	<GameObject
+		id="GDIAircraftQRocketProjectile"
+		inheritFrom="BaseTargetableProjectile"
+		Side="GDI"
+		KindOf="+DEFLECT_BY_SPECIAL_POWER"
+		EditorSorting="SYSTEM"
+		EditorName="GDIAircraftQRocketProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GDIRocketMedium" />
+					<!--
+					<ParticleSysBone
+						BoneName="NONE"
+					-->
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_Trail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_TrailThin"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_GDI_Hammerhead_AirQ_RocketImpactExplosion_AudioOnly" /> <!-- audio only, please add visuals to another Event, thanks -->
+			</FXListBehavior>
+			
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="1"
+				FirstHeightMax="1"
+				SecondHeightMin="5"
+				SecondHeightMax="5"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				GroundHitFX="FX_GDIRocketMediumMiss"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH"
+				SidewaysDrift="25"
+				FlightPathAdjustDistPerSecond="300.0" />
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="GDIAircraftQRocketProjectile_Veteran"
+		inheritFrom="GDIAircraftQRocketProjectile"
+		EditorName="GDIAircraftQRocketProjectile_Veteran">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				xai:joinAction="Replace">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GDIRocketMedium_Veteran" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_Trail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_TrailThin"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="1"
+				FirstHeightMax="1"
+				SecondHeightMin="5"
+				SecondHeightMax="5"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				GroundHitFX="FX_GDIRocketMediumMiss_Veteran"
+				SidewaysDrift="25"
+				FlightPathAdjustDistPerSecond="300.0"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH">
+			</BezierProjectile>
+		</Behaviors>
+	</GameObject>
+
+</AssetDeclaration>

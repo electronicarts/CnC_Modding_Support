@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+
+	<!-- What do we do if our normal algorithm cannot place a building? -->
+	<xs:simpleType name="SkirmishAIPlacementFailureAction">
+		<xs:restriction base="xs:string">
+			<!-- The RA3 default: If the normal placement system fails, do an exhaustive search over the entire map for 
+				   somewhere to place the building. If that fails, cancel the build -->
+			<xs:enumeration value="FULL_SEARCH_THEN_CANCEL" /> 
+			
+			<!-- For C&C4: If the normal placement system fails, just hold the building & try again later -->
+			<xs:enumeration value="HOLD_BUILDING" />
+		</xs:restriction>
+	</xs:simpleType>		 
+
+	<xs:simpleType name="SkirmishAIBaseLocation">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FRONT" />
+			<xs:enumeration value="SIDE" />
+			<xs:enumeration value="BACK" />
+			<xs:enumeration value="SPREAD" />
+			<xs:enumeration value="DELETEME" />
+			<xs:enumeration value="CENTER" />
+			<xs:enumeration value="DEFENSE" />
+			<xs:enumeration value="NEAR_RESOURCE_NODE" /> <!-- Type of resource given by NearResourceNodeType. -->
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="EconomyResourceType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TIBERIUM" />
+			<xs:enumeration value="ORE" />
+			<xs:enumeration value="SIGMA"/>
+			<xs:enumeration value="ENERGY" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="AIBuildingPlacementStateDefinition" xas:runtimeWrapper="::AIBuildingPlacementState" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="AIStateDefinition">
+				<xs:sequence>
+					<!-- Only for structure placement. Note: For type NEAR_RESOURCE_NODE, this is used only if the refinery cannot be placed next 
+						   to a resource node and just gets placed in a base like a normal building -->
+					<xs:element name="ConstructionBaseSelectionCriteria" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1" />
+
+					<!-- Only for NEAR_RESOURCE_NODE structure placement. We first place NEAR_RESOURCE_NODE buildings near resource
+						   nodes which are close to bases (and far from other refineries). The first base returned from this criteria
+							 is the one considered closest to the node, so the node closest to that base is the one that will be chosen.
+							 It is **HIGHLY** recommended that all NEAR_RESOURCE_NODE structures has this elements and that the SortOrder
+							 is always set to PREFER_CLOSEST. Otherwise very odd things will happen. -->
+					<xs:element name="ResourceNodeBaseClosenessTestSelectionCriteria" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1" />
+
+					<!-- For AI to only place a building within trigger zones. Intented for campaing missions. -->
+					<xs:element name="MustBeWithinTrigger" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+
+				</xs:sequence>
+
+				<!-- Id to match field of same name in SkirmishAIInformation::BuildingPlacementType -->
+				<xs:attribute name="BuildingPlacementType" type="StringHash" use="required"/>
+
+				<xs:attribute name="BaseBuildingLocation" type="SkirmishAIBaseLocation" default="FRONT" />
+				<xs:attribute name="CenterAroundDefenseClassTarget" type="SageBool" default="true" />
+				<xs:attribute name="MaxPlacementDistanceFromDefenseClassTarget" type="SageReal" use="optional" />
+				<xs:attribute name="PlacementFailureAction" type="SkirmishAIPlacementFailureAction" default="HOLD_BUILDING" />
+				<xs:attribute name="BaseBuildingMaxNudges" type="SageInt" default="3" />
+
+				<!-- BlockIfUnpackTargetBuildingCannotBeRebuilt: If the campaign UseStructureRebuild flag is on (only rebuild 
+					structures in the spots where the AI already had a building), AND this object is of type UNPACK_INTO_BUILDING,
+					AND the BlockIfUnpackTargetBuildingCannotBeRebuilt is true, then refuse to construct this object if the
+					building it unpacks into cannot be placed because no AI buildings of the appropriate type have been 
+					destroyed. This is mostly for the AlliedHarvester, which sets this to false so that it can be built
+					even though there are no destroyed AlliedOutpost 'slots' available. -->
+				<xs:attribute name="BlockIfUnpackTargetBuildingCannotBeRebuilt" type="SageBool" default="true" />
+				<xs:attribute name="NearResourceNodeType" type="EconomyResourceType" default="ORE" />
+
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AIBuildingPlacementState">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:attribute name="State" type="AssetReference" xas:refType="AIBuildingPlacementStateDefinition" use="required"/>
+				<xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+			</xs:extension>
+		</xs:complexContent>  
+	</xs:complexType>
+
+</xs:schema>

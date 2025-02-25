@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+
+  </Includes>
+
+  <!-- this will ensure there are always units to defend this base?  -->
+  <AIStrategicStateDefinition
+    id="AIState_A07_J01_Defense"
+    MaxTargets="1">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <Tactic id="Defense" Tactic="ReactiveDefense" Targetless="true">
+      <TeamTemplate MinUnits="3" MaxUnits="3"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS LAND"
+                    Priority="HIGH"
+                    AlwaysRecruit="true"
+                    MicroManager="ReactiveDefenseMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- Attack stuff with what ever is left over after the defense team -->
+  <AIStrategicStateDefinition
+    id="AIState_A07_J01_Attack"
+    MaxTargets="3">
+    <Heuristic>
+      <IntervalHeuristic IntervalTime="60s" ActiveTime="10s" CountFrom="AI_START"/>
+      <TimerHeuristic StartTime="300s" EndTime="-1s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="2"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS LAND"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A07_J01_TatsuFleet_Battleships"
+    MaxTargets="1">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="CloseToShoreStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>JapanAntiStructureShip</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A07_J01_TatsuFleet_Escort"
+    MaxTargets="1">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+       PassIfExists="true">
+        <ObjectFilter
+          Rule="ANY"
+          Relationship="SAME_PLAYER">
+          <IncludeThing>JapanAntiStructureShip</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A07_TatsuFleet" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleDefense" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="5" MaxUnits="9" 
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessDefenseMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A07_J01_TatsuFleet_AttackWater"
+    MaxTargets="1">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterSurfaceUnitHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleDefense" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="5" MaxUnits="9"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>  
+
+</AssetDeclaration>

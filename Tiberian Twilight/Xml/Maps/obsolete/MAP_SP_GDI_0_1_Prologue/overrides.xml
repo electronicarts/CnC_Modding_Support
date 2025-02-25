@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags/>
+	<Includes>
+	
+		<Include
+			source="art:fxrivera_nrm.xml"
+			type="all"/>
+
+		<Include 
+			source = "DATA:System\PlayerSpellBook.xml"
+			type = "instance"/>
+		<Include 
+			source = "DATA:Nod\Units\NodCarryallInfantry.xml"
+			type = "instance"/> <!-- Carryall needs to carry more, 4 hordes -->
+		<Include 
+			source = "DATA:GDI\Units\GDIV35Ox_SummonedForVehicle.xml"
+			type = "instance"/> <!-- Transport needs to carry more, 2 hordes -->
+		<Include 
+			source = "DATA:GlobalData/CnC3\Armor.xml"
+			type = "instance"/> <!-- Need to make structures weak to rockets so the mission is more winnable -->
+		<Include 
+			source = "DATA:GDI\Units\GDIRifleSoldierSquad.xml"
+			type = "instance"/> <!-- No command button abilities for this mission -->
+		<Include 
+			source = "DATA:GDI\Units\GDIMissileSoldierSquad.xml"
+			type = "instance"/> <!-- No command button abilities for this mission -->
+		<Include 
+			source = "DATA:GDI\Units\GDIEngineer.xml"
+			type = "instance"/> <!-- No command button abilities for this mission -->
+		<Include 
+			source = "DATA:GDI\Structures\GDIWallHub.xml"
+			type = "instance"/>
+		<Include 
+			source = "DATA:GDI\Structures\GDIWallSegment.xml"
+			type = "instance"/> <!-- Building walls in this mission breaks things -->			
+		<Include
+			source="DATA:GDI\Structures\GDICommandPost.xml"
+			type="instance"/> <!-- No Command Post powers for the prologue -->
+		<Include
+			source="DATA:GDI\Structures\GDIAirTower.xml"
+			type="instance"/>
+		<Include
+			source="DATA:GDI\Structures\GDIMedicalBay.xml"
+			type="instance"/>
+		<Include
+			source="DATA:GDI\Structures\GDIArmory.xml"
+			type="instance"/>
+		<Include
+			source="DATA:GDI\Structures\GDIPowerPlant.xml"
+			type="instance"/>
+		<Include
+			source="DATA:GDI\Structures\GDIBarracks.xml"
+			type="instance"/>
+		<Include
+			source="DATA:GlobalData/CnC3\Weapon.xml"
+			type="instance"/>
+		<Include
+			source="DATA:GDI\Units\GDIMCV.xml"
+			type="instance"/>
+		<Include
+			source="DATA:NOD\Units\NODMilitantSquad.xml"
+			type="instance"/>
+		<Include
+			source="DATA:NOD\Units\NODMilitantRocketSquad.xml"
+			type="instance"/>
+		<Include
+			source="DATA:GDI\Structures\GDIIonCannonControl.xml"
+			type="instance"/> <!-- No Command Post powers for the prologue -->
+		<Include 
+			source = "DATA:GlobalData/CnC3\SpecialPowerTemplates.xml"
+			type = "instance"/>
+		<Include 
+			source = "DATA:GlobalData/CnC3\LogicCommandSet.xml"
+			type = "instance"/>
+		<Include
+			source="DATA:GDI\Structures\GDIConstructionYard.xml"
+			type="instance"/>
+		<Include
+			source="DATA:GlobalData/CnC3\SpecialPowerTemplates.xml"
+			type="instance"/>
+		<Include
+			source="DATA:Civilian\Buildings\Bridge3.xml"
+			type="instance"/>
+	</Includes>
+	
+	<GameObject
+		id = "NODCarryallInfantry" inheritFrom="NODCarryallInfantry">
+		<Behaviors>
+			<HordeTransportContain
+				id = "ModuleTag_Contain"
+				xai:joinAction="Overwrite"
+				ContainMax = "4"
+				Slots = "4" />
+		</Behaviors>	
+	</GameObject>
+
+	<GameObject
+		id = "GDIV35Ox_SummonedForVehicle" inheritFrom="GDIV35Ox_SummonedForVehicle">
+		<Behaviors>
+			<HordeTransportContain
+				xai:joinAction="Overwrite"
+				id="ModuleTag_Contain"
+				ObjectStatusOfContained="UNSELECTABLE"
+				ContainMax="1"
+				Slots="1"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="true"
+				AllowNeutralInside="true"
+				AllowOwnPlayerInsideOverride="true"
+				ShowPips="true"
+				KillPassengersOnDeath="true"
+				FlyOffMapOnEmpty="true">
+				<PassengerFilter
+					Rule="NONE">
+					<IncludeThing>GDIAPC</IncludeThing>
+					<IncludeThing>GDIPitbull</IncludeThing>
+					<IncludeThing>GDIPredator</IncludeThing>
+					<IncludeThing>GDISurveyor</IncludeThing>
+					<IncludeThing>GDIHarvester</IncludeThing>
+				</PassengerFilter>
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="BONEGARRISON">
+					<Filter
+						Rule="NONE"
+						Include="VEHICLE" />
+				</PassengerData>
+			</HordeTransportContain>
+		</Behaviors>
+	</GameObject>
+<!--
+	<ArmorTemplate		
+		id="NODHandOfNODArmor" 
+		inheritFrom="NODHandOfNODArmor"
+		xai:joinAction="Replace">
+		<Armor
+			Damage="CANNON"
+			Percent="100" />
+		<Armor
+			Damage="ROCKET"
+			Percent="50" />
+		<Armor
+			Damage="GRENADE"
+			Percent="100" />
+		<Armor
+			Damage="GUN"
+			Percent="5" />
+		<Armor
+			Damage="SNIPER"
+			Percent="1" />
+	</ArmorTemplate>
+	
+	<ArmorTemplate
+		id="NODDropZoneArmor"
+		inheritFrom ="NODDropZoneArmor"
+		xai:joinAction="Overwrite">
+		<Armor
+			Damage="CANNON"
+			Percent="100" />
+		<Armor
+			Damage="ROCKET"
+			Percent="100" />
+		<Armor
+			Damage="GRENADE"
+			Percent="100" />
+		<Armor
+			Damage="GUN"
+			Percent="5" />
+		<Armor
+			Damage="SNIPER"
+			Percent="1" />
+	</ArmorTemplate>
+
+	<ArmorTemplate
+		id="NODMCVArmor"
+		inheritFrom ="NODMCVArmor"
+		xai:joinAction="Overwrite">
+		<Armor
+			Damage="CANNON"
+			Percent="100" />
+		<Armor
+			Damage="ROCKET"
+			Percent="100" />
+		<Armor
+			Damage="GRENADE"
+			Percent="100" />
+		<Armor
+			Damage="GUN"
+			Percent="5" />
+		<Armor
+			Damage="SNIPER"
+			Percent="1" />
+	</ArmorTemplate>
+-->  <!-- With the introduction of the Ion Cannon these structures no longer needs to be so weak -->
+	<ArmorTemplate
+		id="NODCarryallArmor"
+		inheritFrom ="NODCarryallArmor"
+		xai:joinAction="Overwrite">
+		<Armor
+			Damage="CANNON"
+			Percent="0" />
+		<Armor
+			Damage="ROCKET"
+			Percent="10" />
+		<Armor
+			Damage="GRENADE"
+			Percent="0" />
+		<Armor
+			Damage="GUN"
+			Percent="0" />
+		<Armor
+			Damage="SNIPER"
+			Percent="0" />
+	</ArmorTemplate>
+<!--
+	<GameObject
+		id="GDIRifleSoldierSquad"  inheritFrom="GDIRifleSoldierSquad" 
+		CommandSet="NODMilitantCommandSet" >
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				xai:joinAction="Overwrite"
+				MaxHealth="75.0" />
+		</Body>
+	</GameObject>
+
+	<GameObject
+		id="GDIMissileSoldierSquad"  inheritFrom="GDIMissileSoldierSquad" 
+		CommandSet="NODMilitantCommandSet" />
+		
+	<GameObject
+		id="GDIEngineer"  inheritFrom="GDIEngineer" 
+		CommandSet="EmptyCommandSet" />
+-->				
+	<GameObject
+		id="GDIWallSegment"  inheritFrom="GDIWallSegment" 
+		CommandSet="EmptyCommandSet" />
+		
+	<GameObject
+		id="GDIWallHub"  inheritFrom="GDIWallHub" 
+		CommandSet="EmptyCommandSet" />
+		
+	<GameObject
+		id="GDICommandPost" inheritFrom="GDICommandPost">
+		<Behaviors>
+			<OCLSpecialPower
+				id="ModuleTag_OCLRadarScan"
+				xai:joinAction="Remove"
+			/>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="GDIArmory" inheritFrom="GDIArmory">
+		<Behaviors>
+			<OCLSpecialPower
+				id="ModuleTag_CallSupportHunterKillerTeam"
+				xai:joinAction="Remove"
+			/>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="GDIMedicalBay" inheritFrom="GDIMedicalBay">
+		<Behaviors>
+			<OCLSpecialPower
+				id="ModuleTag_CallSupportGDIAirborne"
+				xai:joinAction="Remove"
+			/>
+		</Behaviors>
+	</GameObject>
+	
+	<GameObject
+		id="GDIAirTower" inheritFrom="GDIAirTower">
+		<GameDependency xai:joinAction = "Remove"/>
+		<Behaviors>
+			<OCLSpecialPower
+				id="ModuleTag_CallSupportBloodhound"
+				xai:joinAction="Remove"
+			/>
+			<ParkingPlaceBehavior
+				id="ModuleTag_ParkingPlaceBehavior">
+				<CanParkHereFilter
+					Relationship = "ALLIES SAME_PLAYER"/>					
+			</ParkingPlaceBehavior>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="GDIPowerPlant"
+		inheritFrom="GDIPowerPlant"
+		BuildTime="20"/>
+
+	<GameObject
+		id="GDIBarracks"
+		inheritFrom="GDIBarracks"
+		BuildTime="10"/>
+
+	<WeaponTemplate
+		id="GDIFirehawkBombMainLoad"
+		ScatterRadius = "1.0"
+		HitPercentage="0%"
+		AttackRange="200.0" 
+		WeaponSpeed="350" 
+		WeaponRecoil="20d" 
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		ClipSize="14"  
+		ProjectileCollidesWith  = "ALLIES ENEMIES NEUTRAL STRUCTURES WALLS" 
+		AntiMask="ANTI_GROUND ANTI_STRUCTURE"
+		DisableScatterForTargetsOnWall="true"
+		CanFireWhileMoving="true"
+		AutoReloadsClip="RETURN_TO_BASE"
+		RequiredFiringObjectStatus="WEAPON_UPGRADED_02"
+ 		>
+		<FiringDuration
+			MinSeconds="3.0s"
+			MaxSeconds="3.0s" />
+		<ClipReloadTime
+			MinSeconds="10s"
+			MaxSeconds="10s" />
+		<Nuggets>
+			<ProjectileNugget 
+				WarheadTemplate="FireHawkBombWarhead"
+				ProjectileTemplate="GDIFirehawkBombProjectile"/>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		  id="FireHawkBombWarhead"
+		  ProjectileCollidesWith  = "ALLIES ENEMIES NEUTRAL STRUCTURES WALLS" 
+		  RadiusDamageAffects="ENEMIES NEUTRALS"
+		  AntiMask="ANTI_GROUND ANTI_STRUCTURE">
+		<Nuggets>
+			<DamageContainedNugget 
+				MaxUnitsToDamage="100"
+				Damage="2000.0" 
+				DelayTimeSeconds="0.0s" 
+				DamageType="GRENADE" 
+				AcceptDamageAdd="false"		
+				DeathType="EXPLODED">
+				<DamageObjectFilter
+					Rule="NONE"
+					Include="INFANTRY" />
+			</DamageContainedNugget>
+
+			<DamageNugget
+				Damage="1500.0"
+				Radius="50.0"
+				DelayTimeSeconds="0.0s"
+				DamageType="BLAST"
+				DamageFXType="GDI_BOMB"
+				DeathType="NORMAL" />
+			<MetaImpactNugget
+				ShockWaveAmount="90.0"
+				ShockWaveRadius="100.0"
+				ShockWaveZMult="1.50" />
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<GameObject
+		id="GDIMCV"
+		inheritFrom="GDIMCV">
+		<LocomotorSet
+			Locomotor="GDIMCVLocomotor"
+			Condition="NORMAL"
+			Speed="70.0" />
+	</GameObject>
+
+	<GameObject
+		id="NODMilitantSquad"
+		inheritFrom="NODMilitantSquad"
+		BuildTime="20"/>
+
+	<GameObject
+		id="NODMilitantRocketSquad"
+		inheritFrom="NODMilitantRocketSquad"
+		BuildTime="20"/>
+
+	<GameObject
+		id="GDIIonCannonControl"
+		inheritFrom="GDIIonCannonControl"
+		EnergyProduction="0"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS POWERED UNIQUE_UNIT NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER SUPER_WEAPON"
+		>
+		<Behaviors>
+			<EngineerContain
+				id="ModuleTag_EngineerContain"
+				xai:joinAction="Remove"	/>
+				
+			<OCLSpecialPower
+				id="ModuleTag_IonCannon"
+				xai:joinAction="Replace" 
+				SpecialPowerTemplate="SpecialPowerIonCannonControlIonCannon"
+				UpdateModuleStartsAttack="true"
+				AvailableAtStart="true"
+				OCL="OCL_SuperweaponDestroyCiviliansHumanelyObject"
+				CreateLocation="CREATE_AT_LOCATION" 
+				/>
+		</Behaviors>
+	</GameObject>
+
+	<SpecialPowerTemplate
+		id="SpecialPowerIonCannonControlIonCannon"
+		DisplayName="NAME:SuperweaponTimerIonCannon"
+		Description="DESC:SuperweaponTimerIonCannon"
+		Flags="IS_PLAYER_POWER FOGGED_SHROUDED_CELLS_OK WATER_OK IGNORE_MAP_EXTENTS SHARED_SYNC"
+		ReloadTime="30s"
+		TargetType="LOCATION"
+		RadiusCursorRadius="300"
+		RestrictionType="1" 
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"/>
+
+	<WeaponTemplate
+		id="IonCannonWeapon"
+		inheritFrom="IonCannonWeapon">
+		<Nuggets>
+			<!-- Adding to The big explosion -->
+			<DamageNugget
+				Damage="150000.0"
+				DamageTaperOff="0.0" 
+				Radius="400.0"
+				DelayTimeSeconds="7.5s"
+				DamageType="CANNON"
+				DeathType="NORMAL"
+			/>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<SpecialPowerTemplate
+		id="SpecialPowerBombingRun"
+		ReloadTime="150s"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="GDI_Orca_VoiceAirstrikeInbound"
+		RadiusCursorRadius="100"
+		Flags="IS_PLAYER_POWER WATER_OK SHARED_SYNC" 
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		Money="-250"/>
+		
+	<WeaponTemplate
+		id="GDIBombingRunOrcaWeaponWarhead"
+		inheritFrom="GDIBombingRunOrcaWeaponWarhead"
+		xai:joinAction = "Replace">
+		<Nuggets>
+			<DamageNugget 
+				Damage="650.0"
+				Radius="100" 
+				DamageType="ROCKET" 
+				DamageFXType="GDI_BOMB"
+				DeathType="NORMAL" 
+				/>
+			<MetaImpactNugget
+				ShockWaveAmount="90.0"
+				ShockWaveRadius="100.0"
+				ShockWaveZMult="1.50" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<LogicCommandSet
+		id="GDIConstructionYardCommandSet">
+		<Cmd>Command_ConstructGDIPowerPlant</Cmd>
+		<Cmd>Command_ConstructGDIRefinery</Cmd>
+		<Cmd>Command_ConstructGDIBarracks</Cmd>
+		<Cmd>Command_ConstructGDIWarfactory</Cmd>
+		<Cmd>Command_ConstructGDICommandPost</Cmd>
+		<Cmd>Command_ConstructGDIMedicalCenter</Cmd>
+		<Cmd>Command_ConstructGDIAirTower</Cmd>
+		<Cmd>Command_ConstructGDIArmory</Cmd>
+		<Cmd>Command_ConstructGDISpaceCommandUplink</Cmd>
+		<Cmd>Command_ConstructGDIWatchTower</Cmd>
+		<Cmd>Command_ConstructGDIGolumCannon</Cmd>
+		<Cmd>Command_ConstructGDIAABattery</Cmd>
+		<Cmd>Command_ConstructGDIWallHub</Cmd>
+		<Cmd>Command_ConstructGDITiberiumSilo</Cmd>
+		<Cmd>Command_ConstructGDITerraformingStation</Cmd>
+		<Cmd>Command_ConstructGDIIonCannonControl</Cmd>
+		<Cmd>Command_ConstructGDICrane</Cmd>
+		<Cmd>Command_ConstructGDISurveyor</Cmd>
+	</LogicCommandSet>
+	
+	<GameObject
+		id="GDIConstructionYard"
+		inheritFrom="GDIConstructionYard"
+		EnergyProduction="15"/><!-- Increased so that when the player loses the initial power plant only 1 structure must be turned off -->
+
+	<SpecialPowerTemplate
+		id="SpecialPowerCallForTransportNOD"
+		inheritFrom="SpecialPowerCallForTransportNOD"
+		xai:joinAction="Replace"
+		ReloadTime="120s"
+		TargetType="NONE"
+		Money="0" 
+		InitiateAtLocationSound="NOD_Carryall_VoiceInbound">
+	</SpecialPowerTemplate>
+	
+	<GameObject
+		id="Bridge3_Center"
+		inheritFrom="Bridge3_Center">
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="InvulnerableArmor"/>
+	</GameObject>
+
+	<GameObject
+		id="Bridge3_Center2"
+		inheritFrom="Bridge3_Center2">
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="InvulnerableArmor"/>
+	</GameObject>
+	
+	<WeaponTemplate
+		id="NODMilitantMinigun"
+		inheritFrom="NODMilitantMinigun"
+		xai:joinAction = "Replace"
+		AttackRange="200.0" 
+		WeaponSpeed="999999.0"
+		FireSoundPerClip="NOD_RifleMilitant_GunFire_v2"
+		FireFX="FX_NODRifleManFire"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		ClipSize="3"
+		AntiMask="ANTI_GROUND"
+		AcceptableAimDelta="10d"
+		CanFireWhileMoving="true"
+		>
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<ClipReloadTime
+			MinSeconds="0.3s"
+			MaxSeconds="0.4s" />
+		<Nuggets>
+			<DamageNugget 
+				Damage="1.0" 
+				Radius="0.0" 
+				DelayTimeSeconds="0.0s" 
+				DamageType="GUN" 
+				DamageFXType="NOD_MACHINEGUN"		
+				DeathType="NORMAL" />
+			<SuppressionNugget
+				Radius="0.0"
+				Suppression="0"
+				DurationSeconds="0s" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODAttackBikeRocketWarhead"
+		inheritFrom="NODAttackBikeRocketWarhead"
+		xai:joinAction = "Replace"
+		ProjectileCollidesWith  = "ENEMIES" 
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		AntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		>
+		<Nuggets>			
+			<DamageNugget
+				Damage="300.0" 
+				Radius="10.0" 
+				DamageType="ROCKET"
+				DamageFXType="NOD_MISSILE"
+				DeathType="EXPLODED">
+				<DamageScalarDetails Scalar= "50%">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</DamageScalarDetails>
+				<DamageScalarDetails Scalar= "150%">
+					<Filter
+						Rule="NONE"
+						Include="AIRCRAFT" />
+				</DamageScalarDetails>
+
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODScorpionBuggyGatling"
+		inheritFrom="NODScorpionBuggyGatling" 
+		xai:joinAction = "Replace"
+		AttackRange="250.0" 
+		WeaponSpeed="999999.0" 
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		ClipSize="3"
+		CanFireWhileMoving="true"
+		FireSoundPerClip="NOD_RaiderBuggy_GunFire_v1"
+		FireFX="FX_NODRifleManFire"									
+		ForbiddenFiringObjectStatus="WEAPON_UPGRADED_01"
+		AntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY">
+
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<ClipReloadTime
+			MinSeconds="0.7s"
+			MaxSeconds="0.8s" />
+		<Nuggets>
+			<DamageNugget 
+				Damage="25.0" 
+				Radius="0.0" 
+				DelayTimeSeconds="0.0s" 
+				DamageType="GUN" 
+				DamageFXType="NOD_MACHINEGUN"		
+				DeathType="NORMAL" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODScorpionBuggyGatlingLaser"
+		inheritFrom="NODScorpionBuggyGatlingLaser" 
+		xai:joinAction = "Replace"
+		AttackRange="250.0" 
+		WeaponSpeed="999999.0"
+		ClipSize="1"
+		FireSound="NOD_RaiderBuggy_CapacitorFire"
+		FireFX="FX_NODSpitfireFire"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		CanFireWhileMoving="true"
+		ReAcquireDetailType="POST_FIRE"
+		AntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		>
+		<FiringDuration
+			MinSeconds="0.6s"
+			MaxSeconds="0.6s" />
+		<ClipReloadTime
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.5s"
+				LaserId="1"
+				HitGroundFX="FX_NODSpitfireHit"/>
+			<DamageNugget 
+				Damage="75.0" 
+				Radius="0.0" 
+				DamageType="GUN" 
+				DamageFXType="NOD_LASER"		
+				DeathType="LASERED" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODStealthTankRocketWarhead"
+		inheritFrom="NODStealthTankRocketWarhead" 
+		xai:joinAction = "Replace"
+		ProjectileCollidesWith  = "ENEMIES" 
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		AntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+ 		>
+		<Nuggets>
+			<DamageNugget 
+				Damage="150.0" 
+				Radius="10.0" 
+				DamageTaperOff="0"
+				DamageType="ROCKET" 
+				DamageFXType="NOD_MISSILE"
+				DeathType="EXPLODED">
+				<DamageScalarDetails Scalar= "125%">
+					<Filter
+						Rule="NONE"
+						Include="AIRCRAFT" />
+				</DamageScalarDetails>
+			</DamageNugget>
+			<SuppressionNugget
+				Radius="10.0"
+				Suppression="75"
+				DurationSeconds="5s" />
+		</Nuggets>
+	</WeaponTemplate>	
+
+</AssetDeclaration>

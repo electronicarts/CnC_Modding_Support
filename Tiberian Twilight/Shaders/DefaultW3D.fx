@@ -1,0 +1,11 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2009 Electronic Arts Inc
+//
+// TEMP SHADER UNTIL ASSET REFERENCES REMOVED. REPLACING WITH CNC4_VFX.FX
+//////////////////////////////////////////////////////////////////////////////
+
+#define SUPPORT_CLOUDS 1	// enable clouds
+#define SUPPORT_FOG 1		// enable fog
+#define SUPPORT_SSAO 1		// enable SSAO
+
+#include "CNC4_VFX.fx"

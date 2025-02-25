@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!-- AudioMixer data loaded into memory -->
+	<xs:complexType name="AudioMixerRuntime" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence />
+				<!-- The MixerData attribute will actually be a void * through the magic of xsd2cpp\[platform].config.xml -->
+				<xs:attribute name="MixerData" type="SageInt" use="required" />
+				<xs:attribute name="MixerDataSize" type="SageInt" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Dynamic Mix PTC file -->
+	<xs:complexType name="AudioMixer" xas:typeGroup="Audio">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence />
+				<xs:attribute name="File" type="FileReference" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AudioMixerSnapshot" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence />
+				<xs:attribute name="SnapshotName" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="AudioMixerSnapshotRef" xas:isRef="true" xas:refType="AudioMixerSnapshot">
+		<xs:restriction base="AssetReference" />
+	</xs:simpleType>
+
+	<xs:complexType name="AudioMixerSnapshotSet"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Snapshot" type="AudioMixerSnapshotRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

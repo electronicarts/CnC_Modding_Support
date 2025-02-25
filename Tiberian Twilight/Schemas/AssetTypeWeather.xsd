@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="WeatherParticleType">
+		<xs:sequence>
+            <xs:element name="BoxSize" type="Vector3" minOccurs="1" maxOccurs="1" />
+    		<xs:element name="Width" type="RealRange" minOccurs="1" maxOccurs="1" />
+    		<xs:element name="Height" type="RealRange" minOccurs="1" maxOccurs="1" />
+    		<xs:element name="Alpha" type="RealRange" minOccurs="1" maxOccurs="1" />
+    		<xs:element name="MotionSpeed" type="RealRange" minOccurs="1" maxOccurs="1" />
+            <xs:element name="MotionDir" type="Vector3" minOccurs="1" maxOccurs="1" />
+    		<xs:element name="RandomDir" type="Vector3" minOccurs="1" maxOccurs="1" />
+    		<xs:element name="Stretch" type="SageReal" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+    	<xs:attribute name="DiffuseTexture" type="TextureRef" />
+		<xs:attribute name="NumParticlesPerBox" type="SageInt" default="1024" />
+	</xs:complexType>
+
+	<xs:complexType name="LightningType">
+		<xs:sequence>
+			<xs:element name="LightningFactor" type="ClientRandomVariable" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="LightningDuration" type="SageInt" default="30" />
+		<xs:attribute name="LightningChance" type="SageReal" default="0.01" />
+	</xs:complexType>
+
+	<xs:complexType name="CloudType">
+		<xs:sequence>
+			<xs:element name="CloudTextureSize" type="Vector2" minOccurs="0" maxOccurs="1" />
+			<xs:element name="CloudOffsetPerSecond" type="Vector2" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="WeatherData">
+		<xs:sequence>
+			<xs:element name="WeatherParticle" type="WeatherParticleType" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="id" type="WeatherType" />
+		<xs:attribute name="HasLightning" type="SageBool" default="false"/>
+		<xs:attribute name="Sound" type="AudioEventInfoRef" />
+	</xs:complexType>
+
+	<xs:complexType name="Weather" xas:runtimeWrapper="::WeatherSetting" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="Lightning" type="LightningType" minOccurs="0" maxOccurs="1" />
+					<xs:element name="Cloud" type="CloudType" minOccurs="0" maxOccurs="1" />
+					<xs:element name="WeatherData" type="WeatherData" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

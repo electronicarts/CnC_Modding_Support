@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="Includes/FactionType.xsd"/>
+	<xs:include schemaLocation="Includes/Plugin.xsd"/>
+	<xs:include schemaLocation="Includes/Accelerator.xsd"/>
+
+	<!-- 	<xs:include schemaLocation="AssetTypePlayerClassTemplate.xsd"/>
+		This value is stored online in Blaze.  Please be cautious about modifying
+		these values and make sure you don't invalidate any old data!
+		ie, make sure you add any new values to the bottom, and don't re-order 
+		any existing values.
+		
+		We're using this enum instead of the assets' type Ids so that we're safe from
+		any pipeline changes that may occur over the life of the product.
+	 -->
+	<xs:simpleType name="EntitlementType" xas:targetNamespace="" xas:enumItemPrefix="EntitlementType_" xas:useEnumPrefix="false">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="GeneralUpgrade" />
+			<xs:enumeration value="CrawlerUpgrade" />
+			<xs:enumeration value="Structure" />
+			<xs:enumeration value="Unit" />
+			<xs:enumeration value="Power" />
+			<!-- Add new values down here! -->
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="TechLevel" xas:targetNamespace="" xas:enumItemPrefix="TechLevel_" xas:useEnumPrefix="false">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Tier1" />
+			<xs:enumeration value="Tier2" />
+			<xs:enumeration value="Tier3" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="EntitlementTemplate" xas:runtimeWrapper="::Entitlement" xas:isPolymorphic="true" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">				
+				<!-- 
+					Required. Type of the entitlement.  Somewhat redundant to 
+					the TypeId but this is somewhat safer to serialize in the 
+					game run-time since the values are explicitly defined. 
+				-->
+				<xs:attribute name="Type" type="EntitlementType" use="required" />
+
+				<xs:attribute name="Faction" type="FactionType" use="required" />
+				<xs:attribute name="Class" type="PlayerClassType" use="required" />
+
+				<!--
+					Shell/UI display data 
+					If these are not specified, game engine will attempt to get
+					them from the ThingTemplate, UpgradeTempalte, etc.
+				-->
+				<xs:attribute name="ButtonImage" type="ImageWeakRef" />
+				<xs:attribute name="DisplayName" type="xs:string"/>
+				<xs:attribute name="Description" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="GameObjectEntitlementTemplate" xas:isPolymorphic="true" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="EntitlementTemplate">				
+				<xs:attribute name="GameObject" type="GameObjectWeakRef" use="required"/>	
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="UnitEntitlementTemplate" xas:runtimeWrapper="::UnitEntitlement" xas:isPolymorphic="true" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="GameObjectEntitlementTemplate">				
+				<xs:attribute name="Type" type="EntitlementType" default="Unit" use="optional" />	
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="StructureEntitlementTemplate" xas:runtimeWrapper="::StructureEntitlement" xas:isPolymorphic="true" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="GameObjectEntitlementTemplate">				
+				<xs:attribute name="Type" type="EntitlementType" default="Structure" use="optional" />	
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="PowerEntitlementTemplate" xas:runtimeWrapper="::PowerEntitlement" xas:isPolymorphic="true" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="EntitlementTemplate">				
+				<xs:attribute name="Type" type="EntitlementType" default="Power" use="optional" />	
+				
+				<xs:attribute name="PlayerPower" type="SpecialPowerWeakRef" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	
+	<!-- Intended to be used as a base-type only, do not actually create assets of this type -->
+	<xs:complexType name="UpgradeEntitlementTemplate" xas:runtimeWrapper="::UpgradeEntitlement" xas:isPolymorphic="true" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="EntitlementTemplate">				
+				<xs:attribute name="Upgrade" type="UpgradeTemplateWeakRef" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="GeneralUpgradeEntitlementTemplate" xas:runtimeWrapper="::UpgradeEntitlement" xas:isPolymorphic="true" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="UpgradeEntitlementTemplate">
+				<xs:attribute name="Type" type="EntitlementType" default="GeneralUpgrade" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="CrawlerUpgradeEntitlementTemplate" xas:runtimeWrapper="::UpgradeEntitlement" xas:isPolymorphic="true" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="UpgradeEntitlementTemplate">
+				<xs:attribute name="Type" type="EntitlementType" default="CrawlerUpgrade" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+</xs:schema>

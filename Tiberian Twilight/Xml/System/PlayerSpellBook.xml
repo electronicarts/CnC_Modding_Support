@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="PlayerSpellBook"
+		Side="Neutral"
+		EditorSorting="SYSTEM"
+		KindOf="SPELL_BOOK IMMOBILE IGNORES_SELECT_ALL INERT SKIRMISH_AI_CONSIDER_AS_UNIT_FACTORY"
+		RadarPriority="NOT_ON_RADAR"
+		CommandSet="PlayerSpellBookCommandSetFull" 
+		EditorName="PlayerSpellBook">
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<ProductionUpdate
+				id="ModuleTag_UpgradeProductionUpdate"
+				Type="UPGRADE"
+				ShowUpgradeQueueInBuildUI="true"
+				UnitEmitRequiresPlayerProducer="true">
+			</ProductionUpdate>
+			
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				Type="MAIN_STRUCTURE"
+				MaximumFinishedUnits="1"
+				EndZoneBuildTimeModifier="1.0"
+				UnitEmitRequiresPlayerProducer="true"/>
+
+			<ProductionUpdate
+				id="ModuleTag_InfantryProductionUpdate"
+				Type="INFANTRY"
+				EndZoneBuildTimeModifier="0.75" 
+				MaximumFinishedUnits="5"
+				UnitEmitRequiresPlayerProducer="true"
+				NumDoorAnimations="1"
+				DoorOpeningTime="0.5s"
+				DoorWaitOpenTime="3.0s"
+				DoorCloseTime="1.0s"
+				HoldDoorOpenForFinishedObjects="true"/>
+			
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_Redeployment"
+				SpecialPowerTemplate="SpecialPower_Redeployment"
+			/>
+			
+			<!-- Redeployemnts -->
+			<DelayedSpecialPower
+				id="ModuleTag_DelayedDeploymentPower"
+				SpecialPowerTemplate="SpecialPower_Redeployment"
+				DelayUpdateModuleId="ModuleTag_DelayedDeploymentPowerUpdate"
+				DelayedSpecialPowerId="ModuleTag_Redeployment"
+				CanAffectObjectFilter="GenericAllEnemyObjectSpecialPowerObjectFilter"
+				CanAffectPartitionFilterTestType="CIRCLE"/>
+
+			<DelayedSpecialPowerUpdate
+				id="ModuleTag_DelayedDeploymentPowerUpdate"
+				SpecialPowerModuleId="ModuleTag_Redeployment"
+				Flags="DELAY_UNTIL_MATCH_INTRO_ENDS"/>
+			
+			<ClassChangeDeploySpecialPower
+				id="ModuleTag_Redeployment"
+				SpecialPowerTemplate="SpecialPower_Redeployment"
+				OCL="OCL_PlayerRedeployment"
+				CreateLocation="CREATE_AT_LOCATION"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="GenericAllEnemyObjectSpecialPowerObjectFilter"
+				CanAffectPartitionFilterTestType="CIRCLE"/>
+			
+			<!-- Radar for the people -->
+			<RadarBehavior
+				id="ModuleTag_RadarBehavior" />
+
+			<!-- GDI Support Player Powers-->
+			<OCLSpecialPower
+				id="ModuleTag_GDI_ScoutDrone"
+				SpecialPowerTemplate="SpecialPower_GDI_ScoutDrone"
+				OCL="OCL_GDIScoutDronePlayerPower"
+				CreateLocation="CREATE_AT_EDGE_NEAR_TARGET_AND_MOVE_TO_LOCATION" 
+				CanAffectObjectFilter="GenericAllAlliedObjectSpecialPowerObjectFilter" />
+
+			<OCLSpecialPower
+				id="ModuleTag_GDI_Restoration_HealObject"
+				SpecialPowerTemplate="SpecialPower_GDI_Restoration"
+				OCL="OCL_GDIRestorationProxyObject"
+				CreateLocation="CREATE_AT_LOCATION"
+				CanAffectObjectFilter="ObjectFilterAsset_GDI_StatusReboot" />
+
+			<SpecialPower
+				id="ModuleTag_GDI_RapidFire"
+				SpecialPowerTemplate="SpecialPower_GDI_RapidFire"
+				AttributeModifier="AttributeModifer_GDI_RapidFire"
+				AttributeModifierRange="=$GDI_RAPIDFIRE_AOE_RADIUS"
+				CanAffectObjectFilter="ObjectFilterAsset_GDI_Overkill">
+				<AttributeModifierAffects
+					Rule="ANY"
+					Relationship="ALLIES SAME_PLAYER"
+					Include="AIRCRAFT VEHICLE INFANTRY">
+					<ExcludeThing>GDIScoutDrone</ExcludeThing>
+				</AttributeModifierAffects>
+			</SpecialPower>
+
+			<OCLSpecialPower
+				id="ModuleTag_GDI_EngineerElite_OCLSpecialPower"
+				SpecialPowerTemplate="SpecialPower_GDI_EngineerElite"
+				OCL="OCL_GDIEngineerEliteDropPod"
+				CreateLocation="CREATE_ABOVE_LOCATION"
+				CanAffectObjectFilter="GenericNoObjectSpecialPowerObjectFilter"/>
+
+			<OCLSpecialPower
+				id="ModuleTag_GDI_RepairZone"
+				SpecialPowerTemplate="SpecialPower_GDI_RepairZone"
+				OCL="OCL_GDIRepairZoneProxyObject"
+				CreateLocation="CREATE_AT_LOCATION"
+				CanAffectObjectFilter="GenericAllAlliedObjectSpecialPowerObjectFilter"/>
+
+			<SpecialPower
+				id="ModuleTag_GDI_EnhanceConstruction"
+				SpecialPowerTemplate="SpecialPower_GDI_EnhanceConstruction"
+				AttributeModifier="AttributeModifier_GDI_EnhanceConstruction"
+				CanAffectObjectFilter="GenericAlliedCrawlersSpecialPowerObjectFilter"
+				TriggerFX="FX_GDIEnhanceConstruction">
+				<AttributeModifierAffects
+					Relationship="ALLIES"
+					Rule="NONE"
+					Include="CRAWLER">
+				</AttributeModifierAffects>
+			</SpecialPower>
+
+			<OCLSpecialPower
+				id="ModuleTag_GDI_SupplyDrop"
+				SpecialPowerTemplate="SpecialPower_GDI_SupplyDrop"
+				OCL="OCL_GDI_SupplyDrop_Master"
+				CreateLocation="CREATE_ABOVE_LOCATION"
+				CanAffectObjectFilter="GenericNoObjectSpecialPowerObjectFilter"/>
+
+			<SpecialPower
+				id="ModuleTag_GDI_PersonalShields"
+				SpecialPowerTemplate="SpecialPower_GDI_PersonalShields"
+				UpdateModuleStartsAttack="true"
+				TriggerFX="FX_GDI_Power_PersonalShields_AudioOnly"
+				CanAffectPartitionFilterTestType="CIRCLE"
+				CanAffectObjectFilter="ObjectFilterAsset_GDI_PersonalShields"> <!-- FINALLY this one works for sound!!!! -->
+				<!-- <InitiateSound Sound="GDI_Power_PersonalShields"/> no worky -->
+			</SpecialPower>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_WeaponFireSpecialAbilityUpdateGDIPersonalShields"
+				SpecialPowerTemplate="SpecialPower_GDI_PersonalShields"
+				SpecialWeapon="GDIPersonalShields"
+				WhichSpecialWeapon="1"/>
+				<!-- TriggerSound="GDI_Power_PersonalShields"
+				UnpackSound="GDI_Power_PersonalShields" no worky -->
+
+			<OCLSpecialPower
+				id="ModuleTag_GDI_EMPMineDrop"
+				SpecialPowerTemplate="SpecialPower_GDI_EMPMineDrop"
+				OCL="OCL_GDIEMPMines_Master"
+				CreateLocation="CREATE_AT_LOCATION"/>
+
+			<SpecialPower
+				id="ModuleTag_GDI_MirrorCoat"
+				SpecialPowerTemplate="SpecialPower_GDI_MirrorCoat"
+				AttributeModifier="AttributeModifier_GDI_MirrorCoat"
+				CanAffectObjectFilter="ObjectFilterAsset_GDI_MirrorCoat"
+				AttributeModifierAffectsRef="ObjectFilterAsset_GDI_MirrorCoat"
+				AttributeModifierRange="=$GDI_MIRRORARMOR_RADIUS">
+			</SpecialPower>
+
+			<OCLSpecialPower
+				id="ModuleTag_GDI_SonicArtillery"
+				SpecialPowerTemplate="SpecialPower_GDI_SonicArtillery"
+				OCL="OCL_SonicArtillery_Master"
+				CreateLocation="CREATE_AT_LOCATION"
+				CanAffectObjectFilter="ObjectFilterAsset_GDI_SonicArtillery"/>
+
+			<SpecialPower
+				id="ModuleTag_GDI_MassPromotion"
+				SpecialPowerTemplate="SpecialPower_GDI_MassPromotion"
+				CanAffectObjectFilter="ObjectFilterAsset_GDI_MassPromotion" 
+				UpdateModuleStartsAttack="true"
+				TriggerFX="FX_GDI_Power_MassPromotion_AudioOnly">
+			</SpecialPower>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_GDI_MassPromotionWeaponFireSpecialAbilityUpdate"
+				SpecialPowerTemplate="SpecialPower_GDI_MassPromotion"
+				SpecialWeapon="GDIMassPromotionWeapon"
+				WhichSpecialWeapon="1" />			
+
+			<OCLSpecialPower
+				id="ModuleTag_GDI_SeismicDisturbance"
+				SpecialPowerTemplate="SpecialPower_GDI_SeismicDisturbance"
+				OCL="OCL_BuildGDISeismicDisturbance"
+				CanAffectObjectFilter="ObjectFilterAsset_GDI_SeismicDisturbance"
+				CreateLocation="CREATE_AT_LOCATION"/>
+
+			<SpecialPower
+				id="ModuleTag_GDI_Resonance"
+				SpecialPowerTemplate="SpecialPower_GDI_Resonance"
+				AttributeModifier="AttributeModifier_GDIResonanceDodgeEffect"
+				AttributeModifierRange="=$GDI_RESONANCE_AOE_RADIUS"
+				CanAffectObjectFilter="ObjectFilterAsset_GDI_Resonance">
+				<AttributeModifierAffects
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="VEHICLE INFANTRY AIRCRAFT CRAWLER"
+					Exclude="STRUCTURE"/>
+			</SpecialPower>
+			
+			<OCLSpecialPower
+				id="ModuleTag_GDI_FirehawkStrike"
+				SpecialPowerTemplate="SpecialPower_GDI_FirehawkStrike"
+				OCL="OCL_GDIFirehawkAirstrike_Master"
+				CreateLocation="CREATE_AT_LOCATION"
+				CanAffectObjectFilter="ObjectFilterAsset_GDI_FirehawkStrike"/>
+
+			<!-- Nod Support Player Powers-->
+			<SpecialPower
+				id="ModuleTag_NOD_EyesOfPeople"
+				SpecialPowerTemplate="SpecialPower_NOD_EyesOfPeople"
+				AttributeModifier="AttributeModifier_NOD_EyesOfPeople"
+				AttributeModifierRange="999999.0"
+				CanAffectObjectFilter="GenericAlliesOnlySpecialPowerObjectFilter">
+				<!-- AttributeModifierFX="FX_NOD_Power_EyesOfThePeople_Stereo_AudioOnly" won't play in shroud; nah, add MinVolume and InitiateSound on SpecialPowerTemplate --> 
+				<AttributeModifierAffects
+						Relationship="ALLIES"
+						Rule="ALL">
+				</AttributeModifierAffects>
+				<!-- <InitiateSound
+					Sound="NOD_Power_EyesOfThePeople_Stereo">
+				</InitiateSound> no worky; nah, add MinVolume and InitiateSound on SpecialPowerTemplate --> 
+			</SpecialPower>
+			
+			<SpecialPower
+				id="ModuleTag_NOD_Demoralize"
+				SpecialPowerTemplate="SpecialPower_NOD_Demoralize"
+				AttributeModifier="AttributeModifier_NOD_Demoralize"
+				AttributeModifierRange="=$NOD_DEMORALIZE_RADIUS"
+				CanAffectObjectFilter="GenericAllEnemyObjectSpecialPowerObjectFilter">
+				<AttributeModifierAffects
+						Relationship="NEUTRAL ENEMIES"
+						Rule="ALL">
+				</AttributeModifierAffects>
+			</SpecialPower>
+			
+			<OCLSpecialPower 
+				id="ModuleTag_NOD_ObeliskOfLife_OCLSpecialPower" 
+				SpecialPowerTemplate="SpecialPower_NOD_ObeliskOfLife" 
+				AvailableAtStart="true" 
+				OCL="OCL_NOD_ObeliskOfLife" 
+				CreateLocation="CREATE_AT_LOCATION" />
+
+			<InvisibilitySpecialPower
+				id="ModuleTag_NOD_CloakingField"
+				SpecialPowerTemplate="SpecialPower_NOD_CloakingField"
+				TriggerFX="FX_NodCloakingField"
+				AttributeModifierRange="300.0"
+				AttributeModifier="Modifier_CloakingFieldStealthDodge"
+				Duration="30s"
+				InvisibilityTemplate="NODCloakingFieldInvisibilityTemplate"
+				CanAffectObjectFilter="GenericAllAlliedObjectSpecialPowerObjectFilter">
+				<AttributeModifierAffects
+					Rule="ALL"
+					Relationship="ALLIES">
+				</AttributeModifierAffects>
+			</InvisibilitySpecialPower>
+			
+			<OCLSpecialPower
+				id="ModuleTag_NOD_BurrowMines"
+				SpecialPowerTemplate="SpecialPower_NOD_BurrowMines"
+				TriggerFX="FX_NodWarningFlare"
+				OCL="OCL_BuildNODBurrowMines_BurrowPod_Master"
+				CreateLocation="CREATE_AT_LOCATION"/>
+			
+			<!-- EMP Countermeasures -->
+			<SpecialPower
+				id="ModuleTag_NOD_EMPCounterMeasures"
+				SpecialPowerTemplate="SpecialPower_NOD_EMPCounterMeasures"
+				TriggerFX="FX_RedTester" 
+				UpdateModuleStartsAttack="true"/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_WeaponFireSpecialAbilityUpdateEMPCounterMeasures"
+				SpecialPowerTemplate="SpecialPower_NOD_EMPCounterMeasures"
+				SpecialWeapon="NODEMPCounterMeasures"
+				WhichSpecialWeapon="1" />
+			
+			<SpecialPower
+				id="ModuleTag_NOD_RadarJam"
+				SpecialPowerTemplate="SpecialPower_NOD_RadarJam"
+				UpdateModuleStartsAttack="true">
+				<!-- <InitiateSound Sound="NOD_Power_RadarJam_Quad"> InitiateSound> nah, add MinVolume and InitiateSound on SpecialPowerTemplate
+				AttributeModifierFX="FX_NOD_Power_RadarJam_Quad_AudioOnly" no worky -->
+			</SpecialPower>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_NOD_RadarJam_Update"
+				SpecialPowerTemplate="SpecialPower_NOD_RadarJam"
+				SpecialWeapon="Weapon_NOD_RadarJam"/>
+				<!-- UnpackSound="NOD_Power_RadarJam_Quad" nah, add MinVolume and InitiateSound on SpecialPowerTemplate -->
+			
+			<StoreObjectsSpecialPower
+				id="ModuleTag_NOD_DecoyArmy"
+				SpecialPowerTemplate="SpecialPower_NOD_DecoyArmy"
+				Radius="200"
+				CanAffectPartitionFilterTestType="SPHERE"
+				CanAffectObjectFilter="ObjectFilterAsset_NOD_DecoyPower"/>
+
+			<SpecialPower
+				id="ModuleTag_NOD_DecoyArmy_Target"
+				SpecialPowerTemplate="SpecialPower_NOD_DecoyArmy_Target"/>
+			<CloneStoredObjectsSpecialPowerUpdate
+				id="ModuleTag_NOD_DecoyArmy_TargetUpdate"
+				SpecialPowerTemplate="SpecialPower_NOD_DecoyArmy_Target"
+				ClonedObjectLifetime="120s"
+				TriggerAttributeModifierOnClones="AttributeModifier_NOD_DecoyArmy" />
+			
+			<SpecialPower
+				id="ModuleTag_NOD_FirestormIgnition"
+				SpecialPowerTemplate="SpecialPower_NOD_FirestormIgnition"
+				UpdateModuleStartsAttack="true"/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_WeaponNOD_FirestormIgnitionUpdate"
+				SpecialWeapon="Weapon_NOD_FirestormIgnition"
+				SpecialPowerTemplate="SpecialPower_NOD_FirestormIgnition"
+				WhichSpecialWeapon="1"/>
+
+			<OCLSpecialPower
+				id="ModuleTag_NOD_SubterraneanStrike"
+				SpecialPowerTemplate="SpecialPower_NOD_SubterraneanStrike"
+				TriggerFX="FX_NodWarningFlare"
+				OCL="OCL_SubterraneanStrike_Master"
+				CreateLocation="CREATE_AT_LOCATION"
+				CanAffectObjectFilter="ObjectFilterAsset_NOD_SubterraneanStrike_Initial">
+				<CanAffectSupplementalFilterList>
+					<FilterEntry ObjectFilter="ObjectFilterAsset_NOD_SubterraneanStrike_Enemies"	/>
+					<FilterEntry ObjectFilter="ObjectFilterAsset_Neutral_Husks"	/>
+				</CanAffectSupplementalFilterList>
+			</OCLSpecialPower>
+			
+			<OCLSpecialPower
+				id="ModuleTag_NOD_Megalisk"
+				SpecialPowerTemplate="SpecialPower_NOD_Megalisk"
+				OCL="OCL_BuildNODMegaliskObelisk_BurrowPod"
+				CreateLocation="CREATE_AT_LOCATION"/>
+			
+			<OCLSpecialPower
+				id="ModuleTag_NOD_HackerElite"
+				SpecialPowerTemplate="SpecialPower_NOD_HackerElite"
+				OCL="OCL_BuildNODHackerElite_BurrowPod"
+				CreateLocation="CREATE_AT_LOCATION"/>
+			
+			<SpecialPower
+				id="ModuleTag_NOD_MarkOfKane"
+				SpecialPowerTemplate="SpecialPower_NOD_MarkOfKane"
+				AttributeModifier="AttributeModifier_MarkOfKane"
+				AttributeModifierRange="=$NOD_MARK_OF_KANE_RADIUS"
+				CanAffectObjectFilter="ObjectFilterAsset_NOD_MarkOfKane">
+				<AttributeModifierAffects
+						Relationship="ALLIES"
+						Rule="ALL"
+						Exclude="DEBRIS MINE HUSK">
+				</AttributeModifierAffects>
+			</SpecialPower>
+			
+			<OCLSpecialPower
+				id="ModuleTag_NOD_VeinDetonation"
+				SpecialPowerTemplate="SpecialPower_NOD_VeinDetonation"
+				OCL="OCL_NOD_VeinDetonation_Master"
+				CreateLocation="CREATE_AT_LOCATION"
+				CanAffectObjectFilter="ObjectFilterAsset_NOD_VeinDetonation"/>
+
+			<SpecialPowerTimerRefreshSpecialPower
+				id="ModuleTag_NOD_VoiceOfKane"
+				SpecialPowerTemplate="SpecialPower_NOD_VoiceOfKane"
+				AttributeModifier="AttributeModifier_VoiceOfKane"
+				AttributeModifierRange="999999.0"
+				CanAffectObjectFilter="GenericAlliesOnlySpecialPowerObjectFilter">
+				<AttributeModifierAffects
+						Relationship="ALLIES"
+						Rule="ALL">
+					<ExcludeThing>TechStructureG</ExcludeThing>
+				</AttributeModifierAffects>
+			</SpecialPowerTimerRefreshSpecialPower>
+
+			<!-- Offense Class Command Point Upgrades-->
+			<!--
+			<CommandPointsUpgrade
+				id="ModuleTag_CPUpgradeOffenseRank1"
+				CommandPointsPercentage="0.0%"
+				RequiresAllTriggers="true">
+				<TriggeredBy>Upgrade_Tech_Up_Rank1</TriggeredBy>
+				<TriggeredBy>Upgrade_OffenseClass</TriggeredBy>
+			</CommandPointsUpgrade>
+			<CommandPointsUpgrade
+				id="ModuleTag_CPUpgradeOffenseRank2"
+				CommandPointsPercentage="0.0%"
+				RequiresAllTriggers="true">
+				<TriggeredBy>Upgrade_Tech_Up_Rank2</TriggeredBy>
+				<TriggeredBy>Upgrade_OffenseClass</TriggeredBy>
+			</CommandPointsUpgrade>
+					 -->
+
+			<!-- Defense Class Command Point Upgrades-->
+			<!--
+			<CommandPointsUpgrade
+				id="ModuleTag_CPUpgradeDefenseRank1"
+				CommandPointsPercentage="0.0%"
+				RequiresAllTriggers="true">
+				<TriggeredBy>Upgrade_Tech_Up_Rank1</TriggeredBy>
+				<TriggeredBy>Upgrade_DefenseClass</TriggeredBy>
+			</CommandPointsUpgrade>
+			<CommandPointsUpgrade
+				id="ModuleTag_CPUpgradeDefenseRank2"
+				CommandPointsPercentage="0.0%"
+				RequiresAllTriggers="true">
+				<TriggeredBy>Upgrade_Tech_Up_Rank2</TriggeredBy>
+				<TriggeredBy>Upgrade_DefenseClass</TriggeredBy>
+			</CommandPointsUpgrade>
+					 -->
+
+			<!-- Support Class Command Point Upgrades-->
+			<!--
+			<CommandPointsUpgrade
+				id="ModuleTag_CPUpgradeSupportRank1"
+				CommandPointsPercentage="0.0%"
+				RequiresAllTriggers="true">
+				<TriggeredBy>Upgrade_Tech_Up_Rank1</TriggeredBy>
+				<TriggeredBy>Upgrade_SupportClass</TriggeredBy>
+			</CommandPointsUpgrade>
+			<CommandPointsUpgrade
+				id="ModuleTag_CPUpgradeSupportRank2"
+				CommandPointsPercentage="0.0%"
+				RequiresAllTriggers="true">
+				<TriggeredBy>Upgrade_Tech_Up_Rank2</TriggeredBy>
+				<TriggeredBy>Upgrade_SupportClass</TriggeredBy>
+			</CommandPointsUpgrade>
+					 -->
+
+		</Behaviors>
+
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="StructureAIStateMachine"
+				AutoAcquireEnemiesWhenIdle="NO">
+			</AIUpdate>
+		</AI>
+		
+		<Body>
+			<HighlanderBody
+				id="ModuleTag_Body"
+				MaxHealth="1.0"
+				InitialHealth="1.0" />
+		</Body>
+
+		<ClientUpdates>
+			<!--<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="AnnounceAirborneReady"
+				AnnouncementEventOwner="ReinforcementsReady"
+				ScienceTemplate="Science_Airborne"
+				JustMonitorPercentReady="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="AnnounceBloodhoundReady"
+				AnnouncementEventOwner="ReinforcementsReady"
+				ScienceTemplate="Science_Bloodhounds"
+				JustMonitorPercentReady="true"
+			/>-->
+		</ClientUpdates>
+
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="1.0"
+				Height="1.0"></Shape>
+		</Geometry>
+	</GameObject>
+	<GameObject
+		id="TeamManagerSpellBook"
+		Side="Neutral"
+		EditorSorting="SYSTEM"
+		KindOf="SPELL_BOOK IMMOBILE IGNORES_SELECT_ALL INERT SKIRMISH_AI_CONSIDER_AS_UNIT_FACTORY"
+		RadarPriority="NOT_ON_RADAR"
+		CommandSet="EmptyCommandSet"
+		EditorName="TeamManagerSpellBook">
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<EnergyPointsUpgrade
+				id="ModuleTag_EnergyTeamManager"
+				EnergyPointsToChange="500">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+			</EnergyPointsUpgrade>
+
+		</Behaviors>
+
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="StructureAIStateMachine"
+				AutoAcquireEnemiesWhenIdle="NO">
+			</AIUpdate>
+		</AI>
+
+		<Body>
+			<HighlanderBody
+				id="ModuleTag_Body"
+				MaxHealth="1.0"
+				InitialHealth="1.0" />
+		</Body>
+
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="1.0"
+				Height="1.0"></Shape>
+		</Geometry>
+	</GameObject>
+</AssetDeclaration>

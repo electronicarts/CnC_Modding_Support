@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:FXDesolatorBlatProjectile.w3x"/>
+    
+		<!--Base Object-->
+		<Include type="instance" source="DATA:BaseObjects\BaseProjectile.xml"/>
+	</Includes>
+	<GameObject
+		id="SovietBlatGunProjectile"
+		inheritFrom="BaseProjectile"
+		KindOf="PROJECTILE INERT HIDE_IF_FOGGED NO_COLLIDE" 
+		Side="Soviet"
+		EditorName="SovietBlatGunProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXDesolatorBlatProjectile" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="FXDesolatorBlatGunProjectileLight"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="FXDesolatorBlatProjectile"
+						AnimationMode="ONCE"/>
+				</AnimationState>				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_SovietDesolatorBlatHit" />
+				<Event Index="onDeath" FX="FX_SOV_DesolatorTrooper_BlatGunExplo_Audio" />
+			</FXListBehavior>
+
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				Flags="ORIENT_TO_FLIGHT_PATH DETONATE_CALLS_KILL"
+				FirstHeightMin="5"
+				FirstHeightMax="5"
+				SecondHeightMin="0"
+				SecondHeightMax="0"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				CurveFlattenMinDist="300"
+				FlightPathAdjustDistPerSecond="20"
+				GroundHitFX="FX_SovietDesolatorBlatHit" />			
+		</Behaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0.8"></Shape>
+		</Geometry>
+	</GameObject>
+
+	<!-- VETERAN -->
+	<GameObject
+		id="SovietBlatGunProjectile_Vet"
+		inheritFrom="SovietBlatGunProjectile"
+		EditorName="SovietBlatGunProjectile_Vet">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				xai:joinAction="Replace">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="FXDesolatorBlatProjectile" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="FXDesolatorBlatGunProjectileLight"
+						FollowBone="true" />
+        </ModelConditionState>
+      </ScriptedModelDraw>
+    </Draws>
+    <Behaviors>
+      <FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_SovietDesolatorBlatHitVet" />
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				GroundHitFX="FX_SovietDesolatorBlatHitVet"/>
+		</Behaviors>
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:EX_JapanMissileGlow.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+	</Includes>
+	
+	<!-- NOTE - this projectile is just for looks, it doesn't do any damage, check
+			JapanArcherInfantryEnergyArrowBarrageMIRVingDamageProjectile just below to modify
+			the damage dealing projectile.  PROJECTILE kindOf removed to fix DT#23807, stops Magnetic Armor
+			from sucking up the MIRVing projectile before it splits -->
+	<GameObject
+		id="JapanArcherInfantryEnergyArrowBarrageMIRVingProjectile"
+		inheritFrom="BaseProjectile"
+		Side="Japan"
+		EditorSorting="SYSTEM"
+		KindOf="+DEFLECT_BY_SPECIAL_POWER -PROJECTILE"
+		EditorName="JapanArcherInfantryEnergyArrowBarrageMIRVingProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="EXJapanArrowGeo" />
+          <ParticleSysBone
+						BoneName="Box02"
+						FXParticleSystemTemplate="JapanArrowMIRVLHigh"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="Box03"
+						FXParticleSystemTemplate="JapanArrowMIRVLHigh"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="Box02"
+						FXParticleSystemTemplate="JapanArrowMIRVLLow"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="Box03"
+						FXParticleSystemTemplate="JapanArrowMIRVLLow"
+						FollowBone="true" />
+				</ModelConditionState>
+        <AnimationState
+        ParseCondStateType="PARSE_DEFAULT">
+          <Animation
+            AnimationName="EXJapanArrowGeo"
+            AnimationMode="LOOP" />
+        </AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+			  id="ModuleTag_LifetimeUpdate"
+			  IgnoreProjectileState="true"
+			  MinLifetime="5.8s"
+			  MaxLifetime="6.3s" />
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_JapanArrowMIRV" />
+			</FXListBehavior>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeapon"
+				InitiallyActive="true"
+				ContinueToBezierDestination="true"
+				DeathWeapon="JapanArcherInfantryEnergyArrowBarrageArrowLauncher">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				Flags="ORIENT_TO_FLIGHT_PATH DETONATE_ON_APEX DETONATE_CALLS_KILL"
+				FirstHeightMin="360"
+				FirstHeightMax="360"
+				SecondHeightMin="200"
+				SecondHeightMax="250"
+				FirstPercentIndent="40"
+				SecondPercentIndent="75"
+				FlightPathAdjustDistPerSecond="0.0"
+				Acceleration="20.0" />
+			
+		</Behaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0.8"/>
+		</Geometry>
+	</GameObject>
+
+  <GameObject
+		id="JapanArcherInfantryEnergyArrowBarrageMIRVingProjectileVet"
+		inheritFrom="JapanArcherInfantryEnergyArrowBarrageMIRVingProjectile">
+    <Draws>
+      <ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+        xai:joinAction="Replace">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="EXJapanArrowGeoVet" />
+          <ParticleSysBone
+						BoneName="Box02"
+						FXParticleSystemTemplate="FXJapanMIRVTrail_VetHIGH"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="Box03"
+						FXParticleSystemTemplate="FXJapanMIRVTrail_VetHIGH"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="Box02"
+						FXParticleSystemTemplate="FXJapanMIRVTrail_VetLOW"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="Box03"
+						FXParticleSystemTemplate="FXJapanMIRVTrail_VetLOW"
+						FollowBone="true" />
+        </ModelConditionState>
+        <AnimationState
+        ParseCondStateType="PARSE_DEFAULT">
+          <Animation
+            AnimationName="EXJapanArrowGeoVet"
+            AnimationMode="LOOP" />
+        </AnimationState>
+      </ScriptedModelDraw>
+    </Draws>
+    <Behaviors>
+
+      <FXListBehavior
+				id="ModuleTag_FXLists"
+        xai:joinAction="Replace">
+        <DieMuxData
+					DeathTypes="ALL" />
+        <Event
+					Index="onDeath"
+					FX="FX_JapanArrowMIRVVet" />
+      </FXListBehavior>
+      <FireWeaponWhenDead
+				id="ModuleTag_FinalWeapon"
+				DeathWeapon="JapanArcherInfantryEnergyArrowBarrageArrowLauncherVet">
+      </FireWeaponWhenDead>
+
+    </Behaviors>
+
+  </GameObject>
+
+	<!-- the actual damage dealing projectile. -->
+	<GameObject
+		id="JapanArcherInfantryEnergyArrowBarrageMIRVingDamageProjectile"
+		inheritFrom="BaseProjectile"
+		Side="Japan"
+		EditorSorting="SYSTEM"
+		KindOf="+DEFLECT_BY_SPECIAL_POWER"
+		EditorName="JapanArcherInfantryEnergyArrowBarrageMIRVingDamageProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				Flags="DETONATE_CALLS_KILL"
+				FirstHeightMin="350"
+				FirstHeightMax="350"
+				SecondHeightMin="350"
+				SecondHeightMax="350"
+				FirstPercentIndent="20"
+				SecondPercentIndent="50"
+				FlightPathAdjustDistPerSecond="0.0" />
+		</Behaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0.8"/>
+		</Geometry>
+	</GameObject>
+	
+</AssetDeclaration>

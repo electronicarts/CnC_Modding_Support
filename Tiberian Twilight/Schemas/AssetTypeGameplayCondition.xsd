@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="Includes/DieMux.xsd"/>
+	<xs:include schemaLocation="Includes/GameDifficulty.xsd"/>
+	<xs:include schemaLocation="Includes/ObjectFilter.xsd"/>
+	<xs:include schemaLocation="Includes/FactionType.xsd"/>
+
+	<xs:simpleType name="GameplayConditionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="KILL" />
+			<xs:enumeration value="CAPTURE" />
+			<xs:enumeration value="UPGRADE" />
+			<xs:enumeration value="FIRE_WEAPON" />
+			<xs:enumeration value="SPECIAL_POWER" />
+			<xs:enumeration value="DAMAGE_DEALT" />
+			<xs:enumeration value="HEALING_DONE" />
+			<xs:enumeration value="SHIELD_DAMAGE_ABSORBED" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="GameplayConditionBitFlags">
+		<xs:list itemType="GameplayConditionType" />
+	</xs:simpleType>
+	
+	<xs:simpleType name="GameplayConditionModeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SINGLE_PLAYER" />
+			<xs:enumeration value="COOP" />
+			<xs:enumeration value="SKIRMISH" />
+			<xs:enumeration value="ONLINE" />
+			<xs:enumeration value="RANKED_ONLINE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="GameplayConditionModeBitFlags">
+		<xs:list itemType="GameplayConditionModeType" />
+	</xs:simpleType> 
+	
+	<xs:complexType name="BaseConditionData" xas:typeGroup="Xml">
+		<xs:sequence>
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="Unique" type="SageBool" default="false" />
+		<xs:attribute name="Count" type="SageUnsignedInt" default="1" />
+	</xs:complexType>
+
+	<xs:complexType name="ObjectConditionData" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseConditionData">
+				<xs:sequence>
+					<xs:element name="DieMuxData" type="DieMuxDataType" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="UpgradeConditionData" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseConditionData">
+				<xs:sequence>
+					<xs:element name="UpgradeRequired" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="WeaponConditionData" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseConditionData">
+				<xs:sequence>
+					<!-- Strong ref would be nice here but then every individual unit's xml has to be included in 
+					the gameplay condition xml, which is pretty painful. We assert on an invalid ref instead. -->
+					<xs:element name="WeaponRequired" type="WeaponWeakRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SpecialPowerConditionData" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseConditionData">
+				<xs:sequence>
+					<xs:element name="SpecialPowerRequired" type="SpecialPowerWeakRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="GameplayConditionData" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="PrimaryObject" type="ObjectConditionData"/>
+					<xs:element name="RequiredObjectCondition" type="ObjectConditionData" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="RequiredUpgradeCondition" type="UpgradeConditionData" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="RequiredWeaponCondition" type="WeaponConditionData" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="RequiredSpecialPowerCondition" type="SpecialPowerConditionData" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="GameplayConditionBitFlags" type="GameplayConditionBitFlags" default=""/>
+				<xs:attribute name="TimeReq" type="Time" use="optional" />
+				<xs:attribute name="AllowedGameTypeBitFlags" type="GameplayConditionModeBitFlags" default="SINGLE_PLAYER COOP SKIRMISH ONLINE RANKED_ONLINE" />
+				<xs:attribute name="GameDifficultyBitFlags" type="GameDifficultyBitFlags" default="EASY NORMAL HARD BRUTAL" />
+				<xs:attribute name="Faction" type="FactionType" use="required" />
+				<!-- Warning! Using Persistent and/or UseCountFrom with a GameplayCondition that has Unique=true will do extremely weird things. -->
+				<xs:attribute name="Persistent" type="SageBool" default="false" />
+				<xs:attribute name="UseCountFrom" type="GameplayConditionDataRef" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

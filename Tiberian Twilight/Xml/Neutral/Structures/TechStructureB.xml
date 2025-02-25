@@ -1,0 +1,405 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NB_TechStructB.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechStructB_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechStructB_SKL.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechStructB_CPTR.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechStructB_IDLA.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechStructB_FX_CPTR.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechStructB_FX_IDLA.w3x" />
+		<Include
+			type="all"
+			source="ART:TBTibSpk_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:TBTibSpk_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:TBTibSpk_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:TBTibSpk_D3.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+	</Includes>
+	<GameObject
+		id="TechStructureB"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_TechStructureB"
+		ButtonImage="Portrait_TechStructureB"
+		Side="Neutral"
+		BuildTime="15"
+		EditorSorting="STRUCTURE"
+		CommandSet="TibSpikeCommandSet"
+		KindOf="ALWAYS_VISIBLE STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH TIBERIUM_BASED TEAMCOLOR_ONLY"
+		RadarPriority="STRUCTURE"
+		EditorName="TechStructureB"
+		Description="Desc:TechBuildingIonSpike">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechBuildingIonSpike</DisplayName>
+		<ArmorSet
+			Armor="TechStructureArmor"
+			DamageFX="GenericStructureDamageFX" />
+			<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="SB_Base"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+				 ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechStructB_SKN" />
+					<ParticleSysBone
+						BoneName="SB_Base"
+						FXParticleSystemTemplate="ResourceStructure_IdleParticlesSmall"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="SB_Base"
+						FXParticleSystemTemplate="ResourceStructure_IdleGlow"
+						FollowBone="true"/>
+				</ModelConditionState>
+
+
+				<ModelConditionState
+				 ParseCondStateType="PARSE_NORMAL"
+				 ConditionsYes="RUBBLE">
+					<Model
+						Name="TBTibSpk_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="TBTibSpk_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="TBTibSpk_D1" />
+				</ModelConditionState>
+				
+
+
+				<ModelConditionState
+				 ParseCondStateType="PARSE_NORMAL"
+				 ConditionsYes="USER_1">
+					<Model
+						Name="NB_TechStructB_SKN" />
+				</ModelConditionState>
+
+
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NB_TechStructB_CPTR"
+						AnimationMode="MANUAL"/>
+	
+				</AnimationState>
+
+
+				<!-- when captured -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="CAPTURED">
+					<Animation
+						AnimationName="NB_TechStructB_IDLA"
+						AnimationMode="LOOP"/>
+					<ParticleSysBone
+						BoneName="SB_Base"
+						FXParticleSystemTemplate="ResourceStructure_IonSuck"
+						FollowBone="true" />
+          <ParticleSysBone
+            BoneName="SB_Base"
+            FXParticleSystemTemplate="ResourceStructure_IonParticles"
+            FollowBone="true"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "CAPTURED" and Prev ~= "Transition_ToCaptured" then
+						CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+						end
+					</Script>
+				</AnimationState>
+
+
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="TBTibSpk_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="TBTibSpk_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="TBTibSpk_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="TBTibSpk_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+
+
+
+
+
+
+				<!-- transition to captured state -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToCaptured">
+					<Animation
+						AnimationName="NB_TechStructB_CPTR"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="SB_Base"
+						FXParticleSystemTemplate="ResourceStructure_IonSuck"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="SB_Base"
+						FXParticleSystemTemplate="ResourceStructure_IonParticles"
+						FollowBone="true" />
+					<ParticleSysBone
+            BoneName="SB_Base"
+            FXParticleSystemTemplate="ResourceStructure_IdleGlow"
+            FollowBone="true"/>
+          <ParticleSysBone
+            BoneName="SB_Base"
+            FXParticleSystemTemplate="ResourceStructure_IdleParticles"
+            FollowBone="true"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+
+      <!-- Ion fx dissolve on when captured -->
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_CaptureFX">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="" />
+        </ModelConditionState>
+        <AnimationState
+					ParseCondStateType="PARSE_DEFAULT" />
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+          <Model
+						Name="NB_TechStructB_FX_CPTR" />
+        </ModelConditionState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="SPIKE_CAPTURED">
+          <Animation
+						AnimationName="NB_TechStructB_FX_IDLA"
+						AnimationMode="LOOP"
+					/>
+          <Script>
+            Prev = CurDrawablePrevAnimationState()
+            if Prev ~= "SPIKE_CAPTURED" and Prev ~= "Transition_ToCaptured" then
+            CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToCaptured">
+          <Animation
+						AnimationName="NB_TechStructB_FX_CPTR"
+						AnimationMode="ONCE" />
+        </AnimationState>
+      </ScriptedModelDraw>
+			
+			
+    </Draws>
+    <Behaviors>
+
+			<PlayerTechExperienceDepositUpdate
+				id="ModuleTag_PlayerTechDeposit"
+				DepositInterval="5s"
+				Points="10"
+				CapturePoints="300"
+				DepositToPlayersWithRelationships="ALLIES"
+				Flags="IN_GAME_FEEDBACK"
+			/>
+				
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+			<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" /> 
+        <DieMuxData
+					DeathTypes="ALL" />
+      </SlowDeath>
+			<RebuildHoleExposeDie
+				id="ModuleTag_RebuildHoleExposeDie"
+				HoleObject="TechStructureBHole"
+				FadeInTimeSeconds="3.0s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</RebuildHoleExposeDie>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="2.0s" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="TechStructureEFunctions"
+			/>
+
+			<ModelConditionUpgrade
+				id="ModuleTag_FactionUpgrade"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+	</Behaviors>
+    <AI>
+      <AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO">
+      </AIUpdate>
+    </AI>
+    <Body>
+      <ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="8000.0" />
+    </Body>
+    <Geometry
+			IsSmall="false">
+      <Shape
+				Type="CYLINDER"
+				MajorRadius="10.3081"
+				MinorRadius="10.3081"
+				Height="124.951">
+        <Offset
+					x="-0.102257"
+					y="0.291839"
+					z="0.0" />
+      </Shape>
+      <Shape
+				Type="CYLINDER"
+				MajorRadius="25.7703"
+				MinorRadius="25.7703"
+				Height="20.2843">
+        <Offset
+					x="-0.102257"
+					y="0.29184"
+					z="0.0" />
+      </Shape>
+      <ContactPoint>
+        <Pos
+					x="-5.92092"
+					y="-6.06962"
+					z="0.0" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="4.93066"
+					y="-6.06961"
+					z="119.205" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="4.93066"
+					y="4.78196"
+					z="0.0" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="-5.92092"
+					y="4.78197"
+					z="119.205" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="-5.92092"
+					y="-6.06961"
+					z="119.205" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="4.93066"
+					y="-6.06962"
+					z="0.0" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="4.93066"
+					y="4.78197"
+					z="119.205" />
+      </ContactPoint>
+      <ContactPoint>
+        <Pos
+					x="-5.92092"
+					y="4.78196"
+					z="0.0" />
+      </ContactPoint>
+    </Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="TiberiumSpike_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+    <VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+  </GameObject>
+</AssetDeclaration>

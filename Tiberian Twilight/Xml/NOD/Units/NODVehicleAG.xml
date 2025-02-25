@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+
+	<!-- NOD Vehicle AG / NOD S Medium MG Tier 1 / Marauder -->
+
+	<Includes>
+		<Include type="all" source="ART:NUM_VehicleAG_SKN.w3x" />
+		<Include type="all" source="ART:NUM_VehicleAG_SKL.w3x" />
+		<Include type="all" source="ART:NUM_VehicleAG_AIDA.w3x" />
+		<Include type="all" source="ART:NUM_VehicleAG_ATKA.w3x" />
+		<Include type="all" source="ART:NUM_VehicleAG_MOVA.w3x" />
+
+		<Include type="all" source="ART:NUM_VehicleAG_DMG.xml" />
+		<Include type="all" source="ART:FXTracerGDI.xml" />
+		
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseMediumVehicle.xml" />
+	</Includes>
+
+	<Defines>
+		<!-- This ReloadTime is used for the weapon and the ReloadSpecialPower.-->
+		<Define name="NODVehicleAG_TIBERIUM_CORROSION_DOT_DURATION" value="10.0s" />
+	</Defines>
+
+	<GameObject
+		id="NODVehicleAG"
+		inheritFrom="BaseMediumVehicle"
+		HealthBoxHeightOffset="40"
+		SubGroupPriority="336"
+		SelectPortrait="Portrait_NOD_Vehicle_AG"
+		ButtonImage="Btn_NOD_Vehicle_AG"
+		Side="NOD"
+		ParticipationValue="=$NODVEHICLEAG_PARTICIPATION_VALUE"
+		TransportSlotCount="1"
+		BuildTime="12"
+		CommandSet="NODVehicleAGCommandSet"
+		CommandPoints="=$NOD_VEHICLE_AG_COMMANDPOINT_COST"
+		KindOf="+HARDENED_ANTI_AIR +HAS_VISIBLE_AMMO"
+		WeaponCategory="GUN"
+		VoicePriority="172"
+		EditorName="NOD_S1_Medium_MGun(Marauder)"
+		EditorSorting="UNIT"
+		Description="Desc:NODVehicleAG"
+		TypeDescription="Type:NODVehicleAG">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODVehicleAG</DisplayName>
+		<LocomotorSet
+			Locomotor="NODVehicleAGLocomotor"
+			Condition="NORMAL"
+			Speed="140.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_01"
+				OkToChangeModelColor="true"
+				TrackMarks="EXTireTrack2"
+				TrackMarksOnlyWhenCorneringQuickly="true"
+				TrackMarksLeftBone="NVG_Tire04"
+				TrackMarksRightBone="NVG_Tire03"
+				TireRotationMultiplier="0.3"
+				PowerslideRotationAddition="1.25"
+				InitialRecoilSpeed="16.0"
+				MaxRecoilDistance="10.0"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				MaximumWheelExtension="-2.5"
+				MaximumWheelCompression="1.75"
+				ExtraPublicBone="FX_Weapon01 FX_Weapon02 NVG_Turret NVG_GunPitch NVG_Recoil01 NVG_Recoil02 NVG_Tire01 NVG_Tire02 NVG_Tire03 NVG_Tire04"
+				Options="RENDER_BUFF_EFFECTS">
+
+				<TireBoneGroup
+					TireGroupSettings="FRONT"
+					LeftTireBone="NVG_Tire02"
+					RightTireBone="NVG_Tire01"
+					WheelTurnAngle="35d"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="NVG_Tire04"
+					RightTireBone="NVG_Tire03"/>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUM_VehicleAG_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="NVG_Recoil" />
+					<WeaponRecoilBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="NVG_Recoil" />
+					<Turret
+						TurretNameKey="NVG_Turret"
+						TurretPitch="NVG_GunPitch"
+						TurretID="1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Texture
+						Original="NUM_VehicleAG"
+						New="NUM_VehicleAG_DMG" />
+					<Model
+						Name="NUM_VehicleAG_SKN" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIPitbullDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUM_VehicleAG_SKN" />
+					<Texture
+						Original="NUM_VehicleAG"
+						New="NUM_VehicleAG_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIPitbullDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NUM_VehicleAG_SKN" />
+					<Texture
+						Original="NUM_VehicleAG"
+						New="NUM_VehicleAG_DMG" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIDebrisSmallFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIDebrisSmallFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="NUM_VehicleAG_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NUM_VehicleAG_AIDA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RELOADING_A">
+					<Animation
+						AnimationName="NUM_VehicleAG_AIDA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="NUM_VehicleAG_ATKA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_LEFT">
+					<Animation
+						AnimationName="NUM_VehicleAG_MOVA"
+						AnimationMode="LOOP"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_RIGHT">
+					<Animation
+						AnimationName="NUM_VehicleAG_MOVA"
+						AnimationMode="LOOP"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="NUM_VehicleAG_MOVA"
+						AnimationMode="LOOP"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+				</AnimationState>
+			</TruckDraw>
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw_Primary"
+				MinLength="1.0"
+				MaxLength="1.0"
+				Width="1.0"
+				MinSpeed="30"
+				MaxSpeed="30"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame=".08"
+				MaxTracersPerFrame=".12"
+				FrameLifeTime="35"
+				WeaponSlotType="PRIMARY_WEAPON"
+				Texture="FXTracerGDI"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_NODMachineGun_Medium_Hit"
+				WeaponSlotID="1">
+				<HeadColor
+					r="0.0"
+					g="1.0"
+					b="0.0"
+					a="1.0" />
+				<TailColor
+					r="0.0"
+					g="1.0"
+					b="0.0"
+					a="0.0" />
+			</TracerModelDraw>
+
+			<!-- PERFECT HIT FX -->
+
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw_Primary_Strong"
+				MinLength="1.0"
+				MaxLength="1.0"
+				Width="1.0"
+				MinSpeed="30"
+				MaxSpeed="30"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame=".08"
+				MaxTracersPerFrame=".12"
+				FrameLifeTime="35"
+				WeaponSlotType="PRIMARY_WEAPON"
+				Texture="FXTracerGDI"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_NODMachineGun_Medium_Hit"
+				CombatChainCounter="STRONG"
+				WeaponSlotID="1">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="0.0"
+					g="0.0"
+					b="0.0"
+					a="0.0" />
+			</TracerModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODVehicleAGShotgunMG"/>
+					<TurretSettings
+						TurretTurnRate="180"
+						TurretPitchRate="40"
+						AllowsPitch="true"
+						MinimumPitch="-10d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkRate="0.0"
+				DestructionDelay="0s">
+				<OCL
+					Type="INITIAL">
+					<OCL>NOD_Generic_Small_Die_OCL</OCL>
+				</OCL>
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="TOPPLED" />
+				<!-- <Sound Type="INITIAL" List="NOD_Generic_VoiceDieMS" /> -->
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleMED_Death" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<!-- Reload Boost upgrade. -->
+			<AttributeModifierUpgrade
+				id="Upgrade_NODVehicleAG_ReloadUpgrade"
+				AttributeModifier="Modifier_Generic_Clip_NODReloadUpgrade">
+				<TriggeredBy>Upgrade_Nod_Support_Reload</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Range Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_NODVehicleAG_WeaponRangeUpgrade"
+				AttributeModifier="Modifier_Generic_NODWeaponRange_T1">
+				<TriggeredBy>Upgrade_Nod_Support_Range</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Speed Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_NODVehicleAG_SpeedBoostUpgrade"
+				AttributeModifier="Modifier_Generic_NODSpeedBoostUpgrade">
+				<TriggeredBy>Upgrade_Nod_Support_Speed</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<ReloadSpecialPower
+				id="ModuleTag_ReloadSpecialPower"
+				SpecialPowerTemplate="SpecialPower_NODManualReload"
+				WeaponReloadTime="1s"/>
+
+			<xi:include
+				href="DATA:Includes/GenericReflectedWeaponTracker.xml" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					SympathyRange="200.0" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="700" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<Geometry>
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "31.5567"
+					 MinorRadius = "18.2622"
+					 Height = "21.6203"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "30.0"
+					 MinorRadius = "30.0"
+					 Height = "22.0">
+			</Shape>
+		</Geometry>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_VehAGMarauder_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="NOD_VehAGMarauder_VoiceAttackMismatch" AudioType="voiceAttackMismatchHeavy"/>
+			<AudioEntry Sound="NOD_VehAGMarauder_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="NOD_VehAGMarauder_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="NOD_VehAGMarauder_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="NOD_VehAGMarauder_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="NOD_VehAGMarauder_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="NOD_VehAGMarauder_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="NOD_VehAGMarauder_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Marauder_VehAG_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="NOD_Marauder_VehAG_MoveLoop" AudioType="soundMoveLoop" />
+			<AudioEntry Sound="NOD_RaiderBuggy_IdleLoop" AudioType="soundAmbient" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="250"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_Nod_Support_Reload</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_Nod_Support_Range</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_Nod_Support_Speed</DisplayUpgrade>
+	</GameObject>
+
+	<LogicCommandSet
+		id="NODVehicleAGCommandSet">
+		<Cmd>Command_NODManualReload</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+	</LogicCommandSet>
+
+	<AttributeModifier
+		id="AttributeModifier_NODVehicleAGTiberiumCorrosion"
+		Category="NONE"
+		Duration="=$NODVehicleAG_TIBERIUM_CORROSION_DOT_DURATION"
+		RenderBuffEffectFlags="VEIN_DETONATION">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:NODVehicleAG" />
+		<Modifier Type="ARMOR" Value="125%"/>
+	</AttributeModifier>
+
+	<WeaponTemplate
+		id="NODVehicleAGShotgunMG"
+		inheritFrom="BaseGunWeapon"
+		AttackRange="150.0"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		ClipSize="10"
+		ShowsAmmoPips="true"
+		FireSound="NOD_Marauder_VehAG_TiberiumShellWeaponFire"
+		FireFX="FX_NODTiberium_Shotgun_Fire"
+		FireStrongCounterFX="FX_NODTiberium_Shotgun_Fire_Veteran"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT DRAW_AMMO_BAR"
+		AcceptableAimDelta="1d"
+		DamageDealtAtSelfPosition="true"
+		IgnoresContactPoints="true">
+		<FiringDuration
+			id="GunFiringDuration"
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<ClipReloadTime
+			MinSeconds="3.0s"
+			MaxSeconds="3.0s" />
+		<Nuggets>
+			<DamageNugget
+				Damage="4.0"
+				Radius="195.0"
+				DamageTaperOff="4.0"
+				DamageArc="15d"
+				DamageType="GUN"
+				DamageFXType="NOD_MACHINEGUN"
+				PartitionFilterTestType="CIRCLE"
+				DeathType="NORMAL"
+        ApplyRangeModifiersToRadiusEffects="true"/>
+			<DOTNugget
+				id="NuggetTag_DOT"
+				Damage="1.0"
+				Radius="190.0"
+				DamageTaperOff="1.0"
+				DamageInterval="1.0s"
+				DamageDuration="=$NODVehicleAG_TIBERIUM_CORROSION_DOT_DURATION"
+				DamageArc="15d"
+				DamageType="BLAST"
+				FXListVictim="FX_NODTibCloud_Hit" 
+				DeathType="NORMAL"
+				PartitionFilterTestType="CIRCLE"
+        ApplyRangeModifiersToRadiusEffects="true"/>
+			<AttributeModifierNugget
+				id="NuggetTag_AttributeModifier"
+				PartitionFilterTestType="CIRCLE"
+				Radius="195.0"
+				DamageArc="15d"
+				AttributeModifierName="AttributeModifier_NODVehicleAGTiberiumCorrosion"
+				ForbiddenSourceObjectStatus="CLONED"
+        ApplyRangeModifiersToRadiusEffects="true"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<LocomotorTemplate
+		id="NODVehicleAGLocomotor"
+		Name="NODVehicleAGLocomotor"
+		Surfaces="GROUND"
+		TurnTimeSeconds="0.8s"
+		TurnTimeDamagedSeconds="0.8s"
+		MaxSpeedDamaged="100%"
+		AccelerationSeconds="0.2s"
+		BrakingSeconds="0.15s"
+		SlowTurnRadius="30.0"
+		FastTurnRadius="40.0"
+		UseTerrainSmoothing="true"
+
+		MinTurnSpeed="10%"
+		TurnPivotOffset="-0.23"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="FOUR_WHEELS"
+
+		AccelPitchLimit="3d"
+		BounceKick="5d"
+		PitchStiffness="0.4"
+		PitchDamping="0.3"
+		RollStiffness="0.1"
+		RollDamping="0.1"
+		ForwardAccelerationPitchFactor="0.03"
+		LateralAccelerationRollFactor="0.1"
+		ReverseMoveSpeed="100%"
+		HasSuspension="true"
+		ClampOrientationToPathTangent="true"
+		CanReverseMove="true"
+	/>
+
+	
+
+	<ExperienceLevelTemplate
+		id="NODVehicleAGExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_NOD_Rank_01"
+		ExperienceAward="6">
+		<Target>NODVehicleAG</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAGExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_NOD_Rank_02"
+		Prerequisite="NODVehicleAGExperienceLevel_1"
+		RequiredExperience="12"
+		ExperienceAward="7">
+		<Target>NODVehicleAG</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAGExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_NOD_Rank_03"
+		Prerequisite="NODVehicleAGExperienceLevel_2"
+		RequiredExperience="30"
+		ExperienceAward="8">
+		<Target>NODVehicleAG</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAGExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_NOD_Rank_04"
+		Prerequisite="NODVehicleAGExperienceLevel_3"
+		RequiredExperience="54"
+		ExperienceAward="9">
+		<Target>NODVehicleAG</Target>
+	</ExperienceLevelTemplate>
+
+</AssetDeclaration>

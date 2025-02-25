@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags/>
+  <Includes>
+
+    <Include type="all" source="DATA:Includes/CampaignOverrides/CampaignOverrides.xml"/>
+    <!-- Campaign Specific Overrides -->
+    <Include type="instance" source="DATA:Neutral/Structures/OreNode.xml" />
+    <Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+    <Include type="instance" source="DATA:GlobalData/SpecialPowerTemplates.xml" />
+    <Include type="instance" source="DATA:Soviet/Props/IronCurtainEffect.xml" />
+    <Include type="instance" source="DATA:Soviet/Units/SovietAntiVehicleVehicleTech3.xml" />
+    <Include type="instance" source="DATA:Soviet/Structures/SovietSuperWeapon.xml" />
+    <Include type="instance" source="DATA:Allied/Units/AlliedAntiInfantryVehicle.xml" />
+    <Include type="instance" source="DATA:Allied/Units/AlliedMCV.xml" />
+    <Include type="instance" source="DATA:Allied/Structures/AlliedConstructionYard.xml" />
+    <Include type="instance" source="DATA:PathMusic/StandardPathMusicGameDynamicState.xml" />
+  </Includes>
+
+  <GameObject
+    id="AlliedMCV"
+    inheritFrom="AlliedMCV">
+
+    <LocomotorSet
+      id="DefaultLandLocomotor"
+      xai:joinAction="Replace"
+      Locomotor="AlliedMCVLocomotor"
+      Condition="NORMAL"
+      Speed="55.0" />
+    <LocomotorSet
+			id="DefaultWaterLocomotor"
+      xai:joinAction="Replace"
+			Locomotor="AlliedMCVWaterLocomotor"
+			Condition="NORMAL"
+			Speed="55.0" />
+
+  </GameObject>
+
+  <GameObject
+    id="AlliedConstructionYard"
+    inheritFrom="AlliedConstructionYard">
+
+    <Behaviors>
+      <CommandSetUpgrade
+        id="ModuleTag_CommandSetUpgrade"
+        xai:joinAction="Remove">
+      </CommandSetUpgrade>
+    </Behaviors>
+    
+  </GameObject>
+
+  <GameObject
+    id="AlliedAntiInfantryVehicle"
+    inheritFrom="AlliedAntiInfantryVehicle">
+
+    <LocomotorSet
+      id="DefaultLandLocomotor"
+			Locomotor="AlliedAntiInfantryVehicleLocomotor"
+			Condition="NORMAL"
+			Speed="100.0" />
+    <LocomotorSet
+      id="DefaultWaterLocomotor"
+			Locomotor="AlliedAntiInfantryWaterLocomotor"
+			Condition="NORMAL"
+			Speed="100.0" />
+
+    <Behaviors>
+      <AttributeModifierUpgrade
+              id="ModuleTag_A03_RiptideSlower"
+              AttributeModifier="AttributeMod_A03_RiptideSlower">
+        <TriggeredBy>Upgrade_RiptideLocomotorModifier</TriggeredBy>
+      </AttributeModifierUpgrade>
+    </Behaviors>
+  </GameObject>
+
+  <GameObject
+    id="SovietSuperWeapon"
+    inheritFrom="SovietSuperWeapon"
+    KindOf="-REVEAL_TO_ALL">
+
+    <Behaviors>
+      <EngineerContain
+        id="ModuleTag_EngineerContain"
+        xai:joinAction="Remove"/>
+    </Behaviors>
+	<ClientBehaviors>
+		<ModelConditionAudioLoopClientBehavior id="ModuleTag_SuperWeaponReady" xai:joinAction="Remove"/>  <!-- this is so that the Iron Curtain ready sound isn't constantly playing every 30 seconds or so  -->
+	</ClientBehaviors>
+	<ClientUpdates>
+      <EvaAnnounceSpecialPowerReadyClientUpdate
+        id="SuperWeaponReady"
+        xai:joinAction="Remove"/>
+      <EvaAnnounceClientCreate
+            id="SuperWeaponDetected"
+            xai:joinAction="Remove"/>
+    </ClientUpdates>
+  </GameObject>
+
+  <GameObject
+    id="SovietAntiVehicleVehicleTech3"
+    inheritFrom="SovietAntiVehicleVehicleTech3"
+    BuildTime="60"/>
+
+  <GameObject
+		id="IronCurtainEffect"
+    inheritFrom="IronCurtainEffect">
+    <Behaviors>
+      <AttributeModifierAuraUpdate
+        id="ModuleTag_AttributeModifierAuraUpdate"
+        xai:joinAction="Replace"
+        AttributeModifierName="AttributeModifier_IronCurtain"
+        RefreshDelay="0.75s"
+        Range="825"
+        InitiallyActive="true">
+        <ObjectFilter
+          Rule="ANY"
+          Include="VEHICLE STRUCTURE">
+        </ObjectFilter>
+      </AttributeModifierAuraUpdate>
+    </Behaviors>
+
+  </GameObject>
+
+  <GameObject
+		id="OreNode"
+		inheritFrom="OreNode">
+    <Behaviors>
+      <OreNodeBehavior
+        id="ModuleTag_OreNodeBehavior"
+        MaximumGatheredValue="50000">
+      </OreNodeBehavior>
+    </Behaviors>
+  </GameObject>
+
+  <SpecialPowerTemplate
+    id="SpecialPowerIronCurtain"
+    inheritFrom="SpecialPowerIronCurtain"
+    xai:joinAction="Replace"
+    ReloadTime="10s"
+    TargetType="LOCATION"
+    RadiusCursorRadius="100"
+    Flags="IS_PLAYER_POWER WATER_OK">
+  </SpecialPowerTemplate>
+
+  <WeaponTemplate
+		id="IronCurtainInfantryDeathWeapon"
+		AttackRange="0.0"
+		WeaponSpeed="999999.0"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+    <Nuggets>
+      <DamageNugget
+				Damage="999999.0"
+				Radius="750.0"
+				DamageType="SNIPER"
+				DamageFXType="SOVIET_IRONCURTAIN"
+				DeathType="NORMAL">
+        <SpecialObjectFilter
+					Rule="NONE"
+					Include="INFANTRY" />
+      </DamageNugget>
+    </Nuggets>
+  </WeaponTemplate>
+
+  <WeaponTemplate
+  id="SovietPowerPlantAdvancedDeathWeapon"
+  AttackRange="5.0"
+  WeaponSpeed="999999.0"
+  PreAttackFX="FX_None"
+  FireFX="FX_SovPPXP"
+  HitPercentage="0%"
+  CanFireWhileMoving="false"
+  ClipSize="1"
+  Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+  RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+  RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE">
+    <PreAttackDelay
+		  MinSeconds="0.5s"
+		  MaxSeconds="0.5s" />
+    <FiringDuration
+			MinSeconds="3s"
+			MaxSeconds="3s" />
+    <Nuggets>
+      <DamageNugget
+				Damage="1500"
+				DamageTaperOff="300"
+				DelayTimeSeconds="0.5s"
+				Radius="200"
+				DamageType="EXPLOSIVE"
+				DeathType="EXPLODED">
+      </DamageNugget>
+    </Nuggets>
+  </WeaponTemplate>
+
+  <WeaponTemplate
+  id="SovietBaseDefenseAdvancedTeslaGun"
+  FireSoundPerClip="SOV_TeslaCoil_WeaponFire"
+  FireFX="FX_TeslaBoatFire"
+  AcceptableAimDelta="360d"
+  AttackRange="300.0"
+  WeaponSpeed="999999.0"
+  RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER ANTI_SUBMERGED"
+  CanFireWhileMoving="false"
+  ClipSize="1"
+  Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+  ReAcquireDetailType="PER_CLIP"
+  ShotsPerBarrel="1">
+    <!-- PreAttackDelay needed for NotifyWhenAttackingBehavior (hackish) -->
+    <PreAttackDelay
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+    <FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+    <ClipReloadTime
+			MinSeconds="3.0s"
+			MaxSeconds="3.0s" />
+    <Nuggets>
+      <DamageNugget
+				Damage="300.0"
+				DamageType="TESLA"
+				DamageFXType="SOVIET_TESLA"
+				DeathType="ELECTROCUTED"
+				DelayTimeSeconds="0.1s"
+				ForbiddenTargetObjectStatus="HAS_SECONDARY_DAMAGE"/>
+      <SecondaryDamageNugget
+				Amount="=$FACTION_WEAPON_SECONDARY_DAMAGE_AMOUNT"
+			/>
+    </Nuggets>
+  </WeaponTemplate>
+
+  <!-- PathMusic Overrides -->
+
+</AssetDeclaration>

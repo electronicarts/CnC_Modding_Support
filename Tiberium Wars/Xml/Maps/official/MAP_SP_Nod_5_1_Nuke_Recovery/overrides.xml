@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags/>
+	<Includes>
+		<Include source="DATA:Alien\Units\AlienStormrider.xml" type ="instance"/>
+		<Include source="DATA:GlobalData\Weapon.xml" type="instance"/>
+		<Include source="DATA:GlobalData\SpecialPowerTemplates.xml" type="instance"/>
+		<Include source="DATA:NOD\Structures_SinglePlayerCampaign\NSSilo.xml" type="instance"/>
+		<Include source="DATA:Alien\Units\AlienPlanetaryAssaultCarrier.xml" type="instance"/>
+		<Include source="DATA:Alien\Units\AlienDevastatorWarship.xml" type="instance"/>
+		<Include source="DATA:GlobalData\Locomotor.xml" type="instance"/>
+	</Includes>
+	<GameObject
+ 		id = "NOD_Silo" inheritFrom ="NOD_Silo" BuildCost= "500" >
+		<ArmorSet
+			id="DefaultArmor"
+			xai:joinAction="Overwrite"
+			Armor="CatalystLaunchFacilityArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Behaviors>
+			<RepairUpdate 
+			id="ModuleTag_RepairUpdate" 
+			HealAmountPerSecond = "150" >
+			</RepairUpdate>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="12000.0" />
+		</Body>
+	</GameObject>
+
+
+	<GameObject
+ 		id = "AlienStormrider" inheritFrom ="AlienStormrider" >
+		<Body>
+			<ActiveBody
+				    id="ModuleTag_Body"
+				    MaxHealth="1000" />
+		</Body>
+		<AI>
+			<JetAIUpdate
+					    id="ModuleTag_AI"
+					    NeedsRunway="false"
+					    KeepsParkingSpaceWhenAirborne="true"
+					    AutoAcquireEnemiesWhenIdle="YES"
+					    CirclesForAttack="true">
+				<UnitAITargetChooserData
+							  SympathyRange="25.0" 
+				  TargetingCompareList="CompleteTargetingCompareList"/>
+				<LockonInfo />
+			</JetAIUpdate>
+		</AI>
+
+	</GameObject>
+
+
+
+	<SpecialPowerTemplate
+		id="SpecialPowerLaunchCatalystMissile"
+		Flags="IS_PLAYER_POWER FOGGED_SHROUDED_CELLS_OK WATER_OK SHARED_SYNC"
+		RadiusCursorRadius="200"
+		ReloadTime="45s"
+		TargetType="LOCATION" 
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget">
+	</SpecialPowerTemplate>
+
+
+
+	<!-- The main explosion when the missile hits -->
+	<WeaponTemplate
+		id="NODCatalystMissileWeapon"
+		Name="NODCatalystMissileWeapon"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ENEMIES ALLIES NEUTRALS"
+		 >
+		<Nuggets>
+			<DamageNugget 
+				Damage="4500.0" 
+				Radius="200.0" 
+				DamageType="GRENADE" 
+				DamageFXType="NOD_SEED"
+				DeathType="NORMAL" >
+				<DamageScalarDetails Scalar= "0%">
+					<Filter
+						Rule="NONE"
+						Include="TIBERIUM">
+					</Filter>
+				</DamageScalarDetails>
+				<DamageScalarDetails Scalar= "500%">
+					<Filter
+						Rule="NONE"
+						Include="TIBERIUM_BASED"
+						Exclude="TIBERIUM">
+						<IncludeThing>GDITiberiumSilo</IncludeThing>
+						<IncludeThing>GDIHarvester</IncludeThing>
+						<IncludeThing>GDIRefinery</IncludeThing>
+						<IncludeThing>NODTiberiumSilo</IncludeThing>
+						<IncludeThing>NODHarvester</IncludeThing>
+						<IncludeThing>NODRefinery</IncludeThing>
+						<IncludeThing>NODTiberiumLiquidationFacility</IncludeThing>
+					</Filter>
+				</DamageScalarDetails>
+			</DamageNugget>
+
+			<FireOnObjectsNugget
+				Radius="200.0" 
+				Weapon="NODCatalystCreationWeapon">
+				<Filter
+					Rule="NONE"
+					Include="TIBERIUM"/>
+			</FireOnObjectsNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- The tiberium reaction magma explosion -->
+	<WeaponTemplate
+			id="NODCatalystMissileCatalystWeapon"
+			Name="NODCatalystMissileCatalystWeapon" 
+			ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS" 
+			RadiusDamageAffects="ENEMIES ALLIES NEUTRALS"
+		 >
+		<Nuggets>
+			<DamageNugget 
+				Damage="3000.0" 
+				Radius="150.0" 
+				DamageType="GRENADE" 
+				DamageFXType="NOD_SEED"
+				DeathType="NORMAL" >
+				<DamageScalarDetails Scalar= "0%">
+					<Filter
+						Rule="NONE"
+						Include="TIBERIUM">
+					</Filter>
+				</DamageScalarDetails>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="AlienStormRiderPlasmaAutocannonWarhead"
+		Name="AlienStormRiderPlasmaAutocannonWarhead" 
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		AntiMask="ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ANTI_GROUND ANTI_STRUCTURE"		
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS">
+		<Nuggets>
+			<DamageNugget 
+				Damage="15" 
+				DamageType="ROCKET" 
+				DamageFXType="ALIEN_CANNON">
+				<DamageScalarDetails
+					Scalar= "200%">
+					<Filter
+						Rule="NONE"
+						Include="CIVILIAN_BUILDING" />
+				</DamageScalarDetails>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="AlienStormRiderPlasmaDiskLauncherWarhead"
+		Name="AlienStormRiderPlasmaDiskLauncherWarhead" 
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS">
+		<Nuggets>
+			<DamageNugget 
+				Damage="5.0" 
+				DamageType="ROCKET" 
+				DamageFXType="ALIEN_PLASMADISK">
+				<DamageScalarDetails Scalar= "200%">
+					<Filter
+						Rule="NONE"
+						Include="CIVILIAN_BUILDING" />
+				</DamageScalarDetails>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<LocomotorTemplate
+		id="AlienPlanetaryAssaultCarrierLocomotor"
+		inheritFrom="AlienPlanetaryAssaultCarrierLocomotor"
+		AbsoluteMinHeightWorldSpace="350.0"/>
+
+	<LocomotorTemplate
+		id="AlienInvaderFighter"
+		inheritFrom="AlienInvaderFighter"
+		AbsoluteMinHeightWorldSpace="350.0"/>
+
+	<LocomotorTemplate
+		id="AlienDevastatorWarshipLocomotor"
+		inheritFrom="AlienDevastatorWarshipLocomotor"
+		AbsoluteMinHeightWorldSpace="350.0"/>
+
+	<MissionObjectiveList id="MissionObjectives">
+			<MissionObjectiveTag
+				Script="SCRIPT:Nod_5_1_Objective_1"
+				Description="SCRIPT:Nod_5_1_Objective_1_Detail" >
+				<PresentationSettings
+					ID = "Nod_ToW_5_1_Objective_1"
+					Dialog = "MN51_NodEVA12"
+					CameraFieldOfViewVariance="0">
+					<Duration>7s</Duration>
+					<CameraStartAngle>10d</CameraStartAngle>
+					<CameraEndAngle>20d</CameraEndAngle>	
+				</PresentationSettings>
+			</MissionObjectiveTag>
+			<MissionObjectiveTag
+				Script="SCRIPT:Nod_5_1_Objective_2"
+				Description="SCRIPT:Nod_5_1_Objective_2_Detail" >
+				<PresentationSettings
+					ID = "Nod_ToW_5_1_Objective_2"
+					Dialog = "MN51_NodEVA13">
+					<Duration>7s</Duration>
+					<CameraStartAngle>10d</CameraStartAngle>
+					<CameraEndAngle>20d</CameraEndAngle>	
+				</PresentationSettings>
+			</MissionObjectiveTag>
+			<MissionObjectiveTag
+				Script="SCRIPT:Nod_5_1_Objective_3"
+				Description="SCRIPT:Nod_5_1_Objective_3_Detail" >
+				<PresentationSettings
+					ID = "Nod_ToW_5_1_Objective_3"
+					Dialog = "MN51_NodEVA02"
+					CameraFieldOfViewVariance="0">
+					<Duration>3s</Duration>
+					<CameraStartAngle>10d</CameraStartAngle>
+					<CameraEndAngle>20d</CameraEndAngle>	
+				</PresentationSettings>
+				<PresentationSettings
+					ID = "Nod_ToW_5_1_Objective_3a"
+					CameraFieldOfViewVariance="0">
+					<Duration>3s</Duration>
+					<CameraStartAngle>10d</CameraStartAngle>
+					<CameraEndAngle>20d</CameraEndAngle>	
+				</PresentationSettings>
+				<PresentationSettings
+					ID = "Nod_ToW_5_1_Objective_3b"
+					CameraFieldOfViewVariance="0">
+					<Duration>3s</Duration>
+					<CameraStartAngle>10d</CameraStartAngle>
+					<CameraEndAngle>20d</CameraEndAngle>	
+				</PresentationSettings>
+			</MissionObjectiveTag>
+			<MissionObjectiveTag IsBonusObjective="true" 
+				Script="SCRIPT:Nod_5_1_Bonus_Objective_1"
+				Description="SCRIPT:Nod_5_1_Bonus_Objective_1_Detail" >
+				<PresentationSettings
+					ID = "Nod_ToW_5_1_Bonus_Objective_1"
+					Dialog = "MN51_NodEVA14"
+					CameraFieldOfViewVariance="0">
+					<Duration>5s</Duration>
+					<CameraStartAngle>10d</CameraStartAngle>
+					<CameraEndAngle>20d</CameraEndAngle>	
+				</PresentationSettings>
+			</MissionObjectiveTag>
+			<MissionObjectiveTag IsBonusObjective="true" 
+				Script="SCRIPT:Nod_5_1_Bonus_Objective_2"
+				Description="SCRIPT:Nod_5_1_Bonus_Objective_2_Detail" >
+				<PresentationSettings
+					ID = "Nod_ToW_5_1_Bonus_Objective_2"
+					Dialog = "MN51_NodEVA15"
+					CameraFieldOfViewVariance="0">
+					<Duration>6s</Duration>
+					<CameraStartAngle>10d</CameraStartAngle>
+					<CameraEndAngle>20d</CameraEndAngle>	
+				</PresentationSettings>
+			</MissionObjectiveTag>
+		</MissionObjectiveList>
+	
+	  <Weather id="Weather">
+		<Cloud>
+			<CloudTextureSize x="1500.0" y="1500.0"/>
+			<CloudOffsetPerSecond x="-.006" y="-.009"/>
+		</Cloud>		
+	</Weather>
+
+</AssetDeclaration>

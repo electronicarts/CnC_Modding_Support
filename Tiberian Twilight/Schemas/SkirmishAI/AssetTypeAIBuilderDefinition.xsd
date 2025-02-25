@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="AIBuildHeuristics">
+		<xs:restriction base="xs:string">
+
+		<xs:enumeration value="CONSTANT"/>
+		<xs:enumeration value="BEST_UNIT_EXPECTED"/>
+		<xs:enumeration value="BEST_UNIT_ACTUAL"/>
+		<xs:enumeration value="BEST_UNIT_WEIGHTED"/>
+		<xs:enumeration value="FEWEST_UNIT"/>
+		<xs:enumeration value="RANDOM_UNIT"/>
+		<xs:enumeration value="WORST_UNIT"/>
+		<xs:enumeration value="NEEDED_UNIT"/>
+		<xs:enumeration value="FACTORY"/>
+		<xs:enumeration value="TECH"/>
+		<xs:enumeration value="POWER"/>      
+		<xs:enumeration value="REFINERY"/>
+		<xs:enumeration value="HARVESTER"/>
+		<xs:enumeration value="UNIQUE"/>
+
+		<xs:enumeration value="UPGRADE_LOW_EFFICIENCY"/>
+		<xs:enumeration value="UPGRADE_SAFE"/>
+		<xs:enumeration value="FORCE_TIME"/>
+
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="AIBuildHeuristicScoreAccumulation">
+		<xs:restriction base="xs:string">
+
+		<!-- Calculation: (Sum Every Heuristic (score * WeightModifier)) / (sum of all WeightModifers) -->
+		<xs:enumeration value="AVERAGE"/>
+
+		<!-- Calculation: (Mult Every Heuristic (score * WeightModifier) by each other ) -->
+		<xs:enumeration value="MULTIPLY"/>
+
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="AIBuildHeuristic">
+		<!-- Required enumeration -->
+		<xs:attribute name="Type" type="AIBuildHeuristics"/>
+
+		<!-- WeightModifier is a Heuristic weight modifier for ALL: 
+			For N BuildHeuristics in a list, each heuristic defaults to a value of Heuristic * (1/N).  
+			WeightModifier changes formula to Heuristic * (WeightModifier/All_WeightModifiers)
+			This is used to give a BuildHeuristic more importanceG. 
+			NOTE: only really useful if used with ScoreAccumulation == AVERAGE
+		-->
+		<xs:attribute name="WeightModifier" type="xs:float" default="1.0"/>
+
+		<!-- Used by RANDOM_UNIT -->
+		<xs:attribute name="PercentLow" type="Percentage" default="0%"/>
+		<xs:attribute name="PercentHigh" type="Percentage" default="0%"/>
+
+		<!-- Used by BEST_UNIT_WEIGHTED, FACTORY -->
+		<xs:attribute name="ExpectedEfficiencyWeight" type="xs:float" default="0.4"/>
+		<xs:attribute name="ActualEfficiencyWeight" type="xs:float" default="0.6"/>
+		<xs:attribute name="SampleSizeForFullWeight" type="xs:int" default="10000"/>
+
+		<!-- Used by FORCE_TIME -->
+		<xs:attribute name="MinTime" type="Time" default="0s"/>
+		<xs:attribute name="ForceTime" type="Time" default="99999s"/>
+
+	</xs:complexType>
+
+	<xs:complexType name="AIBuildBlockNearFactory">
+		<!-- xs:attribute name="ObjectFilter" type="ObjectFilter"/-->
+	    <xs:sequence>
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="Distance" type="SageReal" default="150.0"/>
+	</xs:complexType>
+
+	<xs:complexType name="AIBuildEntry">
+		<xs:sequence>
+			<xs:element name="BuildHeuristic" type="AIBuildHeuristic" minOccurs="1" maxOccurs="unbounded"/>
+
+			<!-- Currently only used with Build, not Upgrade -->
+			<xs:element name="BlockIfThingNearFactory" type="AIBuildBlockNearFactory" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+
+		<!-- This is a weak ref as the AI personalities are in the global list, and objects in the level lists -->
+		<xs:attribute name="Build" type="GameObjectWeakRef" default=""/>
+		<xs:attribute name="Upgrade" type="UpgradeTemplateWeakRef" default=""/>
+
+		<!-- deterimines if scores are multiplied or averaged together.  Multiplying makes it so a single 0.0 will make entire heurist fail -->
+		<xs:attribute name="ScoreAccumulation" type="AIBuildHeuristicScoreAccumulation" default="AVERAGE"/>
+
+		<!-- ScoreMultiplier is a Heuristic weight modifier.  After all BuildHeuristic scores are Accumulated, 
+			they are mulitplied by this ScoreMultiplier. -->
+		<xs:attribute name="ScoreMultiplier" type="xs:float" default="1.0"/>
+	</xs:complexType>
+</xs:schema>

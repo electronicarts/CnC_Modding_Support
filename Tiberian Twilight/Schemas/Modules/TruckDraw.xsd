@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!-- NOTE: if Independent is defined, the tires will stick directly to the terrain 
+							independent of the other wheel on the axle, HOWEVER, this is computationally 
+							expensive and should be avoided unless you are doing close ups of the vehicle -->
+	<xs:simpleType name="TireGroupSettingsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FRONT" />
+			<xs:enumeration value="REAR" />
+			<xs:enumeration value="INDEPENDENT" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="TireBoneGroupType">
+		<xs:sequence/>
+		<xs:attribute name="TireGroupSettings" type="TireGroupSettingsType" default="REAR" />
+		<xs:attribute name="LeftTireBone" type="xs:string" />
+		<xs:attribute name="RightTireBone" type="xs:string" />
+		<xs:attribute name="LeftSuspensionBone" type="xs:string" default=""/>
+		<xs:attribute name="RightSuspensionBone" type="xs:string" default=""/>
+		<xs:attribute name="MaximumWheelExtension" type="SageReal" use="optional"/>
+		<xs:attribute name="MaximumWheelCompression" type="SageReal" use="optional"/>
+		<xs:attribute name="WheelTurnAngle" type="Angle" default="0.0d"/>
+		<xs:attribute name="WheelTurnDampening" type="SageReal" default="0.0"/>
+	</xs:complexType>
+
+	<xs:complexType name="W3DTruckDrawModuleData">
+		<xs:complexContent>
+			<xs:extension base="W3DScriptedModelDrawModuleData">
+				<xs:sequence>
+					<xs:element name="TreadTerrainParticles" type="TerrainParticleMappingRef" minOccurs="0" maxOccurs="1" />
+					<xs:element name="TireBoneGroup" type="TireBoneGroupType" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+
+				<!-- default and wheel-specific multipliers, only Front for now -->
+				<xs:attribute name="TireRotationMultiplier" type="SageReal" default="1.0" />
+				<xs:attribute name="TireRotationMultiplierFront" type="SageReal" default="1.0" />
+
+				<xs:attribute name="PowerslideRotationAddition" type="SageReal" default="0" />
+				<xs:attribute name="CabBone" type="xs:string" />
+				<xs:attribute name="TrailerBone" type="xs:string" />
+				<xs:attribute name="CabRotationMultiplier" type="SageReal" default="1.0" />
+				<xs:attribute name="TrailerRotationMultiplier" type="SageReal" default="1.0" />
+				<xs:attribute name="RotationDamping" type="SageReal" default="1.0" />
+
+				<!-- Optional global wheel settings.  The Tire Groups can be managed independently as well -->
+				<xs:attribute name="MaximumWheelExtension" type="SageReal" use="optional"/>
+				<xs:attribute name="MaximumWheelCompression" type="SageReal" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	
+</xs:schema>

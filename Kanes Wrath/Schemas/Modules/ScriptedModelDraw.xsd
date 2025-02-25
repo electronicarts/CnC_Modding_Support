@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="ScriptedModelDrawTexture">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Texture" type="TextureRef" />
+		<xs:attribute name="Object" type="AssetId" />
+		<xs:attribute name="TimeOfDay" type="TimeOfDayType" />
+		<xs:attribute name="TexturePass" type="SageInt" />
+	</xs:complexType>
+
+	<xs:complexType name="Animation">
+		<xs:attribute name="Flags" type="xs:string" />
+		<xs:attribute name="AnimationName" type="AssetReference" xas:refType="W3DAnimation"/>
+		<xs:attribute name="AnimationMode" type="xs:string" />
+		<xs:attribute name="AnimNickName" type="xs:string" />
+		<xs:attribute name="Distance" type="SageReal" default="0.0" />
+		<xs:attribute name="AnimationBlendTime" type="SageReal" default="5.0" />
+		<xs:attribute name="AnimationMustCompleteBlend" type="SageBool" default="false" />
+		<xs:attribute name="AnimationSpeedFactorMin" type="SageReal" default="1.0" />
+		<xs:attribute name="AnimationSpeedFactorMax" type="SageReal" default="1.0" />
+		<xs:attribute name="UseWeaponTiming" type="SageBool" default="false" />
+		<xs:attribute name="WeaponTimingOrdering" type="WeaponSlotType" />
+		<xs:attribute name="WeaponTimingSlotID" type="SageInt" default="1" />
+		<xs:attribute name="AnimationPriority" type="SageInt" default="1" />
+		<xs:attribute name="FadeBeginFrame" type="SageReal" default="-1.0" />
+		<xs:attribute name="FadeEndFrame" type="SageReal" default="-1.0" />
+		<xs:attribute name="FadingIn" type="SageBool" default="false" />
+	</xs:complexType>
+
+	<xs:complexType name="AnimationState">
+		<xs:sequence>
+			<xs:element name="Animation" type="Animation" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="Script" type="Script" maxOccurs="1" minOccurs="0" />
+			<xs:element name="FXEvent" type="FXEvent" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="LuaEvent" type="LuaEvent" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="ParticleSysBone" type="ParticleSysBone" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="ParseCondStateType" type="ParseCondStateType" use="required" />
+		<xs:attribute name="AnimNickName" type="xs:string" />
+		<xs:attribute name="ConditionsYes" type="xs:string" />
+		<xs:attribute name="Name" type="xs:string" />
+		<xs:attribute name="StateName" type="xs:string" />
+		<xs:attribute name="Flags" type="xs:string" />
+		<xs:attribute name="ShareAnimation" type="SageBool" default="false" />
+		<xs:attribute name="EnteringStateFX" type="FXListRef" />
+		<xs:attribute name="FrameForPristineBonePositions" type="SageInt" default="0" />
+		<xs:attribute name="AllowRepeatInRandomPick" type="SageBool" default="false" />
+		<xs:attribute name="SimilarRestart" type="SageBool" default="false" />
+	</xs:complexType>
+
+	<xs:complexType name="W3DScriptedModelDrawModuleData">
+		<xs:complexContent>
+			<xs:extension base="DrawModuleData">
+				<xs:sequence>
+					<xs:element name="ModelConditionState" type="ModelConditionState" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="AnimationState" type="AnimationState" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="TimeOfDayTexture" type="ScriptedModelDrawTexture" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="RandomTexture" type="ScriptedModelDrawTexture" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="BurntTexture" type="ScriptedModelDrawTexture" maxOccurs="1" minOccurs="0" />
+					<xs:element name="AttachModel" type="ScriptedModelDrawAttachModel" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="EmbedPortal" type="ScriptedModelDrawEmbedPortal" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Name" type="xs:string" />
+				<xs:attribute name="InitialRecoilSpeed" type="Velocity" default="2.0" />
+				<xs:attribute name="MaxRecoilDistance" type="SageReal" default="3.0" />
+				<xs:attribute name="RecoilDamping" type="SageReal" default="0.4" />
+				<xs:attribute name="RecoilSettleSpeed" type="Velocity" default="0.065" />
+				<xs:attribute name="OkToChangeModelColor" type="SageBool" default="false" />
+				<xs:attribute name="AnimationsRequirePower" type="SageBool" default="true" />
+				<xs:attribute name="UseYAxisForTurretRotation" type="SageBool" default="false" />
+				<xs:attribute name="MinLODRequired" type="ModelLODType" />
+				<xs:attribute name="ProjectileBoneFeedbackEnabledSlots" type="WeaponSlotBitFlags" />
+				<xs:attribute name="TrackMarks" type="TextureRef" />
+				<xs:attribute name="TrackMarksOnlyWhenCorneringQuickly" type="SageBool" default="false" />
+				<xs:attribute name="ExtraPublicBone" type="StringList" />
+				<xs:attribute name="AttachToBoneInAnotherModule" type="xs:string" />
+				<xs:attribute name="DependencySharedModelFlags" type="ModelConditionBitFlags" />
+				<xs:attribute name="UseProducerTexture" type="SageBool" default="false" />
+				<xs:attribute name="NoRotate" type="SageBool" default="false" />
+				<xs:attribute name="UseFiringArcRotation" type="SageBool" default="false" />
+				<xs:attribute name="Selectable" type="SageBool" default="true" />
+				<xs:attribute name="RandomTextureFixedRandomIndex" type="SageBool" default="false" />
+				<xs:attribute name="ParticlesAttachedToAnimatedBones" type="SageBool" default="false" />
+				<xs:attribute name="TrackMarksLeftBone" type="xs:string" />
+				<xs:attribute name="TrackMarksRightBone" type="xs:string" />
+				<xs:attribute name="RampMesh1" type="AssetId" />
+				<xs:attribute name="RampMesh2" type="AssetId" />
+				<xs:attribute name="WallBoundsMesh" type="AssetId" />
+				<xs:attribute name="RaisedWallMesh" type="AssetId" />
+				<xs:attribute name="ParticleBonesCheckDrawable" type="SageBool" default="false" />
+				<xs:attribute name="ShadowForceDisable" type="SageBool" default="false" />
+				<xs:attribute name="HighDetailLODThreshold" type="SageReal" default="0.0" />
+				<xs:attribute name="LowDetailLODThreshold" type="SageReal" default="0.0" />
+				<xs:attribute name="SwitchModelLODMode" type="SageBool" default="false" />
+				<xs:attribute name="StaticModelLODMode" type="SageBool" default="false" />
+				<xs:attribute name="ShowShadowWhileContained" type="SageBool" default="false" />
+				<xs:attribute name="UseStandardModelNames" type="SageBool" default="false" />
+				<xs:attribute name="UseDefaultAnimation" type="SageBool" default="false" />
+				<xs:attribute name="WadingParticleSys" type="FXParticleSystemRef" />
+				<xs:attribute name="AlphaCameraFadeOuterRadius" type="SageReal" default="0.0" />
+				<xs:attribute name="AlphaCameraFadeInnerRadius" type="SageReal" default="0.0" />
+				<xs:attribute name="AlphaCameraAtInnerRadius" type="Percentage" default="100" />
+				<xs:attribute name="StaticSortLevelWhileFading" type="SageInt" default="-1" />
+				<xs:attribute name="BirthFadeTime" type="SageInt" default="0" />
+				<xs:attribute name="BirthFadeAdditive" type="SageBool" default="false" />
+				<xs:attribute name="ZWriteDisableOverride" type="SageBool" default="false" />
+				<xs:attribute name="MultiPlayerOnly" type="SageBool" default="false" />
+				<xs:attribute name="AffectedByStealth" type="SageBool" default="true" />
+				<xs:attribute name="InvertStealthOpacity" type="SageBool" default="false" />
+				<xs:attribute name="HighDetailOnly" type="SageBool" default="false" />
+				<xs:attribute name="SetAnimsToLastFrameOnConstructionComplete" type="SageBool" default="true" />
+
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

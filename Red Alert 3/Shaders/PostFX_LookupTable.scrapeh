@@ -1,0 +1,47 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// Scrape script for lookup table post effect
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_POSTFX_LOOKUPTABLE_SCRAPEH
+#define SCRAPE_SCRIPT_POSTFX_LOOKUPTABLE_SCRAPEH
+
+//
+// LookupTable
+//
+
+var shader PostEffectLookupTableShader PostFX_LookupTable.fx
+
+proc PostEffectLookupTable
+	beginevent UpdatePostFXLookupTable
+	
+	if PostEffect LookupTable.IsEnabled
+		callproc copyFrameBufferToTexture
+
+		settarget 0 FrameBuffer
+		setdepth DepthBuffer
+		
+		settexture PostEffect FrameBufferTexture PostEffectFrameBufferTexture
+		
+		setshader PostEffectLookupTableShader Default
+		renderquad
+		
+	else // PostFX LUT disabled.
+		// Still need to do a resolve from HDR target to frame buffer if intermediate render target is used
+		if WW3D IsUsingFrameRenderTarget
+			callproc copyFrameBufferToTexture
+
+			settexture PostEffect FrameBufferTexture PostEffectFrameBufferTexture
+
+			settarget 0 FrameBuffer
+			setdepth DepthBuffer
+			
+			setshader PostEffectLookupTableShader ResolveOnly
+			renderquad
+		endif
+	endif
+
+	endevent UpdatePostFXLookupTable
+endproc
+
+#endif // SCRAPE_SCRIPT_POSTFX_LOOKUPTABLE_SCRAPEH

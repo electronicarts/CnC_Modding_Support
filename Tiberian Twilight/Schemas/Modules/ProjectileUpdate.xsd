@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+<!-- Generic Projectile that behaves according to the specified state machine.  
+	Each state machine requires the corresponding "Move" structure listed below, otherwise
+	a runtime error will be thrown, or really strange bad things will happen.  -->
+	<xs:simpleType name="ProjectileStateMachineType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BombProjectile" />		<!-- Dumb bomb that just falls straight to ground -->
+			<xs:enumeration value="StraightLineProjectile" /> <!-- Tank shell style that just flies straight to target -->
+			<xs:enumeration value="BalloonProjectile" />		<!-- Dumb bomb that just falls straight to ground, but follows player's move orders somewhat -->
+			<xs:enumeration value="BezierSplineProjectile" />	<!-- Spline projectile that uses the Projectile Paths-->
+			<xs:enumeration value="TerrainHuggerProjectile" />   <!-- Straight-line ground-based to target -->
+			<xs:enumeration value="CatmullRomSplineProjectile" />		<!-- A Spline used for projectile movement.  -->
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Base struct for state data -->
+	<xs:complexType name="ProjectileMoveBase" xas:isPolymorphic="true">
+		<xs:sequence></xs:sequence>
+	</xs:complexType>
+
+	<!-- Required for BombProjectile -->
+	<xs:complexType name="ProjectileMoveToGroundData">
+		<xs:complexContent>
+			<xs:extension base="ProjectileMoveBase">
+				<xs:attribute name="InitialSpeed" type="SageReal" default="0" />
+				<xs:attribute name="Acceleration" type="SageReal" />
+				<xs:attribute name="TerminalVelocity" type="SageReal" />
+				<xs:attribute name="RotationSpeedPerSecond" type="Angle" default="0d" />
+				<xs:attribute name="TerminalRotation" type="Angle" default="90d" />
+				<xs:attribute name="ForwardVelocityDamping" type="Percentage" default="100%" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Required for the StraightLineProjectile -->
+	<xs:complexType name="ProjectileMoveInStraightLineData">
+		<xs:complexContent>
+			<xs:extension base="ProjectileMoveBase">
+				<xs:attribute name="MuzzleVelocity" type="SageReal" />
+				<xs:attribute name="Acceleration" type="SageReal" />
+				<xs:attribute name="TerminalVelocity" type="SageReal" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Required for BalloonProjectile -->
+	<xs:complexType name="BalloonProjectileMoveToGroundData">
+		<xs:complexContent>
+			<xs:extension base="ProjectileMoveBase">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<!-- Required for BezierSplineProjectile -->
+	<xs:complexType name="BezierSplineProjectileData">
+		<xs:complexContent>
+			<xs:extension base="ProjectileMoveBase">
+				<xs:sequence>
+					<!-- The path actually followed is randomly selected from this list. -->
+					<xs:element name="Path" type="ProjectilePathRef" minOccurs="1" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="Velocity" type="SageReal" use="required"/>
+				<xs:attribute name="Range"	type="SageReal" use="required"/>
+				<!-- This isn't "true" gravity physics, just a fudge factor -->
+				<xs:attribute name="Gravity"  type="SageReal" default="1.0"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Required for TerrainHuggerProjectile -->
+	<xs:complexType name="TerrainHuggerProjectileData">
+		<xs:complexContent>
+			<xs:extension base="ProjectileMoveBase">
+				<xs:sequence>
+				</xs:sequence>
+				<xs:attribute name="MuzzleVelocity" type="SageReal" />
+				<xs:attribute name="Acceleration" type="SageReal" />
+				<xs:attribute name="TerminalVelocity" type="SageReal" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Required for CatmullRomSplineProjectile -->
+	<xs:simpleType name="CatmullRomProjectileOptionsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="COLLIDES_WITH_GROUND" />
+			<xs:enumeration value="PROCESS_CURVES_SEQUENTIALLY" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="CatmullRomProjectileScalingType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LATERALLY" />
+			<xs:enumeration value="ALL_DIRECTIONS" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="CatmullRomProjectileOptionsBitFlags">
+		<xs:list itemType="CatmullRomProjectileOptionsType"/>
+	</xs:simpleType>
+	
+	<xs:complexType name="CatmullRomSplineProjectileData">
+		<xs:complexContent>
+			<xs:extension base="ProjectileMoveBase">
+				<xs:sequence>
+					<!-- The path actually followed is randomly selected from this list. -->
+					<xs:element name="Path" type="ProjectilePathRef" minOccurs="1" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="Acceleration" type="SageReal" default="0.0" />			<!-- Acceleration is defined as distance per second -->
+				<xs:attribute name="Options" type="CatmullRomProjectileOptionsBitFlags" default="" />
+				<xs:attribute name="ScaleType" type="CatmullRomProjectileScalingType" default="ALL_DIRECTIONS" />
+				<xs:attribute name="MinTargetMovementToTrack" type="SageReal" default="0.0" />				<!-- The minimum distance that the target needs to move before we recalculate
+																																																			the distance we need to move and the direction to the target   -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ProjectileMoveData">
+		<xs:choice minOccurs="1" maxOccurs="1">
+			<xs:element name="MoveToGround" type="ProjectileMoveToGroundData"/>
+			<xs:element name="MoveInStraightLine" type="ProjectileMoveInStraightLineData"/>
+			<xs:element name="BalloonMoveToGround" type="BalloonProjectileMoveToGroundData"/>
+			<xs:element name="BezierSpline" type="BezierSplineProjectileData"/>
+			<xs:element name="TerrainHugger" type="TerrainHuggerProjectileData"/>
+			<xs:element name="CatmullRomSpline" type="CatmullRomSplineProjectileData"/>
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:simpleType name="ProjectileUpdateOptions" >
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LAUNCH_AT_TARGET_POS" /> <!-- Reorients (but does not reposition) projectile from launch bone position to face directly at target position -->
+			<xs:enumeration value="TRACKING_PROJECTILE" />
+			<xs:enumeration value="CAN_BE_REFLECTED" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="ProjectileUpdateOptionsBitFlags">
+		<xs:list itemType="ProjectileUpdateOptions" />
+	</xs:simpleType>
+
+	<xs:complexType name="ProjectileUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="Movement" type="ProjectileMoveData" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="StateMachine" type="ProjectileStateMachineType" />
+				<xs:attribute name="MinDetonationHeight" type="SageReal" />
+				<xs:attribute name="MinTargetDistance" type="SageReal" />
+				<xs:attribute name="SphereModuleCollideFX" type="FXListRef" />
+				<xs:attribute name="Flags" type="ProjectileUpdateOptionsBitFlags" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

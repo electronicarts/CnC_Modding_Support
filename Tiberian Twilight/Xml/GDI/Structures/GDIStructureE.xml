@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+
+	<!-- GDI Tunnel Network T2 -->
+	<!-- 
+		'USER_1' - object status/model condition set when unit is upgraded.   
+		'USER_2' - enhanced shields
+	-->
+
+	<Includes>
+		<!-- Art Includes-->
+		<Include type="all"	source="ART:GSL_StructureE_SKN.w3x" />
+		<Include type="all"	source="ART:GSL_StructureE_BLDA01_SKN.w3x" />
+		<Include type="all"	source="ART:GSL_StructureE_BLDA01.w3x" />
+		<Include type="all"	source="ART:GSL_StructureE_DMG.xml" />
+		<!-- Temp Shield Art -->
+		<Include type="all"	source="ART:FXShieldLargeB.w3x" />
+		<Include type="all"	source="ART:Shield_decal.xml" />		
+
+		<!-- Other Includes -->
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="all"	source="ART:FXGDITunnelArrow.w3x" />
+		
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+		
+	</Includes>
+
+	<Defines>
+		<Define name="GDISTRUCTUREE_SHIELD_HEALTH" value="500.0"/>
+		<Define name="GDISTRUCTUREE_SHIELD_RADIUS" value="200.0"/>
+		<Define name="GDISTRUCTUREE_DECAL_SIZE" value="=$GDISTRUCTUREE_SHIELD_RADIUS * 2"/>
+	</Defines>
+
+	<GameObject
+		id="GDIStructureE"
+		inheritFrom="BaseDefensiveStructure"
+		SubGroupPriority="430"
+		HealthBoxHeightOffset="50"
+		HealthBar="Structure"
+		SelectPortrait="Portrait_GDI_Structure_E_tech1"
+		ButtonImage="Btn_GDI_Structure_E_tech1"
+		Side="GDI"
+		ParticipationValue="=$GDISTRUCTUREE_PARTICIPATION_VALUE"
+		BuildTime="10.0"
+		EnergyProduction="=$GDI_STRUCTURE_E_COMMANDPOINT_COST"
+		CommandSet="GDIStructureECommandSet"
+		MaxSimultaneousOfType="2"
+		KindOf="+AUTO_ACQUIRABLE_BY_AI -CAN_ATTACK +ENERGY_CHANGES_ON_UPGRADE +AUTO_RALLYPOINT"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="GDI_D2_Struct_Tunnel(Tunnel Network)"
+		EditorSorting="STRUCTURE"
+		Description="Desc:GDIStructureE"
+		TypeDescription="Type:GDIStructureE">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIStructureE</DisplayName>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BuildingPlacementType="SpreadDefault" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="E_Root"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GSL_StructureE_SKN" />
+				</ModelConditionState>
+				<!-- BUILD UP -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="GSL_StructureE_BLDA01_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GSL_StructureE_SKN" />
+					<Texture
+						Original="GSL_StructureE"
+						New="GSL_StructureE_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GSL_StructureE_SKN" />
+					<Texture
+						Original="GSL_StructureE"
+						New="GSL_StructureE_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSparks"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Animation
+						AnimationName="GSL_StructureE_BLDA01"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObjectPermanently( "GSL_STRUCTUREE_UPG" )
+					</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="GSL_StructureE_BLDA01"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Large"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Medium"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- temporary Shield Geometry -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawShield"
+				Options="RENDER_BUFF_EFFECTS IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name=""/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPHERE_MODULE_ACTIVE USER_2">
+					<Model
+						Name="FXShieldLargeBUpgrade"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPHERE_MODULE_ACTIVE">
+					<Model
+						Name="FXShieldLargeB"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<!-- temporary Shield Geometry -->
+
+			<!-- temporary decal to represent bubble -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawDecal"
+				OkToChangeModelColor="true"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name=""/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPHERE_MODULE_ACTIVE">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$GDISTRUCTUREE_DECAL_SIZE"
+						SizeY="=$GDISTRUCTUREE_DECAL_SIZE"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Shield_decal"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+			<!-- Arrow Geometry -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawArrow"
+				Options="RENDER_BUFF_EFFECTS IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name=""/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CONNECTED_TUNNEL">
+					<Model
+						Name="FXGDITunnelArrow"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<!-- Arrow Geometry -->		
+			
+		</Draws>
+		<Behaviors>
+
+
+			<!-- USER_1 status is applied when the unit is upgraded, and this upgrade influences which units can enter the tunnel -->
+			<TunnelTeleportContain
+				id="ModuleTag_Tunnel"
+				EnterSound="GDI_TunnelNetwork_StrE_EnterMS"
+				ExitSound="GDI_TunnelNetwork_StrE_ExitMS"
+				AllowEnemiesInside="false"
+				AllowNeutralInside="false"
+				ShowPips="false"
+				KillPassengersOnDeath="false"
+				ResetUpgradesOnEmpty="false"
+				AllowedBodyDamageTypes="PRISTINE DAMAGED REALLY_DAMAGED">
+				<ContainerStatusValidation
+					ForbiddenStatus="USER_1" />
+				<PassengerFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="LIGHT_UNIT MEDIUM_UNIT"
+					Exclude="AIRCRAFT CRAWLER HEAVY_UNIT"
+					StatusBitFlagsExclude="UPGRADE_CRYSTAL_ATTACHED AIRBORNE_TARGET">
+				</PassengerFilter>
+				<ExitOffset
+					x="80"
+					y="0"
+					z="0" />
+			</TunnelTeleportContain>
+			<TunnelTeleportContain
+				id="ModuleTag_TunnelUpgraded"
+				EnterSound="GDI_TunnelNetwork_StrE_EnterMS"
+				ExitSound="GDI_TunnelNetwork_StrE_ExitMS"
+				AllowEnemiesInside="false"
+				AllowNeutralInside="false"
+				ShowPips="false"
+				KillPassengersOnDeath="false"
+				ResetUpgradesOnEmpty="false"
+				AllowedBodyDamageTypes="PRISTINE DAMAGED REALLY_DAMAGED">
+				<ContainerStatusValidation
+					RequiredStatus="USER_1" />
+				<PassengerFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="LIGHT_UNIT MEDIUM_UNIT HEAVY_UNIT"
+					Exclude="AIRCRAFT CRAWLER"
+					StatusBitFlagsExclude="UPGRADE_CRYSTAL_ATTACHED AIRBORNE_TARGET">
+				</PassengerFilter>
+				<ExitOffset
+					x="80"
+					y="0"
+					z="0" />
+			</TunnelTeleportContain>
+
+      <!-- This will hide the upgraded model -->
+      <LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIStructureEFunctions"/>
+
+      <!-- This will unhide the upgraded model -->
+      <SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+        <TriggeredBy>UpgradeGDIStructureE</TriggeredBy>
+        <Nugget
+					ShowSubObjects="GSL_StructureE_UPG"
+					HideSubObjects="GSL_StructureE01"
+          Upgrade="UpgradeGDIStructureE"
+          FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+      </SubObjectsUpgrade>
+
+      <!-- Upgrade Modules-->
+			<xi:include
+				href="DATA:Includes/GenericDefenseStructureProductionUpdate.xml" />
+			<EnergyPointsUpgrade
+				id="ModuleTag_EnergyPointsUpgrade"
+				EnergyPointsToChange="=$ENERGY_DEDUCTED_UPGRADED_STRUCTURE">
+				<TriggeredBy>UpgradeGDIStructureE</TriggeredBy>
+			</EnergyPointsUpgrade>
+			<AttributeModifierUpgrade
+				id="Upgrade_AttributeGDIStructureE"
+				AttributeModifier="AttributeModifier_UpgradeGDIStructureE"
+				Permanent="true">
+				<TriggeredBy>UpgradeGDIStructureE</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<MaxHealthUpgrade
+				id="ModuleTag_HealthUpgrade"
+				AddMaxHealth="200"
+				ChangeType="ADD_CURRENT_HEALTH_TOO">
+				<TriggeredBy>UpgradeGDIStructureE</TriggeredBy>
+			</MaxHealthUpgrade>
+
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIArtilleryHitBIG" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event Index="onDeath" FX="FX_GDIArtilleryHitBIG"/>
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<!-- Turn on the shield sphere with the Tier 3 upgrade 
+							The Model Condition USER_1 is already being set with 
+							the upgrade and that can be used to turn on the effects-->
+			<ShieldSphereUpdate
+				id="ModuleTag_ShieldSphereUpdate"
+				Options="ALLOW_ALLIES_PROJECTILE_GOTHROUGH ABSORB_ALL_DAMAGE_ON_KILLING_BLOW"
+				RadiusMin="=$GDISTRUCTUREE_SHIELD_RADIUS"
+				RadiusMax="=$GDISTRUCTUREE_SHIELD_RADIUS"
+				ScanFrequency="2s"
+				MaxDamage="=$GDISTRUCTUREE_SHIELD_HEALTH"
+				DamageChangePerSecond="-5"
+				SphereModuleOptions="INCLUDE_SELF"
+				DamageTypesToAbsorb="LASER CANNON GUN BLAST ROCKET"
+				ShieldRegenerateThresholdPercent="90%">
+				<ObjectFilter
+					Rule="ALL"/>
+				<DamageTypeFXMap
+					DamageType="GUN"
+					DamageFX="FX_BuildDamaged_Small">
+				</DamageTypeFXMap>
+				<DamageTypeFXMap
+					DamageType="LASER"
+					DamageFX="FX_BuildDamaged_Small">
+				</DamageTypeFXMap>
+			</ShieldSphereUpdate>
+
+			<ShieldSphereUpgrade
+				id="ModuleTag_ShieldSphereUpgrade">
+				<TriggeredBy>UpgradeGDIStructureE</TriggeredBy>
+			</ShieldSphereUpgrade>
+
+			<ShieldSphereDamageUpgrade
+				id="ModuleTag_ShieldSphereDamageUpgrade"
+				MaxDamageModifier="750">
+				<TriggeredBy>Upgrade_GDIDefenseAdvancedShields</TriggeredBy>
+			</ShieldSphereDamageUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_AdvancedShieldUpgrade"
+				AddConditionFlags="USER_2">
+				<TriggeredBy>Upgrade_GDIDefenseAdvancedShields</TriggeredBy>
+			</ModelConditionUpgrade>
+			<FXListBehavior
+				id="ModuleTag_FXListShieldUpgrade">
+				<TriggeredBy>Upgrade_GDIDefenseAdvancedShields</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeGDIEnhancedShields" />
+			</FXListBehavior>
+
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDIStructureE_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+			<!-- 
+				If all player-owned instances of this object die, then the player loses the upgrade and has to buy it again.
+							
+				NOTE: this needs to be the last die module listed in the XML so other die modules can set the parent object 
+				as effectively dead.
+			-->
+			<UpgradeDie
+				id="ModuleTag_UpgradeDie"
+				UpgradeId="UpgradeGDIStructureE"
+				Flags="PLAYER_REGISTERED_OBJECT_SET_MUST_BE_EMPTY"
+				RegisteredObjectSet="GDITUNNELS_ONLY">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</UpgradeDie>
+	
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="StructureAIStateMachine">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="600.0" />
+		</Body>
+		<Geometry>
+			<!-- needs a big placement shape to make room for big units exiting -->
+			<PlacementShape
+				Type= "BOX"
+				MajorRadius = "120.0"
+				MinorRadius = "60.0"
+				Height = "42.0">
+				<Offset x="60.0" y="0.0" z="0.0" />
+			</PlacementShape>
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "36.2407"
+					 MinorRadius = "33.4094"
+					 Height = "31.1295"
+					 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+						x = "-3.24438"
+						y = "0.0"
+						z = "0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="0.0"
+					y="-22.68"
+					z="42.01" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="11.12"
+					y="22.54"
+					z="38.5" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-44.79"
+					y="-0.37"
+					z="21.869" />
+			</ContactPoint>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "51.7356"
+					 MinorRadius = "51.8611"
+					 Height = "42.4275">
+			</Shape>
+		</Geometry>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ShieldLoop">
+				<ModelConditionSound Sound="GDI_TunnelNetwork_StrE_ShieldLoop" RequiredFlags="SPHERE_MODULE_ACTIVE" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="GDI_TunnelNetwork_StrE_Deploy1" Animation="GSL_StructureE_BLDA01" Frame="5" />
+				<Sound Sound="GDI_TunnelNetwork_StrE_Deploy2" Animation="GSL_StructureE_BLDA01" Frame="18" />
+				<Sound Sound="GDI_TunnelNetwork_StrE_EndImpactMS" Animation="GSL_StructureE_BLDA01" Frame="35" />
+			</AnimationSoundClientBehavior>			
+			
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_TunnelNetwork_StrE_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice> 
+		<AudioArraySound>
+			<!-- <AudioEntry Sound="Fire1_StructureLarge_LoopMS" AudioType="soundAmbientReallyDamaged" /> -->
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="325" />
+		<DisplayUpgrade>Upgrade_GDIDefenseAdvancedShields</DisplayUpgrade>
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET			-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LogicCommand
+		Type="OBJECT_UPGRADE"
+		id="Command_GDIStructureEUpgrade">
+		<Upgrade>UpgradeGDIStructureE</Upgrade>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="GDIStructureECommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_GDIStructureEUpgrade</Cmd>
+		<Cmd>Command_SellSelf</Cmd>
+	</LogicCommandSet>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   UPGRADE TEMPLATES						-->
+	<!-- ////////////////////////////////////////	-->
+
+	<!-- 
+		This is a player level upgrade that will upgrade all instances of the object.  
+		However, If the player loses all instances of this object they will have to purchase the upgrade again. 
+	-->
+	<UpgradeTemplate
+		Type="PLAYER"
+		id="UpgradeGDIStructureE"
+		DisplayName="UPGRADE:UpgradeGDIStructureE"
+		Description="UPGRADE:UpgradeGDIStructureE"
+		ResearchSound="Upgrade_TunnelNetworkExpansion"
+		BuildCost="0"
+		BuildTime="10s"
+		RequiresEntitlement="false">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+	</UpgradeTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   ATTRIBUTE MODIFIERS						-->
+	<!-- ////////////////////////////////////////	-->
+	<AttributeModifier
+		id="AttributeModifier_UpgradeGDIStructureE"
+		Category="NONE"
+		ObjectStatusToSet="USER_1"
+		ModelConditionsSet="USER_1"
+		StartFX="FX_UpgradeGDIStructureE">
+		<Modifier Type="ARMOR" Value="100%" />
+	</AttributeModifier>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   EXPERIENCE LEVELS											-->
+	<!-- ////////////////////////////////////////	-->
+	<ExperienceLevelTemplate
+		id="GDIStructureEExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="4"
+		BountyValue="100"
+		Rank="1">
+		<Target>GDIStructureE</Target>
+	</ExperienceLevelTemplate>
+	
+	<!-- OCL -->
+	<ObjectCreationList
+		id="GDIStructureE_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectTemplate>GDIDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<ObjectOffset x="10.0" y="10.0" z="20.0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+</AssetDeclaration>

@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBShredder_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBShredder_IDLA.w3x" />
+		<Include
+			type="all"
+			source="ART:NBShredder_BLD.w3x" />
+		<Include
+			type="all"
+			source="ART:NBShredder_D2SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBShredder_D2AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBShredder_D3SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBShredder_D3AN.w3x" />
+		<Include
+			type="all"
+			source="ART:FXTracerNOD.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+	</Includes>
+	<GameObject
+		id="NODShredderTurret"
+		inheritFrom="BaseDefensiveStructure"
+		SelectPortrait="Portrait_NODShredderTurret"
+		ButtonImage="Portrait_NODShredderTurret"
+		Side="NOD"
+		EditorSorting="STRUCTURE"
+		BuildTime="10.0"
+		CommandSet="EmptyCommandSet"
+		KindOf="+CAN_ATTACK +NOT_SELLABLE +KEEP_CLASSIFIED_WHEN_DEAD +CANT_TOGGLE_POWER +CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="NODShredderTurret"
+		WeaponCategory="GUN"
+		Description="Desc:NODShredderTurret"
+		TypeDescription="Type:NODShredderTurret">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="400"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODShredderTurret</DisplayName>
+		<ArmorSet
+			Armor="NODBaseDefenceArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="16.0"
+				MaxRecoilDistance="10.0"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				ExtraPublicBone="MuzzleFlash01 MuzzleFlash02 FX_WEAPON01 FX_WEAPON02">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBShredder_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON" />
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="MuzzleFlash" />
+					<WeaponMuzzleFlash
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="MuzzleFlash" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON" />
+					<Turret
+						TurretNameKey="TURRET"
+						TurretPitch="TURRET_PITCH"
+						TurretID="1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REPAIRING_DISABLED">
+					<Model
+						Name="NBShredder_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NBShredder_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBShredder_D2SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBShredder_SKN" />
+					<Texture
+						Original="NBShredder"
+						New="NBShredderD" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NBShredder_IDLA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<!-- REPAIR FROM RUBBLE ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="NBShredder_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBShredder_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REPAIRING_DISABLED"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBShredder_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBShredder_D3AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBShredder_D2AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NBShredder_D2AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NBShredder_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODShredderTurretSpawnWeapon" />
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-30d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="180.0">
+						<TurretAITargetChooserData />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NOD_DefensiveTurret_Explode" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Small" />
+			</FXListBehavior>
+			<!-- These take care of killing the spawn when the master dies -->
+			<SlavedUpdate
+				id="ModuleTag_SlavedUpdate"
+				DieOnMastersDeath="true"
+				DieOnMastersDeathType="SUICIDED" />
+			<!-- master was sold or destroyed. Commit suicide by dying slowly -->
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<DieMuxData
+					DeathTypes="SUICIDED" />
+			</SlowDeath>			
+			<KeepObjectDie
+				id="ModuleTag_KeepObjectForRepair">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</KeepObjectDie>
+			<InitiateRepairDie
+				id="ModuleTag_InitiateRepair"
+				DelayTime="20s"
+				Options="REPAIR_INSTANT"
+				InstantRepairModelCondition="USER_1"
+				InstantRepairAnimDuration="1.5s"
+				MasterDeadDieFX="FX_TEMPLarge">
+				<Die
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</InitiateRepairDie>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			<xi:include
+				href="../../Includes/GenericBuildingRepairNODDefenseSpawns.xml" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODShredderFunctions"
+			/>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					CheckVisionRange="false" 
+					IdleScanDelay="0.2s"/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1000.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior
+				id="MT_MCALCB">
+				<!-- Repaired by InitiateRepairDie -->
+				<ModelConditionSound
+					Sound="NOD_GenericTurret_Regenerate"
+					RequiredFlags="USER_1" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="16.0"
+				Height="27.0"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="-3.0"
+					y="0.0"
+					z="0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_ShredderTurretHubSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry
+				Sound="AudioEvent:NOD_GenericTurret_MoveStart"
+				AudioType="soundTurretMoveLoop" />
+			<AudioEntry
+				Sound="NOD_GenericTurret_Deploy"
+				AudioType="soundPrepositioned" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="450"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

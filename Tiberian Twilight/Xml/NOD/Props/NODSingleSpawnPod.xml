@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> <!--xmlns:xi="http://www.w3.org/2001/XInclude">-->
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		 <!-- Art Includes -->
+		<Include type="all" source="ART:NODSubterraneanStrike_SKN.w3x" />
+		<Include type="all" source="ART:NODSubterraneanStrike_ATKA.w3x" />
+	</Includes>
+	<GameObject
+		id="NODSingleSpawnPod"
+		SelectPortrait="Portrait_GDIDropPod"
+		ButtonImage="Portrait_GDIDropPod"
+		Side="NOD"
+		EditorSorting="UNIT"
+		CommandSet="EmptyCommandSet"
+		IsTrainable="false"
+		KindOf="CAN_CAST_REFLECTIONS UNATTACKABLE"
+		RadarPriority="UNIT"
+		EditorName="NODSingleSpawnPod_DO_NOT_PLACE">
+		<DisplayName>Name:NODSingleSpawnPod</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NODSubterraneanStrike_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NODSubterraneanStrike_ATKA"
+						AnimationMode="ONCE"/>
+				<FXEvent
+						Frame="20"
+						FireWhenSkipped="true"
+						Effect="FX_NOD_Burrow_Large_NoAudio"
+						Bone="" />
+					<ParticleSysBone
+							BoneName="NONE"
+							FXParticleSystemTemplate="TeraSonicBlast_dust"
+							FollowBone="true" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="4s"
+				MaxLifetime="4s"
+				DeathType="SUICIDED" />
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NODBurrowPodUnburrow_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0s"
+				SinkRate="0.0"
+				Fade="true"
+				FadeTime="0.1s"
+				FadeDelay="0s"
+				DestructionDelay="0.1s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			
+		</Behaviors>
+
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<!-- <ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="Nod_CrawlerExhumePod_MS" Animation="NOD_CrawlerBurrowingPod_MOVC" Frame="1"/>
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors> -->
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.0"
+				Height="20.0"/>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="" AudioType="soundAmbient"/>
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+		<CrusherInfo
+			CrusherLevel="0"
+			CrushableLevel="10" />
+	</GameObject>
+
+	<!-- ////////////////////////////////// -->
+	<!--			OBJECT CREATION LISTS					-->
+	<!-- ////////////////////////////////// -->
+	<ObjectCreationList
+		id="NODBurrowPodUnburrow_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODDebrisSmall_Collapse</ObjectTemplate>
+					<ObjectTemplate>NODDebrisSmall_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<ObjectOffset x="20.0" y="20.0" z="20.0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+</AssetDeclaration>

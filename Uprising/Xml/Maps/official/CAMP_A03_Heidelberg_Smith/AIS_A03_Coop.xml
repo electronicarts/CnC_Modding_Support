@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes/>
+  
+  <AIStrategicStateDefinition
+    id="AIState_A03_Protect_Hydrofoils"
+    MaxTargets="4">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A03_Hydrofoil01" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="AITarget_A03_Hydrofoil02" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="AITarget_A03_Hydrofoil03" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="AITarget_A03_Hydrofoil04" Priority="20"/>
+    <Tactic id="Defend" Tactic="StaticDefense" EndBehavior="DISBAND" Distance="100" CombatLeashSlack="1.0" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="2" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER" AllowedLocomotorTypes="WATER"
+                    Priority="HIGH" AlwaysRecruit="true"
+                    MicroManager="A03_HydrofoilEscortMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!--
+  
+  <AIStrategicStateDefinition
+    id="AIState_A03_Allied_LandAttack"
+    MaxTargets="2">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristicAllEnemies" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristicAllEnemies" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="12" MaxUnits="28" MinPowerAdvantage="0.75"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  -->
+  
+  <AIStrategicStateDefinition
+    id="AIState_A03_Allied_APPAttackers"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="90s" EndTime="-1s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A03_APP01" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="AITarget_A03_APP02" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="AITarget_A03_APP03" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="AITarget_A03_APP04" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristicAllEnemies" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristicAllEnemies" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RETURN_HOME_AND_DISBAND" DisbandAfterRetreatTeamSize="999" GatherWaypoint="WP - Co-Commander Assualt Gather Point">
+      <TeamTemplate MinUnits="8" MaxUnits="16"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HIGH" AlwaysRecruit="false"
+                    MicroManager="A03_Coop_AttackMicroManager">
+        <ObjectFilter Rule="NONE">
+          <IncludeThing>AlliedAntiVehicleInfantry</IncludeThing>
+          <IncludeThing>AlliedAntiVehicleVehicleTech1</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A03_Allied_APPAttackers_Escort"
+    MaxTargets="4">
+    <Heuristic>
+      <TimerHeuristic StartTime="90s" EndTime="-1s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestOwnTankHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="StaticDefense" EndBehavior="DISBAND" Distance="150" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="4"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HIGH" AlwaysRecruit="false"
+                    MicroManager="FearlessDefenseMicroManager">
+        <ObjectFilter Rule="NONE">
+          <IncludeThing>AlliedScoutInfantry</IncludeThing>
+          <IncludeThing>AlliedAntiInfantryInfantry</IncludeThing>
+          <IncludeThing>AlliedAntiInfantryVehicle</IncludeThing>
+          <IncludeThing>AlliedAntiInfantryVehicle_Ground</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_A03_Coop_StructureBuild">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <BuildEntry Build="AlliedPowerPlant" Heuristic="POWER"/>
+    <BuildEntry Build="AlliedRefinery" Heuristic="REFINERY"/>
+    <BuildEntry Build="AlliedBarracks" Heuristic="FACTORY"/>
+    <BuildEntry Build="AlliedWarFactory" Heuristic="FACTORY"/>
+  </AIBuildStateDefinition>
+  
+  <AIBuildStateDefinition
+    id="AIState_A03_TechBuild">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <BuildEntry Build="AlliedAirfield" Heuristic="TECH" MinTime="420s" ForceTime="420s"/>
+    <BuildEntry Upgrade="Upgrade_AlliedTech2" Heuristic="UPGRADE_TECH" ForceTime="240s"/>
+  </AIBuildStateDefinition>
+
+</AssetDeclaration>

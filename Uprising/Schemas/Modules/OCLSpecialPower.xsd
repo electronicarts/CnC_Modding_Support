@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="OCLUpgradePair">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="OCL" type="ObjectCreationListRef" />
+	</xs:complexType>
+
+	<xs:simpleType name="OCLCreateLocType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CREATE_AT_EDGE_NEAR_SOURCE" />
+			<xs:enumeration value="CREATE_AT_EDGE_NEAR_TARGET" />
+			<xs:enumeration value="CREATE_AT_EDGE_NEAR_TARGET_AND_MOVE_TO_LOCATION" />
+			<xs:enumeration value="CREATE_AT_LOCATION" />
+			<xs:enumeration value="USE_OWNER_OBJECT" />
+			<xs:enumeration value="CREATE_ABOVE_LOCATION" />
+			<xs:enumeration value="CREATE_AT_EDGE_FARTHEST_FROM_TARGET" />
+			<xs:enumeration value="CREATE_CLOSEST_TO_SPAWN_POINT" />
+			<xs:enumeration value="USE_SECONDARY_OBJECT_LOCATION" />
+			<xs:enumeration value="USE_MULTIPLE_SECONDARY_OBJECT_LOCATIONS" />
+			<xs:enumeration value="CREATE_AT_EDGE_ALONG_PATH_LINE" />
+			<xs:enumeration value="CREATE_AT_EDGE_NEAR_SECONDARY_TARGET" />
+			<xs:enumeration value="CREATE_AT_OFFSET_FROM_TARGET" />
+			<xs:enumeration value="CREATE_AT_OFFSET_FROM_TARGET_AND_MOVE_TO_TARGET" />
+			<xs:enumeration value="CREATE_AT_OFFSET_FROM_TARGET_ALONG_SECONDARY_OBJECT_VECTOR_AND_MOVE_TO_TARGET" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="OCLSpecialPowerModuleData">
+		<xs:complexContent>
+			<xs:extension base="SpecialPowerModuleData">
+				<xs:sequence>
+					<xs:element name="UpgradeOCL" type="OCLUpgradePair" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="NearestSecondaryObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+					<xs:element name="Upgrade" type="UpgradeTemplateRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="OCL" type="ObjectCreationListRef" />
+				<xs:attribute name="CreateLocation" type="OCLCreateLocType" />
+				<xs:attribute name="CreateLocationOffset" type="SageReal" />
+				<xs:attribute name="MaxCreateCount" type="SageUnsignedInt" default="0" />
+				<!-- Only used with USE_MULTIPLE_SECONDARY_OBJECT_LOCATIONS for now -->
+				<xs:attribute name="NumberToSpawn" type="SageUnsignedInt" default="1" />
+				<!-- The DestinationOCL is always triggered at the cast position -->
+				<xs:attribute name="DestinationOCL" type="ObjectCreationListRef" />
+				<xs:attribute name="RegisterObjectsWithSpecialAbilityUpdate" type="SageBool" default="false"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

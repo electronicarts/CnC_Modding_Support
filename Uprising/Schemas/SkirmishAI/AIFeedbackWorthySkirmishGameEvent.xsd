@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	
+	<xs:simpleType name="AIFeedbackWorthySkirmishGameEvent">
+		<xs:restriction base="xs:string">
+				<xs:enumeration value="StartGame" />
+				<xs:enumeration value="InTrouble" />
+				<xs:enumeration value="FirstSeen" />
+				<xs:enumeration value="DefeatedLocalPlayer" />
+				<xs:enumeration value="DefeatedByLocalPlayer" />
+				<xs:enumeration value="Lost" />	
+	 	</xs:restriction>
+	</xs:simpleType>
+	
+	<!-- Control data for the "InTrouble" event. Basically, every TimeBetweenScans, any AI with
+	     the OnlyIfLocalPlayerIs relationship to the local player checks and sees if 
+			  (a) It has lost at least NumberOfObjectsRecentlyLost objects that pass the ObjectLostFilter within the last TimeForNumberOfObjectLost seconds AND
+				(b) The power advantage of all the enemy units IN MY BASE verses ALL my units and defenses ANYWHERE ON THE MAP is at least MinPowerAdvantageOverallToEnemiesInMyBase.
+				If both of these are true... It does nothing yet. It keeps checking those conditions every TimeBetweenScans until they have
+				been continuously true for TimeThatConditionsMustBeMet seconds. Then, and only then, does it trigger the InTrouble event. 
+				After the event has been triggered, it then sleeps for TimeoutAfterPlaying seconds. -->
+	<xs:complexType name="AIInTroubleSkirmishFeedbackControl">
+		<xs:sequence />
+		<xs:attribute name="OnlyIfLocalPlayerIs" type="ObjectFilterRelationshipBitMask" use="required"/>
+		<xs:attribute name="TimeoutAfterPlaying" type="Time" use="required"/>
+		<xs:attribute name="TimeBetweenScans" type="Time" use="required"/>
+		<xs:attribute name="TimeThatConditionsMustBeMet" type="Time" use="required"/>
+		<xs:attribute name="NumberOfObjectsRecentlyLost" type="SageInt" use="required"/>
+		<xs:attribute name="TimeForNumberOfObjectLost" type="Time" use="required"/>
+		<xs:attribute name="ObjectLostFilter" type="ObjectFilterAssetRef" use="required" />
+		<xs:attribute name="MinPowerAdvantageEnemiesInMyBaseVsAllMyUnits" type="SageReal" use="required"/>
+	</xs:complexType>
+</xs:schema>

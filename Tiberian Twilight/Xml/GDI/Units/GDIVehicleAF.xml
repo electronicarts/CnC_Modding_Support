@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+
+	<!-- GDI Vehicle AF / Heavy Laser T3 / Reflector Tank / Refractor -->
+	<!-- 
+	Object Status Flags:
+		USER_1: Crate Upgrade
+		USER_2: Deflection Armor
+	Model Condition Flags:
+		USER_1: Crate Upgrade
+		USER_2: Deflection Armor
+			  
+	-->
+	
+	<Includes>
+		<Include type="all"	source="ART:GUL_VehicleAF_IDLA.w3x" />
+		<Include type="all"	source="ART:GUL_VehicleAF_SKN.w3x" />
+		<Include type="all"	source="ART:GUL_VehicleAF_SKL.w3x" />
+		<Include type="all"	source="ART:GUL_VehicleAF_ATKA1.w3x" />
+		<Include type="all"	source="ART:GUL_VehicleAF_ATKA2.w3x" />
+		<Include type="all"	source="ART:GUL_VehicleAF_ATKA3.w3x" />
+		<Include type="all"	source="ART:GUL_VehicleAF_MOVA.w3x" />
+		<Include type="all"	source="ART:GUL_VehicleAF_DMG.xml" />
+		<Include type="instance" source="ART:EXTireTrack2.xml" />
+		<Include type="all"	source="ART:FXRailGunCoreDistortion.xml" />
+		<Include type="all"	source="ART:FXRailGunCoreMask.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseHeavyVehicle.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+		
+		<!-- Clean this up later (Aram) -->
+		<Include type="instance" source="ART:FXGDILaser.xml" />
+		<Include type="instance" source="ART:FXGDILaser_Veteran.xml" />
+		<Include type="instance" source="ART:FXEnergyBeam.xml" />
+		<Include type="instance" source="ART:FXGDILaser_Secondary.xml" />
+		<Include type="instance" source="ART:FXGDILaser_Veteran_Secondary.xml" />
+		<Include type="instance" source="ART:FXRailDistort02.xml" />
+		
+	</Includes>
+
+	<ObjectFilterAsset
+		id="GDIVehicleAFRefractionTargetObjectFilter">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES NEUTRAL"
+			Include="VEHICLE INFANTRY AIRCRAFT STRUCTURE"
+			Exclude="CRATE"/>
+	</ObjectFilterAsset>
+	
+	<GameObject
+		id="GDIVehicleAF"
+		inheritFrom="BaseHeavyVehicle"
+		HealthBoxHeightOffset="55"
+		HealthBar="Large"
+		SubGroupPriority="118"
+		SelectPortrait="Portrait_GDI_Vehicle_AF"
+		ButtonImage="Btn_GDI_Vehicle_AF"
+		Side="GDI"
+		ParticipationValue="=$GDIVEHICLEAF_PARTICIPATION_VALUE"
+		TransportSlotCount="1"		
+		BuildTime="15"
+		PathPriority="80"
+		CommandSet="GDIVehicleAFCommandSet"
+		CommandPoints="=$GDI_VEHICLE_AF_COMMANDPOINT_COST" 
+		ThreatLevel="10"
+		WeaponCategory="LASER"
+		VoicePriority="184"
+		EditorName="GDI_O3_Heavy_Laser(Refractor)"
+		EditorSorting="UNIT"
+		Description="Desc:GDIVehicleAF"
+		TypeDescription="Type:GDIVehicleAF">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIVehicleAF</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+		<LocomotorSet
+			Locomotor="GDIvehicleAFLocomotor"
+			Condition="NORMAL"
+			Speed="75.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TankDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="Bone_Tread_Rear_Left"
+				TrackMarksRightBone="Bone_Tread_Rear_Right"
+				TrackMarkWidth="6"
+				MaxRecoilDistance="0.05"
+				RecoilDamping="6.0"
+				RecoilSettleSpeed="6.0"
+				ExtraPublicBone="FXDamage01 FXDamage02 Bone_Tread_Rear_Right Bone_Tread_Rear_Left Bone_Tread_Front_Right Bone_Tread_Front_Left GAF_Turret FXWeapon01 "
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUL_VehicleAF_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUL_VehicleAF_SKN" />
+					<Texture
+						Original="GUL_VehicleAF"
+						New="GUL_VehicleAF_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUL_VehicleAF_SKN" />
+					<Texture
+						Original="GUL_VehicleAF"
+						New="GUL_VehicleAF_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GUL_VehicleAF_IDLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+						<Script>
+									CurDrawableHideSubObjectPermanently( "GUL_VEHICLEAF_UPG" )
+						</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_A">
+					<Animation
+						AnimationName="GUL_VehicleAF_ATKA1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+					<Script>
+						CurDrawablePlaySound("GDI_Refractor_VehAF_MirrorOpen")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="GUL_VehicleAF_ATKA2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BETWEEN_FIRING_SHOTS_A">
+					<Animation
+						AnimationName="GUL_VehicleAF_ATKA3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+					<Script>
+						CurDrawablePlaySound("GDI_Refractor_VehAF_MirrorClose")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="GUL_VehicleAF_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+				</AnimationState>
+
+			</TankDraw>
+
+			<TreadScrollDraw
+				id="ModuleTag_TreadDraw">
+				<TreadScrollingMap
+					LeftTrack="Bone_Tread_Front_Left"
+					RightTrack="Bone_Tread_Front_Right"
+					SpeedMultiplier="0.06"
+					TreadDriveSpeedFraction="10%" />
+				<TreadScrollingMap
+					LeftTrack="Bone_Tread_Rear_Left"
+					RightTrack="Bone_Tread_Rear_Right"
+					SpeedMultiplier="0.06"
+					TreadDriveSpeedFraction="10%" />
+			</TreadScrollDraw>
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw1"
+				Texture1_UTile="1"
+				Texture1_VTile=".8"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="40"
+				WeaponSlotID="1"
+				LightMin="20"
+				LightMax="40"
+				CombatChainCounter="EQUAL WEAK"
+				LaserStateID="101">
+				<LightColor R="0.15" G="0.15" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+				<ObjectStatusValidation
+					ForbiddenStatus="USER_1" />
+			</LaserDraw>
+			<!-- Upgraded laser draw -->
+			<LaserDraw
+				id="ModuleTag_LaserDrawUpgraded"
+				Texture1_UTile="1"
+				Texture1_VTile="3"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="4"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile="1"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="40"
+				WeaponSlotID="1"
+				LightMin="20"
+				LightMax="40"
+				CombatChainCounter="EQUAL WEAK"
+				LaserStateID="101">
+				<LightColor R="0.15" G="0.15" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser_Secondary</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXRailDistort02</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+				<ObjectStatusValidation
+					RequiredStatus="USER_1" />
+			</LaserDraw>
+
+			<!-- Perfect Hit FX-->
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw1_Strong"
+				Texture1_UTile="1"
+				Texture1_VTile=".8"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="40"
+				LightMin="20"
+				LightMax="40"
+				CombatChainCounter="STRONG"
+				LaserStateID="101">
+				<LightColor R="0.15" G="0.07" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser_Veteran</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+			<!-- Secondary laser draw -->
+			<LaserDraw
+				id="ModuleTag_LaserDraw_Strong"
+				Texture1_UTile="1"
+				Texture1_VTile="3"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="4"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile="1"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="40"
+				WeaponSlotID="1"
+				LightMin="20"
+				LightMax="40"
+				CombatChainCounter="STRONG"
+				LaserStateID="101">
+				<LightColor R="0.15" G="0.07" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser_Veteran_Secondary</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXRailDistort02</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+		</Draws>
+		
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehicleAFLaser" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<LaserState
+				id="ModuleTag_LaserState"
+				LaserId="101"/>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Large_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleLRG_Explode" />
+				<Event
+					Index="onDeath"
+					FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<AudioLoopUpgrade
+				id="RailCannonUpgradeSound"
+				SoundToPlay="GDI_RailCannon_Upgrade">
+				<TriggeredBy>Upgrade_GDIArmoryRailgunTech</TriggeredBy>
+			</AudioLoopUpgrade>
+
+			<GiveMoney
+				id="ModuleTag_GiveMoney_GDIVehicleAF"/>
+
+			<AttributeModifierUpgrade
+				id="ModuleTag_CrateAttributeModifierUpgrade"
+				AttributeModifier="AttributeModifier_CrateUpgrade">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+      		<!-- This will hide the upgraded model -->
+      		<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIVehicleAFFunctions"/>
+
+      		<!-- This will unhide the upgraded model -->
+      		<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+        		<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+        		<Nugget
+					ShowSubObjects="GUL_VehicleAF_UPG"
+					Upgrade="Upgrade_Crate_Level1"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+
+			<SpecialPower
+				id="ModuleTag_RefractionArmorSpecialPower"
+				SpecialPowerTemplate="SpecialPower_RefractionArmor"
+				AttributeModifier="AttributeModifier_RefractionArmor"
+				AttributeModifierAffectsSelf="true"/>
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowRefractionArmor">
+				<TriggeredBy>Upgrade_RefractionArmor</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Refraction_Armor"
+					Upgrade="Upgrade_RefractionArmor"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+			<FXListBehavior
+				  xmlns="uri:ea.com:eala:asset"
+				  id="ModuleTag_FXListUpgrade">
+				<TriggeredBy>Upgrade_RefractionArmor</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					  Index="onUpgraded"
+					  FX="FX_UpgradeGDIMirrorPlating" />
+			</FXListBehavior>
+
+			<RefractionBehavior
+				id="ModuleTag_RefractionBehavior"
+				xai:joinAction="Replace">
+				<!-- Refraction Armor + Crate -->
+				<Data
+					RefractionNumAdditionalTargets="3"
+					RefractionAdditionalTargetFilter="GDIVehicleAFRefractionTargetObjectFilter">
+					<ObjectStatusValidation
+						RequiredStatus="USER_2 USER_1"/>
+				</Data>
+				<!-- Refraction Armor -->
+				<Data
+					RefractionNumAdditionalTargets="2"
+					RefractionAdditionalTargetFilter="GDIVehicleAFRefractionTargetObjectFilter">
+					<ObjectStatusValidation
+						RequiredStatus="USER_2"/>
+				</Data>
+				<!-- Normal, just reflect against attacker -->
+				<Data/>
+			</RefractionBehavior>
+			
+			<ReflectiveShieldSphereUpdate
+				id="ModuleTag_DeflectionShield"
+				MajorShieldHitFX="FX_GDILaser_Medium_Hit"
+				RadiusMin="60"
+				RadiusMax="60"
+				ScanFrequency="999999s"
+				MaxDamage="9999999999"
+				HandleDamageArc="90d"
+				DamageTypesToAbsorb="LASER CANNON GUN"
+				DamageTypesNotToAbsorb="BLAST ROCKET"
+				MinorShieldDamageTypes="GUN LASER"
+				SphereModuleOptions="INCLUDE_SELF IGNORE_PROJECTILES INITIALLY_ACTIVE"
+				ShieldReactChance="75%"
+				Options="NO_SHIELD_BAR">
+				<ObjectStatusValidation ForbiddenStatus="IS_FIRING_WEAPON IS_RELOADING_WEAPON IS_AIMING_WEAPON"/>
+			</ReflectiveShieldSphereUpdate>
+
+			<xi:include
+				href="DATA:Includes/FXListBehaviorCrateUpgrade.xml" />
+		
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="true"
+					SympathyRange="200.0" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1200" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+				<Key>LargeGroupAudioKey_TankLarge</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "45.0"
+					 MinorRadius = "30.0"
+					 Height = "36.0"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+		</Geometry>
+		
+		<ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior
+			id="ModuleTag_HiJackedSounds">
+			<Override
+				ExcludedFlags="HIJACKED">
+				<AudioArrayVoice>
+					<AudioEntry	Sound="GDI_VehAFRefractor_VoiceAttack" AudioType="voiceAttack" />
+					<AudioEntry Sound="GDI_VehAFRefractor_VoiceAttackMismatch" AudioType="voiceAttackMismatchLight" />
+					<AudioEntry Sound="GDI_VehAFRefractor_VoiceCreate" AudioType="voiceCreated" />
+					<AudioEntry Sound="GDI_VehAFRefractor_VoiceCreate" AudioType="voiceFullyCreated" />
+					<AudioEntry Sound="GDI_VehAFRefractor_VoiceMove" AudioType="voiceGuard" />
+					<AudioEntry Sound="GDI_VehAFRefractor_VoiceMoveAttack" AudioType="voiceAttackAfterMoving" />
+					<AudioEntry Sound="GDI_VehAFRefractor_VoiceMove" AudioType="voiceMove" />
+					<AudioEntry Sound="GDI_VehAFRefractor_VoiceRetreat" AudioType="voiceRetreatToCastle" />
+					<AudioEntry Sound="GDI_VehAFRefractor_VoiceSelectMS" AudioType="voiceSelect" />
+					<AudioEntry Sound="GDI_VehAFRefractor_VoiceSelectBattleMS" AudioType="voiceSelectBattle" />
+					<AudioEntry Sound="GDI_VehAFRefractor_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" />
+				</AudioArrayVoice>
+			</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+		
+		<AudioArraySound>
+			<AudioEntry Sound="PredatorIdleLoop" AudioType="soundAmbient" />
+			<AudioEntry Sound="GDI_Refractor_VehAF_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="TankLarge_Generic_MoveLoop" AudioType="soundMoveLoop" />
+		</AudioArraySound>		
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_RefractionArmor</DisplayUpgrade>
+	</GameObject>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_RefractionArmor"
+		ReloadTime="60s"
+		TargetType="NONE"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoicePulseScan"
+		InitiateSound="GDI_Refractor_RefractionArmorOn"
+		WaypointModeTerminal="false">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_RefractionArmor</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_RefractionArmor">
+		<SpecialPower>SpecialPower_RefractionArmor</SpecialPower>
+	</LogicCommand>
+	
+	<LogicCommandSet
+		id="GDIVehicleAFCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_RefractionArmor</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+	</LogicCommandSet>
+
+	<AttributeModifier
+		id="AttributeModifier_CrateUpgrade"
+		Category="NONE"
+		ObjectStatusToSet="USER_1"
+		ModelConditionsSet="USER_1">
+		<Modifier Type="SPHERE_MODULE_REACT_CHANCE" Value="25%" />
+		<Modifier Type="DAMAGE_MULT" Value="100%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_RefractionArmor"
+		Category="NONE"
+		Duration="5s"
+		ObjectStatusToSet="USER_2"
+		ModelConditionsSet="USER_2">
+		<BuffInfo Type="DEFENSE_POSITIVE" SourceString="Name:GDIVehicleAF" />
+		<Modifier Type="SPHERE_MODULE_REACT_CHANCE" Value="25%" />
+	</AttributeModifier>
+
+	<LocomotorTemplate
+		id="GDIvehicleAFLocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		TurnTimeSeconds="4.0s"
+		TurnTimeDamagedSeconds="4.0s"
+		AccelerationSeconds="1.0s"
+		MaxSpeedDamaged="100%"
+		BrakingSeconds="0.5s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="50.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="FOUR_WHEELS"
+		UseTerrainSmoothing="true"
+		UniformAxialDamping="0.1"
+		PitchStiffness="1"
+		RollStiffness="0.6"
+		PitchDamping="1"
+		RollDamping="0.3"
+		ForwardAccelerationPitchFactor="0.03"
+		LateralAccelerationRollFactor="0.1"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="false"
+		CanReverseMove="true"
+		ReverseMoveSpeed="100%"
+	/>
+
+	<WeaponTemplate
+		id="GDIVehicleAFLaser"
+		inheritFrom="BaseLaserWeapon" 
+		AttackRange="350.0"
+		WeaponRecoil="5d"
+		FireSound="GDI_Refractor_VehAF_LaserWeaponFire"
+		FireFX="FX_GDILaser_Medium_Fire"
+		FireVeteranFX="FX_GDILaser_Medium_Fire_Veteran"
+		AcceptableAimDelta="10d">
+		<PreAttackDelay
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="3.5s"
+			MaxSeconds="3.5s" />
+		<WeaponAiHintInfo
+			UseLongLockOnTimeCode="true"/>
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.75s"
+				LaserId="101"
+				HitGroundFX="FX_GDILaser_Medium_Miss"/>
+			<LineDamageNugget
+				Damage="100.0"
+				DamageType="LASER"
+				DamageFXType="GDI_LASER"
+				DeathType="LASERED"
+				LineWidth="10.0"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<ExperienceLevelTemplate
+		id="GDIVehicleAFExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="10">
+		<Target>GDIVehicleAF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAFExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIVehicleAFExperienceLevel_1"
+		RequiredExperience="20"
+		ExperienceAward="12">
+		<Target>GDIVehicleAF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAFExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIVehicleAFExperienceLevel_2"
+		RequiredExperience="50"
+		ExperienceAward="14">
+		<Target>GDIVehicleAF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAFExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIVehicleAFExperienceLevel_3"
+		RequiredExperience="90"
+		ExperienceAward="16">
+		<Target>GDIVehicleAF</Target>
+	</ExperienceLevelTemplate>
+
+
+</AssetDeclaration>

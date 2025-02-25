@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="../Includes/AIBaseType.xsd"/>
+
+
+	<xs:simpleType name="AIBaseSortingOrder">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PREFER_OLDEST" />
+			<xs:enumeration value="PREFER_NEWEST" />
+			<xs:enumeration value="PREFER_SMALLEST" />
+			<xs:enumeration value="PREFER_LARGEST" />
+			<xs:enumeration value="PREFER_MOST_RECENTLY_ATTACKED" />
+			<xs:enumeration value="PREFER_LEAST_RECENTLY_ATTACKED" />
+			<xs:enumeration value="PREFER_CLOSEST" /> <!-- Only applies to some uses of AIBaseSelectionCriteria, where there is an obvious starting position -->
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Ownership of a base is only relevant for bases off of buildings or crawler,
+		so an owner has at least one object that helps define the base.  There can
+		be multiple owners (anyone what has at least one object) -->
+	<xs:simpleType name="AIBaseOwner">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="OWNER_THIS_PLAYER" /> <!-- really is THIS_AI, but in code it makes more sense as THIS_PLAYER -->
+			<xs:enumeration value="OWNER_OTHER_AI" />
+			<xs:enumeration value="OWNER_HUMAN" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="AIBaseOwnerBitFlags">
+		<xs:list itemType="AIBaseOwner" />
+	</xs:simpleType>
+
+
+  <!-- When we want to choose a base -->
+	<xs:complexType name="AIBaseSelectionCriteria">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="RequiredBaseTypes" type="AIBaseTypeBitFlags" default="" /> <!-- Building will only be placed in base with ALL of these flags set -->
+		<xs:attribute name="ExcludedBaseTypes" type="AIBaseTypeBitFlags" default="" /> <!-- Building will only be placed in base with NONE of these flags set -->
+		<xs:attribute name="PreferredBaseTypes" type="AIBaseTypeBitFlags" default="" />
+		<xs:attribute name="PreferredNotBaseTypes" type="AIBaseTypeBitFlags" default="" /> <!-- Building will be placed in the base with the highest 
+																						  (# of PreferredBaseTypes set) minus (# of PreferredNotBaseTypes set) -->
+
+		<!-- Certain bases assume all ally players are owners (Monument, spawn zone) even if there are no buildings/rigs in base -->
+		<xs:attribute name="RequireOwner" type="AIBaseOwnerBitFlags" default="" /> <!-- To match, only ONE of the owners needs to match -->
+		<xs:attribute name="PreferredOwner" type="AIBaseOwnerBitFlags" default="" /> <!-- A base will be selected with ONE of these owners over a base with NONE -->
+
+		<xs:attribute name="SortOrder" type="AIBaseSortingOrder" default="PREFER_NEWEST" /> <!-- How to sort the bases if multiple bases pass the other checks.
+																							 NOTE: PreferredBaseTypes/PreferredNotBaseTypes override this -->	
+
+	</xs:complexType>
+</xs:schema>

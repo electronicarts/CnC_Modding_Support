@@ -1,0 +1,111 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// Ocean wave displacement scrape script
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_OCEAN_DISPLACEMENT_SCRAPEH
+#define SCRAPE_SCRIPT_OCEAN_DISPLACEMENT_SCRAPEH
+
+//
+// Ocean displacement, ie wave simulation code
+//
+
+//#define DISABLE_OCEAN_DISPLACEMENT
+
+#if !defined(DISABLE_OCEAN_DISPLACEMENT)
+
+#if defined(EA_PLATFORM_WINDOWS)
+#define OceanDisplacementSize 1024
+#define OceanDisplacementFormat A16B16G16R16F
+#elif defined(EA_PLATFORM_XENON)
+#define OceanDisplacementSize 512
+#define OceanDisplacementFormat A8R8G8B8
+#endif
+
+var texture OceanDisplacementTexture OceanDisplacementSize OceanDisplacementSize OceanDisplacementFormat
+
+#if defined(EA_PLATFORM_WINDOWS)
+	#define OceanDisplacementRenderTarget OceanDisplacementTexture
+
+	// On Windows we need to render target textures to do a ping pong post effects update
+	var texture OceanDisplacementTexture2 OceanDisplacementSize OceanDisplacementSize OceanDisplacementFormat
+	#define OceanDisplacementRenderTarget2 OceanDisplacementTexture2
+#elif defined(EA_PLATFORM_XENON)
+	// On Xenon we just use one render target and a texture to ping pong between
+	var surface OceanDisplacementRenderTarget edram OceanDisplacementSize OceanDisplacementSize OceanDisplacementFormat
+#endif
+
+var shader OceanDisplacementShader OceanDisplacement.fx
+
+var camera OceanDisplacement
+
+#endif//!defined(DISABLE_OCEAN_DISPLACEMENT)
+
+var texture StaticOceanDisplacementTexture Octave3_NRM
+
+proc updateOceanDisplacement
+
+        settexture Water StaticDisplacementTexture StaticOceanDisplacementTexture
+
+#if !defined(DISABLE_OCEAN_DISPLACEMENT)
+	if Water IsReflectionVisible
+		beginevent UpdateWaterDisplacement
+		
+		setfloat Water DisplacementTextureSize OceanDisplacementSize
+		
+		settarget 0 OceanDisplacementRenderTarget
+		setdepth NULL
+		
+#if defined(EA_PLATFORM_XENON) // scale range on xenon
+		setclearcolor		0.5 0.5 0 0
+#else
+		setclearcolor		0 0 0 0
+#endif
+		clearcolor
+
+		setcamera OceanDisplacement
+		
+		renderWaterDisplacement
+		
+		renderbin OceanDisplacement
+		renderbin OceanDisplacement BinCommand_RenderParticles
+
+		setshader OceanDisplacementShader StaticDisplacement
+		renderquad
+
+		settexture Water DisplacementTexture OceanDisplacementTexture
+		
+#if defined(EA_PLATFORM_XENON)
+		resolve OceanDisplacementTexture
+#elif defined(EA_PLATFORM_WINDOWS)
+		settarget 0 OceanDisplacementRenderTarget2
+#endif
+
+		setshader OceanDisplacementShader BlurU
+		renderquad
+
+#if defined(EA_PLATFORM_XENON)
+		resolve OceanDisplacementTexture
+#elif defined(EA_PLATFORM_WINDOWS)
+		settexture Water DisplacementTexture OceanDisplacementTexture2
+
+		settarget 0 OceanDisplacementRenderTarget
+#endif
+
+		setshader OceanDisplacementShader BlurV
+		renderquad
+
+#if defined(EA_PLATFORM_XENON)
+		resolve OceanDisplacementTexture
+#elif defined(EA_PLATFORM_WINDOWS)
+		settexture Water DisplacementTexture OceanDisplacementTexture
+#endif
+
+		endevent UpdateWaterDisplacement
+	endif
+
+#endif//!defined(DISABLE_OCEAN_DISPLACEMENT)
+
+endproc
+
+#endif // SCRAPE_SCRIPT_OCEAN_DISPLACEMENT_SCRAPEH

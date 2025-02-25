@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Tags></Tags>
+	
+	<!-- 
+	   'USER_1' - model condition denotes the ON state
+	-->
+  <Includes>
+		<!-- TEMP ART-->
+		<Include type="all" source="ART:NB_TECHSTRUCTP_SKN.w3x" />
+		<Include type="all" source="ART:NB_TECHSTRUCTP_SKL.w3x" />
+		<Include type="all" source="ART:NB_TECHSTRUCTP_AIDA.w3x" />
+		<Include type="all" source="ART:NB_TECHSTRUCTP_CPTR.w3x" />
+		<Include type="all" source="ART:NB_TECHSTRUCTP_DMGA.w3x" />
+
+
+		<Include type="instance" source="DATA:BaseObjects/BaseTechStructure.xml" />
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="TechStructureP"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_Neutral_TechStr_A_GDI"
+		ButtonImage="Portrait_Neutral_TechStr_A_GDI"
+		Side="Neutral"
+		EditorSorting="STRUCTURE"
+		CommandSet="TibSpikeCommandSet"
+		KindOf="SELECTABLE STRUCTURE PRELOAD IMMOBILE CAN_CAST_REFLECTIONS NOT_SELLABLE HAS_HEALTH_BAR HAS_BUILDING_DESTRUCT_BEHAVIOR"
+		RadarPriority="STRUCTURE"
+		EditorName="TechStructureP"
+		Description="Desc:TechStructureP">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Title:TechStructureP</DisplayName>
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="StructureArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="Spike01 Spike02 Spike03 Bone_contact_point_01 Bone_contact_point_02 Bone_contact_point_03 Bone_contact_point_04 Bone_contact_point_05
+				Bone_contact_point_06 Bone_contact_point_07 Panel03 Coloumn"
+				Options="RENDER_BUFF_EFFECTS">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TECHSTRUCTP_SKN" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Animation
+						AnimationName="NB_TECHSTRUCTP_AIDA"
+						AnimationBlendTime="15"
+						AnimationMode="LOOP"/>
+					<ParticleSysBone
+						BoneName="Panel01"
+						FXParticleSystemTemplate="TechStructureP_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Panel01"
+						FXParticleSystemTemplate="TechStructureP_DamageSparks"
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Animation
+						AnimationName="NB_TECHSTRUCTP_DMGA"
+						AnimationBlendTime="15"
+						AnimationMode="LOOP"/>
+					<ParticleSysBone
+						BoneName="Panel03"
+						FXParticleSystemTemplate="TechStructureP_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Panel01"
+						FXParticleSystemTemplate="TechStructureP_DamageSparks"
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="STATE_CAPTURED">
+					<Animation
+						AnimationName="NB_TECHSTRUCTP_AIDA"
+						AnimationBlendTime="15"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Behaviors>
+				
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				AssociatedModule="ModuleTag_Draw">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					CreationObject="PAGarStructure04_Debris"
+					FlingVelocity="100.0"
+					FX="FX_TechStructureP_Damage">
+					<!-- 1 -->
+					<NamedBoneInfo>
+						<BoneName>Bone_contact_point_05</BoneName>
+						<BoneName>Bone_contact_point_01</BoneName>
+						<BoneName>Bone_contact_point_07</BoneName>
+					</NamedBoneInfo>
+					<!-- 2 -->
+					<NamedBoneInfo>
+						<BoneName>Bone_contact_point_04</BoneName>
+						<BoneName>Bone_contact_point_02</BoneName>
+					</NamedBoneInfo>
+					<!-- 3 -->
+					<NamedBoneInfo>
+						<BoneName>Bone_contact_point_03</BoneName>
+						<BoneName>Bone_contact_point_06</BoneName>
+					</NamedBoneInfo>
+				</Item>
+			</BuildingDestructionBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="TechStructureP_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleLRG_Death" />
+				<Event 
+					Index="onDeath" 
+					FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_MEDIUM" />
+		</Body>
+
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "31.9893"
+					 MinorRadius = "34.3861"
+					 Height = "44.4243"
+					 ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "16.5851"
+					 MinorRadius = "17.8277"
+					 Height = "139.775"
+					 ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NEU_Junkyard_StrJ_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice> 
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged"/>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged"/>
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+	</GameObject>
+
+	<!-- OCL -->
+	<ObjectCreationList
+		id="TechStructureP_Die_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectTemplate>NODDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<ObjectOffset x="-5.0" y="5.0" z="100.0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="8.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+</AssetDeclaration>

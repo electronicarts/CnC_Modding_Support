@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Tags></Tags>
+  <Includes></Includes>
+
+  <!--If opponent is low on funds cripple his economy-->
+  <AIStrategicStateDefinition
+		id="NODResourceSqueeze"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <PathToTargetHeuristic PathExists="true"/>
+      <ResourceSqueezeHeuristic
+        PenetrabilityWeight="0.25"
+        OpponentFundsWeight="0.75">
+        <PenetrabilityHeuristic/>
+        <OpponentFundsHeuristic/>
+      </ResourceSqueezeHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="EconomyKillHeuristic" TargetType="PrimaryTarget"/>
+    <Tactic Tactic="DefenseAvoidanceAttack" TargetType="PrimaryTarget">
+      <TeamTemplate MinUnits="3" MaxUnits="5" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false"/>
+    </Tactic>
+    <UnitModifierByName UnitName="NODRaiderTank" UnitPreferenceOffensiveModifier="125%" UnitPreferenceDefensiveModifier="100%"/>
+  </AIStrategicStateDefinition>
+
+  <!--If opponent is nearly matched in forces, take out his production capacity-->
+  <AIStrategicStateDefinition
+		id="NODProductionHalt"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <PathToTargetHeuristic PathExists="true"/>
+      <ProductionHaltHeuristic
+        BalanceOfPowerWeight="0.75"
+        PenetrabilityWeight="0.25">
+        <PenetrabilityHeuristic/>
+        <BalanceOfPowerHeuristic/>
+      </ProductionHaltHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ProductionKillHeuristic" TargetType="PrimaryTarget"/>
+    <Tactic Tactic="DefenseAvoidanceAttack" TargetType="PrimaryTarget">
+      <TeamTemplate MinUnits="3" MaxUnits="5" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false"/>
+    </Tactic>
+    <UnitModifierByName UnitName="NODRaiderTank" UnitPreferenceOffensiveModifier="125" UnitPreferenceDefensiveModifier="100%"/>
+  </AIStrategicStateDefinition>
+
+  <!--If opponent is near power threshold, take his power offline-->
+  <AIStrategicStateDefinition
+		id="NODPowerCut"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <PathToTargetHeuristic PathExists="true"/>
+      <OpponentPowerThresholdHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="PowerKillHeuristic" TargetType="PrimaryTarget"/>
+    <Tactic Tactic="DefenseAvoidanceAttack" TargetType="PrimaryTarget">
+      <TeamTemplate MinUnits="3" MaxUnits="5" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false"/>
+    </Tactic>
+    <!--No Unit Preferences-->
+  </AIStrategicStateDefinition>
+
+  <!--If opponent is turtling, siege his base with many "mini" siege groups-->
+  <AIStrategicStateDefinition
+		id="NODMiniSiege"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <PathToTargetHeuristic PathExists="true"/>
+      <LateGameHeuristic/>
+      <SiegeThresholdHeuristic SiegeMode="true" Threshold="1.5"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="PrimaryTarget"/>
+    <Tactic Tactic="SimpleSiege" TargetType="PrimaryTarget">
+      <TeamTemplate MinUnits="1" MaxUnits="1" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false">
+        <CreateUnits UnitName="NODBeamCannon"/>
+      </TeamTemplate>
+      <TeamTemplate MinUnits="3" MaxUnits="3" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!--If opponent's base is undefended sneak an engineer in to capture key structures-->
+  <AIStrategicStateDefinition
+		id="NODEngineer"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <PathToTargetHeuristic PathExists="true"/>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="EngineerHeuristic" TargetType="Engineer"/>
+    <Tactic Tactic="DefenseAvoidanceAttack" TargetType="Engineer">
+      <TeamTemplate MinUnits="2" MaxUnits="8" IncludeKindOf="" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false">
+        <CreateUnits UnitName="NODSaboteur"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!--Airstrike targets undefended by AA-->
+  <AIStrategicStateDefinition
+		id="NODGuerillaAirHarassment"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirUnitHeuristic" TargetType="AssaultAirstrike"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirPowerPlantHeuristic" TargetType="AssaultAirstrike"/>
+    <Tactic Tactic="DefenseAvoidanceAttack" TargetType="AssaultAirstrike">
+      <TeamTemplate MinUnits="1" IncludeKindOf="CAN_ATTACK AIRCRAFT ASSAULT_AIRCRAFT" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="false"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+		id="NODGuerillaBombingRuns"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <LateGameHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" TargetType="BombingAirstrike"/>
+    <Tactic Tactic="SimpleAttack" TargetType="BombingAirstrike">
+      <TeamTemplate MinUnits="1" IncludeKindOf="CAN_ATTACK AIRCRAFT BOMBER_AIRCRAFT" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="false">
+        <CreateUnits UnitName="NODVertigo"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+		id="NODGuerillaStealthTankAttack"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <LateGameHeuristic/>
+      <IntervalHeuristic IntervalTime="130s" ActiveTime="60s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" TargetType="Diversion"/>
+    <Tactic Tactic="DefenseAvoidanceAttack" TargetType="Diversion">
+      <TeamTemplate MinUnits="4" MaxUnits="4" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="false">
+        <CreateUnits UnitName="NODAvatar"/>
+        <CreateUnits UnitName="NODAvatar"/>
+        <CreateUnits UnitName="NODAvatar"/>
+        <CreateUnits UnitName="NODStealthTank"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="NODGuerillaFanaticAttack"
+    UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <MiddleGameHeuristic/>
+      <IntervalHeuristic IntervalTime="50s" ActiveTime="60s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundVehicleHeuristic" TargetType="Diversion"/>
+    <Tactic Tactic="DefenseAvoidanceAttack" TargetType="Diversion">
+      <TeamTemplate MinUnits="3" MaxUnits="3" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="false">
+        <CreateUnits UnitName="NodFanaticSquad"/>
+        <CreateUnits UnitName="NodFanaticSquad"/>
+        <CreateUnits UnitName="NodFanaticSquad"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!--Constantly pester opponent with small attacks on random targets -->  
+  <AIStrategicStateDefinition
+		id="NODDiversion"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <PathToTargetHeuristic PathExists="true"/>
+      <ConstantHeuristic Weight="0.5"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" TargetType="Diversion"/>
+    <Tactic Tactic="DefenseAvoidanceAttack" TargetType="Diversion">
+      <TeamTemplate MinUnits="2" MaxUnits="2" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBudgetStateDefinition
+    id="NODGuerillaTechByTimeBudget">
+    <Heuristic>
+      <ConstantHeuristic Weight="0.8"/>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimerHeuristic StartTime="300s" EndTime="-1s"/>
+      <IntervalHeuristic IntervalTime="160s" ActiveTime="20s"/>
+      <IntervalHeuristic IntervalTime="7s" ActiveTime="3s"/>
+    </Heuristic>
+    <Budget>
+      <AccountShare Account="INVESTMENT" Percent="0%"/>
+      <AccountShare Account="SPECIAL_OPERATIONS" Percent="0%"/>
+      <AccountShare Account="PRODUCTION" Percent="0%"/>
+      <AccountShare Account="DEFENSE" Percent="0%"/>
+      <AccountShare Account="TECHNOLOGY" Percent="90%"/>
+      <AccountShare Account="SLUSH_FUND" Percent="10%"/>
+    </Budget>
+  </AIBudgetStateDefinition>
+
+  <AIBudgetStateDefinition
+    id="NODGuerillaTechByTimeBudget_EASY">
+    <Heuristic>
+      <ConstantHeuristic Weight="0.8"/>
+      <OpeningMoveHeuristic Complete="true"/>
+      <IntervalHeuristic IntervalTime="640s" ActiveTime="20s"/>
+      <IntervalHeuristic IntervalTime="7s" ActiveTime="3s"/>
+    </Heuristic>
+    <Budget>
+      <AccountShare Account="INVESTMENT" Percent="0%"/>
+      <AccountShare Account="SPECIAL_OPERATIONS" Percent="0%"/>
+      <AccountShare Account="PRODUCTION" Percent="0%"/>
+      <AccountShare Account="DEFENSE" Percent="0%"/>
+      <AccountShare Account="TECHNOLOGY" Percent="90%"/>
+      <AccountShare Account="SLUSH_FUND" Percent="10%"/>
+    </Budget>
+  </AIBudgetStateDefinition>
+
+  <AIBudgetStateDefinition
+    id="NODGuerillaTechByTimeBudget_MEDIUM">
+    <Heuristic>
+      <ConstantHeuristic Weight="0.8"/>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimerHeuristic StartTime="300s" EndTime="-1s"/>
+      <IntervalHeuristic IntervalTime="250s" ActiveTime="20s"/>
+      <IntervalHeuristic IntervalTime="7s" ActiveTime="3s"/>
+    </Heuristic>
+    <Budget>
+      <AccountShare Account="INVESTMENT" Percent="0%"/>
+      <AccountShare Account="SPECIAL_OPERATIONS" Percent="0%"/>
+      <AccountShare Account="PRODUCTION" Percent="0%"/>
+      <AccountShare Account="DEFENSE" Percent="0%"/>
+      <AccountShare Account="TECHNOLOGY" Percent="90%"/>
+      <AccountShare Account="SLUSH_FUND" Percent="10%"/>
+    </Budget>
+  </AIBudgetStateDefinition>
+
+</AssetDeclaration>

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:balance="uri:ea.com:eala:balance" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="Appearance">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TWO_LEGS" />
+			<xs:enumeration value="FOUR_WHEELS" />
+			<xs:enumeration value="HOVER" />
+			<xs:enumeration value="HOVER_TANK" />
+			<xs:enumeration value="WINGS" />
+			<xs:enumeration value="HORDE" />
+			<xs:enumeration value="HUGE_TWO_LEGS" />
+			<xs:enumeration value="TREADS" />
+			<xs:enumeration value="SHIP" />
+			<xs:enumeration value="OTHER" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="JetLocomotorDataOption">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NO_CIRCLE_WHILE_USING_SPECIALPOWER"></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="JetLocomotorDataOptionFlags">
+		<xs:list itemType="JetLocomotorDataOption"></xs:list>
+	</xs:simpleType>
+
+	<xs:simpleType name="Surface">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="GROUND" />
+			<xs:enumeration value="WATER" />
+			<xs:enumeration value="CLIFF" />
+			<xs:enumeration value="AIR" />
+			<xs:enumeration value="RUBBLE" />
+			<xs:enumeration value="OBSTACLE" />
+			<xs:enumeration value="IMPASSABLE" />
+			<xs:enumeration value="DEEP_WATER" />
+			<xs:enumeration value="WALL_RAILING" />
+			<xs:enumeration value="CRUSHABLE_OBSTACLE" />
+			<xs:enumeration value="CRUSHABLE_WALL" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="LocomotorSurfaceBitFlags">
+    <xs:list itemType="Surface"></xs:list>
+  </xs:simpleType>
+
+	<xs:simpleType name="LocoZ">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NO_MOTIVE_FORCE" />
+			<xs:enumeration value="SEA_LEVEL" />
+			<xs:enumeration value="SURFACE_RELATIVE_HEIGHT_ALLOW_ZERO_HEIGHT" />
+			<xs:enumeration value="SURFACE_RELATIVE_HEIGHT" />
+			<xs:enumeration value="ABSOLUTE_HEIGHT" />
+			<xs:enumeration value="FIXED_SURFACE_RELATIVE_HEIGHT" />
+			<xs:enumeration value="FIXED_ABSOLUTE_HEIGHT" />
+			<xs:enumeration value="RELATIVE_TO_GROUND_AND_BUILDINGS" />
+			<xs:enumeration value="SMOOTH_RELATIVE_TO_HIGHEST_LAYER" />
+			<xs:enumeration value="FLOATING_Z" />
+			<xs:enumeration value="SCALING_WALLS" />
+			<xs:enumeration value="DO_NOT_MODIFY_HEIGHT" />
+			<xs:enumeration value="SEA_LEVEL_SMOOTH_Z" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="LocoF">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NO_FORMATION" />
+			<xs:enumeration value="CAVALRY_1" />
+			<xs:enumeration value="CAVALRY_2" />
+			<xs:enumeration value="CAVALRY_3" />
+			<xs:enumeration value="MELEE_1" />
+			<xs:enumeration value="MELEE_2" />
+			<xs:enumeration value="MELEE_3" />
+			<xs:enumeration value="RANGED_1" />
+			<xs:enumeration value="RANGED_2" />
+			<xs:enumeration value="RANGED_3" />
+			<xs:enumeration value="ARTILLERY_1" />
+			<xs:enumeration value="ARTILLERY_2" />
+			<xs:enumeration value="ARTILLERY_3" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- aircraft-only data -->
+	<xs:complexType name="JetLocomotorData">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Options" type="JetLocomotorDataOptionFlags"/>
+		<xs:attribute name="AttackPathStartRunDistance" type="SageReal"/>
+		<xs:attribute name="AttackPathClimbDistance" type="SageReal"/>
+		<xs:attribute name="AttackPathDiveDistanceStart" type="SageReal"/>
+		<xs:attribute name="AttackPathDiveDistanceEnd" type="SageReal"/>
+	</xs:complexType>
+
+	<xs:complexType name="BounceKickTerrainData">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="TerrainClass" type="TerrainClassType"/>
+		<xs:attribute name="BounceMultiplier" type="Percentage" />
+	</xs:complexType>
+
+	<xs:complexType name="BounceKickTerrainMapping" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="Mapping" type="BounceKickTerrainData" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="LocomotorTemplate" xas:runtimeWrapper="::LocomotorTemplate" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="BounceKickTerrainMap" type="BounceKickTerrainMappingRef" minOccurs="0" maxOccurs="1" />
+					<xs:element name="JetLocomotorData" type="JetLocomotorData" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+
+				<xs:attribute name="Surfaces" type="LocomotorSurfaceBitFlags" default=""/>
+				<xs:attribute name="LookAheadMult" type="SageReal" default="1.0"/>
+				<xs:attribute name="MakeTransformNonDirty" type="SageBool" default="false"/>
+				<xs:attribute name="MaxSpeedDamaged" type="Percentage" default="100%"/>
+				<xs:attribute name="MinSpeed" type="Percentage" default="0%"/>
+				<xs:attribute name="TurnTimeSeconds" balance:field="TurnTimeSeconds" type="Time" default="1.0s"/>
+				<xs:attribute name="TurnTimeDamagedSeconds" balance:field="TurnTimeDamagedSeconds" type="Time" default="0s"/> <!-- 0s means use TurnTimeSeconds. jba. 16July2006 -->
+				<xs:attribute name="SlowTurnRadius" balance:field="SlowTurnRadius" type="SageReal" default="0.0"/>
+				<xs:attribute name="FastTurnRadius" balance:field="FastTurnRadius" type="SageReal" default="0.0"/>
+				<xs:attribute name="MinRandomTurnRadiusScale" type="SageReal" default="1.0"/>
+				<xs:attribute name="MaxRandomTurnRadiusScale" type="SageReal" default="1.0"/>
+
+				<xs:attribute name="TurnThreshold" type="Angle" default="15d"/>
+				<xs:attribute name="TurnThresholdHS" type="Angle" default="180d"/>
+				<xs:attribute name="AccelerationSeconds" balance:field="AccelerationSeconds" type="Time" default="1.0s"/>
+				<xs:attribute name="Lift" type="Percentage" default="0.0"/>
+				<xs:attribute name="LiftDamaged" type="Percentage" default="-1.0"/>
+				<xs:attribute name="BrakingSeconds" balance:field="BrakingSeconds" type="Time" default="1.0s"/>
+				<xs:attribute name="MinTurnSpeed" type="Percentage" default="1.0"/>
+				<xs:attribute name="PreferredHeight" type="SageReal" default="0.0"/>
+				<xs:attribute name="PreferredAttackHeight" type="SageReal" default="0.0"/>
+				<xs:attribute name="PreferredHeightDamping" type="SageReal" default="1.0"/>
+				<xs:attribute name="PreferredHeightPitchingEpsilon" type="SageReal" default="10.0"/> <!-- Typically, this epsilon should at most be just less than the unit's max speed divided by the logic frame rate -->
+				<xs:attribute name="CirclingRadius" type="SageReal" default="0.0"/>
+				<xs:attribute name="CirclingSpeed" type="Percentage" default="100%"/>
+				<xs:attribute name="BehaviorZ" type="LocoZ" default="NO_MOTIVE_FORCE"/>
+				<xs:attribute name="Appearance" type="Appearance" default="FOUR_WHEELS"/>
+				<xs:attribute name="FormationPriority" type="LocoF" default="MELEE_1"/>
+
+				<!-- define's the object state whilst this locomotor is active. -->
+				<xs:attribute name="ActiveModelConditions" type="ModelConditionBitFlags" use="optional" />
+				<xs:attribute name="ActiveObjectStatus" type="ObjectStatusBitFlags" use="optional" />
+				<xs:attribute name="EnteringModelConditions" type="ModelConditionBitFlags" use="optional" />
+				<xs:attribute name="EnteringModelConditionsTime" type="Time" />
+
+				<xs:attribute name="AccDecTrigger" type="SageReal" default="0.5"/>
+				<xs:attribute name="WalkDistance" type="SageReal" default="0.0"/>
+				<xs:attribute name="MaxTurnWithoutReform" type="Angle" default="360d"/>
+				<xs:attribute name="AccelPitchLimit" type="Angle" default="0d"/>
+				<xs:attribute name="BounceKick" type="Angle" default="0d"/>
+				<xs:attribute name="PitchStiffness" type="SageReal" default="0.1"/>
+				<xs:attribute name="RollStiffness" type="SageReal" default="0.1"/>
+				<xs:attribute name="PitchDamping" type="SageReal" default="0.9"/>
+				<xs:attribute name="RollDamping" type="SageReal" default="0.9"/>
+				<xs:attribute name="PitchByZVelCoef" type="SageReal" default="0"/>
+
+				<xs:attribute name="YawStiffness" type="SageReal" default="0.0"/>
+				<xs:attribute name="YawDamping" type="SageReal" default="0.0"/>
+
+				<xs:attribute name="MaxOverlappedHeight" type="SageReal" default="1e+37"/>
+				<xs:attribute name="ForwardVelocityPitchFactor" type="SageReal" default="0.0"/>
+				<xs:attribute name="LateralVelocityRollFactor" type="SageReal" default="0.0"/>
+				<xs:attribute name="ForwardAccelerationPitchFactor" type="SageReal" default="0.0"/>
+				<xs:attribute name="LateralAccelerationRollFactor" type="SageReal" default="0.0"/>
+				<xs:attribute name="UniformAxialDamping" type="SageReal" default="1.0"/>
+				<xs:attribute name="TurnPivotOffset" type="SageReal" default="0.0"/>
+				<xs:attribute name="AirborneTargetingHeight" type="SageInt" default="30"/>
+				
+				<xs:attribute name="CloseEnoughDist" type="SageReal" default="1.0"/>
+				<xs:attribute name="IsCloseEnoughDist3D" type="SageBool" default="false"/>
+
+				<xs:attribute name="DontNegateDeceleratePitchFactor" type="SageBool" default="false"/>
+				<xs:attribute name="LocomotorWorksWhenDead" type="SageBool" default="false"/>
+				<xs:attribute name="AllowMotiveForceWhileAirborne" type="SageBool" default="false"/>
+				<xs:attribute name="Apply2DFrictionWhenAirborne" type="SageBool" default="false"/>
+				<xs:attribute name="DownhillOnly" type="SageBool" default="false"/>
+				<xs:attribute name="StickToGround" type="SageBool" default="false"/>
+				<xs:attribute name="CanMoveBackward" type="SageBool" default="false"/>
+				<xs:attribute name="CanReverseMove" type="SageBool" default="false"/>
+				<xs:attribute name="ReverseMoveSpeed" type="Percentage" default="75%"/>
+				<xs:attribute name="UpdateWaterWadingConditions" type="SageBool" default="false"/>
+
+				<xs:attribute name="HasSuspension" type="SageBool" default="false"/>
+				<xs:attribute name="MaximumWheelExtension" type="SageReal" default="0.0"/>
+				<xs:attribute name="MaximumWheelCompression" type="SageReal" default="0.0"/>
+				<xs:attribute name="WheelTurnAngle" type="Angle" default="0.0d"/>
+				<xs:attribute name="UseTerrainSmoothing" type="SageBool" default="false"/>
+
+				<xs:attribute name="WanderWidthFactor" type="SageReal" default="0.0"/>
+				<xs:attribute name="WanderLengthFactor" type="SageReal" default="1.0"/>
+				<xs:attribute name="WanderAboutPointRadius" type="SageReal" default="0.0"/>
+				<xs:attribute name="BurniningDeathRadius" type="SageReal" default="0.0"/>
+				<xs:attribute name="BurniningDeathIsCavalry" type="SageBool" default="false"/>
+				
+				<xs:attribute name="ChargeMaxSpeed" type="Percentage" default="0%"/>
+				<xs:attribute name="ChargeAvailable" type="SageBool" default="false"/>
+				<xs:attribute name="ChargeIgnoresCondition" type="SageBool" default="false"/>
+				<xs:attribute name="EnableHighSpeedTurnFlags" type="SageBool" default="true"/>
+
+				<xs:attribute name="WaitForFormation" type="SageBool" default="false"/>
+
+				<xs:attribute name="RudderCorrectionDegree" type="SageReal" default="0.0"/>
+				<xs:attribute name="RudderCorrectionRate" type="SageReal" default="0.0"/>
+				<xs:attribute name="ElevatorCorrectionDegree" type="SageReal" default="0.0"/>
+				<xs:attribute name="ElevatorCorrectionRate" type="SageReal" default="0.0"/>
+				<xs:attribute name="AeleronCorrectionDegree" type="SageReal" default="0.0"/>
+				<xs:attribute name="AeleronCorrectionRate" type="SageReal" default="0.0"/>
+				<xs:attribute name="SwoopStandoffRadius" type="SageReal" default="200.0"/>
+				<xs:attribute name="SwoopStandoffHeight" type="SageReal" default="200.0"/>
+				<xs:attribute name="SwoopTerminalVelocity" type="SageReal" default="0.07"/>
+				<xs:attribute name="SwoopAccelerationRate" type="SageReal" default="0.003"/>
+				<xs:attribute name="SwoopSpeedTuningFactor" type="SageReal" default="1.0"/>
+
+				<xs:attribute name="BackingUpSpeed" type="Percentage" default="75%"/>
+				<xs:attribute name="BackingUpStopWhenTurning" type="SageBool" default="false"/>
+				<xs:attribute name="BackingUpDistanceMin" type="SageReal" default="0.0"/>
+				<xs:attribute name="BackingUpDistanceMax" type="SageReal" default="0.0"/>
+				<xs:attribute name="BackingUpAngle" type="SageReal" default="0.5"/>
+
+				<xs:attribute name="RiverModifier" type="Percentage" default="100%"/>
+
+				<xs:attribute name="ScalesWalls" type="SageBool" default="false"/>
+				<xs:attribute name="TurnWhileMoving" type="SageBool" default="true"/>
+				<xs:attribute name="ClampOrientationToPathTangent" type="SageBool" default="false"/>
+				<xs:attribute name="ReorientIfTurnTooSharp" type="SageBool" default="false"/>
+				<xs:attribute name="BrakeBeforeReorienting" type="SageBool" default="false" />
+				<xs:attribute name="IgnoreLowSpeedAngleMultiplier" type="SageBool" default="false" />
+				<xs:attribute name="TakeOffAndLandingSpeed" type="SageReal" default="0.0"/>
+				<xs:attribute name="TakeOffAndLandingSlowDownDelta" type="SageReal" default="25.0"/>
+				<xs:attribute name="TakeOffAndLandingSlowDownTime" type="Time" default="2s"/>
+				<xs:attribute name="EasingTakeOffAndLanding" type="SageBool" default="false"/>
+				<xs:attribute name="EasingPercentage" type="Percentage" default="0%"/>
+				<xs:attribute name="AttackPathTrailDistance" type="SageReal" default="0" />
+				<xs:attribute name="AttackPathTrailDistanceMinScale" type="SageReal" default="1.0" />
+				<xs:attribute name="AttackPathTrailDistanceMaxScale" type="SageReal" default="1.0" />
+				<xs:attribute name="AbsoluteMinHeightWorldSpace" type="SageReal" default="-1000.0"/>
+				<xs:attribute name="SpeedBasedHeightOffset" type="SageReal" default="0.0"/>
+
+				<xs:attribute name="ResubmergeDelay" type="Time" default="3.0s" />
+				<xs:attribute name="WaterToAirTransitionFX" type="FXListRef"/>
+				<!-- just cuz we are not at the exact water level doesn't mean we don't want to be considered "at the surface" -->
+				<xs:attribute name="WaterSurfaceHeightOffset" type="SageReal" default="0.0"/>
+
+				<xs:attribute name="ForbiddenObjectStatus" type="ObjectStatusBitFlags" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,259 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// Main scene scrape script
+//////////////////////////////////////////////////////////////////////////////
+
+var camera Viewer
+
+#include "Common.scrapeh"
+#include "Shadow.scrapeh"
+#include "PostFX.scrapeh"
+#include "DepthMap.scrapeh"
+#include "DeferredLighting.scrapeh"
+#include "WaterReflection.scrapeh"
+#include "OceanDisplacement.scrapeh"
+#include "UnderwaterDeferred.scrapeh"
+#include "ShroudEffect.scrapeh"
+#include "Outlines.scrapeh"
+#include "RotateEnvironmentMap.scrapeh"
+#if defined(EA_PLATFORM_XENON)
+#include "MSAA.scrapeh"
+#endif
+#include "TerrainTopView.scrapeh"
+
+//
+// InGame
+//
+proc InGame
+
+	callproc initCustomTextures
+	
+	if WW3D IsShroudPostEffectEnabled
+		callproc updateShroudTexture
+	else
+		callproc useRawShroudTexture
+	endif
+
+	callproc updateFrameRenderTargetToUse
+
+#if defined(EA_PLATFORM_XENON)
+	// As 99% of our shaders are pixel heavy give 'pixel shaders the most GPR's. 
+	// 3-4ms GPU time saving.
+	setgpr 48 80
+#endif
+	// Setup the global light info
+	setGlobalLightInfo
+
+	callproc updateShadowTexture
+	GPUFLUSH
+	callproc doRotateEnvironmentMaps
+	callproc updateWaterReflection
+	GPUFLUSH
+	callproc updateOceanDisplacement
+	GPUFLUSH
+	callproc updateDepthMap
+	GPUFLUSH
+	callproc updateDefferedLighting
+	GPUFLUSH
+	callproc updateTerrainTopView
+
+	beginevent UpdateFrameBuffer
+	
+	callproc setFrameRenderTarget
+	callproc setFrameDepthBuffer
+	
+	setcamera Viewer
+	visibleobjects Frame
+
+	setclearcolor 0 0 0 1
+	setcleardepth 1.0
+
+#if defined(EA_PLATFORM_XENON)
+	callproc beginMSAATiling
+#else
+	clear
+#endif
+
+	beginevent RenderTerrain
+		renderTerrain
+	endevent RenderTerrain
+	
+	beginevent RenderTerrainExtra
+		renderRoads
+
+		// Render cliffs, sea walls, road segments over terrain but below scorch marks
+		renderbin TerrainLikeGroundObject
+
+		renderTerrainTracks
+
+		// Bridges go above terrain, but below decals
+		renderbin Bridge
+		
+		renderProps
+	endevent RenderTerrainExtra
+
+	beginevent RenderObjects
+		renderUnits			// includes "renderbin UnitPlayer0" - "renderbin UnitPlayer19"
+
+		renderStructures	// includes "renderbin Structure"
+		
+		// Regular unassigned objects, putting this after structure since some energy projectile doesn't write to depth buffer
+		renderbin Solid
+		renderbin StaticSort5 // Underwater Sorting
+	endevent RenderObjects
+
+	if DebugToggle RenderUnderwater.IsEnabled
+		beginevent RenderUnderwater
+			// Apply underwater deferred shading, based on screen-depth texture
+			callproc renderUnderwaterDeferred
+
+			// Render transparent objects and particles that should be under water and apply non-deferred underwater-like shading themselves
+			renderbin Underwater
+			renderbin Underwater BinCommand_RenderParticles
+		endevent RenderUnderwater
+	endif
+
+	beginevent RenderWater
+		callproc updateWaterRefraction
+		renderWater
+	endevent RenderWater
+	
+	renderDecals
+	
+	renderbin Transparent
+	
+	renderTransparentOutlineObjects
+
+	if DebugToggle RenderOutlines.IsEnabled
+		callproc renderOutlines	// render outlines onto the screen
+	endif
+	
+	renderBehindBuildingMarkers
+
+	callproc renderBinsStaticSort
+
+	beginevent RenderParticles	
+		setbool Particle ReallyRenderSoftParticles true
+		if DebugToggle RenderParticles.IsEnabled
+			renderParticles
+		endif
+	endevent RenderParticles	
+
+	beginevent RenderMiscVFX
+		renderTerrainUI
+		renderTracers
+		renderLasers
+		renderStreams
+		renderConnectionLines
+		renderRain
+	endevent RenderMiscVFX
+        
+	beginevent RenderShroudEffect
+		callproc renderShroudEffect
+	endevent RenderShroudEffect
+
+	callproc renderPostEffects // PostEffects will change current render target to be FrameBuffer
+	
+	callproc renderDeferredLightingDebugInfo3D
+	
+	beginevent RenderUIAndDebug
+		renderDebugSystems
+		renderTileFeedback
+		
+		renderIconLayers
+		renderUI
+		
+		renderDebugDisplays
+		callproc renderDeferredLightingDebugInfo2D
+	endevent RenderUIAndDebug
+	
+	endevent UpdateFrameBuffer
+endproc
+
+//
+// Main entry point for WorldBuilder rendering
+//
+proc Editor
+
+	callproc initCustomTextures
+
+	callproc useRawShroudTexture
+
+	callproc updateFrameRenderTargetToUse
+
+	// Setup the global light info
+	setGlobalLightInfo
+
+	callproc updateShadowTexture
+	callproc updateWaterReflection
+	callproc updateDepthMap
+	callproc updateDefferedLighting
+	callproc updateTerrainTopView
+	
+	beginevent UpdateFrameBuffer
+
+	callproc setFrameRenderTarget
+	callproc setFrameDepthBuffer
+	
+	setcamera Viewer
+	visibleobjects Frame
+
+	setclearcolor		1 1 1 1
+	setcleardepth       1.0
+	clear
+
+	if WW3D IsTerrainRenderingEnabled
+		renderTerrain
+	endif
+	
+	renderRoads
+
+	// Render cliffs, sea walls, road segments over terrain but below scorch marks
+	renderbin TerrainLikeGroundObject
+
+	// Bridges go above terrain, but below decals
+	renderbin Bridge
+	
+	renderProps
+	
+	renderUnits			// includes "renderbin UnitPlayer0" - "renderbin UnitPlayer19"
+	
+	// Regular unassigned objects
+	renderbin Solid
+
+	renderStructures	// includes "renderbin Structure"
+	
+	renderbin StaticSort5 // Underwater Sorting
+
+	// Apply underwater deferred shading, based on screen-depth texture
+	callproc renderUnderwaterDeferred
+	
+	// Render transparent objects that should be under water and apply non-deferred underwater-like shading themselves
+	renderbin Underwater
+
+	callproc updateWaterRefraction
+
+	renderWater
+	
+	renderDecals
+	
+	renderbin Transparent
+	
+	callproc renderOutlines // render outlines onto the screen
+	callproc renderBinsStaticSort
+	
+	renderTileFeedback
+	
+	renderEditorObjects
+	
+	if WW3D IsShroudRenderingEnabled
+		settexture Terrain Shroud.BlurTexture White
+		callproc renderShroudEffect	
+	endif
+	
+	callproc PostEffectBloom
+	callproc PostEffectLookupTable
+	
+	endevent UpdateFrameBuffer
+endproc

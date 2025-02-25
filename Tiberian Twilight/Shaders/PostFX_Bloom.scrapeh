@@ -1,0 +1,223 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2008 Electronic Arts Inc
+//
+// Scrape script for bloom post effect
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_POSTFX_BLOOM_SCRAPEH
+#define SCRAPE_SCRIPT_POSTFX_BLOOM_SCRAPEH
+
+//
+// Bloom
+//
+
+var shader PostEffectBloomShader PostFX_Bloom.fx
+
+// The following values are the basic render target sizes used on each platform.
+// They normally need to be set through code to accommodate the various display resolutions/aspect ratios,
+// but they can overridden here for experimentation.
+#define CODE_DRIVEN_TEXTURE_SIZES 1
+
+#if CODE_DRIVEN_TEXTURE_SIZES
+	#define HIGH_X $PostEffect.Bloom.TextureSizeHigh.x
+	#define HIGH_Y $PostEffect.Bloom.TextureSizeHigh.y
+	#define MEDIUM_X $PostEffect.Bloom.TextureSizeMedium.x
+	#define MEDIUM_Y $PostEffect.Bloom.TextureSizeMedium.y
+	#define LOW_X $PostEffect.Bloom.TextureSizeLow.x
+	#define LOW_Y $PostEffect.Bloom.TextureSizeLow.y
+#else
+	#define WIDESCREEN 1
+
+	#if defined(EA_PLATFORM_WINDOWS)
+		// The PC seems to have most resolutions map somewhat "nice" to 256 wide based render targets,
+		// eg our main 1024 screen res is 4x downsampled, up to big displays of 2560x1600 which can be 10x downsampled.
+		#if !WIDESCREEN // 4:3
+			#define HIGH_X 256 // 1024 / 4
+			#define HIGH_Y 192 // 768 / 4
+			#define MEDIUM_X 64 // HIGH_X / 4
+			#define MEDIUM_Y 48 // HIGH_Y / 4
+			#define LOW_X 16 // MEDIUM_X / 4
+			#define LOW_Y 12 // MEDIUM_Y / 4
+		#else // 16:9
+			#define HIGH_X 256
+			#define HIGH_Y 144
+			#define MEDIUM_X 64
+			#define MEDIUM_Y 36
+			#define LOW_X 16
+			#define LOW_Y 9
+		#endif
+	#else // XENON
+		// On the Xenon our two resolutions are 960x720 and 1280x720,
+		// both map nicely to 4x downsampling with a height of 180 and variable width.
+		#if !WIDESCREEN // 4:3
+			#define HIGH_X 240
+			#define HIGH_Y 180
+			#define MEDIUM_X 60
+			#define MEDIUM_Y 45
+			#define LOW_X 15
+			#define LOW_Y 11
+		#else // 16:9
+			#define HIGH_X 320
+			#define HIGH_Y 180
+			#define MEDIUM_X 80
+			#define MEDIUM_Y 45
+			#define LOW_X 20
+			#define LOW_Y 11
+		#endif
+	#endif
+#endif
+
+#define BLOOM_SURFACE_FORMAT $PostEffect.Bloom.SurfaceFormat
+#define BLOOM_TEXTURE_FORMAT $PostEffect.Bloom.TextureFormat
+
+var texture BloomTextureHigh0 HIGH_X HIGH_Y BLOOM_TEXTURE_FORMAT
+
+#if defined(EA_PLATFORM_WINDOWS)
+	var texture BloomTextureHigh1 HIGH_X HIGH_Y BLOOM_TEXTURE_FORMAT
+	#define BloomRenderTargetHigh0 BloomTextureHigh0
+	#define BloomRenderTargetHigh1 BloomTextureHigh1
+#elif defined(EA_PLATFORM_XENON)
+	#define BloomTextureHigh1 BloomTextureHigh0
+	var surface BloomRenderTargetHigh0 edram HIGH_X HIGH_Y BLOOM_SURFACE_FORMAT
+	#define BloomRenderTargetHigh1 BloomRenderTargetHigh0
+#endif
+
+var texture BloomTextureMedium0 MEDIUM_X MEDIUM_Y BLOOM_TEXTURE_FORMAT
+
+#if defined(EA_PLATFORM_WINDOWS)
+	var texture BloomTextureMedium1 MEDIUM_X MEDIUM_Y BLOOM_TEXTURE_FORMAT
+	#define BloomRenderTargetMedium0 BloomTextureMedium0
+	#define BloomRenderTargetMedium1 BloomTextureMedium1
+#elif defined(EA_PLATFORM_XENON)
+	#define BloomTextureMedium1 BloomTextureMedium0
+	var surface BloomRenderTargetMedium0 edram MEDIUM_X MEDIUM_Y BLOOM_SURFACE_FORMAT
+	#define BloomRenderTargetMedium1 BloomRenderTargetMedium0
+#endif
+
+#if defined(EA_PLATFORM_WINDOWS)
+	var texture BloomTextureLow1 LOW_X LOW_Y BLOOM_TEXTURE_FORMAT
+	#define BloomRenderTargetLow0 BloomTextureLow0
+	#define BloomRenderTargetLow1 BloomTextureLow1
+#elif defined(EA_PLATFORM_XENON)
+	#define BloomTextureLow1 BloomTextureLow0
+	var surface BloomRenderTargetLow0 edram LOW_X LOW_Y BLOOM_SURFACE_FORMAT
+	#define BloomRenderTargetLow1 BloomRenderTargetLow0
+#endif
+
+proc PostEffectBloom
+	if PostEffect Bloom.IsEnabled
+		beginevent UpdatePostFXBloom
+
+		// Fill debug pattern
+		//setshader PostEffectBloomShader DebugPattern
+		//renderfullquad
+
+		// Copy frame buffer to RT
+		callproc copyFrameBufferToTexture
+
+		setdepth NULL
+
+		// Downsample to high res texture
+		settexture PostEffect Bloom.SourceTexture PostEffectFrameBufferTexture
+		settosize PostEffect Bloom.SourceTextureSize PostEffectFrameBufferTexture
+
+		settarget 0 BloomRenderTargetHigh0
+		settosize PostEffect Bloom.TargetTextureSize BloomRenderTargetHigh0
+
+		setshader PostEffectBloomShader DownsampleInitial
+		renderquad
+		XENON_RESOLVE(BloomTextureHigh0)
+
+		// Downsample to medium res texture
+		settexture PostEffect Bloom.SourceTexture BloomTextureHigh0
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureHigh0
+
+		settarget 0 BloomRenderTargetMedium0
+		setshader PostEffectBloomShader Downsample4x4
+		renderquad
+		XENON_RESOLVE(BloomTextureMedium0)
+
+
+
+
+
+
+
+
+
+		// Accumulate low and medium res texture
+		settexture PostEffect FrameBufferTexture BloomTextureMedium0
+		settexture PostEffect Bloom.SourceTexture BloomTextureMedium0
+
+		settarget 0 BloomRenderTargetMedium1
+
+		setshader PostEffectBloomShader Accumulate
+		renderquad
+		XENON_RESOLVE(BloomTextureMedium1)
+
+		// Blur medium res texture
+		settexture PostEffect Bloom.SourceTexture BloomTextureMedium1
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureMedium1
+
+		settarget 0 BloomRenderTargetMedium0
+		setshader PostEffectBloomShader BlurGaussian11x11U
+		renderquad
+		XENON_RESOLVE(BloomTextureMedium0)
+
+		settexture PostEffect Bloom.SourceTexture BloomTextureMedium0
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureMedium0
+
+		settarget 0 BloomRenderTargetMedium1
+		setshader PostEffectBloomShader BlurGaussian11x11V
+		renderquad
+		XENON_RESOLVE(BloomTextureMedium1)
+
+		// Accumulate medium and high res texture
+		settexture PostEffect FrameBufferTexture BloomTextureHigh0
+		settexture PostEffect Bloom.SourceTexture BloomTextureMedium1
+
+		settarget 0 BloomRenderTargetHigh1
+		setshader PostEffectBloomShader Accumulate
+		renderquad
+		XENON_RESOLVE(BloomTextureHigh1)
+
+
+		// Blur high res texture
+		settexture PostEffect Bloom.SourceTexture BloomTextureHigh1
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureHigh1
+
+		settarget 0 BloomRenderTargetHigh0
+		setshader PostEffectBloomShader BlurGaussian11x11U
+		renderquad
+		XENON_RESOLVE(BloomTextureHigh0)
+
+		settexture PostEffect Bloom.SourceTexture BloomTextureHigh0
+		settosize PostEffect Bloom.SourceTextureSize BloomTextureHigh0
+
+		settarget 0 BloomRenderTargetHigh1
+		setshader PostEffectBloomShader BlurGaussian11x11V
+		renderquad
+		XENON_RESOLVE(BloomTextureHigh1)
+
+		// Reset render target to screen
+		callproc setFrameRenderTarget
+
+		// Accumulate high res texture and frame buffer
+		settexture PostEffect FrameBufferTexture PostEffectFrameBufferTexture
+		settexture PostEffect Bloom.SourceTexture BloomTextureHigh1
+
+		setshader PostEffectBloomShader AccumulateFinal
+		renderquad
+
+		// Fill half the screen with an intermediate texture for debugging
+		//callproc setFrameRenderTarget
+		//settexture PostEffect FrameBufferTexture BloomTextureHigh1
+		//setshader PostEffectBloomShader DebugDisplay
+		//renderfullquad
+
+		callproc setFrameDepthBuffer
+		
+		endevent UpdatePostFXBloom
+	endif
+endproc
+
+#endif // SCRAPE_SCRIPT_POSTFX_BLOOM_SCRAPEH

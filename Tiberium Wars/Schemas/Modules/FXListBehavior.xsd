@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	
+	<xs:simpleType name="FXListBehaviorType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="onDeath" />
+			<xs:enumeration value="onDamaged" />
+			<xs:enumeration value="onCreate" />
+			<xs:enumeration value="onTransitionToDamaged" />
+			<xs:enumeration value="onTransitionToReallyDamaged" />
+			<xs:enumeration value="onTransitionToRubble" />
+			<xs:enumeration value="onBecomingTemporarySlave" />
+			<xs:enumeration value="onBecomingTemporaryOwner" />
+			<xs:enumeration value="onEndingTemporarySlave" />
+			<xs:enumeration value="onEndingTemporaryOwner" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="FXListBehaviorDirection">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Front" />
+			<xs:enumeration value="Rear" />
+			<xs:enumeration value="Side" />
+			<xs:enumeration value="Top" />
+			<xs:enumeration value="Default" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="FXListBehaviorEvent">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Index" type="FXListBehaviorType" />
+		<xs:attribute name="FX" type="FXListRef" />
+		<xs:attribute name="MinThreshold" type="SageReal" default="0" />
+		<xs:attribute name="MaxThreshold" type="SageReal" default="0" />
+		<xs:attribute name="OrientToObject" type="SageBool" default="true" />
+		<!-- This is a "don't want to break anything 2 weeks before ship" hack. We should always be using doFXObj for all 
+		     these FXListBehavior events; but I don't want to change it now. So for my FXLists (which want to use ExcludedSourceModelConditions),
+				 force it use doFXObj; and leave everything else alone -->
+		<xs:attribute name="ForceUseDoFXObj" type="SageBool" default="false" />
+		<xs:attribute name="Direction" type="FXListBehaviorDirection" default="Default" />
+	</xs:complexType>
+	
+	<xs:complexType name="FXListBehaviorModuleData">
+		<xs:complexContent>
+			<xs:extension base="DieModuleData">
+				<xs:sequence>
+					<xs:element name="Event" type="FXListBehaviorEvent" minOccurs="1" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+</xs:schema>

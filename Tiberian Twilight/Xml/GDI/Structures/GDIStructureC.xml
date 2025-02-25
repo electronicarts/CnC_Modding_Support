@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<!-- GDIStructure C / GDI Directional Cannon Tier 1
+			 Slowing effect on cannon weapons, upgraded to have more health and better armor and do Circular AOE damager
+		-->
+		<Include type="all" source="ART:GSL_StructureC_SKN.w3x" />
+		<Include type="all" source="ART:GSL_StructureC_AIDA.w3x" />
+		<Include type="all" source="ART:GSL_StructureC_BLDA.w3x" />
+		<Include type="all" source="ART:GSL_StructureC_ATKA.w3x" />
+		<Include type="all" source="ART:GSL_StructureC_DMG.xml" />
+
+		<Include type="all" source="ART:FXTracerNOD.xml" />
+		<Include type="instance" source="DATA:GDI/Props/GDICannonProjectiles.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+	</Includes>
+
+	<Defines>
+		<Define name="GDISTRUCTUREC_ATTACK_RANGE" value="400.0" />
+	</Defines>
+	<GameObject
+		id="GDIStructureC"
+		inheritFrom="BaseDefensiveStructure"
+		HealthBoxHeightOffset="30"
+		SubGroupPriority="454"
+		SelectPortrait="Portrait_GDI_Structure_C_tech1"
+		ButtonImage="Btn_GDI_Structure_C_tech1"
+		Side="GDI"
+		ParticipationValue="=$GDISTRUCTUREC_PARTICIPATION_VALUE"
+		BuildTime="15.0"
+		EnergyProduction="=$GDI_STRUCTURE_C_COMMANDPOINT_COST"
+		CommandSet="GDIStructureCCommandSet"
+		KindOf="+CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING +ENERGY_CHANGES_ON_UPGRADE"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		WeaponCategory="CANNON"
+		EditorName="GDI_D1_Struct_Cannon(Guardian Cannon)"
+		EditorSorting="STRUCTURE"
+		Description="Desc:GDIStructureC"
+		TypeDescription="Type:GDIStructureC">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIStructureC</DisplayName>
+		<ArmorSet
+			Armor="HeavyStructureArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX"
+			Conditions="PLAYER_UPGRADE"/>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="16.0"
+				MaxRecoilDistance="10.0"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				ExtraPublicBone="Turret Pitch FX_Weapon01"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GSL_StructureC_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon01" />
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon01" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon01" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretPitch="Pitch"
+						TurretID="1" />
+				</ModelConditionState>
+				<!--
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REPAIRING_DISABLED">
+					<Model
+						Name="NBShredder_D3SN" />
+				</ModelConditionState>
+				-->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GSL_StructureC_SKN" />
+					<Texture
+						Original="GSL_StructureC"
+						New="GSL_StructureC_DMG" />
+					<ParticleSysBone
+						BoneName="Pitch"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Pitch"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GSL_StructureC_SKN" />
+					<Texture
+						Original="GSL_StructureC"
+						New="GSL_StructureC_DMG" />
+					<ParticleSysBone
+						BoneName="Pitch"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="GSL_StructureC_SKN" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Animation
+						AnimationName="GSL_StructureC_AIDA"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObjectPermanently( "GSL_STRUCTUREC_UPG" )
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GSL_StructureC_AIDA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="GSL_StructureC_ATKA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="GSL_StructureC_BLDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true" />
+				</AnimationState>
+				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIStructureCWeapon"
+            	ForbiddenObjectStatus="USER_1"/>
+          <Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIStructureCWeapon_Upgraded"
+						ObjectStatus="USER_1"/>
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretTurnRateOutsideArcOfFire="20"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-30d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="45.0"
+						MaxFiringArcClockwise="45d"
+						MaxFiringArcAntiClockwise="45d">
+						<TurretAITargetChooserData />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+
+			<xi:include
+				href="DATA:Includes/GenericDefenseStructureProductionUpdate.xml" />
+			<EnergyPointsUpgrade
+				id="ModuleTag_EnergyPointsUpgrade"
+				EnergyPointsToChange="=$ENERGY_DEDUCTED_UPGRADED_STRUCTURE">
+				<TriggeredBy>UpgradeGDIStructureC</TriggeredBy>
+			</EnergyPointsUpgrade>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDI_GuardianCannon_DieExplosion" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Small" />
+				<Event Index="onDeath" FX="FX_StructureSmall_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			
+			<ArmorUpgrade
+				id="ModuleTag_ArmorUpgrade"
+				ArmorSetFlag="PLAYER_UPGRADE"
+				Permanent="true">
+				<TriggeredBy>UpgradeGDIStructureC</TriggeredBy>
+			</ArmorUpgrade>
+
+      <!-- This will hide the upgraded model -->
+      <LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIStructureCFunctions"/>
+
+      <!-- This will unhide the upgraded model -->
+      <SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+        <TriggeredBy>UpgradeGDIStructureC</TriggeredBy>
+        <Nugget
+					ShowSubObjects="GSL_StructureC_UPG"
+					Upgrade="UpgradeGDIStructureC"
+          FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>          
+      </SubObjectsUpgrade>
+
+      <MaxHealthUpgrade
+				id="ModuleTag_HealthUpgrade"
+				AddMaxHealth="150"
+				ChangeType="ADD_CURRENT_HEALTH_TOO">
+				<TriggeredBy>UpgradeGDIStructureC</TriggeredBy>
+			</MaxHealthUpgrade>
+
+			<AttributeModifierUpgrade
+				id="Upgrade_AttributeGDIStructureC"
+				AttributeModifier="Modifier_UpgradeGDIStructureC"
+				Permanent="true">
+				<TriggeredBy>UpgradeGDIStructureC</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDIStructureC_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					TargetingCompareList="BaseDefenseTargetingCompareList" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior
+				id="MT_MCALCB">
+				<!-- Repaired by InitiateRepairDie -->
+				<ModelConditionSound
+					Sound="NOD_GenericTurret_Regenerate"
+					RequiredFlags="USER_1" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<PlacementShape
+				Type= "BOX"
+				MajorRadius = "30.0"
+				MinorRadius = "30.0"
+				Height = "42.0" />
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "8.34603"
+					 MinorRadius = "9.07044"
+					 Height = "41.9012"
+					 ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="6.73"
+					y="-14.23"
+					z="48.24" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="8.17"
+					y="14.45"
+					z="41.76" />
+			</ContactPoint>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "30.0"
+					 MinorRadius = "30.0"
+					 Height = "48.0">
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_GuardianCannon_StrC_SelectMS" AudioType="voiceSelect"/>
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_StructureSmall_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="StructureSmall_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureSmall_DamagedMS" AudioType="soundOnReallyDamaged" />
+			<!-- <AudioEntry
+				Sound="AudioEvent:NOD_GenericTurret_MoveStart"
+				AudioType="soundTurretMoveLoop" /> -->
+			<!-- <AudioEntry
+				Sound="NOD_GenericTurret_Deploy"
+				AudioType="soundPrepositioned" /> -->
+		</AudioArraySound>
+		<VisionInfo
+			UIWeaponRangePreview="=$GDISTRUCTUREC_ATTACK_RANGE - 5.0"
+			VisionRange="450"
+			ShroudClearingRange="500" />
+
+	</GameObject>
+
+	<!-- //////////////////////////////////////	-->
+	<!--	LOGIC COMMANDS AND COMMAND SET		-->
+	<!-- //////////////////////////////////////	-->
+	<LogicCommand
+		Type="OBJECT_UPGRADE"
+		id="Command_UpgradeGDIStructureC">
+		<Upgrade>UpgradeGDIStructureC</Upgrade>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo	Heuristic="STRUCTURE_UPGRADE" Distance="400.0"/>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="GDIStructureCCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_UpgradeGDIStructureC</Cmd>
+		<Cmd>Command_SellSelf</Cmd>
+	</LogicCommandSet>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--		ATTRIBUTE MODIFIERS					-->
+	<!-- ////////////////////////////////////////	-->
+	<AttributeModifier
+		id="Modifier_UpgradeGDIStructureC"
+		Category="NONE"
+		StartFX="FX_UpgradeGDIStructureC"
+    ObjectStatusToSet="USER_1">
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_GDIStructureCSlowdown"
+		Category="NONE"
+		Duration="5.0s"
+		StartFX="FX_SeismicSlow">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:GDIStructureC" />
+		<Modifier Type="SPEED" Value="50%"/>
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-50%"/>
+	</AttributeModifier>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--			UPGRADE TEMPLATES				-->
+	<!-- ////////////////////////////////////////	-->
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="UpgradeGDIStructureC"
+		DisplayName="UPGRADE:UpgradeGDIStructureC"
+		Description="UPGRADE:UpgradeGDIStructureC"
+		ResearchSound="Upgrade_ReinforcedStructureGuardianCannon"
+		BuildCost="0"
+		BuildTime="10s">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</UpgradeTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--			WEAPON TEMPLATES				-->
+	<!-- ////////////////////////////////////////	-->
+
+	<WeaponTemplate
+		id="GDIStructureCWeapon"
+		inheritFrom="BaseCannonWeapon" 
+		AttackRange="=$GDISTRUCTUREC_ATTACK_RANGE"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		AcceptableAimDelta="1d"
+		FireSound="GDI_GuardianCannon_StrC_CannonWeaponFire"
+		FireFX="FX_GDI_Heavy_CannonDust"
+		FireStrongCounterFX="FX_GDI_Heavy_Cannon_Strong"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_BUILDINGS">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="4.0s"
+			MaxSeconds="4.0s" />
+		<Nuggets>
+			<ProjectileNugget
+				id="projectileNugget" 
+				ProjectileTemplate="GDIGuardianCannonCannonProjectile"
+				WarheadTemplate="GDIStructureCWeaponWarhead" >
+				<CombatChainProjectiles
+					CombatChain="STRONG"
+					ProjectileTemplate="GDIGuardianCannonCannonProjectile_Veteran"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Inherits from the normal weapon, but changes the warhead -->
+	<WeaponTemplate
+		id="GDIStructureCWeapon_Upgraded"
+		inheritFrom="GDIStructureCWeapon">
+		<Nuggets>
+			<ProjectileNugget
+				id="projectileNugget"
+				ProjectileTemplate="GDIMediumCannonProjectile"
+				WarheadTemplate="GDIStructureCWeaponUpgradedWarhead" />
+		</Nuggets>
+	</WeaponTemplate>
+  
+	<WeaponTemplate
+		id="GDIStructureCWeaponWarhead">
+		<Nuggets>
+			<DamageNugget
+				Damage="45.0"
+				DamageType="CANNON"
+				DamageFXType="GDI_CANNON"
+				DeathType="NORMAL">
+			</DamageNugget>
+			<AttributeModifierNugget
+				AttributeModifierName="AttributeModifier_GDIStructureCSlowdown">
+			</AttributeModifierNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIStructureCWeaponUpgradedWarhead">
+		<Nuggets>
+			<DamageNugget
+				Damage="50.0"
+				DamageType="CANNON"
+				DamageFXType="GDI_CANNON"
+				DeathType="NORMAL">
+			</DamageNugget>
+			<AttributeModifierNugget
+				Radius="50.0"
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifier_GDIStructureCSlowdown">
+			</AttributeModifierNugget>
+		</Nuggets>
+	</WeaponTemplate>
+  
+	<!-- OCL -->
+	<ObjectCreationList
+		id="GDIStructureC_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   EXPERIENCE LEVELS						-->
+	<!-- ////////////////////////////////////////	-->
+	<ExperienceLevelTemplate
+		id="GDIStructureCExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="6">
+		<Target>GDIStructureC</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIStructureCExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIStructureCExperienceLevel_1"
+		RequiredExperience="12"
+		ExperienceAward="7">
+		<Target>GDIStructureC</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIStructureCExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIStructureCExperienceLevel_2"
+		RequiredExperience="30"
+		ExperienceAward="8">
+		<Target>GDIStructureC</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIStructureCExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIStructureCExperienceLevel_3"
+		RequiredExperience="54"
+		ExperienceAward="9">
+		<Target>GDIStructureC</Target>
+	</ExperienceLevelTemplate>
+
+</AssetDeclaration>

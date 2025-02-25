@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+	</Includes>
+	<GameObject
+		id="BaseTechStructure"
+		inheritFrom="BaseObject" 
+		BuildTime="15"
+		UnitCategory="STRUCTURE"
+		KindOf="ALWAYS_VISIBLE STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH TEAMCOLOR_ONLY DO_NOT_STEALTH"
+		>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="1000"/>
+		</ObjectResourceInfo>
+		<Behaviors>
+			<AttributeModifierPoolUpdate 
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="6s"
+				SinkRate="0.1"
+				DestructionDelay="6.1s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+			</FXListBehavior>
+		</Behaviors>
+		<ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_CrystallineShieldDisables">
+				<Override RequiredFlags="PARALYZED INVULNERABLE">
+					<AudioArrayVoice>
+						<AudioEntry Sound="" AudioType="voiceSelect"/>
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+		<Body>
+			<ActiveBody
+				id="DefaultBody"/>
+		</Body>
+	    <EvaEventArray>
+			<EvaEntry EvaEvent="StructureUnderAttack" EvaType="damagedOwner" />
+			<EvaEntry EvaEvent="StructureSold" EvaType="soldOwner" />
+			<EvaEntry EvaEvent="StructureRepairing" EvaType="repairingOwner" />
+			<EvaEntry EvaEvent="EnemyCampSighted" EvaType="enemyObjectSighted" />
+			<EvaEntry EvaEvent="BuildingStolen" EvaType="defectingAwayAllies" />
+			<EvaEntry EvaEvent="EnemyBuildingCaptured" EvaType="defectingTowardsAllies" />
+		</EvaEventArray>
+		<AudioArraySound>
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+	</GameObject>
+
+</AssetDeclaration>

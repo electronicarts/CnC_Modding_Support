@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+	</Includes>
+	<GameObject
+		id="BaseCivilianStructureNoGarrison"
+		inheritFrom="BaseObject" 
+		SelectPortrait="Portrait_NeutralGenericStructure"
+		ButtonImage="Button_NeutralGenericStructure"
+		Side="Civilian"
+		EditorSorting="STRUCTURE"
+		CommandSet="EmptyCommandSet"
+		CampnessValue="=$CAMPNESS_TECH_BUILDING"
+		KindOf="UNATTACKABLE STRUCTURE PRELOAD IMMOBILE CAN_CAST_REFLECTIONS AUTO_RALLYPOINT COVER KEEP_CLASSIFIED_WHEN_DEAD COVER CIVILIAN_BUILDING RESIST_EMP"
+		RadarPriority="STRUCTURE"
+		TypeDescription="TYPE:NonGarrisonableStructure"
+		Description="DESC:NonGarrisonableStructure">
+
+		<DisplayName>NAME:NonGarrisonableStructure</DisplayName>
+
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="StructureArmor"
+			DamageFX="GenericStructureDamageFX" />
+
+		<Behaviors>
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_None" />
+			</FXListBehavior>
+
+			<SecondaryDamageTracker
+				id="ModuleTag_SecondaryDamageTracker"
+				UpdateDuration="1s"
+				DissipateAmount="25"
+				MaxDamageClampScaler="=$MAX_SECONDARY_DAMAGE_SCALER">
+				<Color R="1.0" G="1.0" B="1.75"/>
+				<EffectInfo
+					Fraction="0.2"
+					AttributeModifier="AttributeModifer_CryoBeam_02"
+				/>
+				<EffectInfo
+					Fraction="0.4"
+					AttributeModifier="AttributeModifer_CryoBeam_04"
+				/>
+				<EffectInfo
+					Fraction="0.6"
+					AttributeModifier="AttributeModifer_CryoBeam_06"
+				/>
+				<EffectInfo
+					Fraction="0.8"
+					AttributeModifier="AttributeModifer_CryoBeam_08"
+				/>
+				<EffectInfo
+					Fraction="1.0"
+					SetUpgradedArmor="true"
+					OnEnterDisable="true"
+					OnEnterCancelSpecialAbilities="true"
+					AttributeModifier="AttributeModifer_CryoBeam_10"
+				/>
+				<ObjectStatusValidation
+					ForbiddenStatus="UNDER_IRON_CURTAIN" />
+			</SecondaryDamageTracker>
+		</Behaviors>
+
+		<Body>
+			<ActiveBody
+				id="DefaultBody" />
+		</Body>
+
+		<AudioArrayVoice>
+			<AudioEntry EvaEvent="BuildingStolen" AudioType="voiceDefectingAway" />
+			<AudioEntry EvaEvent="EnemyBuildingCaptured" AudioType="voiceDefectingTowards" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+
+		<EvaEventArray>
+			<EvaEntry EvaEvent="StructureUnderAttack" EvaType="damagedOwner" />
+			<EvaEntry EvaEvent="StructureRepairing" EvaType="repairingOwner" />
+		</EvaEventArray>
+
+
+
+		<VisionInfo
+			VisionRange="600"
+			ShroudClearingRange="600" />
+
+	</GameObject>
+
+</AssetDeclaration>

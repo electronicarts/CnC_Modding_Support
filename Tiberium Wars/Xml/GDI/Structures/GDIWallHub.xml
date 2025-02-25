@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GBWallHub.w3x" />
+		<Include
+			type="all"
+			source="ART:GBWallHub_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:GBWallHub_D3.w3x" />
+		<Include
+			type="all"
+			source="ART:GBWallHub_A.w3x" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GDIWallHub"
+		inheritFrom="BaseStructure"
+		Side="GDI"
+		EditorSorting="STRUCTURE"
+		BuildCost="100"
+		BuildTime="1"
+		SelectPortrait="Portrait_GDIWallHub"
+		ButtonImage="Portrait_GDIWallHub"
+		EnergyProduction="0"
+		CommandSet="GDIWallHubCommandSet"
+		KindOf="PRELOAD STRUCTURE SELECTABLE IMMOBILE SCORE WALL_HUB NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER IGNORE_FOR_VICTORY CAN_CAST_REFLECTIONS RESIST_EMP"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		BuildCompletion="PLACED_BY_PLAYER"
+		CampnessValue="=$CAMPNESS_WALL"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="GDIWallHub"
+		Description="Desc:GDIWallHub"
+		TypeDescription="Type:GDIWallHub">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIWallHub</DisplayName>
+		<ArmorSet
+			Armor="GDIWallArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="FRONT" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				UseStandardModelNames="true"
+				StaticModelLODMode="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBWallHub" />
+				</ModelConditionState>
+				<!-- BUILD UP -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="GBWallHub_A" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBWallHub_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBWallHub_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBWallHub" />
+					<Texture
+						Original="GBwall2"
+						New="GBwall2_D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="GBWallHub_A"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBWallHub_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBWallHub_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GBWallHub_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBWallHub_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>					
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<GettingBuilt
+				id="ModuleTag_04"
+				UseSpawnTimerWithoutWorker="true">
+				<PercentOfBuildCostToRebuildInfo></PercentOfBuildCostToRebuildInfo>
+				<SelfAudio></SelfAudio>
+			</GettingBuilt>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Small" />
+			</FXListBehavior>				
+			<WallHubBehavior
+				id="ModuleTag_SoWeCanBuildWalls"
+				StaggeredBuildFactor="0"
+				BuilderRadius="8"
+				HubCapTemplateId="GDIWallHub"
+				DefaultSegmentTemplateId="GDIWallSegment"
+				CliffCapTemplateId="GDIWallHub"
+				Options="16">
+				<SegmentPattern>GDIWallSegment</SegmentPattern>
+				<SegmentPattern>GDIWallSegment</SegmentPattern>
+				<SegmentPattern>GDIWallSegment</SegmentPattern>
+				<SegmentPattern>GDIWallSegment</SegmentPattern>
+				<SegmentPattern>GDIWallSegment</SegmentPattern>
+				<SegmentPattern>GDIWallHub</SegmentPattern>
+			</WallHubBehavior>
+			<StructureUnpackUpdate
+				UnpackTime="1.5s" />
+			<xi:include
+				href="DATA:Includes/GenericGDIBuildingDestructionNoSpawn.xml" />
+			<xi:include
+				href="DATA:Includes/GenericGDIBuildingSuicideNoSpawn.xml" />
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_05"
+				MaxHealth="1500" />
+		</Body>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				Name="Geom_Orig"
+				MajorRadius="11.0"
+				MinorRadius="11.0"
+				Height="25.0">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="100" />
+	</GameObject>
+</AssetDeclaration>

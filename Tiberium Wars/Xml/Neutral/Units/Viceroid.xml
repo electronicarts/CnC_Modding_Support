@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:NUVisrod_SKN.w3x" />
+		<Include type="all"	source="ART:NUVisrod_ACCL.w3x" />
+		<Include type="all"	source="ART:NUVisrod_ATKA.w3x" />
+		<Include type="all"	source="ART:NUVisrod_DECL.w3x" />
+		<Include type="all"	source="ART:NUVisrod_DIEA.w3x" />
+		<Include type="all"	source="ART:NUVisrod_IDLA.w3x" />
+		<Include type="all"	source="ART:NUVisrod_MOVA.w3x" />
+		<Include type="all"	source="ART:NUVisrod_MOVB.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseInfantry.xml" />
+	</Includes>
+	<StanceTemplate id="AggressiveOnly">
+		<StanceDefinition Type="AGGRESSIVE" />
+	</StanceTemplate>
+
+	<GameObject
+		id="Viceroid"
+		inheritFrom="BaseInfantry" 
+		SelectPortrait="Portrait_NeutralVisceroid"
+		ButtonImage="Portrait_NeutralVisceroid"
+		Side="Neutral"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		CommandSet="EmptyCommandSet"
+		KindOf="PRELOAD SELECTABLE CAN_ATTACK ATTACK_NEEDS_LINE_OF_SIGHT CAN_CAST_REFLECTIONS INFANTRY IGNORES_SELECT_ALL"
+		RadarPriority="UNIT"
+		EditorName="Viceroid"
+		TypeDescription="Type:Visceroid">
+		<DisplayName>Name:Visceroid</DisplayName>
+		<ArmorSet
+			Armor="NeutralViceroidArmor"
+			DamageFX="InfantryDamageFX" />
+		<LocomotorSet
+			Locomotor="HumanLocomotor"
+			Condition="NORMAL"
+			Speed="75.0" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUVisrod_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="true"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="NUVisrod_IDLA"
+						AnimationMode="ONCE"
+						AnimationPriority="30"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+				</AnimationState>	
+<!--						
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_Suppressed" then
+						CurDrawableSetTransitionAnimState("TRANS_fromSuppressed")
+						end
+						if Prev == "STATE_SelectedPose" then
+						CurDrawableSetTransitionAnimState("TRANS_SelectedToIdle")
+						end
+						if Prev == "STATE_stunned_flailing" then
+						CurDrawableSetTransitionAnimState("STATE_stunned_landing")
+						end
+					</Script>
+				</AnimationState>	
+-->								
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING"
+					StateName="STATE_Cover">
+					<Animation
+						AnimationName="NUVisrod_DIEA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+		
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ATTACKING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NUVisrod_ATKA"
+						AnimationMode="LOOP"/>
+				</AnimationState>		
+<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NUVisrod_ACCL"
+						AnimationMode="LOOP"
+						Distance="30" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NUVisrod_DECL"
+						AnimationMode="LOOP"
+						Distance="30" />
+				</AnimationState>
+-->				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NUVisrod_MOVA"
+						AnimationMode="LOOP"
+						AnimationPriority="30"
+						Distance="30" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NeutralViceroidSpittleWeapon" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="100" />
+			
+			<Physics
+				id="ModuleTag_Physics" />
+			<AutoHealBehavior
+				InitiallyActive="true"
+				HealingAmount="10"
+				HealingDelay="1s"
+				HealOnlyIfNotUnderAttack="false"
+				/>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="8s">
+				<Sound Type="INITIAL" List="ALI_Viceroid_SoundDie" /> 
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="AggressiveOnly"/>
+		</Behaviors>
+		<AI>
+			<!-- If you make that wander distance small, like about 10 or so, they'll
+				walk around really funkily (don't know if you want that) -->
+			<WanderAIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"				
+				WanderDistance="100"
+				AttackAll="true"
+				Selectable="true">
+				<UnitAITargetChooserData 
+					CanAutoAcquireNonAutoAcquirable="true" 
+				/>
+			</WanderAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500.0"
+				InitialHealth="500.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="7.0"
+				Height="13.0"></Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="ALI_Viceroid_SoundAttack"
+				AudioType="voiceAttack" />
+			<AudioEntry
+				Sound="ALI_Viceroid_SoundCreate"
+				AudioType="voiceCreated" />
+			<AudioEntry
+				Sound="ALI_Viceroid_SoundMove"
+				AudioType="voiceMove" />
+			<AudioEntry
+				Sound="ALI_Viceroid_SoundMove"
+				AudioType="voiceGuard" />
+			<AudioEntry
+				Sound="ALI_Viceroid_SoundSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="ALI_Viceroid_AmbientDelayedLoop" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="0" />
+		<CrusherInfo
+			CrushableLevel="0" />
+	</GameObject>
+</AssetDeclaration>

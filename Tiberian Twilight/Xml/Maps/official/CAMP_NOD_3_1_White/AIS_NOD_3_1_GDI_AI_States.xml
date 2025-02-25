@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+
+  </Includes>
+
+
+	<AIStrategicStateDefinition
+		id="AIState_NOD_3_1_GDI_01_CrawlerController"
+		MaxInactiveCopies="1"
+		PathfindingCheckType="None"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		CreateMcvPowerCanUse="true"	>
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<!-- Note that this target heuristic is called again every few seconds to keep updating the position -->
+		<TargetHeuristic TargetHeuristic="MaintainOffenseAndSupportCrawlerBehindFrontLines_Domination" Priority="40"/>
+		<TargetHeuristic TargetHeuristic="AITarget_Nod_3_1_GDI_01" Priority="50"/>
+		<!-- UseAestheticsManager=false because Crawlers do not currently handle formation movement -->
+		<Tactic
+			id="Controller"
+			Tactic="SimpleMovement"
+			EndBehavior="DISBAND"
+			UpdateTime="1.3s"
+			CountForFrontLines="false"
+			UseAestheticsManager="false">
+			<TeamTemplate MinUnits="1" MaxUnits="1"
+											  RegisteredObjectSet="CRAWLERS"
+											  IncludeKindOf="CRAWLER"
+											  ExcludeKindOf=""
+											  Priority="HIGH" AlwaysRecruit="true">
+				<MicroManager 
+				  MicroManager="CrawlerMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_NOD_3_1_GDI_02_CrawlerController"
+		MaxInactiveCopies="1"
+		PathfindingCheckType="None"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		CreateMcvPowerCanUse="true"	>
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<!-- Note that this target heuristic is called again every few seconds to keep updating the position -->
+		<TargetHeuristic TargetHeuristic="MaintainOffenseAndSupportCrawlerBehindFrontLines_Domination" Priority="40"/>
+		<TargetHeuristic TargetHeuristic="AITarget_Nod_3_1_GDI_02" Priority="50"/>
+		<!-- UseAestheticsManager=false because Crawlers do not currently handle formation movement -->
+		<Tactic
+			id="Controller"
+			Tactic="SimpleMovement"
+			EndBehavior="DISBAND"
+			UpdateTime="1.3s"
+			CountForFrontLines="false"
+			UseAestheticsManager="false">
+			<TeamTemplate MinUnits="1" MaxUnits="1"
+											  RegisteredObjectSet="CRAWLERS"
+											  IncludeKindOf="CRAWLER"
+											  ExcludeKindOf=""
+											  Priority="HIGH" AlwaysRecruit="true">
+				<MicroManager 
+				  MicroManager="CrawlerMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_NOD_3_1_GDI_03_CrawlerController"
+		MaxInactiveCopies="1"
+		PathfindingCheckType="None"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		CreateMcvPowerCanUse="true"	>
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<!-- Note that this target heuristic is called again every few seconds to keep updating the position -->
+		<TargetHeuristic TargetHeuristic="MaintainOffenseAndSupportCrawlerBehindFrontLines_Domination" Priority="40"/>
+		<TargetHeuristic TargetHeuristic="AITarget_Nod_3_1_GDI_03" Priority="50"/>
+		<!-- UseAestheticsManager=false because Crawlers do not currently handle formation movement -->
+		<Tactic
+			id="Controller"
+			Tactic="SimpleMovement"
+			EndBehavior="DISBAND"
+			UpdateTime="1.3s"
+			CountForFrontLines="false"
+			UseAestheticsManager="false">
+			<TeamTemplate MinUnits="1" MaxUnits="1"
+											  RegisteredObjectSet="CRAWLERS"
+											  IncludeKindOf="CRAWLER"
+											  ExcludeKindOf=""
+											  Priority="HIGH" AlwaysRecruit="true">
+				<MicroManager 
+				  MicroManager="CrawlerMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+ 
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_GDILandDefense"
+			MaxTargets="3">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="FriendlyLandStructureHeuristic"/>
+		<Tactic id="Defense" Tactic="StaticDefense" Distance="300" EndBehavior="DISBAND">
+			<TeamTemplate MinUnits="3" MaxUnits="5"
+						  IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+						  AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+						  Priority="DEFENSE" AlwaysRecruit="true" SortByDistance="true">
+				<ObjectFilter Rule="ALL">
+				<!--	
+					<ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+					<ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+				-->	
+				</ObjectFilter>
+				<MicroManager
+					MicroManager="DefenseMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_GDIOffAttack01"
+			MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="2s" EndTime="-1s" CountFrom="AI_START"/>
+			<IntervalHeuristic IntervalTime="77s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="3" MaxUnits="5"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AIR"
+				Priority="STANDARD" AlwaysRecruit="false">
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_GDIOffAttack02"
+			MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="8s" EndTime="-1s" CountFrom="AI_START"/>
+			<IntervalHeuristic IntervalTime="177s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="3" MaxUnits="4"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AIR"
+				Priority="STANDARD" AlwaysRecruit="false">
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_GDIOffAttack03"
+			MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="8s" EndTime="-1s" CountFrom="AI_START"/>
+			<IntervalHeuristic IntervalTime="133s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="3" MaxUnits="4"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AIR"
+				Priority="STANDARD" AlwaysRecruit="false">
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_GDIOffAttack04"
+			MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="2s" EndTime="-1s" CountFrom="AI_START"/>
+			<IntervalHeuristic IntervalTime="111s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="3" MaxUnits="4"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AIR"
+				Priority="STANDARD" AlwaysRecruit="false">
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_GDIOffAttackCoOp"
+			MaxTargets="1">
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="/Flag-P2IsHuman"/>
+			<TimerHeuristic StartTime="200s" EndTime="-1s" CountFrom="AI_START"/>
+			<IntervalHeuristic IntervalTime="199s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="2" MaxUnits="3"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AIR"
+				Priority="STANDARD" AlwaysRecruit="false">
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_NOD_3_1_GDIOffAttackLong01"
+		MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="600s" EndTime="-1s" CountFrom="AI_START"/>
+			<IntervalHeuristic IntervalTime="111s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="3" MaxUnits="5"
+					IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+					AllowedLocomotorTypes="LAND AIR"
+					Priority="STANDARD" AlwaysRecruit="false">
+				<ObjectFilter Rule="ALL">
+						
+					<ExcludeThing>GDI_O3_Heavy_Blast</ExcludeThing>
+					<ExcludeThing>GDI_O3_Heavy_Cannon</ExcludeThing>
+				
+				</ObjectFilter>
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+	id="AIState_NOD_3_1_GDIOffAttackLong02"
+	MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="540s" EndTime="-1s" CountFrom="AI_START"/>
+			<IntervalHeuristic IntervalTime="144s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="3" MaxUnits="5"
+					IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+					AllowedLocomotorTypes="LAND AIR"
+					Priority="STANDARD" AlwaysRecruit="false">
+				<ObjectFilter Rule="ALL">
+
+					<ExcludeThing>GDI_O3_Heavy_Blast</ExcludeThing>
+					<ExcludeThing>GDI_O3_Heavy_Cannon</ExcludeThing>
+
+				</ObjectFilter>
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_GDIAttackCrawler"
+			MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="22s" EndTime="-1s" CountFrom="AI_START"/>
+			<IntervalHeuristic IntervalTime="77s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="AITarget_EnemyCrawler_Mobile" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="AITarget_EnemyCrawler_Deployed" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="3" MaxUnits="4"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AIR"
+				Priority="STANDARD" AlwaysRecruit="false">
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+
+	<AITargetingHeuristic
+		id="AITarget_Nod_3_1_GDI_01"
+		HeuristicType="Waypoint"
+		Name="WP-AIBase01"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_Nod_3_1_GDI_02"
+		HeuristicType="Waypoint"
+		Name="WP-AIBase02"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_Nod_3_1_GDI_03"
+		HeuristicType="Waypoint"
+		Name="WP-AIBase03"
+	/>
+
+</AssetDeclaration>

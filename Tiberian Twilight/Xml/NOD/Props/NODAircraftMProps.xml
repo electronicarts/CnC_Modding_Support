@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags/>
+	<Includes>
+		<Include type="all" source="ART:NPHalGrenadeGeo.w3x" />
+		<Include type="all" source="ART:Decal_Rig_CO.xml" />
+		<Include type="all"	source="ART:NUL_AircraftM_SKN.w3x" />
+		<Include type="all"	source="ART:NUL_AircraftM_DMG.xml" />
+		<Include type="all"	source="ART:NUL_AircraftM_AIDD.w3x" />
+		
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseFirestormObject.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+	</Includes>
+
+	<Defines>
+		<Define name="NOD_AIRCRAFT_M_FLAME_WEAPON_DOT_RADIUS" value="100" />
+		<Define name="NOD_AIRCRAFT_M_FLAME_DECAL_LENGTH" value="=($NOD_AIRCRAFT_M_FLAME_WEAPON_DOT_RADIUS * 2)+10"/>
+	</Defines>
+	
+	<GameObject
+		id="NODAircraftMFlameWeaponProjectile"
+		inheritFrom="baseunattackableprojectile"
+		Side="NOD"
+		EditorSorting="SYSTEM"
+		EditorName="NODAircraftMFlameWeaponProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NPHalGrenadeGeo" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="NODFireball01"
+						FollowBone="True" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="NODFireball02"
+						FollowBone="True" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="NODFireball_Light"
+						FollowBone="True" />
+					
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimNickName="IDL"
+						AnimationName="NPHalGrenadeGeo"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NOD_FireballHit" />
+				<Event Index="onDeath" FX="FX_NOD_MCF_AirM_FlameWeaponImpactExplosion_AudioOnly" />
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="0"
+				FirstHeightMax="0"
+				SecondHeightMin="0"
+				SecondHeightMax="0"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				Flags="DETONATE_CALLS_KILL DONT_TRACK_TARGET" />
+		</Behaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_MCF_AirM_FlameWeaponIncoming" AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+
+	<!-- limited lifetime egg that pulses damage to nearby enemies -->
+	<GameObject
+		id="NODAicraftMFlameWeaponWarheadEgg"
+		inheritFrom="BaseFirestormAOEObject"
+		Side="NOD"
+		EditorSorting="UNIT"
+		KindOf="+GRANT_PLAYER_THREAT" 
+		EditorName="NODAicraftMFlameWeaponWarheadEgg">
+		<DisplayName>NODAicraftMFlameWeaponWarheadEgg</DisplayName>
+		<Draws>
+			<!-- temporary drawable to denote AOE. -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				xai:joinAction="Replace" 
+				StaticModelLODMode="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$NOD_AIRCRAFT_M_FLAME_DECAL_LENGTH"
+						SizeY="=$NOD_AIRCRAFT_M_FLAME_DECAL_LENGTH"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Rig_CO"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>		
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="5.0s"
+				MaxLifetime="5.0s" />
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateNODAircraftMFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<FireWeaponUpdate
+				id="ModuleTag_DOTEffect"
+				FireInterval="0.5s">
+				<RequiredObject
+					Range="=$NOD_AIRCRAFT_M_FLAME_WEAPON_DOT_RADIUS">
+					<ObjectFilter
+						Rule="ANY"
+						StatusBitFlagsExclude="IN_SHIELD_SPHERE"/>
+				</RequiredObject>
+				<FireWeaponNugget
+					WeaponName="NODAircraftMFlameWeaponWarheadDOTWeapon" />
+			</FireWeaponUpdate>
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate">
+				<RequiredObject
+					Range="=$NOD_AIRCRAFT_M_FLAME_WEAPON_DOT_RADIUS">
+					<ObjectFilter
+						Rule="ANY"
+						Include="FIRESTORM"
+						Relationship="SAME_PLAYER"
+						StatusBitFlagsExclude="IN_SHIELD_SPHERE"/>
+				</RequiredObject>
+				<FireWeaponNugget
+					WeaponName="GenericKillOwnerFirestormWeapon"
+					OneShot="true"/>
+			</FireWeaponUpdate>
+
+			<FireGroupCenterUpdate
+				id="ModuleTag_FirestormWeapon"
+				WeaponName="GenericKillOwnerFirestormWeapon"
+				Range="=$NOD_AIRCRAFT_M_FLAME_WEAPON_DOT_RADIUS"
+				RequiredCount="3">
+				<ObjectFilter
+					Rule="NONE"
+					Relationship="SAME_PLAYER"
+					Include="HAS_FIRE_GROUP_CENTER_UPDATE"
+					StatusBitFlagsExclude="IN_SHIELD_SPHERE"/>
+			</FireGroupCenterUpdate>
+
+		</Behaviors>
+		<Body>
+			<PropBody id="ModuleTag_Body" />
+		</Body>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_AIRCRAFT_M_FLAME_WEAPON_DOT_RADIUS"
+				Height="10.0" />
+		</Geometry>
+	</GameObject>
+
+	<ObjectCreationList
+		id="OCL_CreateNODAircraftMFirestormOCL">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODAircraftMFirestormObject"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<GameObject
+		id="NODAircraftMFirestormObject"
+		inheritFrom="BaseFirestormObject"
+		KindOf="+GRANT_PLAYER_THREAT +SKIRMISH_AI_ATTEMPT_TO_DODGE" 
+		EditorName="NODAircraftMFirestormObject">
+		<DisplayName>NODAircraftMFirestormObject</DisplayName>
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NOD_AIRCRAFT_M_FLAME_WEAPON_DOT_RADIUS + $AI_DODGE_SAFETY_BUFFER">
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"
+				StatusBitFlagsExclude="AIRBORNE_TARGET">
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="2.0s"
+				MaxLifetime="2.0s" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateNODAircraftMFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="2.0s">
+				<FireWeaponNugget
+					WeaponName="NODAircraftMFirestormWeapon" />
+				<FireWeaponNugget
+					OneShot="true"
+					WeaponName="NODAircraftMOneShotFirestormWeapon" />
+			</FireWeaponUpdate>
+		</Behaviors>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_AIRCRAFT_M_FLAME_WEAPON_DOT_RADIUS"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+	</GameObject>
+
+	<WeaponTemplate
+		id="NODAircraftMFirestormWeapon">
+		<Nuggets>
+			<DamageNugget
+				Damage="15"
+				Radius="=$NOD_AIRCRAFT_M_FLAME_WEAPON_DOT_RADIUS"
+				DamageType="BLAST"
+				DamageFXType="NOD_FLAMETHROWER"
+				DeathType="BURNED" >
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODAircraftMOneShotFirestormWeapon"
+		inheritFrom="GenericOneShotFirestormWeapon">
+		<Nuggets>
+			<DamageNugget
+				id="DamageNugget_OneShotFirestorm"
+				Radius="=$NOD_AIRCRAFT_M_FLAME_WEAPON_DOT_RADIUS">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!--    /////////////////////////////////////   -->
+	<!--		The Collapsing ship which falls					-->
+	<!--		from the sky when the unit is killed		-->
+	<GameObject
+		id="NODAircraftM_Dying"
+		EditorName="NODAircraftM_Dying"
+		Description="Desc:NODAircraftM_Dying"
+		Side="NOD"
+		KindOf="=$BASE_DYING_AIRCRAFT_KINDOF">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				OkToChangeModelColor="true" >
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUL_AircraftM_SKN" />
+					<Texture
+						Original="NUL_AircraftM"
+						New="NUL_AircraftM_DMG" />
+					<ParticleSysBone
+						BoneName="NAM_Engineer03"
+						FXParticleSystemTemplate="VenomExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAM_Engineer03"
+						FXParticleSystemTemplate="VenomDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAM_Engineer03"
+						FXParticleSystemTemplate="VenomDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NUL_AircraftM_AIDD"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.2"
+						AnimationSpeedFactorMax="0.2" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<Physics
+				id="ModuleTag_Physics"
+				TumbleRandomly="true"
+				MaxXRotationVelocity="25"
+				MaxYRotationVelocity="5"
+				MaxZRotationVelocity="0"
+				KillWhenRestingOnGround="true"/>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL"/>
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleLRG_Death" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_AircraftM_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+			<FireWeaponWhenDead
+				id="ModuleTag_DeathWeapon"
+				DeathWeapon="NODDyingAircraft_DeathWeapon_Large"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="Tag_PropBody"/>
+		</Body>
+
+		<xi:include	href="DATA:NOD/Includes/NODAircraftMGeometry.xml" />
+
+		<VisionInfo
+			VisionRange="700"
+			ShroudClearingRange="500" />
+	</GameObject>
+	
+	<!-- OCL -->
+	<ObjectCreationList
+		id="NOD_AircraftM_Die_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectTemplate>NODDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<ObjectOffset x="10.0" y="10.0" z="20.0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="30.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="90d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+</AssetDeclaration>

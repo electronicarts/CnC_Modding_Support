@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="Includes/DieMux.xsd"/>
+	<xs:include schemaLocation="Includes/GameDifficulty.xsd"/>
+	<xs:include schemaLocation="Includes/ObjectFilter.xsd"/>
+
+	<xs:simpleType name="GameplayConditionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="KILL" />
+			<xs:enumeration value="CAPTURE" />
+			<xs:enumeration value="UPGRADE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="GameplayConditionBitFlags">
+		<xs:list itemType="GameplayConditionType" />
+	</xs:simpleType>
+	
+	<xs:simpleType name="GameplayModeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CAMPAIGN" />
+			<xs:enumeration value="SKIRMISH" />
+			<xs:enumeration value="ONLINE" />
+			<xs:enumeration value="RANKED_ONLINE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="GameplayModeBitFlags">
+		<xs:list itemType="GameplayModeType" />
+	</xs:simpleType>
+	
+	<xs:complexType name="BaseConditionData" xas:typeGroup="Xml">
+		<xs:sequence>
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="Unique" type="SageBool" default="false" />
+		<xs:attribute name="Count" type="SageInt" default="1" />
+	</xs:complexType>
+
+	<xs:complexType name="ObjectConditionData" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseConditionData">
+				<xs:sequence>
+					<xs:element name="DieMuxData" type="DieMuxDataType" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="UpgradeConditionData" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseConditionData">
+				<xs:sequence>
+					<xs:element name="UpgradeRequired" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="GameplayConditionData" xas:runtimeWrapper="::Gameplay::Condition" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="PrimaryObject" type="ObjectConditionData"/>
+					<xs:element name="RequiredObjectCondition" type="ObjectConditionData" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="RequiredUpgradeCondition" type="UpgradeConditionData" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="GameplayConditionBitFlags" type="GameplayConditionBitFlags" default=""/>
+				<xs:attribute name="TimeReq" type="Time" use="optional" />
+				<xs:attribute name="AllowedGameTypeBitFlags" type="GameplayModeBitFlags" default="SKIRMISH RANKED_ONLINE" />
+				<xs:attribute name="GameDifficultyBitFlags" type="GameDifficultyBitFlags" default="EASY NORMAL HARD BRUTAL" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

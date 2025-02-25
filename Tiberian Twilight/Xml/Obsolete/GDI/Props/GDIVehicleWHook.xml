@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:GUVehicleWGrplr_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUVehicleWGrplr_ATKA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUVehicleWGrplr_ATKB.w3x" />
+		<Include
+			type="all"
+			source="ART:GUVehicleWGrplr_ATKC.w3x" />
+		<Include
+			type="all"
+			source="ART:GUVehicleWGrplr_ATKD.w3x" />
+		<Include
+			type="all"
+			source="ART:FXMagneticLaser.xml" />
+		<Include
+			type="all"
+			source="ART:FXContrail.xml" />
+	</Includes>
+	<GameObject
+		id="GDIVehicleWHook"
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		KindOf="INERT DO_NOT_CLASSIFY IGNORE_FOR_VICTORY NOT_AUTOACQUIRABLE UNATTACKABLE IGNORES_SELECT_ALL"
+		EditorName="GDIVehicleWHook">
+		<DisplayName>GDIVehicleWHook</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<!-- hidden when unit is idle -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="GUVehicleWGrplr_SKN" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_IDLE">
+					<!-- no anim -->
+				</AnimationState>
+
+				<!-- retracting loop -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2">
+					<Animation
+						AnimationName="GUVehicleWGrplr_ATKD"
+						AnimationMode="LOOP"
+						AnimationBlendTime="5" />
+				</AnimationState>
+				
+				<!-- launch end hold -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_3">
+					<Animation
+						AnimationName="GUVehicleWGrplr_ATKC"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+				</AnimationState>
+				
+				<!-- launching (loop with onetime transition) -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="GUVehicleWGrplr_ATKB"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_IDLE" then
+							CurDrawableSetTransitionAnimState("TRANS_ToAttacking")
+						end
+					</Script>
+				</AnimationState>
+
+				<!-- transition -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_ToAttacking">
+					<Animation
+						AnimationName="GUVehicleWGrplr_ATKA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+			
+			<LaserDraw
+				id="ModuleTag_LaserDraw1"
+				Texture1_UTile="2"
+				Texture1_VTile="2"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="3"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile="3"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="5"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="7"
+				LaserStateID="1">
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXMagneticLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXContrail</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+				<ObjectStatusValidation
+					RequiredStatus="LAUNCHED_CHILD_ACTIVE HAS_TIBERIUM_AMMO" />
+			</LaserDraw>
+			
+
+		</Draws>
+		<Behaviors>
+			<LaunchedChildDamageUpdate
+				id="ModuleTag_HookUpdate"
+				Weapon="GDIVehicleWHookWeapon"
+				SpeedLaunch="4000"
+				SpeedRetract="3000"
+				ModelConditionActive="USER_1"
+				ModelConditionRetracting="USER_2"
+				ParentModelConditionActive="USER_1"
+				ModelConditionLaunchEndHold="USER_3"
+				RetractEndParentModelCondition="USER_4"
+				RetractEndParentModelConditionDuration="0.5s"
+				DurationLaunchEnd="0.5s"
+				ParentAttachBone="HOOK_BASE">
+				<DepositAmountInfo
+					Amount="100"
+					Account="=$ACCOUNT_CREDIT" />
+			</LaunchedChildDamageUpdate>
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="99999999.0" />
+		</Body>
+	</GameObject>
+</AssetDeclaration>

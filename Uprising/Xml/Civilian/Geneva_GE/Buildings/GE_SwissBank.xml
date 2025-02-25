@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>		
+		<Include type="all"	source="ART:GE_SwissBank.W3X" />
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="instance" source="DATA:Civilian/Geneva_GE/Props/GE_SwissBank_Collapse.xml" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GE_SwissBank"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_Neutral_Bank"
+		ButtonImage="Button_Neutral_Bank"
+		Side="Neutral"
+    	EditorSorting="STRUCTURE"
+		Browser="REGION Geneva_GE STRUCTURE"
+		RadarPriority="STRUCTURE"
+		EditorName="GE_SwissBank"
+		Description="Desc:GE_SwissBank"
+		TypeDescription="Type:GE_SwissBank">		
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GE_SwissBank</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BoneFlag01 BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18 BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GE_SwissBank" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+			<xi:include
+				href="DATA:Includes/TechBuildingFlagDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonFlagDraws/child::*)" />				
+		</Draws>
+		<Behaviors>
+			<AutoDepositUpdate
+				id="ModuleTag_AutoDeposit"
+				DepositInterval="1s"
+				GiveNoXP="true"
+				Flags="ACTIVE_WHEN_REPAIRING">
+				<InitialCaptureBonus
+					Account="=$ACCOUNT_ORE" Amount="750" />
+				<Deposit
+					Account="=$ACCOUNT_ORE" Amount="5"/>
+			</AutoDepositUpdate>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="FX_BuildingDebrisExplosion"
+					CreationObject="YU_HotelDebris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Large" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GE_SwissBank_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions" />
+			<!-- civ buildings should have a CreateObjectDie to make a collapse version. -->
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"/>
+		</AI>
+            <Body>
+                  <ActiveBody
+                        id="ModuleTag_BTdy"
+                        MaxHealth="=$CIV_HEALTH_MEDIUM" />              
+            </Body>
+		<Geometry>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "78.7078"
+     MinorRadius = "46.3111"
+     Height = "95.8152"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "0.0256653"
+        y = "-4.95233"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "43.7962"
+     MinorRadius = "24.3208"
+     Height = "39.808"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "0.0256615"
+        y = "-78.1806"
+        z = "0.0" />
+</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="S04_SwissBankCaptureMS" AudioType="voiceDefectingTowards" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+				VisionRange="100"
+				ShroudClearingRange="200" />
+		<ProjectedBuildabilityInfo
+				Radius="0.0"
+				BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+
+	<ObjectCreationList
+		id="GE_SwissBank_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>GE_SwissBank_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>	
+</AssetDeclaration>

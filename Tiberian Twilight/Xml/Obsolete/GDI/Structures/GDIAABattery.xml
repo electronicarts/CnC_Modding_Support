@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:GBAABat_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBAABat_ASN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBAABat_AAN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBAABat_D2SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBAABat_D2AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBAABat_D3SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBAABat_D3AN.w3x" />
+		<Include
+			type="all"
+			source="ART:FXTracerGDI.xml" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:FXspotlight.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GDIAABattery"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_GDIAABattery"
+		ButtonImage="Portrait_GDIAABattery"
+		Side="GDI"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildTime="8"
+		EnergyProduction="0"
+		CommandSet="GDIWatchTowerCommandSet"
+		KindOf="+CAN_ATTACK +FS_BASE_DEFENSE +POWERED +AUTO_ACQUIRABLE_BY_AI +CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING +NOT_SELLABLE"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		CampnessValue="=$CAMPNESS_DEFENSIVE_STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="GDIAABattery"
+		WeaponCategory="MISSILE"
+		TypeDescription="Type:GDIAABattery"
+		Description="Desc:GDIAABattery">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="800"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIAABattery</DisplayName>
+		<ArmorSet
+			Armor="GDIWatchTowerArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BuildingPlacementType="CenterDefault" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="0.1"
+				MaxRecoilDistance="0.1"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				ExtraPublicBone="FX_Weapon_01">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBAABat_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon_" />
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon_" />
+					<WeaponMuzzleFlash
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon_" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon_" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretPitch="Turret_Pitch"
+						TurretID="1" />
+				</ModelConditionState>
+				<!-- BUILD UP -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="GBAABat_ASN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBAABat_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBAABat_D2SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBAABat_SKN" />
+					<Texture
+						Original="GBAABat"
+						New="GBAABat_D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="GBAABat_AAN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBAABat_D3AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Des_Small"
+						FollowBone="false" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBAABat_D2AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBAABat_D1"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Damaged" and Prev ~= "TRANS_IntoDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoDamaged")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoDamaged">
+					<Animation
+						AnimationName="GBAABat_D1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+-->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GBAABat_D2AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBAABat_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<SpotlightDraw
+				id="ModuleTag_Spotlight"
+				AttachToBoneInAnotherModule="bone_stealthdetector"
+				RefreshTime="2.0s"
+				SweepTime="1.0s">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXspotlight" />
+				</ModelConditionState>
+			</SpotlightDraw>
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw"
+				MinLength="35.0"
+				MaxLength="50.0"
+				Width="5.0"
+				MinSpeed="60"
+				MaxSpeed="80"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame="1"
+				MaxTracersPerFrame="1"
+				FrameLifeTime="10"
+				WeaponSlotType="PRIMARY_WEAPON"
+				Texture="FXTracerGDI"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_BulletHitLargeGDI">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="0.0"
+					g="0.0"
+					b="0.0" />
+			</TracerModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIAABattery" />
+					<TurretSettings
+						TurretTurnRate="1800"
+						TurretPitchRate="720"
+						AllowsPitch="true"
+						MinimumPitch="-15d"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData
+							ReacquireDelay="30.0s">
+						</TurretAITargetChooserData>
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<!-- slow death must be defined before the structure topple. -->
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="5s"
+				SinkRate="2.4"
+				DestructionDelay="10s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_TEMPLarge" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Small" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="200" />
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericGDIBuildingSuicide.xml" />
+			<xi:include
+				href="../../Includes/RepairAlliesEngineerContain.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					SympathyRange="25.0" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="7000" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior
+				id="ModuleTag_GDI_Battery_EnemyDetectedBeepAndTurretStart">
+				<ModelConditionSound
+					Sound="GDI_Battery_EnemyDetectedBeepAndTurretStart"
+					RequiredFlags="ATTACKING"
+					ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.134"
+				MinorRadius="15.134"
+				Height="23.5609">
+				<Offset
+					x="-0.159802"
+					y="-0.146642"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-11.1461"
+					y="-11.0199"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="10.0951"
+					y="-11.0199"
+					z="21.0019" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="10.0951"
+					y="10.2213"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-11.1461"
+					y="10.2213"
+					z="21.0019" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-11.1461"
+					y="-11.0199"
+					z="21.0019" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="10.0951"
+					y="-11.0199"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="10.0951"
+					y="10.2213"
+					z="21.0019" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-11.1461"
+					y="10.2213"
+					z="0.0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="GDI_BatterySelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="500"
+			ShroudClearingRange="600" />
+	</GameObject>
+</AssetDeclaration>

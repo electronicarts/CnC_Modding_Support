@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="OCLNuggetModules.xsd" />
+	<xs:include schemaLocation="OCLModules/OCLTrackerBehaviorSuperModule.xsd" />
+	<xs:include schemaLocation="OCLModules/ObjectOffsetSuperModule.xsd" />
+	<xs:include schemaLocation="OCLModules/RadialSuperModule.xsd" />
+
+	<!-- derives from the OCLNuggetModules, and adds any super modules. -->
+	<xs:complexType name="TopLevelOCLNuggetModules">
+		<xs:complexContent>
+			<xs:extension base="OCLNuggetModules">
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="ObjectList" type="ObjectOffsetOCLSuperModule" />
+					<xs:element name="OCLTrackerBehavior" type="OCLTrackerBehaviorSuperModule" />
+					<xs:element name="RadialList" type="RadialOCLSuperModule" />
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- has entry in pc.config.xml -->
+	<xs:complexType name="OCLModuleNugget">
+		<xs:complexContent>
+			<xs:extension base="OCNugget">
+				<xs:sequence>				
+					<xs:element name="Modules" type="TopLevelOCLNuggetModules" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+				<!-- Note: This is used ONLY if 'CREATE_NUGGET_BASED_ON_PERCENTAGE' flag is set on the OCL.
+					 The percentage values for all the OCLModules should add upto 100.-->
+				<xs:attribute name="CreateOCLModulePercentage" type="SageUnsignedInt" default="100" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="ScriptEventType"
+							xas:useEnumPrefix="false"
+							xas:enumItemPrefix="SCRIPT_EVENT_"
+							xas:targetNamespace="" >
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ATTACK_MOVE_ISSUED" />
+			<xs:enumeration value="WAYPOINT_MODE_ENTERED" />
+			<xs:enumeration value="CONTROL_GROUP_CREATED" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ScriptEventTypeBitFlags">
+		<xs:list itemType="ScriptEventType"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="GameScriptParameterBase" xas:isPolymorphic="true">
+	</xs:complexType>
+	
+	<xs:complexType name="GameScriptParameterObjectType">
+		<xs:complexContent>
+			<xs:extension base="GameScriptParameterBase">
+				<xs:attribute name="Object" type="GameObjectRef" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="GameScriptParameterObjectTypeList">
+		<xs:complexContent>
+			<xs:extension base="GameScriptParameterBase">
+				<xs:sequence>
+					<xs:element name="Object" type="GameObjectRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="GameScriptParameter">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="ObjectType" type="GameScriptParameterObjectType" />
+			<xs:element name="ObjectTypeList" type="GameScriptParameterObjectTypeList" />
+		</xs:choice>
+	</xs:complexType>
+	
+	<xs:complexType name="GameScriptAction">
+		<xs:sequence>
+			<xs:element name="ParameterList" type="GameScriptParameter" minOccurs="0" maxOccurs="1" xas:byValue="true" />
+		</xs:sequence>
+		<!-- TODO: this will be an xs:enumeration of action types -->
+		<xs:attribute name="Type" type="StringHash" />
+	</xs:complexType>
+	
+	<xs:complexType name="GameScript">
+		<xs:sequence>
+			<xs:element name="Action" type="GameScriptAction" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:refType="GameScript" />
+	</xs:complexType>
+
+	<xs:complexType name="GameScriptGroup">
+		<xs:sequence>
+			<xs:element name="Script" type="GameScript" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="ScriptGroup" type="GameScriptGroup" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:refType="GameScriptGroup" />
+	</xs:complexType>
+	
+	<xs:complexType name="GameScriptList">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="ScriptSet" type="GameScriptGroup" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

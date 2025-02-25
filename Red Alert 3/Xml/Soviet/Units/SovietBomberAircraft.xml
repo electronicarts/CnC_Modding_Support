@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="all"	source="ART:SUBomberAircraft_D.xml" />			
+		<Include type="all"	source="ART:SUBomberAircraft_SKN.w3x" />
+    <Include type="all"	source="ART:SUBomberAircraft_FP.w3x" />
+		<Include type="all"	source="ART:SUBomberAircraft_DYING.w3x" />			
+		<Include type="all"	source="ART:SUBomberAircraft_IDLA.w3x" />
+		<Include type="all"	source="ART:SUBomberAircraft_BOMBS.w3x" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<!-- aka Soviet Kirov (the Hindenberg unit)-->
+	<GameObject
+		id="SovietBomberAircraft"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_SovietBomberAircraft_big"
+		ButtonImage="Button_SovietBomberAircraft_small"
+		Side="Soviet"
+		SubGroupPriority="620"
+		EditorSorting="UNIT"		
+		BuildTime="25"
+		CommandSet="SovietBomberAircraftCommandSet"
+		KindOf="CAN_CAST_REFLECTIONS CAN_ATTACK SELECTABLE SCORE AIRCRAFT VEHICLE BOMBER_AIRCRAFT T3_UNIT LINE_OF_SIGHT_IGNORES_BUILDINGS LEAVE_PARKING_ON_BUILD_COMPLETE CAN_BE_FAVORITE_UNIT PRODUCED_AT_HELIPAD SKIRMISH_AI_ATTEMPT_TO_DODGE CARPET_BOMBER"
+		RadarPriority="UNIT"
+		ThreatLevel="10"
+		ProductionQueueType="AIRCRAFT"
+		UnitCategory="AIRCRAFT"
+		WeaponCategory="MISSILE"
+		VoicePriority="148"
+		EditorName="SovietBomberAircraft"
+		Description="Desc:SovietBomberAircraft"
+		TypeDescription="Type:SovietBomberAircraft"
+		HealthBoxHeightOffset="20"
+		UnitIntro="Soviet_Kirov_UnitIntro">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SovietBomberAircraft</DisplayName>
+		<GameDependency>
+			<RequiredObject>SovietTechStructure</RequiredObject>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="2500"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietBomberAircraftArmor"
+			DamageFX="AircraftDamageFX" />
+		<LocomotorSet
+			id="TaxiingLocomotor"
+			Locomotor="BasicHelicopterTaxiLocomotor"
+			Condition="TAXIING"
+			Speed="10" />
+		<LocomotorSet
+			id="DefaultLocomotor"
+			Locomotor="SovietBomberAircraftLocomotor"
+			Condition="NORMAL"
+			Speed="30" />
+		<LocomotorSet
+			Locomotor="SovietBomberAircraftLocomotor"
+			Condition="NORMAL_UPGRADED"
+			Speed="55" />
+		<!-- Need ConquerMetricsOverrideDefendingAntiMask or else the TAXIING locomotor will make the AI try to build anti-ground units against this -->
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true"
+			ConquerMetricsOverrideDefendingAntiMask="ANTI_AIRBORNE_VEHICLE"
+      DodgeSafetyDistance="150.0">
+      <DodgeWithUnits Rule="ALL"
+       StatusBitFlagsExclude="AIRBORNE_TARGET"
+       Relationship="ENEMIES">
+      </DodgeWithUnits>
+    </SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true" >
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SUBomberAircraft_SKN" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON" />
+				</ModelConditionState>
+
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="SUBomberAircraft_FP" />
+				</ModelConditionState>
+                
+                <!--FX FOR VENT HYDROGEN DAMAGED-->
+                <ModelConditionState
+                 ParseCondStateType="PARSE_NORMAL"
+                 ConditionsYes="LOCOMOTOR_NORMAL_UPGRADED REALLYDAMAGED">
+                    <Model
+                      Name="SUBomberAircraft_SKN" />
+                    <Texture
+						Original="SUBomberAircraft"
+						New="SUBomberAircraft_D" />
+                    <ParticleSysBone
+                        BoneName="FX_Fire_02"
+                        FXParticleSystemTemplate="Soviet_KirovVentHydro"
+                        FollowBone="true" />
+                    <ParticleSysBone
+                        BoneName="FX_Fire_03"
+                        FXParticleSystemTemplate="VehicleDamageSmoke"
+                        FollowBone="true" />
+                    <ParticleSysBone
+				        BoneName="FX_Fire_03"
+				        FXParticleSystemTemplate="VehicleDamageFire"
+				        FollowBone="true" />
+                    <ParticleSysBone
+                        BoneName="FX_Fire_03"
+                        FXParticleSystemTemplate="VehicleDamageFire02"
+                        FollowBone="true" />
+                </ModelConditionState>
+
+                <!--FX FOR VENT HYDROGEN-->
+                <ModelConditionState
+                  ParseCondStateType="PARSE_NORMAL"
+                  ConditionsYes="LOCOMOTOR_NORMAL_UPGRADED">
+                  <Model
+                    Name="SUBomberAircraft_SKN" />
+                  <ParticleSysBone
+			        BoneName="FX_Fire_02"
+			        FXParticleSystemTemplate="Soviet_KirovVentHydro"
+                    FollowBone="true" />
+                </ModelConditionState>
+        
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="SUBomberAircraft_SKN" />
+					<Texture
+						Original="SUBomberAircraft"
+						New="SUBomberAircraft_D" />
+                    <ParticleSysBone
+                        BoneName="FX_Fire_03"
+                        FXParticleSystemTemplate="VehicleDamageSmoke"
+                        FollowBone="true" />
+                    <ParticleSysBone
+				        BoneName="FX_Fire_03"
+				        FXParticleSystemTemplate="VehicleDamageFire"
+				        FollowBone="true" />
+                  <ParticleSysBone
+						BoneName="FX_Fire_03"
+						FXParticleSystemTemplate="VehicleDamageFire02"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="SUBomberAircraft_SKN" />
+					<ParticleSysBone
+						BoneName="B_Prop05"
+						FXParticleSystemTemplate="VehicleDamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				                
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="SUBomberAircraft_IDLA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- model and anims for the bomb rack reload. -->
+			<ScriptedModelDraw
+				id="ModuleTag_BombRackDraw"
+				AttachToBoneInAnotherModule="B_Bombs">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SUBomberAircraft_BOMBS" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SUBomberAircraft_BOMBS"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RELOADING_A">
+					<Animation
+						AnimationName="SUBomberAircraft_BOMBS"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietBomberAircraftBombWeapon" />
+					<TurretSettings
+						TurretTurnRate="360"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="4.0s"
+						MinIdleScanAngle="30.0"
+						MaxIdleScanAngle="50.0"
+						BlindFireDistance="100.0">
+						<TurretAITargetChooserData
+							CanAcquireDynamicIfAssignedOutOfRange="true"
+							CheckVisionRange="true"/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<SpecialPower
+					id="ModuleTag_SpecialPower_ToggleAfterburners"
+					SpecialPowerTemplate="SpecialPower_ToggleAfterburners"/>
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleAfterburnersUpdate"
+				Options="RECONSTITUTE_STORED_COMMAND"
+				SpecialPowerTemplate="SpecialPower_ToggleAfterburners">
+				<ToggleState
+					EnterStateSound="SOV_Kirov_CastroBurnersOff">
+					<SkirmishAiInfo
+					   ToggleHint="TOGGLE_DEFAULT" />
+				</ToggleState>
+
+				<ToggleState
+					ObjectStatus="GENERIC_TOGGLE_STATE SHROUD_REVEAL_TO_ALL"
+					ModelConditions="LOCOMOTOR_NORMAL_UPGRADED"
+					EnterStateSound="SOV_Kirov_CastroBurnersOn">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_ALWAYS"
+						OnlyUseWhenHaveTarget="true"
+						NeverUseWhenFurtherThanNUnitsFromTarget="1000"
+						NeverUseWhenCloserThanNUnitsFromTarget="50"
+						NeverUseWhenHealthIsBelow="2000"/>
+					<Module
+						ModuleId="ModuleTag_Afterburners"
+						TriggerAtTargetPosition="false"
+						TriggerType="SELF_POSITION"/>
+					<Module
+						ModuleId="ModuleTag_LoseHealthUpdate"
+						TriggerAtTargetPosition="false"
+						TriggerType="SELF_POSITION"/>
+
+				</ToggleState>
+
+			</ToggleStatusSpecialAbilityUpdate>
+
+
+			<SwitchLocomotorUpdate
+				id="ModuleTag_Afterburners"
+				LocomotorSet="NORMAL_UPGRADED"
+				UpdatePeriod="1.0s"
+				MinimumHealth="10%"/>
+
+			<LoseHealthUpdate
+				id="ModuleTag_LoseHealthUpdate"
+				HealthTrigger="0%"
+				DamagePerSecond="200.0">
+				<ObjectStatusValidation
+					RequiredStatus="GENERIC_TOGGLE_STATE" />
+			</LoseHealthUpdate>
+
+
+			<AutoHealBehavior
+				id="Upgrade_PassiveHeal"
+				InitiallyActive="true"
+				HealOnlyIfNotInCombat="false"
+				HealOnlyIfNotUnderAttack="false"
+				StartHealingDelay="1s"
+				HealingAmount="2"
+				HealingDelay=".5s">
+			</AutoHealBehavior>
+
+			<Physics
+				id="ModuleTag_Physics"/>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SUBomberAircraft_Dying_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DynamicsUpdate
+				id="ModuleTag_DefaultDynamicsUpdate"
+				xai:joinAction="Remove" />
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_SOV_KirovExplode" />
+			</FXListBehavior>
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="HelicopterAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					CheckVisionRange="true"/>
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="6000" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_FlyingLoops">
+				<ModelConditionSound Sound="SOV_Kirov_Land" RequiredFlags="LANDING" />
+				<ModelConditionSound Sound="SOV_Kirov_Lift" RequiredFlags="TAKING_OFF" />
+				<ModelConditionSound Sound="SOV_Kirov_IdleLoop" RequiredFlags="FLYING" ExcludedFlags="DAMAGED REALLYDAMAGED MOVING" />
+				<ModelConditionSound Sound="SOV_Kirov_IdleDamagedLoop" RequiredFlags="FLYING DAMAGED" ExcludedFlags="REALLYDAMAGED MOVING" />
+				<ModelConditionSound Sound="SOV_Kirov_IdleReallyDamagedLoop" RequiredFlags="FLYING REALLYDAMAGED" ExcludedFlags="DAMAGED MOVING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="36.3"
+				MinorRadius="11.0"
+				Height="21.5"
+				ContactPointGeneration="VEHICLE"/>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="SOV_Kirov_VoiceAttack" AudioType="voiceAttack" />
+			<AudioEntry Sound="SOV_Kirov_VoiceHelp" AudioType="voiceFear" />
+			<AudioEntry Sound="SOV_Kirov_VoiceCreateMS" AudioType="voiceCreated" />
+			<AudioEntry Sound="SOV_Kirov_VoiceMove" AudioType="voiceMove" />
+			<AudioEntry Sound="SOV_Kirov_VoiceMoveAttack" AudioType="voiceAttackAfterMoving" />
+			<AudioEntry Sound="SOV_Kirov_VoiceSelectMS" AudioType="voiceSelect" />
+			<AudioEntry Sound="SOV_Kirov_VoiceSelectBattleMS" AudioType="voiceSelectBattle" />
+			<AudioEntry Sound="SOV_Kirov_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<!-- <AudioEntry Sound="SOV_Kirov_IdleLoop" AudioType="soundAmbient" /> -->
+			<!-- <AudioEntry Sound="" AudioType="soundAmbientDamaged" /> -->
+			<!-- <AudioEntry Sound="" AudioType="soundAmbientReallyDamaged" /> -->
+			<AudioEntry Sound="SOV_Kirov_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="SOV_Kirov_MoveLoop" AudioType="soundMoveLoop" />
+			<AudioEntry Sound="SOV_Kirov_MoveLoopDamaged" AudioType="soundMoveLoopDamaged" />
+			<AudioEntry Sound="SOV_Kirov_Deflate" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="=$STANDARD_SHROUD_CLEAR" />
+	</GameObject>
+</AssetDeclaration>

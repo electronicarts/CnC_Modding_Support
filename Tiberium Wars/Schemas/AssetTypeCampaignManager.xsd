@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	
+	<xs:simpleType name="CampaignFlagType">
+		<xs:restriction base="xs:string">
+
+			<!-- Engineering Campaign Flags go here -->
+
+			<xs:enumeration value="Use_Alternate_Ending" />	<!-- This flag is deprecated and will be removed as soon as the missions have been modified to use the alternate campaign finale flag -->
+			<xs:enumeration value="Use_Alternate_Campaign_Finale" />	<!-- Set this flag to play an alternate ending for your mission -->
+
+      <!-- Designer Campaign Flags go here -->
+
+      <xs:enumeration value="LUNCH_AT_IHOP" /> <!-- this was the test flag -->
+
+      <!-- GDI TOW 1 -->
+      
+		  <xs:enumeration value="GDI_1_2_CampaignFlag_Snipers_Rescued" /> <!-- this will be checked in 1-3 for extra sniper reinforcementss -->
+		  <xs:enumeration value="GDI_1_3_CampaignFlag_Mission_Complete" /> <!-- this will be checked in 1-2 for airstrike availablility -->
+
+      <!-- GDI TOW 2 -->
+      <!-- GDI TOW 3 -->
+      <!-- GDI TOW 4 -->
+
+      <xs:enumeration value="GDI_4_2_CampaignFlag_PlayedFirst" />  <!-- 4_3 - ups difficulty -->
+      <xs:enumeration value="GDI_4_2_SnipersRescued" /> <!-- 4-4 - provides snipers -->
+      <xs:enumeration value="GDI_4_2_ZoneTroopersRescued" /> <!-- 4-4 - provides zone troopers -->
+      <xs:enumeration value="GDI_4_2_CommandoWin" /> <!-- 4-4 - provides commando, zone troopers, snipers -->
+      <xs:enumeration value="GDI_4_3_CampaignFlag_PlayedFirst" /> <!-- 4_2 - ups difficulty -->
+      <xs:enumeration value="GDI_4_3_Reinforcements" /> <!-- 4-4 - provides juggernauts -->
+		
+      <!-- NOD TOW 1 -->
+      
+      <xs:enumeration value="NOD_1_1_CampaignFlag_LessGroundForces" />      <!-- 1_1 - reduces numbers of enemies in 1_2 -->
+      <xs:enumeration value="NOD_1_1_CampaignFlag_Attack_Bike_IDB" />		<!-- 1_1 - used for determining which mission introduces this unit first -->
+      <xs:enumeration value="NOD_1_2_CampaignFlag_NoOrcas" />				<!-- 1_2 - removes Orca escorts in 1_1 -->
+      
+      
+      <!-- NOD TOW 2 -->
+      <!-- NOD TOW 3 -->
+      <!-- NOD TOW 4 -->
+
+      <xs:enumeration value="NOD_4_2_CampaignFlag_IonCannonDestroyed" />      <!-- 4_4 - changes initial primary objective -->
+      
+      <!-- NOD TOW 5 -->
+
+      <xs:enumeration value="NOD_5_2_CampaignFlag_Stasis_Chamber_Destroyed" />     <!-- this will be checked in 5-4 for shield tech availablility -->
+      <xs:enumeration value="NOD_5_2_CampaignFlag_GravityStabilizer_Destroyed" />     <!-- this will be checked in 5-4 for aero tech availablility -->
+
+      <!-- ALIEN CAMPAIGN -->
+      
+      <xs:enumeration value="Alien_1_2_CampaignFlag_Mastermind_Survived" />     <!-- this will be checked in 1-3 for beginning with Mastermind -->
+      
+		</xs:restriction>
+	</xs:simpleType>
+	
+	
+	
+<xs:simpleType name="CampaignFlagBitFlags">
+		<xs:list itemType="CampaignFlagType" />
+	</xs:simpleType>
+	
+	<xs:complexType name="MissionTemplate">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Prerequisite" type="xs:int" default="-1" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="PrerequisiteTemplate" type="AssetReference" xas:refType="MissionTemplate" minOccurs="0" maxOccurs="unbounded" xas:pipelineOnly="true" />
+					<xs:element name="Objective" type="xs:string" default="-1" minOccurs="0" maxOccurs="5" />
+					<xs:element name="BonusObjective" type="xs:string" default="-1" minOccurs="0" maxOccurs="5" />
+				</xs:sequence>
+				<xs:attribute name="IntroMovieName" type="xs:string" />
+				<xs:attribute name="DisplayName" type="xs:string" />
+				<xs:attribute name="Title" type="xs:string" />
+				<xs:attribute name="BriefingText" type="xs:string" />
+				<xs:attribute name="BriefingMovie" type="xs:string" />
+				<xs:attribute name="BriefingMovieFullScreen" type="xs:boolean" default="false" />
+				<xs:attribute name="LoadScreenImage" type="xs:string" />
+				<xs:attribute name="LoadScreenText" type="xs:string" />
+				<xs:attribute name="LoadScreenMusic" type="AudioEventInfoRef" use="optional" />
+				<xs:attribute name="LoadScreenVoice" type="AudioEventInfoRef" use="optional" />
+				<xs:attribute name="MapName" type="xs:string" />
+				<xs:attribute name="VictoryMovieName" type="xs:string" />
+				<xs:attribute name="DefeatMovieName" type="xs:string" />
+				<xs:attribute name="RequiredToCompleteTheaterOfWar" type="xs:boolean" default="true" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="TheaterOfWarTemplate">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Mission" type="AssetReference" xas:refType="MissionTemplate" minOccurs="1" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="PrerequisiteTemplate" type="AssetReference" xas:refType="TheaterOfWarTemplate" use="optional" xas:pipelineOnly="true" />
+				<xs:attribute name="DisplayName" type="xs:string" />
+				<xs:attribute name="AptTow" type="xs:string" default="Temp"/>
+				<xs:attribute name="AutoStartMission" type="xs:int" default="-1" />
+				<xs:attribute name="SummaryScreenMusic" type="AudioEventInfoRef" use="optional" />
+				<xs:attribute name="SelectionScreenMusic" type="AudioEventInfoRef" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CampaignTemplate">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="TheaterOfWar" type="AssetReference" xas:refType="TheaterOfWarTemplate" minOccurs="1" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="DisplayName" type="xs:string" />
+				<xs:attribute name="FinalMovie" type="xs:string" />
+				<xs:attribute name="AlternateFinalMovie" type="xs:string" />
+				<xs:attribute name="ConsoleAutosaveFilename" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

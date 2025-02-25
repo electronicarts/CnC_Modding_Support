@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:NBOpCenter.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOpCenterA_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOpCenterA_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOpCenD2_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOpCenD2_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOpCenD3_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOpCenD3_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOpCenterX_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOpCenterX_IDLA.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOpCenterX_RDY.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOpCenterX_FIRA.w3x" />
+		<Include
+			type="all"
+			source="ART:NBEmpty_ABLD.w3x" />			
+		<!--		
+		<Include type="all" source="ART:NBOpCenD3_SN.w3x" />
+		<Include type="all" source="ART:NBOpCenD3_AN.w3x" />
+-->
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="NODOperationsCenter"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_NODOperationsCenter"
+		ButtonImage="Portrait_NODOperationsCenter"
+		Side="NOD"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="1500"
+		BuildTime="15"
+		EnergyProduction="-10"
+		CommandSet="NODOperationsCenterCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY POWERED  NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER FS_RADAR"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="315d"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="NODOperationsCenter"
+		Description="Desc:NODOperationsCenter"
+		TypeDescription="Type:NODOperationsCenter">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODOperationsCenter</DisplayName>
+		<GameDependency>
+			<RequiredObject>NODPowerPlant</RequiredObject>
+			<RequiredObject>NODRefinery</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="NODOperationsCenterArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="SPREAD" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBOpCenter" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBOpCenterA_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NBOpCenD3_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBOpCenD2_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBOpCenter" />
+					<Texture
+						Original="NBOpCenter"
+						New="NBOpCenter_D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"></AnimationState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBOpCenterA_AN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Medium"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBOpCenD3_AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBOpCenD2_AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NBOpCenD2_AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NBOpCenD3_AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Missle"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBOpCenterX_SKN" />
+				</ModelConditionState>
+				<!-- BUILDING -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>
+				<!-- ANIMATIONS -->
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle"
+					Flags="DO_NOT_PLAY_WHEN_UNPOWERED">
+					<Animation
+						AnimationName="NBOpCenterX_IDLA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="0" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Ready" and Prev ~= "STATE_Idle" then
+						CurDrawableSetTransitionAnimState("TRANS_FIRING")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBEmpty_ABLD"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName="NBOpCenterX_FIRA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+-->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPECIALPOWER1_READY"
+					StateName="STATE_Ready">
+					<Animation
+						AnimationName="NBOpCenterX_RDY"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PACKING">
+					<Animation
+						AnimationName="NBOpCenterX_IDLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_FIRING">
+					<Animation
+						AnimationName="NBOpCenterX_FIRA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="FX_Rocket01"
+						FXParticleSystemTemplate="NodNukeMissleSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket02"
+						FXParticleSystemTemplate="NodNukeMissleSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket03"
+						FXParticleSystemTemplate="NodNukeMissleSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket04"
+						FXParticleSystemTemplate="NodNukeMissleSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket01"
+						FXParticleSystemTemplate="NodNukeMissleFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket02"
+						FXParticleSystemTemplate="NodNukeMissleFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket03"
+						FXParticleSystemTemplate="NodNukeMissleFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket04"
+						FXParticleSystemTemplate="NodNukeMissleFire"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>			
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_TEMPLarge" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildDamaged_Large" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				UnpackTime="1.5s" />
+
+			<SpecialPower
+				id="ModuleTag_StoreObjectsSpecialPower"
+				SpecialPowerTemplate="SpecialPowerCloneObjectSelect"
+				TriggerFX="FX_NodDecoyArmy"
+			/>
+			<StoreObjectsSpecialPowerUpdate
+				id="ModuleTag_StoreObjectsSpecialPowerUpdate"
+				SpecialPowerTemplate="SpecialPowerCloneObjectSelect"
+				StartRechargeOnExit="true"
+				Radius="100"
+			/>
+			<SpecialPower
+				id="ModuleTag_CloneStoredObjectsSpecialPower"
+				SpecialPowerTemplate="SpecialPowerCloneObjectSpawn"
+				UpdateModuleStartsAttack="true"
+			/>
+			<CloneStoredObjectsSpecialPowerUpdate
+				id="ModuleTag_CloneStoredObjectsSpecialPowerUpdate"
+				SpecialPowerTemplate="SpecialPowerCloneObjectSpawn"
+				StartRechargeOnExit="true"
+				TriggerAttributeModifierOnClones="AttributeModifier_Cloned"
+				MinDestinationRadius="10"
+				MaxDestinationRadius="100"
+				ClonedObjectLifetime="=$DECOY_ARMY_UNIT_DURATION"
+				TriggerFX="FX_NodDecoyArmy"
+				DisabledTypesToProcess="USER_PARALYZED EMP HELD PARALYZED UNDERPOWERED TEMPORARILY_BUSY"
+			/>
+
+			<!-- Cloaking field -->
+			<GrantUpgradeAreaOfEffectSpecialPower
+				id="ModuleTag_CloakingField"
+				UpdateModuleStartsAttack="true"
+				SpecialPowerTemplate="SpecialPower_CloakingField" 
+				TriggerFX="FX_NodCloakingField"
+				Radius="=$CLOAKING_FIELD_RADIUS">
+				<AcceptObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="VEHICLE HUGE_VEHICLE"
+					Exclude="AIRCRAFT"
+				/>
+				<UpgradeTemplate>Upgrade_CloakingFieldInvisibility</UpgradeTemplate>
+			</GrantUpgradeAreaOfEffectSpecialPower>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_WeaponFireSpecialAbilityUpdateCloakingField"
+				SpecialPowerTemplate="SpecialPower_CloakingField"
+				SpecialWeapon="CloakingFieldKillInfantryWeapon"
+				WhichSpecialWeapon="2"
+			/>
+			<AISpecialPowerUpdate
+				id="ModuleTag_NODOpsCloakingFieldAI"
+				CommandButtonName="Command_CloakingField"
+				AllyUnitInclude="VEHICLE"
+				AllyUnitExclude="INFANTRY HARVESTER"
+				SpecialPowerRadius="100.0" 
+				SpecialPowerAIType="SPECIAL_POWER_AOE_BUFF"
+			/>
+
+			<!-- Radar Jam -->
+			<SpecialPower
+				id="ModuleTag_DispatchRadarJammingMissile"
+				SpecialPowerTemplate="SpecialPowerDispatchRadarJammingMissile"
+				UpdateModuleStartsAttack="true">
+			</SpecialPower>
+			<ActivateModuleSpecialPower
+				id="ModuleTag_ManipulatorDeviceUpdate"
+				SpecialPowerTemplate="SpecialPowerDispatchRadarJammingMissile"								
+				UnpackTime="5.0s">
+				<SpecialPowerModules
+					ModuleId="ModuleTag_RadarJammingMissile"
+					TriggerType="SELF_POSITION" />
+			</ActivateModuleSpecialPower>
+			<RadarJamSpecialPower
+				id="ModuleTag_RadarJammingMissile"
+				SpecialPowerTemplate="SpecialPowerRadarJamMissile"
+				JamRadius="-1.0"
+				JamDuration="10s">
+			</RadarJamSpecialPower>				
+			<AISpecialPowerUpdate
+				id="ModuleTag_NODOpsRadarJamming"
+				CommandButtonName="Command_FireRadarJammingMissile"
+				ReinforceDistance="300.0"
+				SpecialPowerRadius="300.0"
+				SpecialPowerAIType="SPECIAL_POWER_REINFORCEMENT"
+        MaxFrequency="2700"
+			/>
+			<MonitorSpecialPowerTimerUpdate
+				id="ModuleTag_RadarMissileReadyToFireUpdate"
+				SpecialPowerTemplate="SpecialPowerDispatchRadarJammingMissile"
+				ReadyCondition="SPECIALPOWER1_READY" />						
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/AdvancedNODBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/AdvancedNODBuildingSuicide.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				AILuaEventsList="BuildingPowerFunctions">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="5000.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior
+				id="ModuleTag_NOD_RadarJam_MissileLaunch">
+				<ModelConditionSound Sound="NOD_RadarJam_MissileLaunch" RequiredFlags="UNPACKING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="21.0"
+				Height="20.0"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="20.0"
+					y="18.0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="6.0"
+				Height="35.0"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="18.0"
+					y="18.0"
+					z="20" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="20.0"
+				Height="16.0"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="-15.0"
+					y="20.0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="12.5"
+				Height="17.0"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="-15.0"
+					y="20.0"
+					z="16" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="15.0"
+				MinorRadius="20.0"
+				Height="20.0"
+				ContactPointGeneration="VEHICLE">
+				<Offset
+					x="5.0"
+					y="-17.0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="4.0"
+				Height="45.0"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="7.0"
+					y="-14.0"
+					z="20" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "46.8567"
+				MinorRadius = "27.4004"
+				Height = "9.27532" 
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x = "2.41555"
+					y = "18.8839"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "29.4575"
+				MinorRadius = "19.6674"
+				Height = "9.27532" 
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x = "2.41555"
+					y = "-25.3502"
+					z = "0.0" />
+			</Shape>		
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_OperationsCenterSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="500" />
+		<ProjectedBuildabilityInfo
+			Radius="175"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

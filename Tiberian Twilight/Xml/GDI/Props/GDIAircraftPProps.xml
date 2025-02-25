@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+
+		<Include type="all" source="ART:GUM_AircraftP_SKN.w3x" />
+		<Include type="all"	source="ART:GUM_AircraftP_DMG.xml" />
+		<Include type="all"	source="ART:GUM_AircraftP_AIDD.w3x" />
+	</Includes>
+
+	<!--    /////////////////////////////////////   -->
+	<!--		The Collapsing ship which falls					-->
+	<!--		from the sky when the unit is killed		-->
+	<GameObject
+		id="GDIAircraftP_Dying"
+		EditorName="GDIAircraftP_Dying"
+		Description="Desc:GDIAircraftP_Dying"
+		Side="GDI"
+		KindOf="=$BASE_DYING_AIRCRAFT_KINDOF">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				OkToChangeModelColor="true" >
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUM_AircraftP_SKN" />
+					<Texture
+						Original="GUM_AircraftP"
+						New="GUM_AircraftP_DMG" />
+					<ParticleSysBone
+						BoneName="GAP_Laser_03"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GAP_Laser_03"
+						FXParticleSystemTemplate="GDIVehicle_DamageSparks"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GUM_AircraftP_AIDD"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.2"
+						AnimationSpeedFactorMax="0.2" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"
+				TumbleRandomly="true"
+				MaxXRotationVelocity="45"
+				MaxYRotationVelocity="25"
+				MaxZRotationVelocity="0"
+				KillWhenRestingOnGround="true"/>
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_GDIVehicleExplode_Medium" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Aircraft_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			
+			<FireWeaponWhenDead
+				id="ModuleTag_DeathWeapon"
+				DeathWeapon="GDIDyingAircraft_DeathWeapon_Medium"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="Tag_PropBody"/>
+		</Body>
+
+		<xi:include	href="DATA:GDI/Includes/GDIAircraftPGeometry.xml" />
+
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

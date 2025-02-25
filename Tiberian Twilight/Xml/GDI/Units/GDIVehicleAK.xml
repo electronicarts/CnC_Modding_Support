@@ -1,0 +1,1188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+
+	<!-- GDI Vehicle AK / Heavy Laser T3 / Prism Tank / Thunderhead -->
+
+	<Includes>
+		<Include type="all"	source="ART:FXInvisBone.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_SKN.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_SKL.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_FP.w3x" />
+		<!-- Animations -->
+		<Include type="all" source="ART:GUL_VehicleAK_ACLA.w3x" /><!-- Not being used. Using locomotor based values instead-->
+		<Include type="all" source="ART:GUL_VehicleAK_AIDA.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_AIDD.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_ATKA.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_ATKB.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_BLDA.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_DCLA.w3x" /><!-- Not being used.  Using locomotor based values instead-->
+		<Include type="all" source="ART:GUL_VehicleAK_LNDA.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_MOVA.w3x" /><!-- Replaced with AIDA by decree of Umberto Bossi!-->
+		<Include type="all" source="ART:GUL_VehicleAK_MOVD.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_TKFA.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_TRN180L.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_TRN180R.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_TRNL.w3x" /> <!-- Not being used. Using locomotor based values instead-->
+		<Include type="all" source="ART:GUL_VehicleAK_TRNR.w3x" /><!-- Not being used. Using locomotor based values instead-->
+
+		<!-- All anims during "flying" state -->
+		<Include type="all" source="ART:GUL_VehicleAK_TKFD.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_HVRA.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_HVRD.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_HVRM.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_TRNLB.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_TRNRB.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_TRNLBD.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_TRNRBD.w3x" />
+
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseHeavyVehicle.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:GDI/Props/GDIVehicleAKProps.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+		<!-- Laser Includes -->
+		<Include type="instance" source="ART:FXRailGunCoreDistortion.xml" />
+		<Include type="instance" source="ART:FXRailGunCoreMask.xml" />
+		<Include type="instance" source="ART:FXGDILaser.xml" />
+		<Include type="instance" source="ART:FXGravityLaser.xml" />
+		<Include type="instance" source="ART:FXEnergyBeam.xml" />
+		
+	</Includes>
+
+	<Defines>
+		<Define name="GDI_VEHICLE_AK_TAKEOFF_TIME" value="3.0s" />
+	</Defines>
+	
+	<GameObject
+		id="GDIVehicleAK"
+		inheritFrom="BaseHeavyVehicle"
+		SubGroupPriority="124"
+		HealthBoxHeightOffset="50"
+		HealthBar="Large"
+		SelectPortrait="Portrait_GDI_Vehicle_AK"
+		ButtonImage="Btn_GDI_Vehicle_AK"
+		Side="GDI"
+		ParticipationValue="=$GDIVEHICLEAK_PARTICIPATION_VALUE"
+		TransportSlotCount="1"
+		BuildTime="15"
+		PathPriority="80"
+		CommandSet="GDIVehicleAKCommandSet"
+		CommandPoints="=$GDI_VEHICLE_AK_COMMANDPOINT_COST"
+		KindOf="+HAS_BUILDING_DESTRUCT_BEHAVIOR"
+		ThreatLevel="10"
+		WeaponCategory="LASER"
+		VoicePriority="184"
+		EditorName="GDI_S3_Heavy_Laser(Prism)"
+		EditorSorting="UNIT"
+		Description="Desc:GDIVehicleAK"
+		TypeDescription="Type:GDIVehicleAK">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIVehicleAK</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+		<LocomotorSet
+			Locomotor="GDIVehicleAKGroundLocomotor"
+			Condition="NORMAL"
+			Speed="80.0" />
+
+		<LocomotorSet
+			Locomotor="GDIVehicleAKAircraftLocomotor"
+			Condition="SPECIALABILITY_ACTIVE"
+			Speed="80.0" />
+
+		<LocomotorSet
+			Locomotor="GDIVehicleAKAircraftLocomotorTransition"
+			Condition="STATE_TRANSITION"
+			Speed="80.0" />
+
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="6.0"
+				MaxRecoilDistance="5.0"
+				RecoilDamping="1.0"
+				RecoilSettleSpeed="1.0"
+				ExtraPublicBone="=$GDIVehicleAK_DAMAGE_BONE_NAMES + ' GAK_Turret GAK_Tire04 GAK_Tire08 FXWeapon01 BONE_GUN'"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUL_VehicleAK_SKN" />
+
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="BONE_GUN" />
+
+					<ParticleSysBone
+						BoneName="FXExhaust01"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust02"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust03"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust04"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+					
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW FLYING">
+					<Model
+						Name="GUL_VehicleAK_FP" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUL_VehicleAK_SKN" />
+					<ParticleSysBone
+						BoneName="FXExhaust01"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust02"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust03"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust04"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+
+					<ParticleSysBone
+						BoneName="GAK_Tire04"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GAK_Tire04"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GAK_Tire08"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUL_VehicleAK_SKN" />
+					<ParticleSysBone
+						BoneName="GAK_Tire04"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+
+					<ParticleSysBone
+						BoneName="FXExhaust01"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust02"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust03"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust04"
+						FXParticleSystemTemplate="GDIVehicleAKExhaust"
+						FollowBone="true" />
+					
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GUL_VehicleAK_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+						<Script>
+							CurDrawableHideSubObjectPermanently( "GUL_VEHICLEAK_UPG" )
+						</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="GUL_VehicleAK_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Flying" then
+						CurDrawableSetTransitionAnimState("TRANS_FromFlying")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="COMING_OUT_OF_FACTORY">
+					<Animation
+						AnimationName="GUL_VehicleAK_BLDA"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.5"
+						AnimationSpeedFactorMax="0.5"
+						AnimationBlendTime="8" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIMBING REALLYDAMAGED">
+					<Animation
+						AnimationName="GUL_VehicleAK_TKFD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="8" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIMBING">
+					<Animation
+						AnimationName="GUL_VehicleAK_TKFA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="8" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="TAKING_OFF REALLYDAMAGED">
+					<Animation
+						AnimationName="GUL_VehicleAK_TKFA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="8" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="TAKING_OFF">
+					<Animation
+						AnimationName="GUL_VehicleAK_TKFA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="8" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FLYING TURN_LEFT REALLYDAMAGED"
+					StateName="STATE_Flying">
+					<Animation
+						AnimationName="GUL_VehicleAK_TRNLBD"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FLYING TURN_RIGHT REALLYDAMAGED"
+					StateName="STATE_Flying">
+					<Animation
+						AnimationName="GUL_VehicleAK_TRNRBD"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FLYING TURN_LEFT"
+					StateName="STATE_Flying">
+					<Animation
+						AnimationName="GUL_VehicleAK_TRNLB"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FLYING TURN_RIGHT"
+					StateName="STATE_Flying">
+					<Animation
+						AnimationName="GUL_VehicleAK_TRNRB"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FLYING MOVING REALLYDAMAGED"
+					StateName="STATE_Flying">
+					<Animation
+						AnimationName="GUL_VehicleAK_HVRD"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FLYING MOVING"
+					StateName="STATE_Flying">
+					<Animation
+						AnimationName="GUL_VehicleAK_HVRM"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FLYING REALLYDAMAGED"
+					StateName="STATE_Flying">
+					<Animation
+						AnimationName="GUL_VehicleAK_HVRD"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FLYING"
+					StateName="STATE_Flying">
+					<Animation
+						AnimationName="GUL_VehicleAK_HVRA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_LEFT_HIGH_SPEED">
+					<Animation
+						AnimationName="GUL_VehicleAK_TRNL"
+						AnimationMode="ONCE"
+						AnimationBlendTime="8" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Flying" then
+						CurDrawableSetTransitionAnimState("TRANS_FromFlying")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_RIGHT_HIGH_SPEED">
+					<Animation
+						AnimationName="GUL_VehicleAK_TRNR"
+						AnimationMode="ONCE"
+						AnimationBlendTime="8" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Flying" then
+						CurDrawableSetTransitionAnimState("TRANS_FromFlying")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING REALLYDAMAGED">
+					<Animation
+						AnimationName="GUL_VehicleAK_MOVD"
+						AnimationMode="LOOP"
+						AnimationBlendTime="8" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Flying" then
+						CurDrawableSetTransitionAnimState("TRANS_FromFlying")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="GUL_VehicleAK_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="8" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Flying" then
+						CurDrawableSetTransitionAnimState("TRANS_FromFlying")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="GUL_VehicleAK_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="8" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Flying" then
+						CurDrawableSetTransitionAnimState("TRANS_FromFlying")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Animation
+						AnimationName="GUL_VehicleAK_AIDD"
+						AnimationMode="LOOP"
+						AnimationBlendTime="8" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Flying" then
+						CurDrawableSetTransitionAnimState("TRANS_FromFlying")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_FromFlying">
+					<Animation
+						AnimationName="GUL_VehicleAK_ATKB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="2"
+						AnimationAbsoluteTime="=$GDI_VEHICLE_AK_TAKEOFF_TIME"/>
+					<FXEvent
+						Frame="36"
+						FireWhenSkipped="true"
+						Effect="FX_Groundpound_Hit" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+			<ScriptedModelDraw
+				id="ModuleTag_GroundDust"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<ParticleSysBone
+						FXParticleSystemTemplate="GDIHoverDust_LargeGrounded" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FLYING">
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<ScriptedModelDraw
+				id="ModuleTag_PreFireDraw"
+				AttachToBoneInAnotherModule="FXWeapon01"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_A">
+					<Model Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="GDILaser_MedChargeup_Light"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="GDILaser_MedChargeup_Rings"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="GDILaser_MedChargeup_Sparks"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw1"
+				Texture1_UTile="1"
+				Texture1_VTile=".8"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="0"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="0"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="20"
+				WeaponSlotID="1"
+				LightMin="20"
+				LightMax="40"
+				CombatChainCounter="EQUAL WEAK"
+				LaserStateID="101">
+				<LightColor R="0.15" G="0.15" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+				<ObjectStatusValidation
+					ForbiddenStatus="USER_1" />
+			</LaserDraw>
+			<!-- Gravity laser draw -->
+			<LaserDraw
+				id="ModuleTag_LaserDrawUpgraded"
+				Texture1_UTile="1"
+				Texture1_VTile="3"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="-4"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile="1"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="2"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="30"
+				WeaponSlotID="1"
+				LightMin="20"
+				LightMax="40"
+				CombatChainCounter="EQUAL WEAK"
+				LaserStateID="102">
+				<LightColor R="0.07" G="0.86" B="0.15" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGravityLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXRailDistort02</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+				<ObjectStatusValidation
+					RequiredStatus="USER_1" />
+			</LaserDraw>
+
+			<!-- Strong counter -->
+			<LaserDraw
+				id="ModuleTag_LaserDraw1_Strong"
+				Texture1_UTile="1"
+				Texture1_VTile=".8"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="0"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="0"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="20"
+				LightMin="20"
+				LightMax="40"
+				CombatChainCounter="STRONG"
+				LaserStateID="101">
+				<LightColor R="0.15" G="0.07" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser_Veteran</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+			<!-- Gravity laser draw strong counter -->
+			<LaserDraw
+				id="ModuleTag_LaserDrawUpgraded_Strong"
+				Texture1_UTile="1"
+				Texture1_VTile="3"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="-4"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile="1"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="30"
+				WeaponSlotID="1"
+				LightMin="20"
+				LightMax="40"
+				CombatChainCounter="STRONG"
+				LaserStateID="102">
+				<LightColor R="0.07" G="0.86" B="0.15" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGravityLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXRailDistort02</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>		
+
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehicleAKLaser" 
+						ObjectStatus="GENERIC_TOGGLE_STATE"
+						ForbiddenObjectStatus="WEAPON_UPGRADED_01"/>
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehicleAKGravityLaser"
+						ObjectStatus="GENERIC_TOGGLE_STATE WEAPON_UPGRADED_01"/>
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehicleAKJetLaser"
+						ForbiddenObjectStatus="GENERIC_TOGGLE_STATE WEAPON_UPGRADED_01"/>
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehicleAKJetGravityLaser"
+						ObjectStatus="WEAPON_UPGRADED_01"
+						ForbiddenObjectStatus="GENERIC_TOGGLE_STATE"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<LaserState
+				id="ModuleTag_LaserState"
+				LaserId="101"/>
+
+			<StatusBitsUpgrade
+				id="ModuleTag_UpgradeWeapon01"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_GDIVehicleAKGravityLaser</TriggeredBy>
+			</StatusBitsUpgrade>
+
+			<FXListBehavior
+				  id="ModuleTag_FXListUpgrade">
+				<TriggeredBy>Upgrade_GDIVehicleAKGravityLaser</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					  Index="onUpgraded"
+					  FX="FX_UpgradeGDIGravityField" />
+			</FXListBehavior>
+      
+      <!--This will hide the upgraded model-->
+      <LUAEventList
+        id="ModuleTag_LUAEventList"
+        EventListName="GDIVehicleAKFunctions"/>
+
+      <!--This will unhide the upgraded model-->
+      <SubObjectsUpgrade
+        id="ModuleTag_ShowUpgrade">
+        <Nugget
+          ShowSubObjects="GUL_VehicleAK_UPG"
+          Upgrade="Upgrade_GDIVehicleAKGravityLaser"
+          FadeTime="0.0s"
+          SkipFlashOnCreate="false"
+          UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+          FlashTime="1.5s"/>
+        <TriggeredBy>Upgrade_GDIVehicleAKGravityLaser</TriggeredBy>
+      </SubObjectsUpgrade>
+      
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="175.0"
+					FX="FX_GDIVehicleL_Damage"/>
+			</BuildingDestructionBehavior>
+
+			<SpecialPower
+				id="ModuleTag_ToggleLocomotorMode"
+				SpecialPowerTemplate="SpecialPower_ToggleLocomotorMode"/>
+
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleLocomotorAbilityUpdate"
+				SpecialPowerTemplate="SpecialPower_ToggleLocomotorMode">
+				<!-- Toggles between Ground/Air mode. -->
+				<ToggleState
+					LocomotorSet="NORMAL"
+					TransitionDuration="1.1s"
+					TransitionLocomotorOverride="STATE_TRANSITION"
+					TransitionObjectStatii="IGNORE_AI_COMMAND NOT_STEALTHABLE"
+					AIUpdateModuleId="ModuleTag_GroundAIUpdate"
+					ObjectStatus="GENERIC_TOGGLE_STATE"
+					Flags="ACTIVATE_FIRE_WEAPON_UPDATE_MODULES IGNORE_FIRE_WEAPON_UPDATES_ON_CREATE"
+					AttributeModifier="AttributeModifier_GDIVehicleAKTransformation"
+					InitiateIntentToExitStateSound="GDI_Thunderhead_VehAK_LiftMS">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_DEFAULT">
+						<StateWeapon
+							Weapon="GDIVehicleAKLaser" />
+					</SkirmishAiInfo>
+				</ToggleState>
+
+				<ToggleState
+					LocomotorSet="SPECIALABILITY_ACTIVE"
+					AIUpdateModuleId="ModuleTag_JetAIUpdate"
+					InitiateIntentToExitStateSound="GDI_Thunderhead_VehAK_LandMS"
+					ModelConditions="FLYING">
+					<ObjectStatusValidation
+						ForbiddenStatus="UPGRADE_CRYSTAL_ATTACHED" />
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_TRANSFORM">
+						<StateWeapon
+							Weapon="GDIVehicleAKJetLaser" />
+					</SkirmishAiInfo>
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireHitGroundWeaponUpdate"
+				Flags="INITIALLY_INACTIVE" 
+				FireDelay="1.25s"
+				FireInterval="1000000s">
+				<FireWeaponNugget
+					WeaponName="GDIVehicleAKAOEWeapon" />
+			</FireWeaponUpdate>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Large_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" 
+					ExemptStatus="AIRBORNE_TARGET"/>
+			</CreateObjectDie>
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectAirDeath"
+				CreationList="GDIVehicleAK_AircraftMode_Dying_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="AIRBORNE_TARGET"/>
+			</CreateObjectDie>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="AIRBORNE_TARGET" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplode_Large" />
+				<Event
+					Index="onDeath"
+					FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			
+			<xi:include
+				href="DATA:Includes/GenericReflectedWeaponTracker.xml" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_GroundAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					SympathyRange="200.0" />
+			</AIUpdate>
+
+			<JetAIUpdate
+				id="ModuleTag_JetAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="HelicopterAIStateMachine"
+				DefaultLocomotorSet="SPECIALABILITY_ACTIVE"
+				Options="TAKEOFF_ON_CREATION">
+				<UnitAITargetChooserData
+					SympathyRange="200.0" />
+			</JetAIUpdate>
+
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1100" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_IdleLoop">
+				<ModelConditionSound Sound="GDI_Thunderhead_VehAK_IdleFlyingLoop" RequiredFlags="FLYING" ExcludedFlags="RECYCLED MOVING DYING"/>
+				<ModelConditionSound Sound="GDI_Thunderhead_VehAK_IdleGroundLoopMS" ExcludedFlags="RECYCLED FLYING MOVING DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MoveLoop">
+				<ModelConditionSound Sound="GDI_Thunderhead_VehAK_MoveFlyingLoop" RequiredFlags="FLYING MOVING" ExcludedFlags="RECYCLED DYING"/>
+				<ModelConditionSound Sound="GDI_Thunderhead_VehAK_MoveGroundLoopMS" RequiredFlags="MOVING" ExcludedFlags="RECYCLED FLYING DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_HiJackedSounds">
+				<Override RequiredFlags="FLYING">
+					<AudioArraySound>
+						<AudioEntry Sound="GDI_Thunderhead_VehAK_MoveFlyingStart" AudioType="soundMoveStart"/>
+					</AudioArraySound>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+
+		<xi:include	href="DATA:GDI/Includes/GDIVehicleAKGeometry.xml" />
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_VehAKThunderhead_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="GDI_VehAKThunderhead_VoiceAttackMismatch" AudioType="voiceAttackMismatchLight"/>
+			<AudioEntry Sound="GDI_VehAKThunderhead_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="GDI_VehAKThunderhead_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="GDI_VehAKThunderhead_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="GDI_VehAKThunderhead_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="GDI_VehAKThunderhead_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="GDI_VehAKThunderhead_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="GDI_VehAKThunderhead_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+			<!--<NamedEntry Sound="GDI_GuardianAPC_VoiceMineDrop" Name="InitiateAPCMinefield" /> -->
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbientReallyDamaged"/>
+			<AudioEntry Sound="GDI_Thunderhead_VehAK_MoveStart" AudioType="soundMoveStart"/>
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="700"
+			ShroudClearingRange="500" />
+
+		<CrusherInfo
+			id="BaseHeavyVehicle_CrusherInfo"
+			MinCrushVelocityPercent="0">
+			<ExtraCrushLevels
+				ModelConditionMatch="USER_1"
+				CrusherLevel="=$CRUSHER_HEAVY"
+				CrushableLevel="=$CRUSHABLE_HEAVY"
+				UseDirectionCheck="false"
+				CrushWhileStationary="true"/>
+		</CrusherInfo>
+		<DisplayUpgrade>Upgrade_GDIVehicleAKGravityLaser</DisplayUpgrade>
+	</GameObject>
+
+	<LogicCommandSet
+		id="GDIVehicleAKCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+		<Cmd>Command_ToggleLocomotor</Cmd>
+	</LogicCommandSet>
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_ToggleLocomotor">
+		<SpecialPower>SpecialPower_ToggleLocomotorMode</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo Heuristic="TOGGLE"/>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_ToggleLocomotorMode"
+		ReloadTime="5s"
+		TargetType="NONE"
+		WaypointModeTerminal="false">
+	</SpecialPowerTemplate>
+
+	<AttributeModifier
+		id="AttributeModifer_GDIVehicleAKDodgeDebuff"
+		Category="NONE"
+		Duration="3.0s"
+		StartFX="FX_GravityStasisField" >
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:GDIVehicleAK" />
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-100%"/>
+		<Modifier Type="SPEED" Value="0%"/>
+	</AttributeModifier>
+	
+	<AttributeModifier
+		id="AttributeModifer_GDIVehicleAKSlowDown"
+		Category="NONE"
+		Duration="6.0s"
+		StartFX="FX_SeismicSlow">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:GDIVehicleAK" />
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-50%"/>
+		<Modifier Type="SPEED" Value="50%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_GDIVehicleAKTransformation"
+		Category="NONE"
+		ModelConditionsSet="USER_1"
+		Duration="=$GDI_VEHICLE_AK_TAKEOFF_TIME">
+	</AttributeModifier>
+
+	<LocomotorTemplate
+		id="GDIVehicleAKAircraftLocomotor"
+		Surfaces="AIR"
+		TurnTimeSeconds="2.0s"
+		TurnTimeDamagedSeconds="2.0s"
+		AccelerationSeconds="1.2s"
+		Lift="120%"
+		LiftDamaged="80%"
+		BrakingSeconds="0.6s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="60.0"
+		MinTurnSpeed="0%"
+		PreferredHeight="100"
+		AllowMotiveForceWhileAirborne="true"
+		BehaviorZ="SURFACE_RELATIVE_HEIGHT_ALLOW_ZERO_HEIGHT"
+		Appearance="HOVER"
+		
+		PitchStiffness="0.5"
+		RollStiffness="0.1"
+		PitchDamping="0.9"
+		RollDamping="0.9"
+		ForwardVelocityPitchFactor="-0.2"
+		LateralVelocityRollFactor="0.1"
+		Apply2DFrictionWhenAirborne="true"
+		AirborneTargetingHeight="30"
+		LocomotorWorksWhenDead="true"
+		
+		LookAheadMult="4.0"
+		TakeOffAndLandingSpeed="3.0"
+		TakeOffAndLandingSlowDownDelta="0.25"
+		TakeOffAndLandingSlowDownTime="0.1s"
+
+		RudderCorrectionDegree="0.169"
+		RudderCorrectionRate="0.027"
+		ElevatorCorrectionDegree="0.103"
+		ElevatorCorrectionRate="0.016"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		CanReverseMove="true"/>
+
+	<LocomotorTemplate
+		id="GDIVehicleAKAircraftLocomotorTransition"
+		inheritFrom="GDIVehicleAKAircraftLocomotor"
+		PreferredHeight="0" />
+
+	<LocomotorTemplate
+		id="GDIVehicleAKGroundLocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		TurnTimeSeconds="2.0s"
+		TurnTimeDamagedSeconds="2.0s"
+		AccelerationSeconds="1.5s"
+		TakeOffAndLandingSpeed="6.0"
+		MaxSpeedDamaged="100%"
+		BrakingSeconds="0.7s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="60.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="FOUR_WHEELS"
+		UseTerrainSmoothing="true"
+		UniformAxialDamping="0.1"
+		PitchStiffness="0.45"
+		RollStiffness="0.6"
+		PitchDamping="0.1"
+		RollDamping="0.1"
+		ForwardAccelerationPitchFactor="-0.05"
+		LateralAccelerationRollFactor="-0.25"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="false"
+		CanReverseMove="true"
+	/>
+
+	<WeaponTemplate
+		id="GDIVehicleAKLaser"
+		inheritFrom="BaseLaserWeapon" 
+		AttackRange="600.0"
+		FireSound="GDI_Thunderhead_VehAK_GravityLaserWeaponFire"
+		FireFX="FX_GDILaser_Medium_Fire"
+		FireStrongCounterFX="FX_GDILaser_Medium_Fire_Veteran"
+		RequiredAntiMask="ANTI_GROUND"
+		AcceptableAimDelta="2d">
+		<PreAttackDelay
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="4.0s"
+			MaxSeconds="4.0s" />
+		<WeaponAiHintInfo
+			UseLongLockOnTimeCode="true"/>
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.75s"
+				LaserId="101"
+				HitGroundFX="FX_GDILaser_Medium_Miss"/>
+			<LineDamageNugget
+				Damage="120.0"
+				DamageType="LASER"
+				DamageFXType="GDI_LASER"
+				DeathType="LASERED"
+				LineWidth="10.0"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Can attack same surface only hence uses different AntiMask while in JetMode. -->
+	<WeaponTemplate
+		id="GDIVehicleAKJetLaser"
+		inheritFrom="GDIVehicleAKLaser"
+		RequiredAntiMask="ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ">
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIVehicleAKGravityLaser"
+		inheritFrom="GDIVehicleAKLaser"
+		FireFX="FX_GDIGravityLaser_Fire">
+		<Nuggets>
+			<ActivateLaserNugget
+			Lifetime="0.3s"
+			LaserId="102"
+			HitGroundFX="FX_GravityLaser_Hit">
+			</ActivateLaserNugget>
+			<!-- This one is applied ONLY on the target -->
+			<AttributeModifierNugget
+				AttributeModifierName="AttributeModifer_GDIVehicleAKDodgeDebuff"/>
+			<!-- Applied to other surrounding targets.-->
+			<AttributeModifierNugget
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifer_GDIVehicleAKSlowDown"
+				Radius="80.0" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIVehicleAKJetGravityLaser"
+		inheritFrom="GDIVehicleAKGravityLaser"
+		RequiredAntiMask="ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ">
+	</WeaponTemplate>
+
+	<!-- This is triggered when the locomotor is changed from Jet to ground -->
+	<WeaponTemplate
+		id="GDIVehicleAKAOEWeapon"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		AttackRange="150"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		FireFX="">
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_AOEEffect"
+				Damage="100.0"
+				Radius="100"
+				DamageType="BLAST"
+				DeathType="NORMAL"
+				PartitionFilterTestType="CIRCLE" >
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="LIGHT_UNIT MEDIUM_UNIT" 
+					Exclude="AIRCRAFT HEAVY_UNIT"/>
+			</DamageNugget>
+			<!-- A damage nugget intended to ONLY kill Crushable props when the unit drops on them -->
+			<DamageNugget
+				id="Nugget_AOEEffect_ClearProps"
+				Damage="99999.0"
+				Radius="60.0"
+				DamageType="UNRESISTABLE"
+				DeathType="NORMAL"
+				PartitionFilterTestType="CIRCLE" >
+				<SpecialObjectFilter
+					Rule="NONE"
+					Include="CRUSHABLE_OBSTACLE"/>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<ObjectCreationList
+		id="GDIVehicleAK_AircraftMode_Dying_OCL">
+		<OCLModule>
+			<Modules>
+				<CreateObject
+					ObjectTemplate="GDIVehicleAK_AircraftMode_Dying"/>
+				<CopyParentLayer/>
+				<CopyParentUpgrades/>
+				<CopyBuildingDestructionBehaviorState/>
+				<InheritVelocityFromParent/>
+				<FlingObject/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+	<ExperienceLevelTemplate
+		id="GDIVehicleAKExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="10">
+		<Target>GDIVehicleAK</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAKExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIVehicleAKExperienceLevel_1"
+		RequiredExperience="20"
+		ExperienceAward="12">
+		<Target>GDIVehicleAK</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAKExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIVehicleAKExperienceLevel_2"
+		RequiredExperience="50"
+		ExperienceAward="14">
+		<Target>GDIVehicleAK</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAKExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIVehicleAKExperienceLevel_3"
+		RequiredExperience="90"
+		ExperienceAward="16">
+		<Target>GDIVehicleAK</Target>
+	</ExperienceLevelTemplate>
+
+</AssetDeclaration>

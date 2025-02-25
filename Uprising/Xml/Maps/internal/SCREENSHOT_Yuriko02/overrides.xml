@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xai="uri:ea.com:eala:asset:instance"
+	xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags/>
+	<Includes>
+		<Include type="instance" source="DATA:System/DynamicsSettings.xml" />
+		<Include type="all" source="DATA:EP1/Includes/FactionFlingableProps.xml" />
+		<Include type="instance" source="DATA:EP1/Includes/YurikoOverrides_AlliedUnits.xml" />
+		<Include type="instance" source="DATA:EP1/Includes/YurikoOverrides_JapanUnits.xml" />
+		<Include type="instance" source="DATA:EP1/Includes/YurikoOverrides_AlliedStructures.xml" />
+		<Include type="all" source="DATA:EP1/Includes/YurikoOverrides_Audio.xml" />
+
+		<Include type="instance" source="DATA:Allied/Units/AlliedAntiVehicleVehicleTech3.xml"/>
+		<Include type="instance" source="DATA:Allied/Structures/AlliedBaseDefenseAdvanced.xml"/>
+
+		<Include type="instance" source="DATA:FXParticleSystems\AlliedPrismPreAttackLight.xml"/>
+
+		<Include type="instance" source="DATA:Allied/Units/AlliedAntiInfantryVehicle.xml"/>
+		<Include type="instance" source="DATA:Allied/Units/AlliedAntiAirVehicleTech1.xml"/>
+
+		<Include type="instance" source="DATA:Civilian/Mykonos_MY/Buildings/MY_AlliedScienceLab.xml"/>
+		<Include type="instance" source="DATA:Allied/Structures/AlliedConstructionYard.xml"/>
+
+		<Include type="instance" source="DATA:Japan/Units/JapanAntiVehicleVehicleTech3.xml" />
+
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml"/>
+
+		<!--<Include type="instance" source="DATA:Japan/Structures/JapanBarracks.xml"/>-->
+	</Includes>
+
+	<!-- increase the allocations for yuriko missions, as they use a lot of dynamics, also add a global island for intercolliding props. -->
+	<DynamicsSettings
+		id="Settings_Dynamics"
+		MaximumContacts="2560"
+		MaximumJoints="256"
+		CreateGlobalIsland="true" />
+	
+	<GameObject
+		id="JapanAntiVehicleVehicleTech3"
+		inheritFrom="JapanAntiVehicleVehicleTech3">
+		<VisionInfo
+			VisionRange="=$MED_RANGE_VIS"/>
+	</GameObject>
+
+	<!--
+	<GameObject
+		id="JapanBarracks"
+		inheritFrom="JapanBarracks">
+		<Behaviors>
+			<GarrisonContain
+				id="ModuleTag_Garrison"
+				ObjectStatusOfContained="ENCLOSED UNSELECTABLE NO_ATTACK"
+				ContainMax="1"
+				EnterSound="GenericBuilding_Garrison"
+				ExitSound="GenericBuilding_Ungarrison"
+				AllowEnemiesInside="true"
+				AllowAlliesInside="true"
+				AllowNeutralInside="true"
+				AllowOwnPlayerInsideOverride="true"
+				PassDisabilityToRiders="true"
+				ShowPips="false"
+				KillPassengersOnDeath="false">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY">
+					<IncludeThing>JapanYurikoTech3</IncludeThing>
+				</PassengerFilter>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</GarrisonContain>
+		</Behaviors>
+	</GameObject>
+	 -->
+
+	<FXParticleSystemTemplate ParticleTexture="FXLenzFlare01" PerParticleAttachedSystem="" Priority="ALWAYS_RENDER" SystemLifetime="2" Type="GPU_PARTICLE" id="AlliedPrismCharge">
+		<Lifetime High="70" Low="70"/>
+		<Size High="30" Low="30"/>
+		<BurstCount High="1" Low="1"/>
+		<Colors>
+			<Color Frame="2" RelativeAge="75">
+				<Color b="1" g="0.658824" r="0.819608"/>
+			</Color>
+			<Color Frame="3" RelativeAge="100">
+				<Color b="0" g="0" r="0"/>
+			</Color>
+			<ColorScale High="2" Low="2"/>
+		</Colors>
+		<Physics>
+			<Default>
+				<VelocityDamping High="1" Low="1"/>
+			</Default>
+		</Physics>
+		<Draw>
+			<Gpu SpeedMultiplier="1"/>
+		</Draw>
+		<Volume>
+			<Line>
+				<StartPoint x="0" y="0" z="20"/>
+				<EndPoint x="0" y="0" z="20"/>
+			</Line>
+		</Volume>
+		<Velocity>
+			<Ortho>
+				<Position>
+					<x High="0" Low="0"/>
+					<y High="0" Low="0"/>
+					<z High="0" Low="0"/>
+				</Position>
+			</Ortho>
+		</Velocity>
+		<Event/>
+		<Update>
+			<Default>
+				<SizeRate High="0.1" Low="0.1"/>
+				<SizeRateDamping High="0.99" Low="0.99"/>
+				<AngleZ High="3" Low="-3"/>
+				<AngularDampingXY High="1" Low="1"/>
+			</Default>
+		</Update>
+	</FXParticleSystemTemplate>
+
+	<GameObject
+		id="AlliedAntiVehicleVehicleTech3"
+		inheritFrom="AlliedAntiVehicleVehicleTech3">
+		<Draws>
+			<!-- way that worked 
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				xai:joinAction="Append">
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_A">
+					<Model
+						Name="AUAntiVehicleVehicleTech3_SKN" />
+					<ParticleSysBone
+						BoneName="FX_Weapon"
+						FXParticleSystemTemplate="AlliedPrismCharge"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+				-->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				xai:joinAction="Append">
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_A">
+					<Model
+						Name="AUAntiVehicleVehicleTech3_FX" />
+					<ParticleSysBone
+						BoneName="B_CHASIS"
+						FXParticleSystemTemplate="AlliedPrismCharge"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_A DAMAGED">
+					<Model
+						Name="AUAntiVehicleVehicleTech3_FX" />
+					<ParticleSysBone
+						BoneName="B_CHASIS"
+						FXParticleSystemTemplate="AlliedPrismCharge"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE01"
+						FXParticleSystemTemplate="VehicleDamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_A REALLYDAMAGED">
+					<Model
+						Name="AUAntiVehicleVehicleTech3_FX" />
+					<ParticleSysBone
+						BoneName="B_CHASIS"
+						FXParticleSystemTemplate="AlliedPrismCharge"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE01"
+						FXParticleSystemTemplate="VehicleDamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+	</GameObject>
+
+	<UpgradeTemplate
+		id="Upgrade_EP01_Y02_FauxShrink"
+		Type="OBJECT"	/>
+
+	<GameObject
+		id="AlliedAntiInfantryVehicle"
+		inheritFrom="AlliedAntiInfantryVehicle">
+		<Behaviors>
+			<AttributeModifierUpgrade
+				id="ModuleTag_Upgrade_FauxShrink"
+				AttributeModifier="AttributeMod_AlliedSupportAircraftShrinkRay">
+				<TriggeredBy>Upgrade_EP01_Y02_FauxShrink</TriggeredBy>
+			</AttributeModifierUpgrade>
+		</Behaviors>
+	</GameObject>
+
+
+	<GameObject
+		id="AlliedAntiAirVehicleTech1"
+		inheritFrom="AlliedAntiAirVehicleTech1"
+		KindOf="+TRANSPORT"/>
+
+
+	<GameObject
+		id="MY_AlliedScienceLab"
+		inheritFrom="AlliedConstructionYard"
+		SelectPortrait="Portrait_AlliedSciencelab"
+		ButtonImage="Button_AlliedSciencelab">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				xai:joinAction="Replace" 
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18 BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="MY_AlliedScienceLab" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<DynamicsUpdate
+				id="ModuleTag_DefaultDynamicsUpdate"
+				Motion="STATIC"
+				Collision="OMNICOLLIDING" />
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				xai:joinAction="Replace">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="ScienceTechLab"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Medium" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				xai:joinAction="Replace" 
+				CreationList="MY_AlliedScienceLab_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+		</Behaviors>
+	</GameObject>
+
+	<!-- Exploding Barrel Weapon Override -->
+	<WeaponTemplate
+		id="ExplodingBarrelWeapon"
+		inheritFrom="ExplodingBarrelWeapon"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS">
+		<Nuggets>
+			<DamageNugget
+					id="DefaultDamageNugget"
+					Damage="1000"
+					  Radius="100"
+					  DamageType="GRENADE"
+					  DeathType="NORMAL">
+				<SpecialObjectFilter
+						Rule="ALL"
+						Exclude="">
+					<ExcludeThing>JapanYurikoTech2</ExcludeThing>
+				</SpecialObjectFilter>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+</AssetDeclaration>

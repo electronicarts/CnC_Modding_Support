@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GBOrbit.W3X" />
+		<Include
+			type="all"
+			source="ART:GBOrbit_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:GBOrbit_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:GBOrbit_D3.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GDI_OrbitalShieldCC"
+		inheritFrom="BaseCivilianStructure"
+		SelectPortrait="Portrait_OrbitalShieldCC"
+		ButtonImage="Portrait_OrbitalShieldCC"
+		Side="GDI"
+		Browser="REGION GDI_Structures STRUCTURE"
+		BuildCost="400"
+		BuildTime="15"
+		CommandSet="EmptyCommandSet"
+		KindOf="PRELOAD SELECTABLE CAN_CAST_REFLECTIONS SCORE STRUCTURE IMMOBILE KEEP_CLASSIFIED_WHEN_DEAD NOT_AUTOACQUIRABLE"
+		RadarPriority="STRUCTURE"
+		ThreatLevel="10"
+		ProductionQueueType="MAIN_STRUCTURE"
+		EditorName="GDI_OrbitalShieldCC"
+		Description="Desc:GDIOrbitalShieldControlCenter">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIOrbitalShieldControlCenter</DisplayName>
+		<!-- This armorset already exists in the base object
+		<ArmorSet
+			Armor="StructureArmor"
+			DamageFX="VehicleDamageFX" />
+		-->
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBOrbit" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBOrbit_D3" />
+					
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBOrbit_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBOrbit_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GBOrbit"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBOrbit_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBOrbit_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GBOrbit_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBOrbit_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_AwesomeXplosion" />
+				
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_ScorchMedium" />					
+			</FXListBehavior>
+<!--			
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="8s">
+				<DieMuxData
+					DeathTypes="ALL" /> 
+			</SlowDeath>
+-->
+			<!--<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />-->
+			<!--<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />-->
+			<xi:include
+				href="DATA:Includes/GenericGDIBuildingDestructionNoSpawn.xml" />
+			<xi:include
+				href="DATA:Includes/GenericGDIBuildingSuicideNoSpawn.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_02"
+				MaxHealth="10000.0"
+				InitialHealth="10000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="41.9544"
+				MinorRadius="39.7317"
+				Height="18.8934">
+				<Offset
+					x="-0.00745392"
+					y="0.525642"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="13.4254"
+				MinorRadius="7.83509"
+				Height="19.6491">
+				<Offset
+					x="-0.00745583"
+					y="-46.9873"
+					z="1.5497e-007" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="16.7818"
+				MinorRadius="19.0712"
+				Height="93.3334">
+				<Offset
+					x="-0.00745583"
+					y="0.525644"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-14.1647"
+					y="-14.669"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="15.568"
+					y="-14.669"
+					z="87.0368" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="15.568"
+					y="15.0638"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-14.1647"
+					y="15.0638"
+					z="87.0368" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-14.1647"
+					y="-14.669"
+					z="87.0368" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="15.568"
+					y="-14.669"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="15.568"
+					y="15.0638"
+					z="87.0368" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-14.1647"
+					y="15.0638"
+					z="0.0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="320" />
+	</GameObject>
+</AssetDeclaration>

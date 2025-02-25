@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NSNLaunchFac.w3x" />
+		<Include
+			type="all"
+			source="ART:NSNLaunchFac_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:NSNLaunchFac_D3.w3x" />
+		<Include
+			type="all"
+			source="ART:NSNLaunchFacMis_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NSNLaunchFacMis_IDLA.w3x" />
+		<Include
+			type="all"
+			source="ART:NSNLaunchFacMis_RDY.w3x" />
+		<Include
+			type="all"
+			source="ART:NSNLaunchFacMis_FIRA.w3x" />
+		<Include
+			type="all"
+			source="ART:NSNLaunchFacMis_D3.W3X" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+	</Includes>
+	<GameObject
+		id="NOD_Silo"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		CommandSet="GarrisonableNeutralBuildingCommandSet"
+		EditorName="NOD_Silo"
+    UnitCategory="STRUCTURE" 
+		KindOf="SELECTABLE STRUCTURE PRELOAD IMMOBILE CAN_CAST_REFLECTIONS AUTO_RALLYPOINT COVER KEEP_CLASSIFIED_WHEN_DEAD COVER CIVILIAN_BUILDING NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI RESIST_EMP"
+		Browser="REGION NOD_Structures STRUCTURE">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				AffectedByStealth="false"
+				ExtraPublicBone="BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NSNLaunchFac" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NSNLaunchFac_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NSNLaunchFac_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NSNLaunchFac" />
+					<Texture
+						Original="NSNMSilo1"
+						New="NSNMSilo1D" />						
+					<Texture
+						Original="NSNMSilo2"
+						New="NSNMSilo2D" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NSNLaunchFac_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NSNLaunchFac_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NSNLaunchFac_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NSNLaunchFac_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="false" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="false" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+<!-- DRAW MISSLE -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Missle"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NSNLaunchFacMis_SKN" />
+				</ModelConditionState>
+				<!-- BUILDING -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING SPECIALPOWER1_READY">
+					<Model
+						Name="NSNLaunchFacMis_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NSNLaunchFacMis_SKN" />
+				</ModelConditionState>
+				<!-- ANIMATIONS -->
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle"
+					Flags="DO_NOT_PLAY_WHEN_UNPOWERED">
+					<Animation
+						AnimationName="NSNLaunchFacMis_IDLA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="0" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Ready" and Prev ~= "STATE_Idle" then
+						CurDrawableSetTransitionAnimState("TRANS_FIRING")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING SPECIALPOWER1_READY">
+					<Animation
+						AnimationName="NSNLaunchFacMis_D3"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="NSNLaunchFacMis_IDLA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBEmpty_ABLD"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPECIALPOWER1_READY"
+					StateName="STATE_Ready">
+					<Animation
+						AnimationName="NSNLaunchFacMis_RDY"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PACKING">
+					<Animation
+						AnimationName="NSNLaunchFacMis_IDLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_FIRING">
+					<Animation
+						AnimationName="NSNLaunchFacMis_FIRA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="FX_Rocket01"
+						FXParticleSystemTemplate="NodNukeMissleSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket02"
+						FXParticleSystemTemplate="NodNukeMissleSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket03"
+						FXParticleSystemTemplate="NodNukeMissleSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket04"
+						FXParticleSystemTemplate="NodNukeMissleSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket01"
+						FXParticleSystemTemplate="NodNukeMissleFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket02"
+						FXParticleSystemTemplate="NodNukeMissleFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket03"
+						FXParticleSystemTemplate="NodNukeMissleFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Rocket04"
+						FXParticleSystemTemplate="NodNukeMissleFire"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Behaviors>
+			<ProductionUpdate
+				id="ModuleTag_Production" />
+			<ModelConditionUpgrade
+				id="ModuleTag_GDIFaction"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_NODFaction"
+				AddConditionFlags="USER_2">
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_AlienFaction"
+				AddConditionFlags="USER_3">
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<CommandSetUpgrade
+				id="ModuleTag_SwapCommandSet"
+				CommandSet="GarrisonableNeutralFortifiedBuildingCommandSet"
+				Permanent="true">
+				<TriggeredBy>Upgrade_FortifyBuilding</TriggeredBy>
+			</CommandSetUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowForceField"
+				ShowSubObjects="ARMOR"
+				Permanent="true">
+				<TriggeredBy>Upgrade_FortifyBuilding</TriggeredBy>
+			</SubObjectsUpgrade>
+			<AttributeModifierUpgrade
+				id="ModuleTag_AddAttributes"
+				AttributeModifier="FortifiedBuilding_Bonus"
+				Permanent="true">
+				<TriggeredBy>Upgrade_FortifyBuilding</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<SpecialPower
+				id="ModuleTag_MissileLauncherSP"
+				SpecialPowerTemplate="SpecialPowerLaunchCatalystMissile"
+				UpdateModuleStartsAttack="true"
+			/>
+			<MonitorSpecialPowerTimerUpdate
+				id="ModuleTag_CatalystMissileReadyToFireUpdate"
+				SpecialPowerTemplate="SpecialPowerLaunchCatalystMissile"
+				ReadyCondition="SPECIALPOWER1_READY" />			
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_MissileLauncherSPUpdate"
+				SpecialPowerTemplate="SpecialPowerLaunchCatalystMissile"
+				SpecialWeapon="NODCatalystMissileLauncher"
+				UnpackTime="1s"
+				PackTime="1s"
+				StartAbilityRange="50000.0"
+				BusyForDuration="2s"
+				WhichSpecialWeapon="1" 
+			/>
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModulTag_AIForLua"
+				AILuaEventsList="NeutralGarrisonableBuildingFunctions" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="6000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape 
+     Type= "BOX"
+     MajorRadius = "27.7296"
+     MinorRadius = "49.4783"
+     Height = "5.43718"
+     ContactPointGeneration="STRUCTURE" >
+    <Offset
+        x = "9.29906"
+        y = "1.33146"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "4.0"
+     MinorRadius = "4.0"
+     Height = "110.0"
+     ContactPointGeneration="STRUCTURE" >
+    <Offset
+        x = "8.61939"
+        y = "27.7017"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "4.0"
+     MinorRadius = "4.0"
+     Height = "79.2"
+     ContactPointGeneration="STRUCTURE" >
+    <Offset
+        x = "8.61939"
+        y = "-2.2664"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "43.0548"
+     MinorRadius = "20.7586"
+     Height = "47.6679"
+     ContactPointGeneration="STRUCTURE" >
+    <Offset
+        x = "0.0"
+        y = "-54.9626"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "22.3885"
+     MinorRadius = "20.7586"
+     Height = "32.4141"
+     ContactPointGeneration="STRUCTURE" >
+    <Offset
+        x = "0.0"
+        y = "-94.8509"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "9.85095"
+     MinorRadius = "20.7586"
+     Height = "12.9657"
+     ContactPointGeneration="STRUCTURE" >
+    <Offset
+        x = "0.0"
+        y = "-126.362"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "43.0548"
+     MinorRadius = "20.7586"
+     Height = "47.6679"
+     ContactPointGeneration="STRUCTURE" >
+    <Offset
+        x = "3.8147e-006"
+        y = "61.7814"
+        z = "5.10304e-006" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "22.3885"
+     MinorRadius = "20.7586"
+     Height = "32.4141"
+     ContactPointGeneration="STRUCTURE" >
+    <Offset
+        x = "7.62939e-006"
+        y = "100.651"
+        z = "8.54565e-006" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "9.85095"
+     MinorRadius = "20.7586"
+     Height = "12.9657"
+     ContactPointGeneration="STRUCTURE" >
+    <Offset
+        x = "1.14441e-005"
+        y = "132.464"
+        z = "1.13137e-005" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "13.8648"
+     MinorRadius = "13.8935"
+     Height = "5.43718"
+     ContactPointGeneration="STRUCTURE" >
+    <Offset
+        x = "-24.9557"
+        y = "29.0539"
+        z = "0.0" />
+</Shape>
+
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+</AssetDeclaration>

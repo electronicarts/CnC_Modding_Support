@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="AssetTypeAIMicroManager.xsd"/>
+	<xs:include schemaLocation="..\Includes\PlayerType.xsd"/>
+
+	<xs:simpleType name="UnitLocomotorType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LAND" />
+			<xs:enumeration value="WATER" />
+			<xs:enumeration value="AMPHIBIOUS" />
+			<xs:enumeration value="AIR" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TeamReleaseType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ALWAYS_RELEASE" />
+			<xs:enumeration value="RELEASE_TO_PRIORITY" />
+			<xs:enumeration value="NEVER_RELEASE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- The ordering below is the actual priority of the enumeration from low to high.  Add new priorities with careful consideration -->
+	<xs:simpleType name="TeamPriority">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DEFAULT" />
+			<xs:enumeration value="DEFENSE" />
+			<xs:enumeration value="LOW" />
+			<xs:enumeration value="STANDARD" />
+			<xs:enumeration value="DEFENSE_HIGH" />
+			<xs:enumeration value="HIGH" />
+			<xs:enumeration value="DEFENSE_CRITICAL" />
+			<xs:enumeration value="COOP" />
+			<xs:enumeration value="SCRIPTED" />
+			<xs:enumeration value="HOTSPOT" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="UnitLocomotorTypeBitFlags">
+		<xs:list itemType="UnitLocomotorType" />
+	</xs:simpleType>
+
+	<xs:complexType name="CreateUnitInfo">
+		<xs:attribute name="MinUnits" type="xs:int" default="1"/>
+		<xs:attribute name="MaxUnits" type="xs:int" default="1"/>
+		<xs:attribute name="UnitName" type="GameObjectWeakRef" use="required"/>
+		<xs:attribute name="ExperienceLevel" type="xs:int" default="1"/>
+	</xs:complexType>
+
+	<xs:simpleType name="DistanceSortPoints">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TARGET_POINT"/>
+			<xs:enumeration value="HOME_BASE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!-- You can change how the micromanager behaviors as the distance to the target
+	     changes. For example, you can make the Micromanager more agressive when 
+			 near the target. -->
+	<xs:complexType name="AIMicroManagerRefWithDistance">
+		<xs:attribute name="id" type="Poid" xas:pipelineOnly="true"/>
+		<xs:attribute name="MicroManager" type="AssetReference" xas:refType="AIMicroManagerData" use="required"/>
+		<xs:attribute name="MaximumRange" type="SageReal" use="optional" />
+		
+		<!-- HysteresisAmount: When we are already using this Micromanager, amount we can go over the 
+		     max range before changing to the next one out -->
+		<xs:attribute name="HysteresisAmount" type="Percentage" default="50%" />
+	</xs:complexType>
+
+	<xs:complexType name="MaximumDistanceFromTargetInfo">
+		<xs:sequence/>
+		<xs:attribute name="MaxDistanceToTarget" type="SageReal" use="required" />
+		<xs:attribute name="TargetObjectFilter" type="ObjectFilterAssetRef" use="optional" />
+	</xs:complexType>
+
+	<xs:simpleType name="AITeamRecruitingType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="UNKNOWN" xas:forceValue="-1" />
+			<xs:enumeration value="NORMAL_RECRUIT" xas:forceValue="0" />
+			<xs:enumeration value="COORDINATED_ATTACK_RECRUIT"/>
+			<!-- If COORDINATED_ATTACK_CALCULATION is set, additional forces are also added into the mix when deciding
+			     if we need to coordinate an attack at all. Remember - if these forces are large enough, they will cause
+					 us to NOT use a coordinated attack. Thus, you should usually use this only if NORMAL_RECRUIT is on. -->
+			<xs:enumeration value="COORDINATED_ATTACK_CALCULATION"/> 
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="AITeamRecruitingTypeBitFlags">
+		<xs:list itemType="AITeamRecruitingType" />
+	</xs:simpleType>
+
+	<!-- If you know that certain additional forces will join you when you make your attack, you can list
+				them in one of these. Those forces will then be added into the power advantage & CP advantage calculations
+				when trying to put together a team. They will NOT help satisfy MinUnits or MinCommandPoints -->
+	<xs:complexType name="AITeamTemplateAdditionalForcesInfo">
+		<xs:sequence>
+			<xs:element name="AdditionalForcesObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+			<xs:element name="ExcludeState" type="AIStrategicStateDefinitionWeakRef" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:pipelineOnly="true" use="required"/>
+		<xs:attribute name="OwningPlayer" type="PlayerRelationFlags" default="SAME_PLAYER" />
+		<xs:attribute name="OwningPlayerClass" type="PlayerClassTypeBitFlags" default="HEAVY SUPPORT DEFENSE" />
+		<xs:attribute name="OwningPlayerType" type="PlayerTypeFlags" default="COMPUTER" />
+		<xs:attribute name="RecruitingType" type="AITeamRecruitingTypeBitFlags" default="NORMAL_RECRUIT COORDINATED_ATTACK_RECRUIT COORDINATED_ATTACK_CALCULATION" />
+		<xs:attribute name="ROS" type="RegisteredObjectSetId" default="UNITS_AND_STRUCTURES" />
+	</xs:complexType>
+
+
+	<xs:complexType name="AITeamTemplate">
+		<xs:sequence>
+			<xs:element name="CreateUnits" type="CreateUnitInfo" minOccurs="0" maxOccurs="7"/>
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="MicroManager" type="AIMicroManagerRefWithDistance" minOccurs="1" maxOccurs="unbounded" />
+			<xs:element name="MaximumDistanceFromTarget" type="MaximumDistanceFromTargetInfo" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="AdditionalForcesInfo" type="AITeamTemplateAdditionalForcesInfo" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+
+		<xs:attribute name="id" type="Poid" xas:pipelineOnly="true"/>
+		<xs:attribute name="MinUnits" type="xs:int" default="1"/>
+		<xs:attribute name="MaxUnits" type="xs:int" use="optional"/>
+		<xs:attribute name="MinCommandPoints" type="xs:int" default="0"/>
+		<xs:attribute name="MaxCommandPoints" type="xs:int" use="optional"/>
+		<xs:attribute name="MinPowerAdvantage" type="SageReal" use="optional"/>
+		<xs:attribute name="MinCommandPointAdvantage" type="SageReal" use="optional"/>
+		<xs:attribute name="MaxTypesOfUnits" type="SageInt" use="optional"/>
+		<xs:attribute name="IncludeKindOf" type="KindOfBitFlags"/>
+		<xs:attribute name="ExcludeKindOf" type="KindOfBitFlags" default="HARVESTER CAN_ASSEMBLE_STRUCTURE"/>
+		<xs:attribute name="Priority" type="TeamPriority" default="STANDARD"/>
+		<xs:attribute name="ReleaseType" type="TeamReleaseType" default="RELEASE_TO_PRIORITY"/>
+		<xs:attribute name="AlwaysRecruit" type="xs:boolean" default="false"/>
+		<xs:attribute name="AllowRecruitUnitsInCombat" type="xs:boolean" default="false"/>
+		<xs:attribute name="RequireCanAttackTarget" type="SageBool" default="false"/>
+		<xs:attribute name="AllowedLocomotorTypes" type="UnitLocomotorTypeBitFlags" default="LAND WATER AMPHIBIOUS AIR" />
+		<xs:attribute name="SortByDistance" type="xs:boolean" default="true"/>
+		<xs:attribute name="DistanceSortPoint" type="DistanceSortPoints" default="TARGET_POINT"/>
+		<xs:attribute name="RegisteredObjectSet" type="RegisteredObjectSetId" default="UNITS"/>
+
+		<!-- Base Defense Teams contain base defenses (and only base defenses). Some of the other fields
+		   are ignored by Base Defense teams (e.g. CreateUnits, MinPowerAdvantage, SortByDistance) -->
+		<xs:attribute name="IsBaseDefenseTeam" type="xs:boolean" default="false" />
+
+		<!-- Only for base defense teams: how far apart can the base defenses be and still be added to the same team? -->
+		<xs:attribute name="BaseDefenseMaxDistance" type="SageReal" use="optional" />
+
+		<!-- Should we consider garrisoned units for recruitment? Set this to false for garrison tactics -->
+		<xs:attribute name="RecruitFromGarrisons" type="xs:boolean" default="true" />
+
+		<!-- This describes how useful the allies in the target area to this team when computing the power advantage in an area.
+						  If this is set to 75% then only 75% of their attack and damage absorption is taken into consideration when deciding who will win-->
+		<xs:attribute name="AlliesCombatEffectiveness" type="Percentage" default="60%" />
+
+	</xs:complexType>
+
+</xs:schema>

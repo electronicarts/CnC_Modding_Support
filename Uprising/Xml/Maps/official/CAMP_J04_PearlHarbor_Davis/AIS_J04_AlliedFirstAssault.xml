@@ -1,0 +1,479 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+    <Include type="instance" source="DATA:SkirmishAI\States\AlliedFirstAssaultStates.xml" />
+  </Includes>
+  
+  <!-- 
+  NOTE:  The Phase # flags are true during thier phase and then are false once that phase is over
+  NOTE:  The AI Phase # flags are false until that phase, and then true forever after
+  -->
+
+  <AIStrategicStateDefinition
+    id="AI_State_J04_ReactiveDefense">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <Tactic id="Defense" Tactic="ReactiveDefense" Targetless="true" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="8" 
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER FIGHTER_AIRCRAFT BOMBER_AIRCRAFT"
+                    AllowedLocomotorTypes="AMPHIBIOUS AIR WATER"
+                    Priority="DEFENSE_HIGH"
+                    ReleaseType="NEVER_RELEASE"
+                    AlwaysRecruit="true"
+                    SortByDistance="false"
+                    MicroManager="ReactiveDefenseMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_J04_AI1_WaterAttacks"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToWaterUnitHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic" Priority="20"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="3" MaxUnits="6"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_J04_AI1_WaterAttacks_Phase3"
+		MaxTargets="2">
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 3"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToWaterUnitHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+			<TeamTemplate MinUnits="3" MaxUnits="8"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+      id="AIState_J04_AI1_Assault_Statues_Inf"
+      MaxTargets="6">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_1" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_2" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_3" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_1" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_2" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="1" MaxUnits="6"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="LAND"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+      id="AIState_J04_AI1_Phase2_StatueAttack"
+      MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - FLAG - Phase 2"/>
+      <!--<IntervalHeuristic IntervalTime="90s" ActiveTime="15s"/>-->
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_3" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_2" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_2" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_1" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_1" Priority="20"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="9" MaxUnits="9"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER FIGHTER_AIRCRAFT ASSAULT_AIRCRAFT BOMBER_AIRCRAFT"
+      							AllowedLocomotorTypes="AMPHIBIOUS AIR"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+      id="AIState_J04_AI1_Phase2_BaseAttack"
+      MaxTargets="1">
+    <Heuristic>
+      <!-- <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 2"/> -->
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - FLAG - Phase 2"/>
+      <!--<IntervalHeuristic IntervalTime="120s" ActiveTime="15s"/>-->
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_ClosestFactoryHeuristic" Priority="5"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" EndIfStateTurnsOff="false">
+      <TeamTemplate MinUnits="4" MaxUnits="6"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER FIGHTER_AIRCRAFT ASSAULT_AIRCRAFT BOMBER_AIRCRAFT"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+      id="AIState_J04_AI1_Phase3_HarborAttack"
+      MaxTargets="3">
+    <Heuristic>
+      <!-- <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 3"/> -->
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - FLAG - Phase 3"/>
+      <!--<IntervalHeuristic IntervalTime="60s" ActiveTime="15s"/>-->
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_2" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_2" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_3" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_1" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_1" Priority="40"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="false">
+      <TeamTemplate MinUnits="12" MaxUnits="13"
+                    MaxTypesOfUnits="2"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER FIGHTER_AIRCRAFT ASSAULT_AIRCRAFT BOMBER_AIRCRAFT"
+      							AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+      id="AIState_J04_AI1_Phase3_BaseAttack"
+      MaxTargets="2">
+    <Heuristic>
+      <!-- <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 3"/> -->
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - FLAG - Phase 3"/>
+      <!-- <IntervalHeuristic IntervalTime="60s" ActiveTime="15s"/> -->
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_ClosestFactoryHeuristic" Priority="5"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" EndIfStateTurnsOff="false">
+      <TeamTemplate MinUnits="8" MaxUnits="15"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER FIGHTER_AIRCRAFT ASSAULT_AIRCRAFT BOMBER_AIRCRAFT"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+      id="AIState_J04_AI1_Phase4_HarborAttack"
+      MaxTargets="3">
+    <Heuristic>
+      <!-- <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 4"/> -->
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - FLAG - Phase 4"/>
+      <!--
+      <IntervalHeuristic IntervalTime="45s" ActiveTime="15s"/>
+      -->
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_1" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_2" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_1" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_2" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_3" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack"  EndBehavior="RAMPAGE" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="10"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER FIGHTER_AIRCRAFT ASSAULT_AIRCRAFT BOMBER_AIRCRAFT"
+      							AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+      id="AIState_J04_AI1_Phase4_BaseAttack"
+      MaxTargets="3">
+    <Heuristic>
+      <!-- <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 4"/> -->
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - FLAG - Phase 4"/>
+      <!--
+      <IntervalHeuristic IntervalTime="30s" ActiveTime="15s"/>
+      -->
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_ClosestFactoryHeuristic" Priority="5"/>
+    <Tactic id="Attack" Tactic="SimpleAttack"  EndBehavior="RAMPAGE" EndIfStateTurnsOff="false">
+      <TeamTemplate MinUnits="10"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER FIGHTER_AIRCRAFT ASSAULT_AIRCRAFT BOMBER_AIRCRAFT"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+      id="AIState_J04_AI1_AssaultAircraft"
+      MaxTargets="4">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 2"/>
+      <IntervalHeuristic IntervalTime="150s" ActiveTime="15s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestHarvesterHeuristic" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_ClosestFactoryHeuristic" Priority="50"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" EndBehavior="RETURN_HOME_AND_DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="2"
+      							IncludeKindOf="CAN_ATTACK ASSAULT_AIRCRAFT"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessBomberAircraftMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+      id="AIState_J04_AI1_BomberAircraft"
+      MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 3"/>
+      <!--
+      <IntervalHeuristic IntervalTime="90s" ActiveTime="15s"/>
+      -->
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="ClosestHarvesterHeuristic" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_1" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_2" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_3" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_1" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_2" Priority="50"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" EndBehavior="RETURN_HOME_AND_DISBAND">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="5"
+      							IncludeKindOf="CAN_ATTACK BOMBER_AIRCRAFT"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessBomberAircraftMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_AI1_BomberEscort"
+    MaxTargets="6">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_BomberEscort" Priority="50"/>
+    <Tactic id="Defend" Tactic="StaticDefense" EndBehavior="RETURN_HOME_AND_DISBAND" EndIfStateTurnsOff="false">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="2"
+      							IncludeKindOf="CAN_ATTACK FIGHTER_AIRCRAFT"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="true"
+                    MicroManager="FearlessDefenseMicroManager_MEDIUM">
+        <CreateUnits UnitName="AlliedFighterAircraft" MinUnits="1" MaxUnits="3"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_AI1_Aircraft_Carrier"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 3"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_1" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_2" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_1" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_2" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_3" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic_NonUnique" Priority="10"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="false">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="1"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="WATER"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedAntiStructureShip</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_AI1_Aircraft_Carrier_Escort"
+    MaxTargets="3">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_AC_Escort" Priority="10"/>
+    <Tactic id="Defend" Tactic="StaticDefense" Distance="250" EndBehavior="DISBAND" EndIfStateTurnsOff="false">
+      <TeamTemplate MinUnits="2"
+      							MaxUnits="5"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER AIRFIELD"
+      							AllowedLocomotorTypes="WATER"
+                    Priority="STANDARD"
+                    AlwaysRecruit="true"
+                    MicroManager="FearlessDefenseMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_AI1_Additional_ConYard"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 3"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="50"/>
+    <Tactic id="Defend" Tactic="SimpleAttack"  EndBehavior="PICK_NEW_TARGET" EndIfStateTurnsOff="false" DisbandAfterRetreatTeamSize="2">
+      <TeamTemplate MinUnits="2"
+      							MaxUnits="6"
+      							IncludeKindOf="CAN_ATTACK FIGHTER_AIRCRAFT"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="LAND"
+                    Priority="STANDARD"
+                    AlwaysRecruit="true"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+        <CreateUnits UnitName="AlliedScoutInfantry"/>
+        <CreateUnits UnitName="AlliedAntiVehicleVehicleTech1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_J04_TechBuild">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Upgrade="Upgrade_AlliedTech2" Heuristic="UPGRADE_TECH" ForceTime="600s"/>
+    <BuildEntry Upgrade="Upgrade_AlliedTech3" Heuristic="UPGRADE_TECH" ForceTime="1120s"/>
+  </AIBuildStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_AI1_BonusObj1Capture"
+    MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 3"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Infiltrate_1"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Infiltrate_2"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Infiltrate_3"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1">
+      <TeamTemplate MinUnits="1" MaxUnits="4" 
+                    IncludeKindOf="CAN_ATTACK" 
+                    ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" 
+                    ReleaseType="NEVER_RELEASE" 
+                    AlwaysRecruit="false"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    MicroManager="CaptureTechMicroManager">
+        <CreateUnits UnitName="AlliedEngineer"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_FootHoldCreated_LandAttack"
+    MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - AI FLAG - Phase 3"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestUnitHeuristic"/>
+    <TargetHeuristic TargetHeuristic="ClosestHarvesterHeuristic"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic"/>
+    <Tactic id="Engineer" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1">
+      <TeamTemplate MinUnits="1" MaxUnits="4"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD"
+                    ReleaseType="NEVER_RELEASE"
+                    AlwaysRecruit="false"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+        <CreateUnits UnitName="AlliedAntiVehicleVehicleTech1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+
+  <AIBuildStateDefinition
+    id="AIState_J04_AlliedNavalYardBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedAntiInfantryVehicle" Heuristic="FEWEST_UNIT" CountModifier="1.2"/>
+    <BuildEntry Build="AlliedAntiNavalScout" Heuristic="FEWEST_UNIT" CountModifier="0.9"/>
+    <BuildEntry Build="AlliedAntiNavyShipTech1" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiAirShip" Heuristic="FEWEST_UNIT" CountModifier="0.5"/>
+    <BuildEntry Build="AlliedAntiStructureShip" Heuristic="FEWEST_UNIT" CountModifier="0.3"/>
+  </AIBuildStateDefinition>
+
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_AttackFighterAircraft_Phase2"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - FLAG - Phase 2"/>
+      <IntervalHeuristic IntervalTime="150s" ActiveTime="90s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestAirborneTargetHeuristic"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RETURN_HOME_AND_DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+                    IncludeKindOf="CAN_ATTACK FIGHTER_AIRCRAFT"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    MicroManager="FighterAircraftMicroManager" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_AttackFighterAircraft_Phase3"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - FLAG - Phase 3"/>
+      <IntervalHeuristic IntervalTime="120s" ActiveTime="90s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestAirborneTargetHeuristic"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RETURN_HOME_AND_DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="2" MaxUnits="3"
+                    IncludeKindOf="CAN_ATTACK FIGHTER_AIRCRAFT" 
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    MicroManager="FighterAircraftMicroManager" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+</AssetDeclaration>

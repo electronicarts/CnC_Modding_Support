@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+		   xmlns="uri:ea.com:eala:asset"
+		   xmlns:at="uri:ea.com:eala:asset:type"
+		   xmlns:xas="uri:ea.com:eala:asset:schema"
+		   targetNamespace="uri:ea.com:eala:asset"
+		   elementFormDefault="qualified"
+		   xmlns:XmlEdit="uri:ea.com:eala:XmlEdit">
+		   
+	<xs:simpleType name="BootupDisplayItemType"
+		xas:useEnumPrefix="false"
+		xas:enumItemPrefix="BOOTUP_"
+		xas:targetNamespace="Sage::UI::Joypad">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="STATIC_SCREEN"/>
+			<xs:enumeration value="LOAD_SCREEN"/> <!-- Animated flash load screen -->
+			<xs:enumeration value="MOVIE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="BootupDisplayItem" >
+		<xs:sequence>
+			<xs:element name="RandomTexture" type="TextureRef" minOccurs="0" maxOccurs="unbounded"/> <!-- Can we make this an asset ref? -->
+			<xs:element name="Movie"		 type="xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="Type" type="BootupDisplayItemType" use="required"/>
+		<xs:attribute name="Duration" type="SageInt"/> <!-- number of seconds to display a screen -->
+		<xs:attribute name="Priority" type="SageInt" use="required"/> <!-- Defines the order in which items are displayed -->
+		<xs:attribute name="ShowOnReboot" type="SageBool" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="BootupDisplaySequence" xas:runtimeWrapper="Sage::UI::Joypad::Settings::BootupSequenceData" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="DisplayItem" type="BootupDisplayItem" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="LoadingTextTexture" type="TextureRef" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

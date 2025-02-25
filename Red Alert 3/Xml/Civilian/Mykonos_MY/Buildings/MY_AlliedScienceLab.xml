@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+		<Include type="all"	source="ART:MY_AlliedScienceLab.W3X" />
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="instance" source="DATA:Civilian/Mykonos_MY/Props/MY_AlliedScienceLab_Collapse.xml" />
+		
+	</Includes>
+	<GameObject
+		id="MY_AlliedScienceLab"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		SelectPortrait="Portrait_AlliedSciencelab"
+		ButtonImage="Button_AlliedSciencelab"
+		EditorName="MY_AlliedScienceLab"	
+	    	EditorSorting="STRUCTURE"
+		Browser="REGION Mykonos_MY STRUCTURE"
+		TypeDescription="TYPE:AlliedScienceLab"
+		Description="DESC:AlliedScienceLab"
+		HealthBoxHeightOffset="130">
+		<DisplayName xai:joinAction="Replace">Name:AlliedScienceLab</DisplayName>		
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18 BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="MY_AlliedScienceLab" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="ScienceTechLab"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_CIV_MY_AlliedScienceLab_DieExplosion" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="MY_AlliedScienceLab_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>	
+			
+			<!-- civ buildings should have a CreateObjectDie to make a collapse version. -->
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+      <xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+
+    </Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_MEDIUM"
+				/>
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<PlacementShape
+				Type= "BOX"
+				MajorRadius = "60.0"
+				MinorRadius = "90.0"
+				Height = "5.0"/>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "55.0"
+				MinorRadius = "41.5"
+				Height = "40.0"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "-5.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				Type= "CYLINDER"
+				MajorRadius = "17.0"
+				MinorRadius = "1.0"
+				Height = "70.0"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "51.0"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "20.0"
+				MinorRadius = "26.0"
+				Height = "5.0"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "-65.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="ALL_TechCenter_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+    <ProjectedBuildabilityInfo
+      Radius="360"
+      BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+
+	<ObjectCreationList
+		id="MY_AlliedScienceLab_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>MY_AlliedScienceLab_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>	
+  
+</AssetDeclaration>

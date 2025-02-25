@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="../AssetTypeInvisibilityTemplate.xsd"/>
+	
+	<xs:complexType name="AnimAndDuration">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="AnimState" type="ModelConditionFlagType" />
+		<xs:attribute name="Frames" type="SageUnsignedInt" default="0" />
+		<xs:attribute name="Trigger" type="SageUnsignedInt" default="0" />
+	</xs:complexType>
+
+	<xs:simpleType name="ParseCondStateType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PARSE_NORMAL" />
+			<xs:enumeration value="PARSE_DEFAULT" />
+			<xs:enumeration value="PARSE_TRANSITION" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="ModuleData" xas:isPolymorphic="true">
+		<xs:attribute name="id" type="Poid" xas:refType="ModuleData" />
+	</xs:complexType>
+
+	<xs:complexType name="ClientBehaviorModuleData">
+		<xs:complexContent>
+			<xs:extension base="ModuleData">
+				<xs:sequence></xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DrawModuleData">
+		<xs:complexContent>
+			<xs:extension base="ModuleData">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="BehaviorModuleData">
+		<xs:complexContent>
+			<xs:extension base="ModuleData">
+				<xs:sequence></xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ContainModuleData">
+		<xs:complexContent>
+			<xs:extension base="BehaviorModuleData">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="DisabledBitsTurningOffContainer" type="DisabledBitFlags" default="USER_PARALYZED FROZEN STASIS_FIELD PRODUCTION_IN_PROGRESS" />
+				<xs:attribute name="DisabledBitsThatKickOutOccupants" type="DisabledBitFlags" default="" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ClientUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="BehaviorModuleData">
+				<xs:sequence></xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="UpdateModuleData">
+		<xs:complexContent>
+			<!-- A little "hack" so that having multiple containers is easier, since
+				some containers use UpdateModule and we can't use multiple inheretance.
+				It was either this or rewriting half the contain modules... -->
+			<xs:extension base="ContainModuleData">
+				<xs:sequence></xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ModelConditionStateTurret">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="TurretNameKey" type="xs:string" />
+		<xs:attribute name="TurretArtAngle" type="Angle" />
+		<xs:attribute name="TurretPitch" type="xs:string" />
+		<xs:attribute name="TurretArtPitch" type="Angle" />
+		<xs:attribute name="TurretID" type="SageInt" default="-1" />
+	</xs:complexType>
+	<xs:complexType name="FXEvent">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Frame" type="SageInt" />
+		<xs:attribute name="FrameStep" type="SageInt" />
+		<xs:attribute name="FrameStop" type="SageInt" />
+		<xs:attribute name="FireWhenSkipped" type="SageBool" default="false" />
+		<xs:attribute name="Effect" type="FXListRef" />
+		<xs:attribute name="Bone" type="xs:string" />
+	</xs:complexType>
+
+	<xs:simpleType name="LuaEventTriggerType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TRIGGER_ONFRAME" />
+			<xs:enumeration value="TRIGGER_ONSTATEENTER" />
+			<xs:enumeration value="TRIGGER_ONSTATELEAVE" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="LuaEvent">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Frame" type="SageInt" />
+		<xs:attribute name="Data" type="xs:string" />
+		<xs:attribute name="Trigger" type="LuaEventTriggerType" default="TRIGGER_ONFRAME" />
+	</xs:complexType>
+
+	<xs:simpleType name="FXTriggerType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="CATAPULT_ROCK" />
+			<xs:enumeration value="TREBUCHET_ROCK" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FXActionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="HOLD" />
+			<xs:enumeration value="KILL" />
+			<xs:enumeration value="SPAWN" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="ParticleSysBone">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="BoneName" type="xs:string" />
+		<xs:attribute name="FXParticleSystemTemplate" type="FXParticleSystemRef" />
+		<xs:attribute name="FollowBone" type="SageBool" default="false" />
+		<xs:attribute name="FXTrigger" type="FXTriggerType" default="NONE" />
+		<xs:attribute name="FXAction" type="FXActionType" default="NONE" />
+		<xs:attribute name="PersistID" type="SageInt" default="0" />
+		<xs:attribute name="OnlyIfOnWater" type="SageBool" default="false" />
+		<xs:attribute name="OnlyIfOnLand" type="SageBool" default="false" />
+		<xs:attribute name="id" type="AssetId" />
+	</xs:complexType>
+	<xs:complexType name="ScriptedModelDrawModel">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Name" type="RenderObjectRef" use="optional" xas:byValue="true" />
+		<xs:attribute name="ExtraMesh" type="SageBool" default="false" />
+	</xs:complexType>
+	<xs:complexType name="BoneAttachPoint">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="WeaponSlotID" type="SageInt" default="1" />
+		<xs:attribute name="WeaponSlotType" type="WeaponSlotType" default="PRIMARY_WEAPON" />
+		<xs:attribute name="BoneName" type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="ModelConditionState">
+		<xs:sequence>
+			<xs:element name="Model" type="ScriptedModelDrawModel" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="Material" type="FXShaderMaterial" minOccurs="0" maxOccurs="1" />
+			<xs:element name="Texture" type="ReplaceTexture" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="WeaponFireFXBone" type="BoneAttachPoint" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="WeaponRecoilBone" type="BoneAttachPoint" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="WeaponMuzzleFlash" type="BoneAttachPoint" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="WeaponLaunchBone" type="BoneAttachPoint" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="ParticleSysBone" type="ParticleSysBone" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="FXEvent" type="FXEvent" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="ShadowInfo" type="ShadowInfo" minOccurs="0" maxOccurs="1" XmlEdit:Category="Engineering" />
+			<xs:element name="Turret" type="ModelConditionStateTurret" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="SubObject" type="Poid" xas:refType="SubObject" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="ParseCondStateType" type="ParseCondStateType" use="required" />
+		<xs:attribute name="Name" type="xs:string" />
+		<xs:attribute name="ConditionsYes" type="ModelConditionBitFlags" />
+		<xs:attribute name="Skeleton" type="AssetId" />
+		<xs:attribute name="PortraitImage" type="ImageRef" />
+		<xs:attribute name="ButtonImage" type="ImageRef" />
+		<xs:attribute name="OverrideTooltip" type="xs:string" />
+		<xs:attribute name="RetainSubObjects" type="SageBool" default="false" />
+		<xs:attribute name="id" type="AssetId" />
+	</xs:complexType>
+	<xs:complexType name="AttachModelStruct">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Object" type="AssetId" />
+		<xs:attribute name="Probability" type="SageInt" default="-1" />
+	</xs:complexType>
+	<xs:complexType name="ScriptedModelDrawAttachModel">
+		<xs:sequence>
+			<xs:element name="Model" type="AttachModelStruct" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="FlagMask" type="ModelConditionBitFlags" />
+		<xs:attribute name="Bone" type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="ScriptedModelDrawEmbedPortal">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="PortalType" type="WaypointPortalType" />
+		<xs:attribute name="BonePrefix" type="xs:string" />
+	</xs:complexType>
+	<xs:simpleType name="BodyDamageType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PRISTINE" />
+			<xs:enumeration value="DAMAGED" />
+			<xs:enumeration value="REALLY_DAMAGED" />
+			<xs:enumeration value="RUBBLE" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BodyDamageBitFlags">
+		<xs:list itemType="BodyDamageType" />
+	</xs:simpleType>
+	<xs:simpleType name="MaxHealthChangeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SAME_CURRENTHEALTH" />
+			<xs:enumeration value="PRESERVE_RATIO" />
+			<xs:enumeration value="ADD_CURRENT_HEALTH_TOO" />
+			<xs:enumeration value="RESTORE_HEALTH_TO_MAX" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="WeatherTexture">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Weather" type="WeatherType" default="NORMAL" />
+		<xs:attribute name="Texture" type="TextureRef" default="" />
+	</xs:complexType>
+	
+	<xs:complexType name="InvisibilityNuggetType">
+		<xs:sequence>
+			<xs:element name="IgnoreTreeCheckUpgrade" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="ForbiddenConditions" type="ModelConditionBitFlags" default="PREATTACK_A FIRING_A FIRING_OR_PREATTACK_A RELOADING_A USING_WEAPON_A PREATTACK_B FIRING_B FIRING_OR_PREATTACK_B RELOADING_B USING_WEAPON_B PREATTACK_C FIRING_C FIRING_OR_PREATTACK_C RELOADING_C USING_WEAPON_C"/>
+		<xs:attribute name="ForbiddenConditionExceptions" type="ModelConditionBitFlags" default=""/>
+		<xs:attribute name="ForbiddenStatus" type="ObjectStatusBitFlags" default="IS_FIRING_WEAPON IS_AIMING_WEAPON SPECIAL_ABILITY_PACKING_UNPACKING_OR_USING USING_ABILITY"/>
+		<xs:attribute name="CamouflageLevel" type="SageUnsignedInt" />
+		<xs:attribute name="InvisibilityType" type="InvisibilityType" default="STEALTH"/>
+		<xs:attribute name="Options" type="InvisibilityNuggetOptionsBitFlags" />
+		<xs:attribute name="EnteringStealthFX" type="FXListRef" />
+		<xs:attribute name="LeavingStealthFX" type="FXListRef" />
+		<xs:attribute name="HintDetectableStates" type="ObjectStatusBitFlags" default="IS_ATTACKING" />
+		<xs:attribute name="NoStealthForAttackWindow" type="Time" default="0s" />
+	</xs:complexType>
+
+	<xs:complexType name="ObjectStatusValidationDataType">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="ForbiddenStatus" type="ObjectStatusBitFlags" />
+		<xs:attribute name="RequiredStatus" type="ObjectStatusBitFlags" />
+	</xs:complexType>
+
+</xs:schema>

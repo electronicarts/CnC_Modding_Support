@@ -1,0 +1,54 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// Scrape script for distortion post effect
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_POSTFX_DISTORTION_SCRAPEH
+#define SCRAPE_SCRIPT_POSTFX_DISTORTION_SCRAPEH
+
+
+//
+// Distortion
+//
+
+var texture DistortionOffsetTexture $PostEffect.FrameBufferSize.x $PostEffect.FrameBufferSize.y A8R8G8B8
+
+var shader PostEffectDistortionShader PostFX_Distortion.fx
+
+proc PostEffectDistortion
+	if PostEffect Distortion.IsEnabled
+		beginevent UpdatePostFXDistortion
+		
+		callproc copyFrameBufferToTexture
+
+		setclearcolor 0.5 0.5 1 1
+		clearcolor // leave z unchanged!
+		
+		renderbin Distorter
+	
+		renderbin Distorter BinCommand_RenderParticles
+
+		renderDistortionLasers
+		//TODO: renderDistortionStreams
+
+#if defined(EA_PLATFORM_XENON)
+		resolve DistortionOffsetTexture
+#else
+		if WW3D IsUsingFrameRenderTarget
+			stretchrect FrameRenderTarget DistortionOffsetTexture
+		else
+			stretchrect FrameBuffer DistortionOffsetTexture
+		endif
+#endif
+
+		settexture PostEffect FrameBufferTexture PostEffectFrameBufferTexture
+		settexture PostEffect Distortion.DistortionOffsetTexture DistortionOffsetTexture
+		
+		setshader PostEffectDistortionShader
+		renderquad
+		
+		endevent UpdatePostFXDistortion
+	endif
+endproc
+
+#endif // SCRAPE_SCRIPT_POSTFX_DISTORTION_SCRAPEH

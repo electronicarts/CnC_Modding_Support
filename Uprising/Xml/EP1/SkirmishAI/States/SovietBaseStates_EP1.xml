@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes></Includes>
+
+	<AIStrategicStateDefinition
+		id="SovietCaptureTechAggressive"
+		MaxTargets="2">
+		<Heuristic>
+			<TimerHeuristic StartTime="15s" EndTime="-1s" CountFrom="AI_START"/>
+			<EnemyNearbyHeuristic Distance="500.0" EnemyNearby="false"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestTechBuildingHeuristic"/>
+		<Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1">
+			<TeamTemplate MinUnits="1" MaxUnits="4" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+						RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+						Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false"
+						AllowedLocomotorTypes="LAND WATER AMPHIBIOUS"
+						MicroManager="CaptureTechMicroManager">
+				<CreateUnits UnitName="SovietEngineer" MinUnits="1" MaxUnits="1"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="SovietAkulaSubAttack"
+		MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="240s" EndTime="-1s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic" Priority="10"/>
+		<Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND" UseAestheticsManager="true">
+			<TeamTemplate MinUnits="2" MaxUnits="6"
+						RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="WATER AMPHIBIOUS"
+						Priority="HIGH" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false" SortByDistance="false"
+						MicroManager="StandardMicroManager">
+				<CreateUnits UnitName="SovietAntiNavyShipTech2" MinUnits="2" MaxUnits="2"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="ApocTankAttack"
+		MaxTargets="3">
+		<Heuristic>
+			<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="10"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true">
+			<TeamTemplate MinUnits="3" MaxUnits="6"
+						RegisteredObjectSet="VEHICLES"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="LAND"
+						Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false" SortByDistance="false"
+						MicroManager="FearlessMicroManager">
+				<ObjectFilter Rule="ANY">
+					<IncludeThing>SovietAntiVehicleVehicleTech3</IncludeThing>
+				</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="GrinderTankAttack_Early"
+		MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="90s" EndTime="160s"/>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+				<ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+					<IncludeThing>SovietGrinderVehicle</IncludeThing>
+				</ObjectFilter>
+		  </ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="10"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999" UseAestheticsManager="true">
+			<TeamTemplate MinUnits="2" MaxUnits="2"
+						RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="AMPHIBIOUS"
+						Priority="HIGH" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false" SortByDistance="false"
+						MicroManager="StandardMicroManager">
+				<ObjectFilter Rule="ANY">
+					<IncludeThing>SovietGrinderVehicle</IncludeThing>
+				</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="GrinderTankAttack"
+		MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="240s" EndTime="-1s"/>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+				<ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+					<IncludeThing>SovietGrinderVehicle</IncludeThing>
+				</ObjectFilter>
+		  </ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="10"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999" UseAestheticsManager="true">
+			<TeamTemplate MinUnits="8" MaxUnits="20"
+						RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+						AllowedLocomotorTypes="AMPHIBIOUS"
+						Priority="HIGH" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="true" SortByDistance="false"
+						MicroManager="StandardMicroManager">
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="SovietHeavyCaptureLandHusks"
+		MaxTargets="8"
+		PathfindingCheckType="QuickDoesAttackPathExist"
+		CannotAttackTargetReaction="Ignore">
+		<Heuristic>
+			<EnemyNearbyHeuristic Distance="300.0" EnemyNearby="false"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="LandHuskHeuristic"/>
+		<Tactic id="Garrison" Tactic="GarrisonBuilding" EndBehavior="DISBAND">
+			<TeamTemplate MinUnits="1" MaxUnits="1" MinPowerAdvantage="0.5"
+						RegisteredObjectSet="INFANTRY"
+						AllowedLocomotorTypes="LAND AMPHIBIOUS"
+						IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+						Priority="STANDARD" AlwaysRecruit="false"
+						MicroManager="CaptureHuskMicroManager">
+				<CreateUnits UnitName="SovietAntiInfantryInfantry" MinUnits="1" MaxUnits="1"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="MortarCycleAttacks"
+		MaxTargets="5">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="10"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="false">
+		<TeamTemplate MinUnits="3" MaxUnits="6"
+					IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+					AllowedLocomotorTypes="LAND"
+					Priority="STANDARD" AlwaysRecruit="false"
+					MicroManager="MortarCycleDodgeMicroManager">
+				<ObjectFilter Rule="ANY">
+					<IncludeThing>SovietMortarcycle</IncludeThing>
+				</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="CC33_DestroyIronCurtain"
+		MaxTargets="1"
+		PathfindingCheckType="None">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="AITarget_CC_33_IronCurtain" Priority="10"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true">
+		<TeamTemplate MinUnits="6" MaxUnits="12"
+					IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+					AllowedLocomotorTypes="AMPHIBIOUS AIR"
+					Priority="HIGH" AlwaysRecruit="false"
+					MicroManager="FearlessMicroManager">
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+  <AIStrategicStateDefinition
+    id="CC33_BaseAttack"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="P1 IC Destroyed"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" DisbandAfterRetreatTeamSize="4">
+      <TeamTemplate MinUnits="6" MaxUnits="18" MaxTypesOfUnits="2"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="StandardMicroManager_MEDIUM">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+          <ExcludeThing>SovietBomberAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+	
+	<AIBuildStateDefinition
+		id="SovietTier2OnlyTechBuildState">
+		<Heuristic>
+		<OpeningMoveHeuristic Complete="true"/>
+		<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+		<EnemyNearbyHeuristic Distance="600.0" EnemyNearby="false" MinEnemyValue="1000">
+			<EnemyFilter
+				Relationship="ENEMIES"
+				Rule="ANY"
+				Include="CAN_ATTACK ENGINEER INFILTRATOR">
+			</EnemyFilter>
+		</EnemyNearbyHeuristic>
+		</Heuristic>
+		<BuildEntry Build="SovietPowerPlantAdvanced" Heuristic="TECH" MinTime="180s" ForceTime="180s"/>
+		<BuildEntry Build="SovietSuperWeapon" Heuristic="TECH" MinTime="360s"/>
+	</AIBuildStateDefinition>
+	
+	<AIBuildStateDefinition
+		id="CC33_SovietTech">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+			<EnemyNearbyHeuristic Distance="600.0" EnemyNearby="false" MinEnemyValue="1000">
+				<EnemyFilter
+					Relationship="ENEMIES"
+					Rule="ANY"
+					Include="CAN_ATTACK ENGINEER INFILTRATOR">
+				</EnemyFilter>
+			</EnemyNearbyHeuristic>
+		</Heuristic>
+		<BuildEntry Build="SovietPowerPlantAdvanced" Heuristic="TECH" MinTime="180s" ForceTime="180s"/>
+		<!--
+		<BuildEntry Build="SovietSuperWeapon" Heuristic="TECH" MinTime="360s"  ForceTime="240s"/>
+		-->
+	</AIBuildStateDefinition>
+	
+	<AIBuildStateDefinition
+		id="CC27_SovietTech">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+		</Heuristic>
+		<BuildEntry Build="SovietPowerPlantAdvanced" Heuristic="TECH" MinTime="180s" ForceTime="180s"/>
+		<BuildEntry Build="SovietTechStructure" Heuristic="TECH" MinTime="210s" ForceTime="210s"/>
+	</AIBuildStateDefinition>
+	
+	<AIBuildStateDefinition
+		id="CC06_SovietTech">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+			<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+		</Heuristic>
+		<BuildEntry Build="SovietPowerPlantAdvanced" Heuristic="TECH" MinTime="180s" ForceTime="240s"/>
+		<BuildEntry Build="SovietTechStructure" Heuristic="TECH" MinTime="210s" ForceTime="480s"/>
+	</AIBuildStateDefinition>
+	
+	<AIBuildStateDefinition
+		id="CC39_SovietWarFactory">
+		<Heuristic>
+		<ConstantHeuristic/>
+		</Heuristic>
+		<BuildEntry Build="SovietScoutVehicle" Heuristic="FEWEST_UNIT" CountModifier="0.5"/>
+		<BuildEntry Build="SovietAntiAirShip_Ground" Heuristic="FEWEST_UNIT" CountModifier="1.5"/>
+		<BuildEntry Build="SovietGrinderVehicle" Heuristic="FEWEST_UNIT" CountModifier="3.0"/>
+		<BuildEntry Build="SovietMiner" Heuristic="HARVESTER"/>
+	</AIBuildStateDefinition>
+
+</AssetDeclaration>

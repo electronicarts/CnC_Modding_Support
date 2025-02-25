@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags/>
+  <Includes>
+    <Include
+      source="DATA:GDI\Units\GDIHammerhead.xml"
+      type="instance"/>
+    <Include
+      source="DATA:GDI\Structures\GDIPowerPlant.xml"
+      type="instance"/>
+    <Include
+      source="DATA:GDI\Structures\MG_GDI_ASATDefense.xml"
+      type="instance"/>
+    <Include
+     source = "DATA:GlobalData\Armor.xml"
+     type = "instance"/>
+    <Include
+     source = "DATA:GlobalData\SpecialPowerTemplates.xml"
+     type = "instance"/>
+    <Include
+     source = "DATA:NOD\Props\NODShadowSquadBeacon.xml"
+     type = "instance"/>
+    <Include
+     source = "DATA:NOD\Units\NODShadowSquad.xml"
+     type = "instance"/>
+    <Include
+     source="DATA:GDI\Props\GDIPowerStore.xml"
+     type="instance"/>
+   <Include
+     source="DATA:GDI/Units/GDIMissileSoldierSquad.xml"
+     type="instance"/>
+   <Include
+     source="DATA:GDI/Units/GDIRifleSoldierSquad.xml"
+     type="instance"/>
+    <Include
+     type="all"
+     source="ART:GUHamSpots_SKN.w3x" />
+    <Include 	source = "DATA:GlobalData\SpecialPowerTemplates.xml" type = "instance"/>
+  </Includes>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerDeployBeacon"
+		TargetType="LOCATION"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="InitiateDeployBeacon"
+		WaypointModeTerminal="false"
+		ReloadTime="15s"
+    ForbiddenObjectRange="15"
+    Flags="PATHABLE_ONLY NOT_CLIFF_CELL NO_FORBIDDEN_OBJECTS">
+    <ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE CRUSHABLE_OBSTACLE" />
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+    id="SpecialPowerIonCannonControlIonCannon_2_1"
+    DisplayName="NAME:SuperweaponTimerIonCannon"
+    Description="DESC:SuperweaponTimerIonCannon"
+    Flags="IS_PLAYER_POWER FOGGED_SHROUDED_CELLS_OK WATER_OK IGNORE_MAP_EXTENTS SHARED_SYNC"
+    ReloadTime="30s"
+    TargetType="LOCATION"
+    RadiusCursorRadius="300"
+    RestrictionType="1"
+    EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+    EvaEventToPlayOnInitiateOwner="OwnIonCannonActivated"
+    EvaEventToPlayOnInitiateAlly="AlliedIonCannonActivated"
+    EvaEventToPlayOnInitiateEnemy="EnemyIonCannonActivated"
+    TimerImage="Button_PlayerPowerIonCannon" />
+  
+  <GameObject
+   id="GDIPowerStore"
+   inheritFrom="GDIPowerStore">
+    <Behaviors>
+      <OCLSpecialPower
+				id="ModuleTag_IonCannon"
+				SpecialPowerTemplate="SpecialPowerIonCannonControlIonCannon_2_1"
+				UpdateModuleStartsAttack="true"
+				AvailableAtStart="false"
+				OCL="OCL_SuperweaponDestroyCiviliansHumanelyObject"
+				CreateLocation="CREATE_AT_LOCATION"
+			/>
+      <WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_IonCannonUpdate"
+				SpecialPowerTemplate="SpecialPowerIonCannonControlIonCannon_2_1"
+				SpecialWeapon="IonCannonWeapon"
+				UnpackTime="0s"
+				PackTime="3s"
+				WhichSpecialWeapon="1"
+			/>
+    </Behaviors>
+    <ClientUpdates>
+      <EvaAnnounceSpecialPowerReadyClientUpdate
+        id="IonCannonReady"
+        xai:joinAction="Remove"/>
+      <EvaAnnounceClientCreate
+        id="IonCannonDetected"
+        xai:joinAction="Remove"/>
+    </ClientUpdates>
+  </GameObject>
+
+  <GameObject
+    id="MG_GDI_ASATDefense"
+    inheritFrom="MG_GDI_ASATDefense">
+    <DisplayName
+      xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIComCenterSP</DisplayName>  
+    
+  </GameObject>
+  
+  <GameObject
+    id="GDIHammerhead"
+    inheritFrom="GDIHammerhead"
+   	KindOf="PRELOAD SELECTABLE TRANSPORT CAN_ATTACK ATTACK_NEEDS_LINE_OF_SIGHT REVEAL_TO_ALL CAN_CAST_REFLECTIONS SCORE VEHICLE AIRCRAFT BEAM_TARGET_REFLECTOR PRODUCED_AT_HELIPAD ASSAULT_AIRCRAFT ATTACK_NEEDS_LINE_OF_SIGHT LINE_OF_SIGHT_IGNORES_BUILDINGS NO_COLLIDE CAN_BE_FAVORITE_UNIT">
+    <Draws>
+      <SpotlightDraw
+          id="ModuleTag_Spotlight"
+          xai:joinAction="Replace"
+          AttachToBoneInAnotherModule="Bone_GunTurret_L"
+          RefreshTime="2.0s"
+          SweepTime="1.0s"
+		  AlwaysOn="true">
+        <ModelConditionState
+          ParseCondStateType="PARSE_DEFAULT">
+          <Model
+            Name="GUHamSpots_SKN" />
+        </ModelConditionState>
+        <ModelConditionState
+          ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="BUILD_PLACEMENT_CURSOR">
+          <Model
+            Name="" />
+        </ModelConditionState>
+        <AnimationState
+          ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="BUILD_PLACEMENT_CURSOR">
+          <Script>
+            CurDrawableHideSubObject("Plane01")
+          </Script>
+        </AnimationState>
+      </SpotlightDraw>
+      <SpotlightDraw
+        id="ModuleTag_Spotlight_2"
+        AttachToBoneInAnotherModule="Bone_GunTurret_R"
+        RefreshTime="2.0s"
+        SweepTime="1.0s"
+		AlwaysOn="true">
+        <ModelConditionState
+          ParseCondStateType="PARSE_DEFAULT">
+          <Model
+            Name="GUHamSpots_SKN" />
+        </ModelConditionState>
+        <ModelConditionState
+          ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="BUILD_PLACEMENT_CURSOR">
+          <Model
+            Name="" />
+        </ModelConditionState>
+        <AnimationState
+          ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="BUILD_PLACEMENT_CURSOR">
+          <Script>
+            CurDrawableHideSubObject("Plane01")
+          </Script>
+        </AnimationState>
+      </SpotlightDraw>
+    </Draws>
+    <VisionInfo
+      VisionRange="150"
+      ShroudClearingRange="150" />
+    <Behaviors>
+      <StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="150" />
+    </Behaviors>
+  </GameObject>
+
+  <GameObject
+    id="GDIPowerPlant"
+    inheritFrom="GDIPowerPlant"
+    EnergyProduction="100">
+  </GameObject>
+
+  <GameObject
+  id="NODShadowSquadBeacon"
+  inheritFrom="NODShadowSquadBeacon"
+  KindOf="RESIST_EMP NOT_AUTOACQUIRABLE IGNORES_SELECT_ALL IMMOBILE CAN_ATTACK ATTACK_NEEDS_LINE_OF_SIGHT VEHICLE INFILTRATOR STEALTH_GARRISON SKIRMISH_AI_DONT_GARRISON CAN_CAPTURE SNIPER CAN_BE_FAVORITE_UNIT SCORE">
+    <Behaviors>
+      <LifetimeUpdate
+        id="ModuleTag_Lifetime"
+        xai:joinAction="Remove" />
+    </Behaviors>
+  </GameObject>
+
+  <GameObject
+    id="NODShadowSquad"
+    inheritFrom="NODShadowSquad">
+    <VisionInfo
+      VisionRange="150"
+      ShroudClearingRange="150" />
+  </GameObject>
+  
+  <GameObject
+	id="GDIRifleSoldierSquad"
+	inheritFrom="GDIRifleSoldierSquad">
+	<VisionInfo
+      VisionRange="140"
+      ShroudClearingRange="140" />
+  </GameObject>
+ 
+   <GameObject
+	id="GDIMissileSoldierSquad"
+	inheritFrom="GDIMissileSoldierSquad">
+	<VisionInfo
+      VisionRange="140"
+      ShroudClearingRange="140" />
+  </GameObject>
+  
+  <ArmorTemplate
+    id="GDIPowerPlantArmor"
+    inheritFrom ="GDIPowerPlantArmor"
+    xai:joinAction="Overwrite">
+    <Armor
+			Damage="CANNON"
+			Percent="5000" />
+    <Armor
+			Damage="ROCKET"
+			Percent="50" />
+    <Armor
+			Damage="GRENADE"
+			Percent="75" />
+    <Armor
+			Damage="GUN"
+			Percent="0" />
+    <Armor
+			Damage="SNIPER"
+			Percent="0" />
+  </ArmorTemplate>
+  
+   <SpecialPowerTemplate
+		id="SpecialPowerGDI_SpaceCommandShockwaveArtillery"
+		ReloadTime="360s"
+		RadiusCursorRadius="110"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="GDI_ShockwaveArtillery_WeaponFire_Stereo"
+		Flags="IS_PLAYER_POWER WATER_OK SHARED_SYNC"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		Money="-2000">
+	</SpecialPowerTemplate>
+	
+	 <SpecialPowerTemplate
+		id="SpecialPowerBombingRun"
+		ReloadTime="480s"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="GDI_Orca_VoiceAirstrikeInbound"
+		RadiusCursorRadius="50"
+		Flags="IS_PLAYER_POWER WATER_OK SHARED_SYNC"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		Money="-500">
+	</SpecialPowerTemplate>
+	
+	<SpecialPowerTemplate
+		id="SpecialPowerCallSupportBloodhound"
+		Flags="NOT_CLIFF_CELL IS_PLAYER_POWER NO_FORBIDDEN_OBJECTS SHARED_SYNC"
+		ReloadTime="360s"
+		ForbiddenObjectRange="140"
+		RadiusCursorRadius="140"
+		TargetType="LOCATION"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		Money="-3000"
+		InitiateAtLocationSound="GDI_Ox_VoiceReinforcements">
+    <ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE" />
+  </SpecialPowerTemplate>
+	
+	  <SpecialPowerTemplate
+		id="SpecialPowerCallSupportGDIAirborne"
+		Flags="NOT_CLIFF_CELL IS_PLAYER_POWER NO_FORBIDDEN_OBJECTS SHARED_SYNC"
+		ReloadTime="480s"
+		ForbiddenObjectRange="110"
+		RadiusCursorRadius="110"
+		TargetType="LOCATION"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		Money="-1500"
+		InitiateAtLocationSound="GDI_Ox_VoiceReinforcements">
+    <ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE" />
+  </SpecialPowerTemplate>
+	
+	  <SpecialPowerTemplate
+		id="SpecialPowerCallSupportHunterKillerTeam"
+		Flags="NOT_CLIFF_CELL IS_PLAYER_POWER NO_FORBIDDEN_OBJECTS SHARED_SYNC"
+		ForbiddenObjectRange="130"
+		ReloadTime="480s"
+		RadiusCursorRadius="130"
+		TargetType="LOCATION"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		Money="-3500"
+		InitiateAtLocationSound="GDI_Ox_VoiceReinforcements">
+    <ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE" />
+  </SpecialPowerTemplate>
+	
+  <SpecialPowerTemplate
+		id="SpecialPowerGDI_SpaceCommandDropPods"
+		ReloadTime="360s"
+		RadiusCursorRadius="80"
+		ForbiddenObjectRange="100"
+		TargetType="LOCATION"
+		Flags="NOT_CLIFF_CELL NO_FORBIDDEN_OBJECTS IS_PLAYER_POWER SHARED_SYNC"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		Money="-4500"
+		InitiateAtLocationSound="GDI_DropPodDescendWithVoiceMS">
+    <ForbiddenObjectFilter
+    			Rule="ANY"	
+			Include="STRUCTURE" />
+    <GameDependency>
+      <RequiredObject>GDISpaceCommandUplink</RequiredObject>
+    </GameDependency>
+  </SpecialPowerTemplate>
+  
+  <SpecialPowerTemplate
+      id="SpecialPowerZOCOM_SpaceCommandRaiderPods"
+      ReloadTime="480s"
+      RadiusCursorRadius="80"
+      ForbiddenObjectRange="100"
+      TargetType="LOCATION"
+      Flags="NOT_CLIFF_CELL NO_FORBIDDEN_OBJECTS IS_PLAYER_POWER SHARED_SYNC"
+      EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+      Money="-4500"
+      InitiateAtLocationSound="GDI_ZOCOM_DropPodDescendWithVoiceMS">
+    <ForbiddenObjectFilter
+    			Rule="ANY"	
+			Include="STRUCTURE" />
+    <GameDependency>
+      <RequiredObject>ZOCOMSpaceCommandUplink</RequiredObject>
+    </GameDependency>
+  </SpecialPowerTemplate>
+  
+  <MissionObjectiveList id="MissionObjectives">
+
+		<MissionObjectiveTag
+			IsBonusObjective="false"
+			Script="SCRIPT:CM_2_2_Obj_1_Summary"
+			Description="SCRIPT:CM_2_2_Obj_1_Details">
+      <PresentationSettings
+				ID = "CM_2_2_Obj_1_A"
+				Dialog = "MN22_NodEVA04">
+        <Duration>3s</Duration>
+        <CameraStartAngle>10d</CameraStartAngle>
+        <CameraEndAngle>-10d</CameraEndAngle>
+      </PresentationSettings>
+      <PresentationSettings
+				ID = "CM_2_2_Obj_1_B">
+        <Duration>2s</Duration>
+        <CameraStartAngle>10d</CameraStartAngle>
+        <CameraEndAngle>-10d</CameraEndAngle>
+      </PresentationSettings>
+		</MissionObjectiveTag>	
+	
+		<MissionObjectiveTag
+			IsBonusObjective="false"
+			Script="SCRIPT:CM_2_2_Obj_2_Summary"
+			Description="SCRIPT:CM_2_2_Obj_2_Details">
+      <PresentationSettings
+				ID = "CM_2_2_Obj_2"
+				Dialog = "MN22_NodEVA06">
+        <Duration>6s</Duration>
+        <CameraStartAngle>10d</CameraStartAngle>
+        <CameraEndAngle>-10d</CameraEndAngle>
+      </PresentationSettings>
+		</MissionObjectiveTag>	
+		
+		<MissionObjectiveTag
+			IsBonusObjective="false"
+			Script="SCRIPT:CM_2_2_Obj_3_Summary"
+			Description="SCRIPT:CM_2_2_Obj_3_Details">
+      <PresentationSettings
+				ID = "CM_2_2_Obj_3"
+				Dialog = "MN22_NodEVA08">
+        <Duration>6s</Duration>
+        <CameraStartAngle>10d</CameraStartAngle>
+        <CameraEndAngle>-10d</CameraEndAngle>
+      </PresentationSettings>
+		</MissionObjectiveTag>	
+
+		<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:CM_2_2_BonusObj_1_Summary"
+			Description="SCRIPT:CM_2_2_BonusObj_1_Details">
+		</MissionObjectiveTag>	
+				
+	</MissionObjectiveList>
+	
+</AssetDeclaration>

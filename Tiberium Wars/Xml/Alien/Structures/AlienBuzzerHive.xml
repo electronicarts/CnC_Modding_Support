@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:ABBHive.w3x" />
+		<Include
+			type="all"
+			source="ART:ABBHiveBld.w3x" />
+		<Include
+			type="all"
+			source="ART:ABBHive_D2SN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABBHive_D2AN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABBHive_D3SN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABBHive_D3AN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABBHiveDr_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABBHiveDr_OPN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABBHiveDr_CLS.w3x" />
+		<Include
+			type="all"
+			source="ART:NBEmpty_ABLD.w3x" />
+		<Include
+			type="all"
+			source="ART:ABBHiveBld_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABBHiveBld_AAN.w3x" />
+		<Include
+			type="all"
+			source="ART:FXAspotlight.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="AlienBuzzerHive"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_ALIENBuzzerHive"
+		ButtonImage="Portrait_ALIENBuzzerHive"
+		Side="ALIEN"
+		EditorSorting="STRUCTURE"
+		BuildCost="600"
+		PlacementViewAngle="315d"
+		BuildTime="6"
+		CommandSet="AlienBuzzerHiveCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS AUTO_ACQUIRABLE_BY_AI COVER POWERED FS_BASE_DEFENSE CAN_SEE_THROUGH_STRUCTURE CAN_ATTACK"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		WeaponCategory="GUN"
+		EditorName="AlienBuzzerHive"
+		TypeDescription="Type:AlienBuzzerHive"
+		EnergyProduction="-7"
+		Description="DESC:ALIENBuzzerHive">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:ALIENBuzzerHive</DisplayName>
+		<GameDependency>
+			<RequiredObject>AlienPowerProjector</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="AlienBuzzerHiveArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="SPREAD" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABBHive" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="ABBHiveBld_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="ABBHive_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ABBHive_D2SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ABBHive" />
+					<Texture
+						Original="ABBHive"
+						New="ABBHive_D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="ABBHiveBld_AAN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABBHive_D3AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABBHive_D2AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABBHive_D1"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Damaged" and Prev ~= "TRANS_IntoDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoDamaged")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoDamaged">
+					<Animation
+						AnimationName="ABBHive_D1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+-->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="ABBHive_D2AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="ABBHive_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<!--
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="false" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="false" />
+-->
+				</AnimationState>
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Door"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABBHiveDr_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Open"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABBHiveDr_OPN"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="15" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Closed" then CurDrawableSetTransitionAnimState("TRANS_Open") end;
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="COMBINED_PARENT"
+					StateName="STATE_Closed"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABBHiveDr_CLS"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Open" then CurDrawableSetTransitionAnimState("TRANS_Close") end;
+					</Script>
+				</AnimationState>
+				<!-- TRANSITIONS -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_Open">
+					<Animation
+						AnimationName="ABBHiveDr_OPN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_Close">
+					<Animation
+						AnimationName="ABBHiveDr_CLS"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<SpotlightDraw
+				id="ModuleTag_Spotlight"
+				AttachToBoneInAnotherModule="abbhiveb"
+				RefreshTime="2.0s"
+				SweepTime="1.0s">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXAspotlight" />
+				</ModelConditionState>
+			</SpotlightDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_AlienBuildingDamagedS" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_AlienBuildingDamagedS" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_AlienBuildingRubbleS" />
+			</FXListBehavior>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="AlienBuzzerHiveWeapon" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="ALI_Building_Die" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<SpawnBehavior
+				id="ModuleTag_SpawnBuzzers"
+				SpawnNumberData="3"
+				InitialBurst="3"
+				SpawnReplaceDelayData=".1s"
+				SpawnInsideBuilding="true"
+				CombineOnCreate="true"
+				SpawnedRequireSpawner="true"
+				KillSpawnsOnCaptured="true"
+				KillSpawnsOnDisabled="true">
+				<Die
+					DeathTypes="ALL" />
+				<SpawnTemplate>AlienBuzzers_Slaved</SpawnTemplate>
+			</SpawnBehavior>
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="200" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/RepairAlliesEngineerContain.xml" />
+			<CreateObjectDie xmlns="uri:ea.com:eala:asset"
+				id="ModuleTag_CreateOccupiedSuicide"
+				CreationList="OCL_AlienBuzzerHiveSuicide">
+				<DieMuxData
+					DeathTypes="SUICIDED" />
+			</CreateObjectDie>
+			<CreateObjectDie xmlns="uri:ea.com:eala:asset"
+				id="ModuleTag_CreateOccupiedDie"
+				CreationList="OCL_AlienBuzzerHiveDie">
+				<DieMuxData
+					DeathTypes="NORMAL CRUSHED BURNED EXPLODED POISONED TOPPLED FLOODED LASERED DETONATED" />
+			</CreateObjectDie>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="2.0s" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				MaxCombineChildren="3">
+				<UnitAITargetChooserData 
+				 
+					IdleScanDelay="0.2s"/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1600" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="13.2272"
+				MinorRadius="13.2272"
+				Height="37.7319">
+				<Offset
+					x="-3.42813"
+					y="0.138149"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-11.0459"
+					y="-7.78425"
+					z="0.753372" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="5.32988"
+					y="-7.78425"
+					z="30.5619" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="5.32988"
+					y="8.59152"
+					z="0.753372" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-11.0459"
+					y="8.59152"
+					z="30.5619" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-11.0459"
+					y="-7.78425"
+					z="30.5619" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="5.32988"
+					y="-7.78425"
+					z="0.753372" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="5.32988"
+					y="8.59152"
+					z="30.5619" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-11.0459"
+					y="8.59152"
+					z="0.753372" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="ALI_BuzzerHive_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry
+				Sound="ALI_BuzzerHive_AmbientLoop"
+				AudioType="soundAmbient" />
+			<AudioEntry Sound="ALI_Building_LightDamage" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="ALI_Building_HeavyDamage" AudioType="soundOnReallyDamaged" />
+			<AudioEntry Sound="ALI_Building_Placed" AudioType="soundUnderConstruction" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="0.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

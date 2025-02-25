@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+
+	<xs:simpleType name="SphereModuleUpdateOption">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INCLUDE_SELF" />
+			<xs:enumeration value="IGNORE_PROJECTILES" />
+			<xs:enumeration value="INITIALLY_ACTIVE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="SphereModuleUpdateOptionFlag">
+		<xs:list itemType="SphereModuleUpdateOption"></xs:list>
+	</xs:simpleType>
+	
+	<xs:complexType name="SphereModuleUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<!-- shield will activate/deactive based on parent object status -->
+					<xs:element name="ObjectStatusValidation" type="ObjectStatusValidationDataType" minOccurs="0" maxOccurs="1" />
+					<xs:element name="PositionOffset" type="Vector3" minOccurs="0" maxOccurs="1" />
+					<!--Object filter for the objects that the shield will protect.-->
+					<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+
+				<!--Radius of the shields sphere.-->
+				<xs:attribute name="RadiusMax" type="SageReal" default="40"/>
+				<xs:attribute name="RadiusMin" type="SageReal" default="10"/>
+
+				<xs:attribute name="DamageTypesNotToAbsorb" type="DamageBitFlags" />
+				
+				<!-- leave empty to absorb everything -->
+				<xs:attribute name="DamageTypesToAbsorb" type="DamageBitFlags" default="" />
+
+				<!-- Amount of time in seconds between partition filter scans.-->
+				<xs:attribute name="ScanFrequency" type="Time" default="1s"/>
+
+				<!--Maximum damage that the shield can absorb.-->
+				<!--xs:attribute name="MaxDamage" type="SageReal" default="0"/-->
+				
+				<!-- Status to set while active.  Will remove object status on deactivation -->
+				<!--xs:attribute name="ObjectStatus" type="ObjectStatusBitFlags" default=""/-->
+
+				<!-- Model Condition set while active.  Will be removed on deactivation -->
+				<!--xs:attribute name="ModelCondition" type="ModelConditionBitFlags" default="" /-->
+
+				<!-- for the shield FX. -->
+				<xs:attribute name="SphereBoneName" type="xs:string" default=""/>
+				<xs:attribute name="SphereSizeMultiplier" type="SageReal" default="1.0" />
+
+				<xs:attribute name="HandleDamageArc" type="Angle" default="180d" />
+				
+				<xs:attribute name="SphereModuleOptions" type="SphereModuleUpdateOptionFlag" default="" />
+
+				<xs:attribute name="ShieldReactChance" type="Percentage" default="100%" />
+			
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

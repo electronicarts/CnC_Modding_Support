@@ -1,0 +1,147 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// Scrape script for the Outlines post effect
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_OUTLINES_SCRAPEH
+#define SCRAPE_SCRIPT_OUTLINES_SCRAPEH
+
+#define TEST_TEXTURE_SIZES 0
+
+#if TEST_TEXTURE_SIZES
+	//#define TEXTURESIZE_X 512
+	//#define TEXTURESIZE_Y 512
+	//#define TEXTURESIZE_X 512
+	//#define TEXTURESIZE_Y 384
+	//#define TEXTURESIZE_X 1024
+	//#define TEXTURESIZE_Y 768
+	//#define TEXTURESIZE_X 256
+	//#define TEXTURESIZE_Y 192
+	//#define TEXTURESIZE_X 640
+	//#define TEXTURESIZE_Y 360
+#else
+	#define TEXTURESIZE_X $WW3D.Outline.TextureSize.x
+	#define TEXTURESIZE_Y $WW3D.Outline.TextureSize.y
+#endif
+
+
+#if defined(EA_PLATFORM_WINDOWS)
+
+	// This texture needs to be the same size as the frame buffer so the outlines
+	// don't show up as offset.
+	var texture OutlineTextureFill $WW3D.FrameBufferSize.x $WW3D.FrameBufferSize.y A8R8G8B8
+	var surface OutlineRenderTargetFill edram $WW3D.FrameBufferSizeIfAntiAliasing.x $WW3D.FrameBufferSizeIfAntiAliasing.y A8R8G8B8 $WW3D.AntiAliasingMode
+
+	var texture OutlineTexture TEXTURESIZE_X TEXTURESIZE_Y A8R8G8B8
+	#define OutlineRenderTarget OutlineTexture
+
+#elif defined(EA_PLATFORM_XENON)
+
+#if defined(SCRAPE_SCRIPT_POSTFX_DISTORTION_SCRAPEH)
+	// Save some memory (4 MB when in 720p) by using the same texture as the distortion post effect
+	#define OutlineTexture DistortionOffsetTexture
+	var surface OutlineRenderTarget edram $PostEffect.FrameBufferSize.x $PostEffect.FrameBufferSize.y A8R8G8B8
+#else
+	var texture OutlineTexture TEXTURESIZE_X TEXTURESIZE_Y A8R8G8B8
+	var surface OutlineRenderTarget edram TEXTURESIZE_X TEXTURESIZE_Y A8R8G8B8
+#endif
+
+	#define OutlineTextureFill OutlineTexture
+	#define OutlineRenderTargetFill OutlineRenderTarget
+	
+#endif
+
+var shader OutlinesShader	Outlines.fx
+
+proc renderOutlines
+	if WW3D Outline.IsEnabled
+		beginevent RenderOutlines
+
+#if defined(EA_PLATFORM_XENON)
+		// Copy EDRAM frame buffer, as it will be overwritten by the outline processing
+		if WW3D IsHdrEnabled
+			resolve PostEffectFrameBufferTexture 0 0 HDR_RESOLVE_EXPONENT color0 // convert from float7e3 to fixed16, decreasing luminance by 2^3
+		else
+			resolve PostEffectFrameBufferTexture color0
+		endif
+#endif
+
+        // Since the OutlineRenderTarget can be smaller than the frame buffer to speed up
+        // the blurring process, we can't use it as the render target for the stencil fill.
+#if defined(EA_PLATFORM_WINDOWS)
+		// The render target anti-aliasing mode needs to fit to the FrameDepthBuffer, ie might be anti-aliased.
+		// On Windows this means we have to render to an AA surface first and then to a strechrect to a non-AA texture.
+		if WW3D IsAntiAliasingEnabled
+			settarget 0 OutlineRenderTargetFill
+		else
+			settarget 0 OutlineTextureFill
+		endif
+#else
+		// On Xenon we don't use real AA on the frame/depth buffer, so a regular render target is fine
+		settarget 0 OutlineRenderTargetFill
+#endif
+
+		callproc setFrameDepthBuffer
+
+		setclearcolor		0 0 0 0
+		clearcolor
+		
+		setcamera Viewer
+		
+		// fill all of the outline areas
+		if WW3D Outline.IsSelectedBinPopulated
+			setshader OutlinesShader FillSelected
+			renderquad
+		endif
+		if WW3D Outline.IsHoverSelectBinPopulated
+			setshader OutlinesShader FillHoverSelect
+			renderquad
+		endif		
+		if WW3D Outline.IsHoverAttackBinPopulated
+			setshader OutlinesShader FillHoverAttack
+			renderquad
+		endif
+		
+#if defined(EA_PLATFORM_XENON)
+		// resolve into a temp texture
+		resolve OutlineTextureFill
+#else
+		if WW3D IsAntiAliasingEnabled
+			// "Resolve" the anti-aliased render target surface to non-AA texture
+			stretchrect OutlineRenderTargetFill OutlineTextureFill
+		endif
+#endif
+
+		settarget 0 OutlineRenderTarget
+		setdepth NULL
+
+        settexture WW3D Outline.Texture OutlineTextureFill
+		setshader OutlinesShader BlurBox
+		renderquad
+		
+#if defined(EA_PLATFORM_XENON)
+		// resolve into a temp texture
+		resolve OutlineTexture
+#endif
+		
+		// restore the frame buffer target
+		callproc setFrameRenderTarget
+		callproc setFrameDepthBuffer
+
+#if defined(EA_PLATFORM_XENON)
+		// Copy back resolved textures back into EDRAM.
+		settexture WW3D Outline.Texture PostEffectFrameBufferTexture
+		setshader OutlinesShader Blit
+		renderquad
+#endif
+		
+		// Draw outlines over the frame buffer, filtering out all the interior areas 
+		settexture WW3D Outline.Texture OutlineTexture
+		setshader OutlinesShader DrawWithStencil
+		renderquad
+
+		endevent RenderOutlines
+	endif
+endproc
+
+#endif // SCRAPE_SCRIPT_OUTLINES_SCRAPEH

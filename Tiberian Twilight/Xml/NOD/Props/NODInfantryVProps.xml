@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:FXTiberiumLaser.xml" />
+		<Include type="all" source="ART:FXInvisBone.w3x" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+	</Includes>
+
+	<Defines>
+		<Define name="NODINFANTRYV_TIBERIUM_CORROSION_DOT_DURATION" value="10.0s" />
+	</Defines>
+	
+	<!-- The Base effect -->
+	<GameObject
+		id="NODInfantryVTiberiumLauncherNodeManager_Base"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>			
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="1s"
+				MaxLifetime="1s" />
+
+			<!-- This manages the complete Scattering effect of a weapon -->
+			<WeaponScatterEffectUpdate
+					 id="Base_ScatterEffect"
+					 WeaponTemplate="NODInfantryVTiberiumLauncherNode_Weapon"
+					 Options="NO_DUPLICATE_TARGETS STOP_SCATTER_IF_NO_TARGET_OBJECTS_HIT">
+				<!-- Define the prioritization of the targets to scatter to -->
+				<!-- NOTE: This is overridden in the inheritted versions    -->
+				<TargetSelection
+						id="Tag_TargetSelectionFilters">					
+					<ObjectPriorityFilter
+						 Rule="ALL"
+						 Relationship="ENEMIES"/>
+					
+				</TargetSelection>
+
+				<!-- Define the specifics for each scatter of the weapon -->
+				<ScatterSettings
+					ScatterDelay="0.25s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="150"
+						NodeOCL="OCL_NODInfantryVTiberiumLauncherNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0.25s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="140"
+						PercentDamage="85%"
+						NodeOCL="OCL_NODInfantryVTiberiumLauncherNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0.25s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="130"
+						PercentDamage="70%"
+						NodeOCL="OCL_NODInfantryVTiberiumLauncherNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0.25s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="120"
+						PercentDamage="55%"
+						NodeOCL="OCL_NODInfantryVTiberiumLauncherNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0.25s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="110"
+						PercentDamage="40%"
+						NodeOCL="OCL_NODInfantryVTiberiumLauncherNode" />
+				</ScatterSettings>
+
+			</WeaponScatterEffectUpdate>
+		
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+	
+	<!-- /////////////////////////////// -->
+	<!-- The Ground only scatter version -->
+	<GameObject
+		id="NODInfantryVTiberiumLauncherNodeManager_Ground"
+		inheritFrom="NODInfantryVTiberiumLauncherNodeManager_Base">
+		<Behaviors>
+			<!-- This manages the complete Scattering effect of a weapon -->
+			<WeaponScatterEffectUpdate
+					 id="Base_ScatterEffect">
+				<!-- Define the prioritization of the targets to scatter to -->
+				<TargetSelection
+						id="Tag_TargetSelectionFilters"
+						xai:joinAction="Replace">					
+					<ObjectPriorityFilter
+						 Rule="ALL"
+						 Relationship="ENEMIES"
+						 Exclude="AIRCRAFT UNATTACKABLE NOT_AUTOACQUIRABLE"
+						 StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+					
+					<ObjectPriorityFilter
+						 Rule="ALL"
+						 Relationship="NEUTRAL"
+						 Exclude="AIRCRAFT UNATTACKABLE NOT_AUTOACQUIRABLE"
+						 StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+				</TargetSelection>
+			</WeaponScatterEffectUpdate>
+		</Behaviors>
+	</GameObject>
+
+	<!-- //////////////////////////// -->
+	<!-- The Air only scatter version -->
+	<GameObject
+		id="NODInfantryVTiberiumLauncherNodeManager_Air"
+		inheritFrom="NODInfantryVTiberiumLauncherNodeManager_Base">
+		<Behaviors>
+			<!-- This manages the complete Scattering effect of a weapon -->
+			<WeaponScatterEffectUpdate
+					 id="Base_ScatterEffect">
+				<!-- Define the prioritization of the targets to scatter to -->
+				<TargetSelection
+						id="Tag_TargetSelectionFilters"
+						xai:joinAction="Replace">
+					<ObjectPriorityFilter
+						 Rule="ANY"
+						 Relationship="ENEMIES"
+						 Include="AIRCRAFT VEHICLE"
+						 Exclude="UNATTACKABLE NOT_AUTOACQUIRABLE"
+						 StatusBitFlags="AIRBORNE_TARGET"/>
+				</TargetSelection>
+			</WeaponScatterEffectUpdate>
+		</Behaviors>
+	</GameObject>
+
+
+
+	<!-- /////////////////////////////// -->
+	<!--    The visual represnetation    -->
+	<GameObject
+		id="NODInfantryVTiberiumLauncherNode_Laser"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+				<!--  NOTE:  This object needs a draw module and a weapon bone setup to 
+												properly fire the particle system that draws the effect -->
+
+			<ScriptedModelDraw
+					id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXINVISBONE" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="MESH" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="0.75s"
+				MaxLifetime="0.75s" />
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		WEAPONS															-->
+	<!-- //////////////////////////////////////	-->
+	<WeaponTemplate
+		id="NODInfantryVTiberiumLauncherNode_Weapon"
+		inheritFrom="BaseLaserWeapon" 
+		AttackRange="125.0"
+		FireSound="GDI_ZoneRaider_SonicRifleFire"
+		FireFX="FX_TiblaserFire"
+		AcceptableAimDelta="180d">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="2.0s"
+			MaxSeconds="2.0s" />
+		<Nuggets>
+			<LineDamageNugget
+				Damage="30.0"
+				DamageType="BLAST"
+				DeathType="LASERED" 
+				DamageFXType="NOD_LASER_TIBERIUM"
+				FXListVictim="FX_NODTibCloud_Hit"
+				Options="USE_DYNAMIC_LENGTH CHECK_VICTIM_GEOMETRY USE_TARGET_DETAIL_POSITION"
+				LineWidth="10.0"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter" />
+			<!-- The DOT and the AttributeModifier that sets the Armor debuff -->
+			<DOTNugget
+				id="NuggetTag_DOT"
+				Damage="2.0"
+				DamageInterval="2.0s"
+				DamageDuration="=$NODINFANTRYV_TIBERIUM_CORROSION_DOT_DURATION"
+				DamageType="BLAST"
+				FXListVictim="FX_NODTibCloud_Hit"
+				DeathType="NORMAL">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES NEUTRAL"
+					Include="INFANTRY VEHICLE STRUCTURE"/>
+			</DOTNugget>
+			<AttributeModifierNugget
+				id="NuggetTag_AttributeModifier"
+				AttributeModifierName="AttributeModifier_NODInfantryVTiberiumCorrosion" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		OBJECT CREATION LISTS								-->
+	<!-- //////////////////////////////////////	-->
+	<ObjectCreationList
+		id="OCL_NODInfantryVTiberiumLauncherNode">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODInfantryVTiberiumLauncherNode_Laser"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   ATTRIBUTE MODIFIERS										-->
+	<!-- ////////////////////////////////////////	-->
+	<AttributeModifier
+		id="AttributeModifier_NODInfantryVTiberiumCorrosion"
+		Category="NONE"
+		Duration="=$NODINFANTRYV_TIBERIUM_CORROSION_DOT_DURATION"
+		RenderBuffEffectFlags="VEIN_DETONATION">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:NODInfantryV" />
+		<Modifier Type="ARMOR" Value="125%"/>
+	</AttributeModifier>
+	
+</AssetDeclaration>

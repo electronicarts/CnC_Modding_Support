@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:NOD/Props/NODBurrowPodBase.xml" />
+
+	</Includes>
+	<GameObject
+		id="NODBurrowPodCampaign"
+		inheritFrom="NODBurrowPodBase"
+		EditorName="NODBurrowPodCampaign"
+		EditorSorting="CAMPAIGN_UNITS">
+		<DisplayName>Name:NODBurrowPod_Campaign</DisplayName>
+
+		<Behaviors>
+			<!-- Hit all units above us -->
+			<!-- NOTE: This overrides the Fring delay of the FireWeaponUpdate in the NODBurrowPodBase -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate">
+				<FireWeaponNugget
+					id="NuggetTag_UnburrowWeapon"
+					FireDelay="0.5s">
+				</FireWeaponNugget>
+			</FireWeaponUpdate>
+			
+			<FXListBehavior
+				id="ModuleTag_FXListBehavior">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onCreate"
+					FX="FX_NOD_BurrowDeploy" />
+			</FXListBehavior>
+
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="1.5s"
+				MaxLifetime="1.5s" />
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie_BurrowMines"
+				CreationList="OCL_NODCampaignReinforcements">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+			<OCLTemplateTrackerBehavior
+					id="ModuleTag_OCLTemplateTracker"/>
+			
+		</Behaviors>
+	</GameObject>
+
+	<ObjectCreationList
+		id="OCL_NODCampaignReinforcements">
+		<OCLModule>
+			<Modules>
+				<OCLTrackerBehavior>
+					<!-- And here there be magic-->
+					<!-- Okay, fine, the OCL is actually populated via script into the OCLTemplateTrackerBehavior above -->
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject />
+					</SubModules>
+				</OCLTrackerBehavior>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+</AssetDeclaration>

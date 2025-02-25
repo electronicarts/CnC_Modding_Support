@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="AttributeModifierCategoryType">
+		<xs:restriction base="xs:string">
+
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="LEADERSHIP" />
+			<xs:enumeration value="FORMATION" />
+			<xs:enumeration value="SPELL" />
+			<xs:enumeration value="WEAPON" />
+			<xs:enumeration value="STRUCTURE" />
+			<xs:enumeration value="LEVEL" />
+			<xs:enumeration value="BUFF" />
+			<xs:enumeration value="DEBUFF" />
+			<xs:enumeration value="STUN" />
+			<xs:enumeration value="INNATE_ARMOR" />
+			<xs:enumeration value="INNATE_DAMAGEMULT" />
+			<xs:enumeration value="INNATE_VISION" />
+			<xs:enumeration value="INNATE_AUTOHEAL" />
+			<xs:enumeration value="INNATE_HEALTH" />
+
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="AttributeType">
+		<xs:restriction base="xs:string">
+
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="ARMOR" />
+			<xs:enumeration value="DAMAGE_ADD" />
+			<xs:enumeration value="DAMAGE_MULT" />
+			<xs:enumeration value="RESIST_FEAR" />
+			<xs:enumeration value="RESIST_TERROR" />
+			<xs:enumeration value="EXPERIENCE" />
+			<xs:enumeration value="RANGE" />
+			<xs:enumeration value="SPEED" />
+			<xs:enumeration value="CRUSH_DECELERATE" />
+			<xs:enumeration value="RESIST_KNOCKBACK" />
+			<xs:enumeration value="SPELL_DAMAGE" />
+			<xs:enumeration value="RECHARGE_TIME" />
+			<xs:enumeration value="PRODUCTION" />
+			<xs:enumeration value="PRODUCTION_COST" />
+			<xs:enumeration value="HEALTH" />
+			<xs:enumeration value="HEALTH_MULT" />
+			<xs:enumeration value="VISION" />
+			<xs:enumeration value="BOUNTY_PERCENTAGE" />
+			<xs:enumeration value="MIN_CRUSH_VELOCITY_PERCENTAGE" />
+			<xs:enumeration value="AUTO_HEAL" />
+			<xs:enumeration value="SHROUD_CLEARING" />
+			<xs:enumeration value="RATE_OF_FIRE" />
+			<xs:enumeration value="DAMAGE_STRUCTURE_BOUNTY_ADD" />
+			<xs:enumeration value="CRUSHER_LEVEL" />
+			<xs:enumeration value="COMMAND_POINT_BONUS" />
+			<xs:enumeration value="CRUSHABLE_LEVEL" />
+			<xs:enumeration value="CRUSHED_DECELERATE" />
+			<xs:enumeration value="INVULNERABLE" />
+			<xs:enumeration value="SUPPRESSABILITY" />
+			<!-- value doesn't matter here, but use 0% or 100% to make it obvious. -->
+			<xs:enumeration value="RESIST_EMP" />
+			<xs:enumeration value="POWER_BOOST" />
+			<xs:enumeration value="AREA_OF_EFFECT" />
+			<xs:enumeration value="COLLISION_GEOMETRY_SIZE_MULT" />
+			<xs:enumeration value="BROADCAST_RANGE" />
+
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="AttributeModifierCategoryBitFlags">
+		<xs:list itemType="AttributeModifierCategoryType"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="AttributeModifierListType">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Type" type="AttributeType" />
+		<xs:attribute name="Value" type="Percentage" default="0" />
+	</xs:complexType>
+
+	<xs:complexType name="AttributeModifier" xas:runtimeWrapper="::AttributeModifierContainer"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="Modifier" type="AttributeModifierListType" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Category" type="AttributeModifierCategoryType" />
+				<!-- Duration of zero is infinite -->
+				<xs:attribute name="Duration" type="Time" default="0s" />
+				<xs:attribute name="ReplaceInCategoryIfLongest" type="SageBool" default="false" />
+				<xs:attribute name="IgnoreIfAnticategoryActive" type="SageBool" default="false" />
+				<xs:attribute name="RemoveWhenDisabledByTypes" type="DisabledBitFlags" default="" />
+				<xs:attribute name="StartFX" type="FXListRef" />
+				<xs:attribute name="EndFX" type="FXListRef" />
+				<xs:attribute name="ModelConditionsSet" type="ModelConditionBitFlags" use="optional" />
+				<xs:attribute name="ModelConditionsClear" type="ModelConditionBitFlags" use="optional" />
+				<xs:attribute name="ObjectStatusToSet" type="ObjectStatusBitFlags" use="optional" />
+				<xs:attribute name="StackingLimit" type="SageUnsignedInt" default="1" />
+				<xs:attribute name="ArmorSetType" type="ArmorSetType" />
+				<xs:attribute name="Shader" type="ShaderOverrideRef" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

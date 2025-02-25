@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:NODRocketMedium.w3x" />
+		<Include type="all" source="ART:NUL_AircraftK_SKN.w3x" />
+		<Include type="all" source="ART:NUL_AircraftK_AIDD.W3X" />
+		
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NODAIRCRAFTK_PURIFY_RADIUS_1" value="50" />
+		<Define name="NODAIRCRAFTK_PURIFY_RADIUS_2" value="75" />
+		<Define name="NODAIRCRAFTK_PURIFY_RADIUS_3" value="110" />
+		<Define name="NODAIRCRAFTK_PURIFY_RADIUS_4" value="145" />
+
+		<Define
+			name="NODAIRCRAFTK_DAMAGE_BONE_NAMES"
+			value="	BONE_CONTACT_POINT_01 
+							BONE_CONTACT_POINT_02 
+							BONE_CONTACT_POINT_03 
+							BONE_CONTACT_POINT_04"/>
+		
+	</Defines>
+	<GameObject
+		id="NODAircraftKRocketProjectile"
+		inheritFrom="BaseTargetableProjectile"
+		EditorSorting="SYSTEM"
+		EditorName="NODAircraftKRocketProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NODRocketMedium" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODRocketMedium_Trail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODRocketMedium_TrailThin"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_NOD_Salamander_AirK_RocketWeaponImpactExplosion_AudioOnly" /> <!-- audio only, please add visuals to another Event, thanks -->
+				
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="10"
+				FirstHeightMax="25"
+				SecondHeightMin="30"
+				SecondHeightMax="40"
+				FirstPercentIndent="20"
+				SecondPercentIndent="90"
+				GroundHitFX="FX_NODRocketMediumMiss"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH"
+				SidewaysDrift="20"
+				FlightPathAdjustDistPerSecond="100"/>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		inheritFrom="NODAircraftKRocketProjectile"
+		id="NODAircraftKRocketProjectile_Veteran"
+		EditorSorting="SYSTEM"
+		EditorName="NODAircraftKRocketProjectile_Veteran">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NODRocketMedium" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODRocketMedium_Fire_Vet"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODRocketMedium_Trail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODRocketMedium_TrailThin_Vet"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_NOD_Ascended_RocketWeaponImpactExplosion_AudioOnly" />
+				<!-- audio only, please add visuals to another Event, thanks -->
+
+
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="10"
+				FirstHeightMax="25"
+				SecondHeightMin="30"
+				SecondHeightMax="40"
+				FirstPercentIndent="20"
+				SecondPercentIndent="90"
+				GroundHitFX="FX_NODRocketMediumMiss"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH"
+				SidewaysDrift="20"
+				FlightPathAdjustDistPerSecond="100"/>
+		</Behaviors>
+	</GameObject>
+	
+	
+	<!-- pulsed weapons base -->
+	<WeaponTemplate
+		id="NODAircraftKPurifyPlaceholderWeaponBase"
+		inheritFrom="NODInfantryBHolyWaterDetonationTrigger"
+		FireFX="">
+		<Nuggets>
+			<DamageNugget
+				id="PrimaryDamage"
+				Damage="18"
+				DamageType="BLAST"
+				FXListVictim="FX_NOD_FireDamage"
+				ForceFXPositionToVictim="true"
+				DeathType="BURNED"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- pulsed weapons -->
+	<WeaponTemplate
+		id="NODAircraftKPurifyPlaceholderWeapon1"
+		inheritFrom="NODAircraftKPurifyPlaceholderWeaponBase"
+		FireFX="">
+		<Nuggets>
+			<DamageNugget
+				id="PrimaryDamage"
+				Radius="=$NODAIRCRAFTK_PURIFY_RADIUS_1" />
+			<DamageNugget
+				id="DamageNugget_NODInfantryBHolyWaterDetonationTrigger"
+				Radius="=$NODAIRCRAFTK_PURIFY_RADIUS_1" />
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="NODAircraftKPurifyPlaceholderWeapon2"
+		inheritFrom="NODAircraftKPurifyPlaceholderWeaponBase"
+		FireFX="">
+		<Nuggets>
+			<DamageNugget
+				id="PrimaryDamage"
+				Radius="=$NODAIRCRAFTK_PURIFY_RADIUS_2" />
+			<DamageNugget
+				id="DamageNugget_NODInfantryBHolyWaterDetonationTrigger"
+				Radius="=$NODAIRCRAFTK_PURIFY_RADIUS_2" />
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="NODAircraftKPurifyPlaceholderWeapon3"
+		inheritFrom="NODAircraftKPurifyPlaceholderWeaponBase"
+		FireFX="">
+		<Nuggets>
+			<DamageNugget
+				id="PrimaryDamage"
+				Radius="=$NODAIRCRAFTK_PURIFY_RADIUS_3" />
+			<DamageNugget
+				id="DamageNugget_NODInfantryBHolyWaterDetonationTrigger"
+				Radius="=$NODAIRCRAFTK_PURIFY_RADIUS_3" />
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="NODAircraftKPurifyPlaceholderWeapon4"
+		inheritFrom="NODAircraftKPurifyPlaceholderWeaponBase"
+		FireFX="">
+		<Nuggets>
+			<DamageNugget
+				id="PrimaryDamage"
+				Radius="=$NODAIRCRAFTK_PURIFY_RADIUS_4" />
+			<DamageNugget
+				id="DamageNugget_NODInfantryBHolyWaterDetonationTrigger"
+				Radius="=$NODAIRCRAFTK_PURIFY_RADIUS_4" />
+		</Nuggets>
+	</WeaponTemplate>
+	
+	
+	<!-- placeholder base -->
+	<GameObject
+		id="NODAircraftKPurifyPlaceholderBase"
+		Side="NOD"
+		EditorSorting="SYSTEM"
+		IsTrainable="false"
+		KindOf="NOT_AUTOACQUIRABLE DO_NOT_CLASSIFY INERT GRANT_PLAYER_THREAT"
+		EditorName="NODAircraftKPurifyPlaceholder_DO_NOT_PLACE">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NODAIRCRAFTK_PURIFY_RADIUS_4">
+			<DodgeWithUnits
+				Rule="ALL" />
+		</SkirmishAIInformation>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_Lifetime"
+				MinLifetime="1.0s"
+				MaxLifetime="1.0s"/>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body"/>
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Salamander_AirK_PurificationWeaponFireBurningLoop" AudioType="soundAmbient"/>
+			<!-- this is weak because of the fade on start and kill flags, but luckily the weapon fire conceals most of it -->
+		</AudioArraySound> 
+	</GameObject>
+
+
+	<!-- placeholders -->
+	<GameObject
+		id="NODAircraftKPurifyPlaceholder1"
+		inheritFrom="NODAircraftKPurifyPlaceholderBase">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				StopParticlesOnDestruction="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle_Expanding01" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle_LR01" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle01" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Smoke_Basic01" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="NODAircraftKPurifyPlaceholderWeapon1" />
+			</FireWeaponUpdate>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onCreate"
+					FX="FX_NOD_Flames_Expanding01" />
+			</FXListBehavior>
+
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="NODAircraftKPurifyPlaceholder2"
+		inheritFrom="NODAircraftKPurifyPlaceholderBase">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				StopParticlesOnDestruction="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle_Expanding02" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle_LR02" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle02" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Smoke_Basic01" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="NODAircraftKPurifyPlaceholderWeapon2" />
+			</FireWeaponUpdate>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onCreate"
+					FX="FX_NOD_Flames_Expanding02" />
+			</FXListBehavior>
+
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="NODAircraftKPurifyPlaceholder3"
+		inheritFrom="NODAircraftKPurifyPlaceholderBase">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				StopParticlesOnDestruction="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle_Expanding03" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle_LR03" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle03" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Smoke_Basic01" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="NODAircraftKPurifyPlaceholderWeapon3" />
+			</FireWeaponUpdate>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onCreate"
+					FX="FX_NOD_Flames_Expanding03" />
+			</FXListBehavior>
+
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="NODAircraftKPurifyPlaceholder4"
+		inheritFrom="NODAircraftKPurifyPlaceholderBase">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				StopParticlesOnDestruction="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle_Expanding04" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle_LR04" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Flame_Circle04" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="Smoke_Basic01" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="NODAircraftKPurifyPlaceholderWeapon4" />
+			</FireWeaponUpdate>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onCreate"
+					FX="FX_NOD_Flames_Expanding04" />
+			</FXListBehavior>
+		</Behaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Salamander_AirK_PurificationWeaponFireBurningLoopMS" AudioType="soundAmbient"/>
+		</AudioArraySound>
+	</GameObject>
+
+	<!--    /////////////////////////////////////   -->
+	<!--		The Collapsing ship which falls					-->
+	<!--		from the sky when the unit is killed		-->
+	<GameObject
+		id="NODAircraftK_Dying"
+		EditorName="NODAircraftK_Dying"
+		Description="Desc:NODAircraftK_Dying"
+		Side="NOD"
+		KindOf="=$BASE_DYING_AIRCRAFT_KINDOF">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				ExtraPublicBone="=$NODAIRCRAFTK_DAMAGE_BONE_NAMES"
+				OkToChangeModelColor="true" >
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUL_AircraftK_SKN" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_L"
+						FXParticleSystemTemplate="VenomDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_L"
+						FXParticleSystemTemplate="VenomDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NUL_AircraftK_AIDD"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.2"
+						AnimationSpeedFactorMax="0.2" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<Physics
+				id="ModuleTag_Physics"
+				TumbleRandomly="true"
+				MaxXRotationVelocity="25"
+				MaxYRotationVelocity="5"
+				MaxZRotationVelocity="0"
+				KillWhenRestingOnGround="true"/>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleLRG_Death" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Aircraft_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+			<FireWeaponWhenDead
+				id="ModuleTag_DeathWeapon"
+				DeathWeapon="NODDyingAircraft_DeathWeapon_Large"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<!-- Needed to copy damage from the original object during a swap -->
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="200.0"
+					FX="FX_GDIVehicleL_Damage"/>
+			</BuildingDestructionBehavior>
+			
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="Tag_PropBody"/>
+		</Body>
+
+		<xi:include	href="DATA:NOD/Includes/NODAircraftKGeometry.xml" />
+
+		<VisionInfo
+			VisionRange="325"
+			ShroudClearingRange="325" />
+	</GameObject>
+
+</AssetDeclaration>

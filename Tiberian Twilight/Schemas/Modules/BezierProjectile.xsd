@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="BezierProjectileFlag">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TUMBLE_RANDOMLY" />
+			<xs:enumeration value="DETONATE_CALLS_KILL" />
+			<xs:enumeration value="ORIENT_TO_FLIGHT_PATH" />
+			<xs:enumeration value="CRUSH_STYLE" />
+			<xs:enumeration value="NO_DETONATE" />
+			<xs:enumeration value="DIE_ON_IMPACT" />
+			<xs:enumeration value="IGNORE_TERRAIN_HEIGHT" />
+			<xs:enumeration value="PING_PONG_SIDEWAYS_DRIFT" />
+			<xs:enumeration value="ADJUST_STRAIGHT_ONLY" />
+			<xs:enumeration value="DONT_DIE_ON_DETONATE" />
+			<xs:enumeration value="DONT_SET_NO_ATTACK_STATUS" />
+			<xs:enumeration value="DONT_TRACK_TARGET" />
+			<xs:enumeration value="DETONATE_ON_APEX" />
+			<xs:enumeration value="USE_ATTACHPOS_ON_VICTIM" />
+			<xs:enumeration value="IGNORE_CONTACT_POINTS" />
+			<xs:enumeration value="TARGET_OFFSET_ALONG_TARGET_VECTOR" />
+			<xs:enumeration value="FIRE_STRAIGHT_THEN_CURVE" />
+			<xs:enumeration value="DONT_DETONATE_WITHOUT_COLLISION" />
+			<xs:enumeration value="CLAMP_DESTINATION_TO_GROUND" />
+			<xs:enumeration value="DESTROY_OBJECT_ON_DETONATE" />
+			<xs:enumeration value="DETONATE_OVER_HIGHER_CLIFF_OR_IMPASSABLE" />
+			<xs:enumeration value="CAN_BE_REFLECTED" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="BezierProjectileBitFlag">
+		<xs:list itemType="BezierProjectileFlag"></xs:list>
+	</xs:simpleType>
+	
+	<xs:complexType name="BezierProjectileBehaviorModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="Flags" type="BezierProjectileBitFlag" default="PING_PONG_SIDEWAYS_DRIFT" />
+				
+				<xs:attribute name="FireStraightDistance" type="SageReal" />
+				<xs:attribute name="FirstHeight" type="SageReal" />
+				<xs:attribute name="SecondHeight" type="SageReal" />
+				<xs:attribute name="FirstHeightMin" type="SageReal" />
+				<xs:attribute name="FirstHeightMax" type="SageReal" />
+				<xs:attribute name="SecondHeightMin" type="SageReal" />
+				<xs:attribute name="SecondHeightMax" type="SageReal" />
+				<xs:attribute name="FirstPercentIndent" type="Percentage" />
+				<xs:attribute name="SecondPercentIndent" type="Percentage" />
+				<xs:attribute name="FinalStuckTime" type="Time" />
+				<xs:attribute name="PreLandingStateTime" type="Time" />
+				<xs:attribute name="BounceCount" type="SageInt" />
+				<xs:attribute name="BounceDistance" type="SageReal" />
+				<xs:attribute name="BounceFirstHeight" type="SageReal" />
+				<xs:attribute name="BounceSecondHeight" type="SageReal" />
+				<xs:attribute name="BounceFirstPercentIndent" type="Percentage" />
+				<xs:attribute name="BounceSecondPercentIndent" type="Percentage" />
+				<xs:attribute name="GarrisonHitKillRequiredKindOf" type="KindOfBitFlags" />
+				<xs:attribute name="GarrisonHitKillForbiddenKindOf" type="KindOfBitFlags" />
+				<xs:attribute name="GarrisonHitKillCount" type="SageUnsignedInt" />
+				<xs:attribute name="GarrisonHitKillFX" type="FXListRef" />
+				<xs:attribute name="GroundHitFX" type="FXListRef" />
+				<xs:attribute name="MaxDistanceReachedFX" type="FXListRef" />
+				<xs:attribute name="GroundBounceFX" type="FXListRef" />
+				<xs:attribute name="SphereModuleCollideFX" type="FXListRef" />
+				<xs:attribute name="GroundHitWeapon" type="WeaponRef" />
+				<xs:attribute name="GroundBounceWeapon" type="WeaponRef" />
+				<xs:attribute name="FlightPathAdjustDistPerSecond" type="Velocity" />
+				<xs:attribute name="FirstPercentHeight" type="Percentage" />
+				<xs:attribute name="SecondPercentHeight" type="Percentage" />
+				<xs:attribute name="CurveFlattenMinDist" type="SageReal" />
+				<xs:attribute name="PreLandingEmotion" type="EmotionType" />
+				<xs:attribute name="PreLandingEmotionRadius" type="SageReal" />
+				<xs:attribute name="InvisibleTime" type="Time" />
+				<xs:attribute name="FadeInTime" type="Time" />
+				<xs:attribute name="PostLandingStateTime" type="Time" />
+				<xs:attribute name="PostLandingEmotion" type="EmotionType" />
+				<xs:attribute name="PostLandingEmotionRadius" type="SageReal" />
+				<xs:attribute name="SidewaysDrift" type="SageReal" />
+				<xs:attribute name="MaxDistanceToTravel" type="SageReal" default="1000000" />
+				<xs:attribute name="TargetVectorOffset" type="SageReal" />
+				<xs:attribute name="Acceleration" type="SageReal" default="0.0" />
+				<xs:attribute name="AttributeModifier" type="AttributeModifierRef" />
+				<xs:attribute name="DisableTypeDuration" type="Time" />
+				<xs:attribute name="DisableType" type="DisabledType" default="DEFAULT" />
+				<xs:attribute name="ObjectStatusDuration" type="Time" />
+				<xs:attribute name="ObjectStatus" type="ObjectStatusType" />
+
+				<!-- fades out the drawable counting backwards from the end of the path.
+				so a setting of 25% means fade out over the last 1/4th of the path.-->
+				<xs:attribute name="MissFadeOutPercentage" type="Percentage" default="0%" />
+
+						
+				<!-- these settings tell the projectile to launch itself to a location along the vector to the target,
+				to a distance equivalent to ( SegmentLength * SegmentNum ). It performs a bounce at every segment and
+				optionally fires a temp weapon at the point of contact with the ground -->
+				<xs:attribute name="FixedSegmentLength" type="SageReal" default="0.0" />
+				<xs:attribute name="FixedSegmentNum" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="FixedSegmentWeapon" type="WeaponWeakRef" default="" />
+				
+				
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

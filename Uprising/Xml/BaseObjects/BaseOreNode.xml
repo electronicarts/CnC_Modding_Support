@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseObject.xml" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<!-- base interface object for all ore nodes, should not be created directly. -->
+	<GameObject
+		id="BaseOreNode"
+		inheritFrom="BaseObject"
+		SelectPortrait="Portrait_Neutral_OreNode"
+		ButtonImage="Button_Neutral_OreNode"
+		Side="Neutral"
+		BuildTime="15"
+		EditorSorting="STRUCTURE"
+		CommandSet="EmptyCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE UNATTACKABLE CAN_CAST_REFLECTIONS FS_TECHNOLOGY NOT_AUTOACQUIRABLE NOT_SELLABLE ORE_NODE CAN_BUILD_ON_WATER CAN_BUILD_ON_DEEP_WATER ALWAYS_VISIBLE_IN_RADAR IMMUNE_TO_CAPTURE"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		EditorName="BaseOreNode"
+		Description="Desc:TechBuildingOreNode">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechBuildingOreNode</DisplayName>
+		<ArmorSet
+			Armor="TechStructureArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws/>
+		<Behaviors>
+			<QueueDockBehavior
+				id="ModuleTag_QueueDockBehavior"
+				DockStartBoneName="DockStart"
+				DockActionBoneName="DockAction"
+				DockEndBoneName="DockEnd"
+				QueueBonePrefix="Que"
+				TurnTableBoneName="BONE_TABLE"/>
+			<!-- DeliveryAmount is likely to match the ore miner behavior DeliveryCapacity -->
+			<!-- MovetoExtractTime is the time on the node arm to get into position to pick up a new load. -->
+			<!-- ExtractTime is the time it takes the arm to pick up a new load -->
+			<!-- MoveToDeliverTime is the time on the arm from picking up more ore to be ready to dump ore -->
+			<!-- DeliveryTime is the time it takes to dump the ore into the miner -->
+			<OreNodeBehavior
+				id="ModuleTag_OreNodeBehavior" 
+				MoveToExtractTime="=$MOVE_TO_EXTRACT_TIME" 
+				ExtractTime="=$EXTRACT_TIME" 
+				MoveToDeliverTime="=$MOVE_TO_DELIVER_TIME"
+				DeliveryAmount="250"
+				DeliveryAmountWhenEmpty="60"
+				DeliveryTime="=$DELIVERY_TIME"
+				DeliveryAnimation="DOCKING_ACTIVE"
+				ReturnAnimation="DOCKING_RETURN"
+				ExtractAnimation="DOCKING_EXTRACT"
+				MoveBackAnimation="DOCKING_MOVEBACK"
+				MaximumGatheredValue="30000"
+				LowNotificationPercentage="10%" 
+				LowNotificationEvaEventRef="OreMineLow" 
+				DepletedNotificationEvaEventRef="OreMineDepleted" 
+		        DepletedNotificationAudioEventInfoRef="OreNodeDepleted" />
+			<!-- Added to allow the Ore Nodes to be placed on water and function correctly -->
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="0.0s" />
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="10000.0" />
+		</Body>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="OreNodeStateMachine"/>
+		</AI>
+
+	<!--	<AudioArrayVoice>
+			<AudioEntry
+				Sound="OreNode_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>	-->
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+		<ProjectedBuildabilityInfo
+			Radius="120.0"
+			RadiusY="105.0"
+			BuildPlacementTypes="BLOCKED">
+			<AllowedObjectFilter
+				Rule="ALL">
+				<ExcludeThing>AlliedRefinery</ExcludeThing>
+				<ExcludeThing>SovietRefinery</ExcludeThing>
+				<ExcludeThing>JapanRefinery</ExcludeThing>
+			</AllowedObjectFilter>
+		</ProjectedBuildabilityInfo>
+	</GameObject>
+</AssetDeclaration>

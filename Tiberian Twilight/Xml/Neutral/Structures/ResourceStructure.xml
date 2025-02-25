@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<!-- structure -->
+		<Include type="all" source="ART:TB_PRStructure_SKN.w3x" />
+		<Include type="all" source="ART:TB_PRStructure_CPTR.w3x" />
+		<Include type="all" source="ART:TB_PRStructure_IDLA.w3x" />
+		<Include type="all" source="ART:TB_PRStructure_DWN.w3x" />
+		<Include type="all" source="ART:TB_PRStrctre_Spike_SKN.w3x" />
+		<Include type="all" source="ART:TB_PRStrctre_Spike_LFT.w3x" />
+		<Include type="all" source="ART:TB_PRStrctre_Spike_IDLA.w3x" />
+
+		<!-- Plugs -->
+		<Include type="all" source="ART:TB_PRStructurePlug_SKL.w3x" />
+		<Include type="all" source="ART:TB_PRStructurePlug_SKN.w3x" />
+		<Include type="all" source="ART:TB_PRStructurePlug_DPLY.w3x" />
+				  
+		<Include type="all" source="ART:TB_PRStructure_FX_CPTR.w3x" />
+		<Include type="all" source="ART:TB_PRStructure_FX_IDLA.w3x" />
+
+		<Include type="instance" source="DATA:BaseObjects/BaseTechStructure.xml" />		
+		
+	</Includes>
+	<GameObject
+		id="ResourceStructure"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_ResourceStructure"
+		ButtonImage="Portrait_ResourceStructure"
+		Side="Neutral"
+		CommandSet="EmptyCommandSet"
+		KindOf="+RESOURCE_STRUCTURE +TIBERIUM_BASED +UNATTACKABLE +RESIST_REDEPLOYMENT_KILL +NO_HEALTH_BAR"
+		RadarPriority="STRUCTURE"
+		EditorName="NEUTRAL_Struct_Resource(Resource Structure)"
+		EditorSorting="STRUCTURE" 
+		Description="Desc:ResourceStructure">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:ResourceStructure</DisplayName>
+		<ArmorSet
+			Armor="TechStructureArmor" />
+		<Draws>
+			<!-- main structure -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				AffectedByStealth="false"
+				ExtraPublicBone="FXCoil TB_ROOF TB_SPIKE1_ATTACH TB_SPIKE2_ATTACH TB_SPIKE3_ATTACH Plug01 Plug02 Plug03 Plug04 TruckDock_01 TruckDock_02 TruckDock_03 TruckDock_04">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TB_PRStructure_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="IDLE">
+					<Animation
+						AnimationName="TB_PRStructure_DWN"
+						AnimationMode="LOOP"/>
+					<ParticleSysBone
+						BoneName="TB_ROOF"
+						FXParticleSystemTemplate="ResourceStructure_IdleParticles"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="TB_ROOF"
+						FXParticleSystemTemplate="ResourceStructure_IdleGlow"
+						FollowBone="true"/>
+				</AnimationState>
+				
+				<!-- when captured -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="CAPTURED">
+					<Animation
+						AnimationName="TB_PRStructure_IDLA"
+						AnimationMode="LOOP"/>
+					<ParticleSysBone
+						BoneName="FXCoil"
+						FXParticleSystemTemplate="ResourceStructure_IonSuck"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXCoil"
+						FXParticleSystemTemplate="ResourceStructure_IonParticles"
+						FollowBone="true" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "CAPTURED" and Prev ~= "Transition_MainToCaptured" then
+						CurDrawableSetTransitionAnimState("Transition_MainToCaptured")
+						end
+					</Script>
+				</AnimationState>
+
+				<!-- transition to captured state -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_MainToCaptured">
+					<Animation
+						AnimationName="TB_PRStructure_CPTR"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="FXCoil"
+						FXParticleSystemTemplate="ResourceStructure_IonSuck"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXCoil"
+						FXParticleSystemTemplate="ResourceStructure_IonParticles"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="TB_ROOF"
+						FXParticleSystemTemplate="ResourceStructure_IdleParticles"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="TB_ROOF"
+						FXParticleSystemTemplate="ResourceStructure_IdleGlow"
+						FollowBone="true"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- Ion fx dissolve on when captured -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_CaptureFX">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT" />
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="TB_PRStructure_FX_CPTR" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="SPIKE_CAPTURED">
+					<Animation
+						AnimationName="TB_PRStructure_FX_IDLA"
+						AnimationMode="LOOP"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "SPIKE_CAPTURED" and Prev ~= "Transition_ToCaptured" then
+						CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToCaptured">
+					<Animation
+						AnimationName="TB_PRStructure_FX_CPTR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			
+			<!-- spike #1 -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Spike1"
+				AttachToBoneInAnotherModule="TB_SPIKE1_ATTACH"
+				OkToChangeModelColor="true">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT" />
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="TB_PRStrctre_Spike_SKN" />
+					<ParticleSysBone
+						BoneName="FXSmoke"
+						FXParticleSystemTemplate="GDIRefinerySmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXSmoke"
+						FXParticleSystemTemplate="TibCellAura"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1" 
+					StateName="SPIKE_CAPTURED">
+					<Animation
+						AnimationName="TB_PRStrctre_Spike_IDLA"
+						AnimationMode="LOOP" 
+					/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "SPIKE_CAPTURED" and Prev ~= "Transition_ToCaptured" then
+						CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToCaptured">
+					<Animation
+						AnimationName="TB_PRStrctre_Spike_LFT"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- spike #2 -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Spike2"
+				AttachToBoneInAnotherModule="TB_SPIKE2_ATTACH"
+				OkToChangeModelColor="true">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT" />
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="TB_PRStrctre_Spike_SKN" />
+					<ParticleSysBone
+						BoneName="FXSmoke"
+						FXParticleSystemTemplate="GDIRefinerySmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXSmoke"
+						FXParticleSystemTemplate="TibCellAura"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="SPIKE_CAPTURED">
+					<Animation
+						AnimationName="TB_PRStrctre_Spike_IDLA"
+						AnimationMode="LOOP"
+					/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "SPIKE_CAPTURED" and Prev ~= "Transition_ToCaptured" then
+						CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToCaptured">
+					<Animation
+						AnimationName="TB_PRStrctre_Spike_LFT"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- spike #3 -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Spike3"
+				AttachToBoneInAnotherModule="TB_SPIKE3_ATTACH"
+				OkToChangeModelColor="true">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT" />
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="TB_PRStrctre_Spike_SKN" />
+					<ParticleSysBone
+						BoneName="FXSmoke"
+						FXParticleSystemTemplate="GDIRefinerySmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXSmoke"
+						FXParticleSystemTemplate="TibCellAura"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="SPIKE_CAPTURED">
+					<Animation
+						AnimationName="TB_PRStrctre_Spike_IDLA"
+						AnimationMode="LOOP"
+					/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "SPIKE_CAPTURED" and Prev ~= "Transition_ToCaptured" then
+						CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToCaptured">
+					<Animation
+						AnimationName="TB_PRStrctre_Spike_LFT"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- Plug #1  -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Plug01"
+				AttachToBoneInAnotherModule="Plug01"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TB_PRStructurePlug_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="TB_PRStructurePlug_DPLY"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<AnimationState
+					StateName="Docking01"
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOCK_1_DOCKING">
+					<Animation
+						AnimationName="TB_PRStructurePlug_DPLY"
+						AnimationMode="ONCE"
+					/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- Plug #2  -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Plug02"
+				AttachToBoneInAnotherModule="Plug02"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TB_PRStructurePlug_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="TB_PRStructurePlug_DPLY"
+						AnimationMode="MANUAL" />
+				</AnimationState>		
+				<AnimationState
+					StateName="Docking02"
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOCK_2_DOCKING">
+					<Animation
+						AnimationName="TB_PRStructurePlug_DPLY"
+						AnimationMode="ONCE"
+					/>
+				</AnimationState>
+			
+			</ScriptedModelDraw>
+
+			<!-- Plug #3  -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Plug03"
+				AttachToBoneInAnotherModule="Plug03"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TB_PRStructurePlug_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="TB_PRStructurePlug_DPLY"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<AnimationState
+					StateName="Docking03"
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOCK_3_DOCKING">
+					<Animation
+						AnimationName="TB_PRStructurePlug_DPLY"
+						AnimationMode="ONCE"
+					/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- Plug #4  -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Plug04"
+				AttachToBoneInAnotherModule="Plug04"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TB_PRStructurePlug_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="TB_PRStructurePlug_DPLY"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<AnimationState
+					StateName="Docking04"
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOCK_4_DOCKING">
+					<Animation
+						AnimationName="TB_PRStructurePlug_DPLY"
+						AnimationMode="ONCE"
+					/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Behaviors>
+			<!-- Temp fix until we can smooth out & finalize the income rate -->
+			<AutoDepositUpdate
+				id="ModuleTag_AutoDepositPrimary"
+				DepositInterval="1.0s"
+				GiveNoXP="true"
+				Flags="ACTIVE_WHEN_REPAIRING DIVIDE_AMONGST_DOCKED"
+				DepositToPlayersWithRelationships="ALLIES"
+				MaxDock="4">
+				<Deposit Account="=$ACCOUNT_CREDIT" Amount="12" />
+			</AutoDepositUpdate>
+
+			<ModelConditionUpgrade
+				id="ModuleTag_FactionUpgrade"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+
+		</Behaviors>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				MaxHealth="1.0"/>
+		</Body>
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior
+				id="ModuleTag_ASCB">
+				<Sound
+					Sound="PrimaryResourceBuilding_AnimationSpike_LFT1"
+					Animation="TB_PRStrctre_Spike_LFT"
+					Frame="1" />
+				<Sound
+					Sound="PrimaryResourceBuilding_AnimationSpike_LFT2"
+					Animation="TB_PRStrctre_Spike_LFT"
+					Frame="31" />	
+					
+				<Sound
+					Sound="PrimaryResourceBuilding_AnimationDoor_CLS1"
+					Animation="TB_PRStrctre_Door_CLS"
+					Frame="1" />		
+				<Sound
+					Sound="PrimaryResourceBuilding_AnimationDoor_CLS2"
+					Animation="TB_PRStrctre_Door_CLS"
+					Frame="18" />	
+					
+				<Sound
+					Sound="PrimaryResourceBuilding_AnimationDoor_OPN"
+					Animation="TB_PRStrctre_Door_OPN"
+					Frame="1" />	
+					
+				<Sound
+					Sound="PrimaryResourceBuilding_AnimationCPTR1"
+					Animation="TB_PRStructure_CPTR"
+					Frame="1" />		
+				<Sound
+					Sound="PrimaryResourceBuilding_AnimationCPTR2"
+					Animation="TB_PRStructure_CPTR"
+					Frame="6" />	
+				<Sound
+					Sound="PrimaryResourceBuilding_AnimationCPTR3"
+					Animation="TB_PRStructure_CPTR"
+					Frame="201" />								
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="60.0"
+				Height="75.0"
+				ContactPointGeneration="STRUCTURE"/>
+		</Geometry>
+		<EvaEventArray>
+			<!-- <EvaEntry EvaEvent="ResourceStructureLost" EvaType="defectingAwayAllies" />
+			<EvaEntry EvaEvent="ResourceStructureCaptured" EvaType="defectingTowardsAllies" /> -->
+		</EvaEventArray>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="PrimaryResourceBuilding_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+			<AudioEntry Sound="PrimaryResourceBuilding_AmbientLoopMS" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<VisionInfo
+		VisionRange="100"
+		ShroudClearingRange="200" />
+	</GameObject>
+</AssetDeclaration>

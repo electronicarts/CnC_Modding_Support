@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="../Includes/AIBaseType.xsd"/>
+	<xs:include schemaLocation="AIBaseSelectionCriteria.xsd"/>
+
+	<!-- Targeting Heuristic definitions, also for the states -->
+  <xs:simpleType name="TargetingHeuristicType">
+    <xs:restriction base="xs:string">
+      
+      <xs:enumeration value="EnemyStructure"/>
+      <xs:enumeration value="FriendlyStructure"/>
+      <xs:enumeration value="EnemyUnit" />
+      <xs:enumeration value="FriendlyUnit" />
+
+      <xs:enumeration value="UnderAttackBy" />
+      
+      <xs:enumeration value="EnemyUnitCloseToShore"/>
+      <xs:enumeration value="EnemyStructureCloseToShore"/>
+      
+      <xs:enumeration value="NeutralGarrison"/>
+      <xs:enumeration value="EnemyGarrison"/>
+      
+      <xs:enumeration value="Expansion"/>
+      <xs:enumeration value="TechBuilding"/>
+      <xs:enumeration value="Bridge"/>
+      <xs:enumeration value="Beacon"/>
+      <xs:enumeration value="Crate"/>
+			<xs:enumeration value="Help"/>
+      <xs:enumeration value="Husk"/>
+
+			<xs:enumeration value="Point"/>
+			<xs:enumeration value="UnpackBuildingPlacement" />
+
+      <xs:enumeration value="NamedObject"/>
+      <xs:enumeration value="Waypoint"/>
+      <xs:enumeration value="Team"/>
+      
+		</xs:restriction>
+  </xs:simpleType>
+  
+  <!--Target Sort Types-->
+  <xs:simpleType name="AITargetSortType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Distance"/>
+      <xs:enumeration value="ThreatToGround"/>
+      <xs:enumeration value="ThreatToAir"/>
+			<xs:enumeration value="ThreatToWater"/>
+      <xs:enumeration value="Random"/>
+      <xs:enumeration value="ClosestToEnemy"/>
+    </xs:restriction>
+  </xs:simpleType>
+	
+  <xs:simpleType name="AITargetLocationType" >
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Water" />
+			<xs:enumeration value="Land" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AITargetLocationBitFlags">
+		<xs:list itemType="AITargetLocationType"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="BuildingPlacementDistance">
+		<xs:sequence />
+		<xs:attribute name="Distance" type="SageReal" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="AITargetingHeuristic" xas:runtimeWrapper ="::AITargetHeuristic" xas:typeGroup="Xml">
+    <xs:complexContent>
+      <xs:extension base="BaseAssetType">
+        <xs:sequence>
+					<!-- Used by Garrison, EnemyGarrison, Expansion, Point, and UnpackBuildingPlacement -->
+					<xs:element name="BaseSelection" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1" /> 
+          <!-- Used only by UnpackBuildingPlacement. Each one specifies a different distance to search at -->
+					<xs:element name="BuildingPlacementDistance" type="BuildingPlacementDistance" minOccurs="0" maxOccurs="unbounded" xas:sortBy="Distance"/>
+        </xs:sequence>
+        <xs:attribute name="HeuristicType" type="TargetingHeuristicType" use="required"/>
+        <xs:attribute name="SortType" type="AITargetSortType" use="optional" default="Distance"/>
+        <!-- Object is true is it has all flags in "Must Include All" and either a vital flag, or no forbidden flags -->
+        <xs:attribute name="VitalKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="ForbiddenKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="VitalObjectStatus" type="ObjectStatusBitFlags"/>
+        <xs:attribute name="ForbiddenObjectStatus" type="ObjectStatusBitFlags"/>
+        <xs:attribute name="Destroyed" type="xs:boolean" default="false"/>
+				<!-- HighestPriorityEnemyPlayersOnly: For heuristics which target enemy stuff: If false, search secondary enemies if the primary enemies have nothing that matches.
+						 If true, use the old method where only the highest priority enemy(ies) were considered -->
+				<xs:attribute name="HighestPriorityEnemyPlayersOnly" type="SageBool" default="true" /> 
+        <xs:attribute name="ThreatFinderRange" type="xs:float" use="optional"/>
+        <xs:attribute name="SearchRange" type="xs:float" default="1500.0"/>
+        <xs:attribute name="Beacon" type="AIBeaconType" use="optional"/>
+        <xs:attribute name="Name" type="xs:string" use="optional"/>
+				<xs:attribute name="Location" type="AITargetLocationBitFlags" default="Water Land"/>
+				<!-- Only for ...CloseToShore -->
+				<xs:attribute name="MaxDistanceToShore" type="SageReal" default="1000.0" />
+        <xs:attribute name="Relationship" type="ObjectFilterRelationshipBitMask" use="optional" />
+        <!-- NOTE: Currently this is only hooked up to the FriendlyUnit target heuristic but ideally will be applied to all of them -->
+        <xs:attribute name="UnderAttack" type="xs:boolean" default="false" />
+        <!-- Used by the EnemyObject, NamedObject, and Waypoint heuristics to only allow the AI to use the object or position for 1 target at a time -->
+        <xs:attribute name="RequireUniqueTarget" type="xs:boolean" default="false" />
+        <!-- The target must be at least this far from the nearest enemy. Currently only hooked up to the Expansion, BuildingPlacement, and NeutralTech heuristics-->
+        <xs:attribute name="MinDistanceFromEnemy" type="SageReal" default="0.0" />
+				<!-- Only for UnpackBuildingPlacement: don't choose points within this distance of one of our conyard's natural rally points.
+						 This is so that we don't box ourselves in by planting a bunch of eggs near the conyard entrance and then find that
+						 we can't unfurl any new buildings at all. -->
+				<xs:attribute name="MinDistanceFromConyardEntrance" type="SageReal" default="0.0" />
+				<!-- Only for UnpackBuildingPlacement: Ignore MinDistanceFromConyardEntrance for this long after the AI starts up. We really want
+						 the first Power Plant in the build order to unpack ASAP, and a single power plant near the conyard isn't going to cause us
+						 problems. -->
+				<xs:attribute name="IgnoreMinDistanceFromConyardEntranceForTime" type="Time" default="0s" />
+			</xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

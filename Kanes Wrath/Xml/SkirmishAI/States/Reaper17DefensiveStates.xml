@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Tags></Tags>
+  <Includes></Includes>
+
+  <AIStrategicStateDefinition
+		id="Reaper17ReactiveDefense"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <Tactic Tactic="ReactiveDefense" TargetType="Targetless">
+      <TeamTemplate MinUnits="1" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="" AlwaysRelease="true" AlwaysRecruit="true"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+		id="Reaper17StaticDefense"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestFriendlyStructureHeuristic" TargetType="Guard"/>
+    <Tactic Tactic="StaticDefense" TargetType="Guard">
+      <TeamTemplate MinUnits="3" MaxUnits="3" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="false"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+		id="Reaper17HarvesterEscort"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestFriendlyHarvesterHeuristic" TargetType="Guard"/>
+    <Tactic Tactic="StaticDefense" TargetType="Guard">
+      <TeamTemplate MinUnits="2" MaxUnits="2" IncludeKindOf="CAN_ATTACK VEHICLE" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="false"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+		id="Reaper17Counterattack"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <PathToTargetHeuristic PathExists="true"/>
+      <TimerHeuristic StartTime="600s" EndTime="-1s"/>
+      <CounterattackHeuristic Threshold="3.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="Counterattack"/>
+    <Tactic Tactic="SimpleAttack" TargetType="Counterattack">
+      <TeamTemplate MinUnits="12" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="ASSAULT_AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="Reaper17FinalAttack"
+    UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <PathToTargetHeuristic PathExists="true"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="Counterattack"/>
+    <Tactic Tactic="SimpleAttack" TargetType="Counterattack">
+      <TeamTemplate MinUnits="50" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="false"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+  id="Reaper17DefensiveAirHarassment"
+  UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirUnitHeuristic" TargetType="AssaultAirstrike"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirPowerPlantHeuristic" TargetType="AssaultAirstrike"/>
+    <Tactic Tactic="DefenseAvoidanceAttack" TargetType="AssaultAirstrike">
+      <TeamTemplate MinUnits="6" IncludeKindOf="CAN_ATTACK AIRCRAFT ASSAULT_AIRCRAFT" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="false"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+		id="Reaper17DefensiveExpansion"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <IntervalHeuristic IntervalTime="130s" ActiveTime="30s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ExpansionHeuristic" TargetType="Expansion"/>
+    <Tactic Tactic="SimpleExpansion" TargetType="Expansion">
+      <TeamTemplate MinUnits="2" MaxUnits="12" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false">
+        <CreateUnits UnitName="Reaper17Explorer"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBudgetStateDefinition
+    id="Reaper17DefensiveTechByTimeBudget">
+    <Heuristic>
+      <ConstantHeuristic Weight="0.8"/>
+      <OpeningMoveHeuristic Complete="true"/>
+      <IntervalHeuristic IntervalTime="70s" ActiveTime="20s"/>
+      <IntervalHeuristic IntervalTime="7s" ActiveTime="3s"/>
+    </Heuristic>
+    <Budget>
+      <AccountShare Account="INVESTMENT" Percent="0%"/>
+      <AccountShare Account="SPECIAL_OPERATIONS" Percent="0%"/>
+      <AccountShare Account="PRODUCTION" Percent="0%"/>
+      <AccountShare Account="DEFENSE" Percent="0%"/>
+      <AccountShare Account="TECHNOLOGY" Percent="90%"/>
+      <AccountShare Account="SLUSH_FUND" Percent="10%"/>
+    </Budget>
+  </AIBudgetStateDefinition>
+
+  <AIBudgetStateDefinition
+    id="Reaper17DefensiveTechByTimeBudget_EASY">
+    <Heuristic>
+      <ConstantHeuristic Weight="0.8"/>
+      <OpeningMoveHeuristic Complete="true"/>
+      <IntervalHeuristic IntervalTime="550s" ActiveTime="20s"/>
+      <IntervalHeuristic IntervalTime="7s" ActiveTime="3s"/>
+    </Heuristic>
+    <Budget>
+      <AccountShare Account="INVESTMENT" Percent="0%"/>
+      <AccountShare Account="SPECIAL_OPERATIONS" Percent="0%"/>
+      <AccountShare Account="PRODUCTION" Percent="0%"/>
+      <AccountShare Account="DEFENSE" Percent="0%"/>
+      <AccountShare Account="TECHNOLOGY" Percent="90%"/>
+      <AccountShare Account="SLUSH_FUND" Percent="10%"/>
+    </Budget>
+  </AIBudgetStateDefinition>
+
+
+  <AIBudgetStateDefinition
+    id="Reaper17DefensiveTechByTimeBudget_MEDIUM">
+    <Heuristic>
+      <ConstantHeuristic Weight="0.8"/>
+      <OpeningMoveHeuristic Complete="true"/>
+      <IntervalHeuristic IntervalTime="160s" ActiveTime="20s"/>
+      <IntervalHeuristic IntervalTime="7s" ActiveTime="3s"/>
+    </Heuristic>
+    <Budget>
+      <AccountShare Account="INVESTMENT" Percent="0%"/>
+      <AccountShare Account="SPECIAL_OPERATIONS" Percent="0%"/>
+      <AccountShare Account="PRODUCTION" Percent="0%"/>
+      <AccountShare Account="DEFENSE" Percent="0%"/>
+      <AccountShare Account="TECHNOLOGY" Percent="90%"/>
+      <AccountShare Account="SLUSH_FUND" Percent="10%"/>
+    </Budget>
+  </AIBudgetStateDefinition>
+
+
+</AssetDeclaration>

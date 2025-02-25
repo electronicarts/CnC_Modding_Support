@@ -1,0 +1,137 @@
+<CrawlerModules xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" >
+
+	<WeaponSetUpdate
+		id="ModuleTag_WeaponSetUpdate">
+		<!-- this is a hardpoint weapon until the right bones get put into the model -->
+		<WeaponSlotTurret
+			ID="1">
+			<Weapon
+				Ordering="PRIMARY_WEAPON"
+				Template="NODCrawlerBLaserWeapon"
+				ObjectStatus="WEAPON_UPGRADED_01"
+				ForbiddenObjectStatus="UNDER_CONSTRUCTION" />
+			<TurretSettings
+				TurretTurnRate="200"
+				TurretPitchRate="100"
+				AllowsPitch="true"
+				MinimumPitch="-30d"
+				PitchHeight="90%"
+				MinIdleScanTime="1.0s"
+				MaxIdleScanTime="5.0s"
+				MinIdleScanAngle="0.0"
+				MaxIdleScanAngle="45.0"
+				MaxDeflectionClockwise="180d"
+				MaxDeflectionAntiClockwise="180d"
+				InvalidIdleScanObjectStatus="UNDER_CONSTRUCTION">
+				<TurretAITargetChooserData
+					CanPickDynamicTargets="true"/>
+			</TurretSettings>
+		</WeaponSlotTurret>
+		<WeaponSlotTurret
+			ID="2">
+			<Weapon
+				Ordering="PRIMARY_WEAPON"
+				Template="NODCrawlerBFlameWeapon"
+				ObjectStatus="WEAPON_UPGRADED_02"
+				ForbiddenObjectStatus="UNDER_CONSTRUCTION" />
+			<TurretSettings
+				TurretTurnRate="200"
+				TurretPitchRate="100"
+				AllowsPitch="true"
+				MinimumPitch="0d"
+				PitchHeight="90%"
+				FirePitch="45d"
+				MinIdleScanTime="1.0s"
+				MaxIdleScanTime="5.0s"
+				MinIdleScanAngle="0.0"
+				MaxIdleScanAngle="45.0"
+				MaxDeflectionClockwise="180d"
+				MaxDeflectionAntiClockwise="180d"
+				InvalidIdleScanObjectStatus="UNDER_CONSTRUCTION">
+				<TurretAITargetChooserData
+					CanPickDynamicTargets="true"/>
+			</TurretSettings>
+		</WeaponSlotTurret>
+	</WeaponSetUpdate>
+
+	<StatusBitsUpgrade
+		id="ModuleTag_UpgradeWeaponTech2"
+		StatusToSet="WEAPON_UPGRADED_01">
+		<TriggeredBy>Upgrade_Tech_Up_Rank1</TriggeredBy>
+	</StatusBitsUpgrade>
+
+	<StatusBitsUpgrade
+		id="ModuleTag_UpgradeWeaponTech3"
+		StatusToSet="WEAPON_UPGRADED_02">
+		<TriggeredBy>Upgrade_Tech_Up_Rank2</TriggeredBy>
+	</StatusBitsUpgrade>
+
+	<!-- FX cards on Tier T2 and Tier T3 -->
+	<FXListBehavior
+		id="ModuleTag_FXListUpgrade_T2">
+		<TriggeredBy>Upgrade_Tech_Up_Rank1</TriggeredBy>
+		<DieMuxData DeathTypes="ALL" />
+		<Event
+			Index="onUpgraded"
+			FX="FX_UpgradeNODTech2" />
+	</FXListBehavior>
+	<FXListBehavior
+		id="ModuleTag_FXListUpgrade_T3">
+		<TriggeredBy>Upgrade_Tech_Up_Rank2</TriggeredBy>
+		<DieMuxData DeathTypes="ALL" />
+		<Event
+			Index="onUpgraded"
+			FX="FX_UpgradeNODTech3" />
+	</FXListBehavior>
+
+	<!-- FX for getting upgraded. -->
+	<FXListBehavior
+		id="ModuleTag_FXListUpgrade_Upgrade01">
+		<TriggeredBy>Upgrade_Nod_Offense_CrawlerTech2</TriggeredBy>
+		<DieMuxData DeathTypes="ALL" />
+		<Event
+			Index="onUpgraded"
+			FX="FX_UpgradeNODStealthGen" />
+	</FXListBehavior>
+	<FXListBehavior
+		id="ModuleTag_FXListUpgrade_Upgrade02">
+		<TriggeredBy>Upgrade_Nod_Offense_CrawlerTech3</TriggeredBy>
+		<DieMuxData DeathTypes="ALL" />
+		<Event
+			Index="onUpgraded"
+			FX="FX_UpgradeNODStealthGenMobile" />
+	</FXListBehavior>
+	
+	<StancesBehavior
+		id="ModuleTag_Stance"
+		StanceTemplate="Generic"
+	/>
+
+	<LaserState
+		id="ModuleTag_LaserState"
+		LaserId="1" 
+	/>
+
+	<!-- Aura to increase bomber aircraft reload times -->
+	<AttributeModifierAuraUpdate
+		id="ModuleTag_BomberReloadAura"
+		InitiallyActive="true"
+		AttributeModifierName="Modifier_NODCrawler_BomberReload"
+		RefreshDelay="0.5s"
+		Range="=$NOD_CRAWLER_BOMBER_RELOAD_MODIFIER_RANGE"
+		AllowSelf="false">
+		<UpdateStatusValidation
+			ForbiddenStatus="DISABLED_FOR_RECYCLE" />
+		<ObjectFilter
+			Rule="NONE"
+			Relationship="ALLIES">
+			<IncludeThing>NODAircraftC</IncludeThing>
+		</ObjectFilter>
+	</AttributeModifierAuraUpdate>
+
+	<xi:include
+		href="DATA:Includes/GenericReflectedWeaponTracker.xml" />
+
+	
+	
+</CrawlerModules>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:JT_NodBlockade_SKN.w3x" />
+		<Include type="all"	source="ART:JT_NodBlockade_D.w3x" />
+		<Include type="all"	source="ART:JT_NodBlockade_D1.w3x" />
+		<Include type="all"	source="ART:JT_NodBlockade_D2.w3x" />
+		<Include type="all"	source="ART:JT_NodBlockade_DMG.xml" />
+		
+		<Include type="instance" source="DATA:BaseObjects/BaseStructure.xml" />
+
+	</Includes>
+	<GameObject
+		id="NODBlockade"
+		inheritFrom="BaseStructure"
+		KindOf="+CLASSIFY_ENTIRE_FOOTPRINT +MOVE_FOR_NOONE"
+		EditorName="NODBlockade"
+		Side="NOD"
+		SelectPortrait="Portrait_Neutral_JT_NodBlockade"
+		Description="Desc:NODBlockade"
+		EditorSorting="STRUCTURE">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODBlockade</DisplayName>
+		<ArmorSet 
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false"
+				AffectedByStealth="false"
+				ExtraPublicBone="">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JT_NodBlockade_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="JT_NodBlockade_D2" />
+					<Texture
+						Original="JT_NodBlockade"
+						New="JT_NodBlockade_DMG"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="JT_NodBlockade_D1" />
+					<Texture
+						Original="JT_NodBlockade"
+						New="JT_NodBlockade_DMG"/>
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="JT_NodBlockade_D" />
+					<Texture
+						Original="JT_NodBlockade"
+						New="JT_NodBlockade_DMG"/>
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Geometry>
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "15.0"
+				 MinorRadius = "59.0"
+				 Height = "62.0"
+				 ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+		</Geometry>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GarStructure_Explode" />
+				<Event Index="onDeath" FX="FX_NEU_RockDestructable1_DieCrumbleExplosion_AudioOnly"/>
+			</FXListBehavior>
+
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0.0s"
+				SinkRate="0.0"
+				DestructionDelay="180.0s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="DefaultBody"
+				MaxHealth="400" />
+		</Body>
+
+		<AudioArraySound>
+			<AudioEntry Sound="NEU_RockDestructable1_DamageImpactExplosion" AudioType="soundOnDamaged"/>
+			<AudioEntry Sound="NEU_RockDestructable1_DamageImpactExplosion" AudioType="soundOnReallyDamaged"/>
+		</AudioArraySound>
+
+	</GameObject>
+</AssetDeclaration>

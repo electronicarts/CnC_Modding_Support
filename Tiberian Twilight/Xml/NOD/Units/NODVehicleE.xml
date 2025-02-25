@@ -1,0 +1,739 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	
+	<!-- NOD Vehicle E / NOD Stealth Tank -->
+	
+	<Includes>
+		<Include type="all" source="ART:NUM_VehicleE_SKN.w3x" />
+		
+		<!-- Animations -->
+		<Include type="all" source="ART:NUM_VehicleE_IDLA.w3x" />
+		<Include type="all" source="ART:NUM_VehicleE_ATKA.w3x" />
+		<Include type="all" source="ART:NUM_VehicleE_MOVA.w3x" />
+
+		<!-- Damaged Texture -->
+		<Include type="all" source="ART:NUM_VehicleE_DMG.xml" />
+		
+		<!-- Other Includes -->
+		<Include type="all" source="ART:Decal_Sensor_CO.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<Include type="instance" source="DATA:Nod/Props/NODVehicleEProps.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseMediumVehicle.xml" />
+		
+	</Includes>
+	<Defines>
+		<Define name="NOD_VEHICLE_E_STEALTH_BROADCAST_RANGE" value="100" />
+		<Define name="NOD_VEHICLE_E_STEALTH_BROADCAST_UPDATE_PERIOD" value="0.5s" />
+		<Define name="NOD_VEHICLE_E_STEALTH_BROADCAST_MODIFIER_DURATION" value="0.7s" />
+	</Defines>
+	<GameObject
+		id="NODVehicleE"
+		inheritFrom="BaseMediumVehicle"
+		HealthBoxHeightOffset="30"
+		SubGroupPriority="251"
+		SelectPortrait="Portrait_NOD_Vehicle_E"
+		ButtonImage="Btn_NOD_Vehicle_E"
+		Side="NOD"
+		ParticipationValue="=$NODVEHICLEE_PARTICIPATION_VALUE"
+		KindOf="+HAS_VISIBLE_AMMO +CAN_ATTACK_WHILE_STEALTHED"
+		TransportSlotCount="2"
+		BuildTime="12"
+		PathPriority="55"
+		CommandSet="NODVehicleECommandSet"
+		CommandPoints="=$NOD_VEHICLE_E_COMMANDPOINT_COST"
+		ShockwaveResistance="90"
+		WeaponCategory="MISSILE"
+		VoicePriority="196"
+		EditorName="NOD_O2_Medium_Rocket(Stealth Tank)"
+		EditorSorting="UNIT"
+		HasFiredRecentlyTime="2s"
+		Description="Desc:NODStealthTank"
+		TypeDescription="Type:NODStealthTank"
+		ReinvisibilityDelay="4s" >
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODStealthTank</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+		<LocomotorSet
+			Locomotor="NODVehicleELocomotor"
+			Condition="NORMAL"
+			Speed="130.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true"
+			ConquerMetricsOverrideDPS="17.5"
+			ConquerMetricsOverrideDamageType="ROCKET" />
+		<Draws>
+			<TankDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="NE_Pitch Bone_Tread_Front_Left Bone_Tread_Front_Right Bone_Tread_Rear_Left Bone_Tread_Rear_Right FXMuzzle01 FXMuzzle02 FXMuzzle03"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="Bone_Tread_Rear_Left"
+				TrackMarksRightBone="Bone_Tread_Rear_Right"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT"
+					RetainSubObjects="true">
+					<Model
+						Name="NUM_VehicleE_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXMuzzle03"/>
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXMuzzle" />
+					<WeaponFireFXBone
+						WeaponSlotType="SECONDARY_WEAPON"
+						BoneName="FXMuzzle" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXMuzzle" />
+					<WeaponLaunchBone
+						WeaponSlotType="SECONDARY_WEAPON"
+						BoneName="FXMuzzle" />
+					<!--
+					<WeaponRecoilBone 
+						WeaponSlotType="PRIMARY_WEAPON" 
+						BoneName="Barrel" />
+						-->
+					<!-- yes, turret bone is called NE_Pitch-->
+					<Turret
+						TurretNameKey="NE_Pitch"
+						TurretPitch=""
+						TurretID="1" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NUM_VehicleE_SKN" />
+					<Texture
+						Original="NUM_VehicleE"
+						New="NUM_VehicleE_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUM_VehicleE_SKN" />
+					<Texture
+						Original="NUM_VehicleE"
+						New="NUM_VehicleE_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="NUM_VehicleE_IDLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+						<Script>
+									CurDrawableHideSubObjectPermanently( "NUM_VEHICLEE_UPG" )
+						</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="NUM_VehicleE_ATKA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="NUM_VehicleE_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+				</AnimationState>
+
+			</TankDraw>
+			<!--
+			<TankDraw
+				id="ModuleTag_Stealth"
+				OkToChangeModelColor="true"
+				InvertStealthOpacity="true"
+				ExtraPublicBone="FXTracksL FXTracksR FXTracksB FXWeaponL FXWeaponR"
+				>
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="INVISIBLE_STEALTH">
+					<Model
+						Name="NUStlthTnkStlth" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NUStlthTnk_IDLA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_LEFT_HIGH_SPEED">
+					<Animation
+						AnimationName="NUStlthTnk_HSTL"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_RIGHT_HIGH_SPEED">
+					<Animation
+						AnimationName="NUStlthTnk_HSTR"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_LEFT">
+					<Animation
+						AnimationName="NUStlthTnk_TRNL"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_RIGHT">
+					<Animation
+						AnimationName="NUStlthTnk_TRNR"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="NUStlthTnk_IDLA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="NUStlthTnk_IDLA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<ArticulationBone
+					ArticulationBoneName="Bone_ArmR"
+					ArticulationHelperBoneName="FXTracksL" />
+				<ArticulationBone
+					ArticulationBoneName="Bone_ArmL"
+					ArticulationHelperBoneName="FXTracksR" />
+				<ArticulationBone
+					ArticulationBoneName="Bone_Rear"
+					ArticulationHelperBoneName="FXTracksB" />
+			</TankDraw>
+			-->
+
+			<TreadScrollDraw
+				id="ModuleTag_TreadDraw">
+				<TreadScrollingMap
+					LeftTrack="Bone_Tread_Front_Left"
+					RightTrack="Bone_Tread_Front_Right"
+					SpeedMultiplier="0.06"
+					TreadDriveSpeedFraction="10%"/>
+				<TreadScrollingMap
+					LeftTrack="Bone_Tread_Rear_Left"
+					RightTrack="Bone_Tread_Rear_Right"
+					SpeedMultiplier="0.06"
+					TreadDriveSpeedFraction="10%"/>
+			</TreadScrollDraw>
+			
+			<ScriptedModelDraw
+				id="ModuleTag_DrawStealthDecal"
+				OkToChangeModelColor="true"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RECYCLED">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STEALTH_FIELD_ACTIVE SELECTED">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$NOD_VEHICLE_E_STEALTH_BROADCAST_RANGE * 2.15"
+						SizeY="=$NOD_VEHICLE_E_STEALTH_BROADCAST_RANGE * 2.15"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODVehicleERocket"
+						ForbiddenObjectStatus="WEAPON_UPGRADED_01"/>
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODVehicleERocket_Upgraded"
+						ObjectStatus="WEAPON_UPGRADED_01" />
+					<TurretSettings
+						TurretTurnRate="300"
+						TurretPitchRate="40"
+						AllowsPitch="true"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData
+							CanPickDynamicTargets="true"
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			
+			<!-- intrinsic invis and concealment -->
+			<GrantUpgradeCreate
+				id="ModuleTag_DefaultUpgrade"
+				UpgradeToGrant="Upgrade_NODVehicleEDefaultUpgrade"/>
+			<InvisibilityUpgrade
+				id="ModuleTag_Invisibility_Intrinsic"
+				InvisibilityTemplate="DefaultInvisibilityTemplate">
+				<TriggeredBy>Upgrade_NODVehicleEDefaultUpgrade</TriggeredBy>
+			</InvisibilityUpgrade>
+			<AttributeModifierUpgrade
+				id="ModuleTag_StealthDodgeUpgrade"
+				AttributeModifier="Modifier_StealthDodge">
+				<TriggeredBy>Upgrade_NODVehicleEDefaultUpgrade</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- The intrinsic Invisibility should make sure that the unit hidden properly-->
+			<InvisibilityBroadcastUpdate
+				id="ModuleTag_InvisibilityBroadcast_Upgraded"
+				InvisibilityTemplate="NODVehicleEInvisibilityTemplate"
+				AffectsSelf="false"
+				UpdatePeriod="=$NOD_VEHICLE_E_STEALTH_BROADCAST_UPDATE_PERIOD"
+				BroadcastRange="=$NOD_VEHICLE_E_STEALTH_BROADCAST_RANGE">
+				<ObjectStatusValidation
+					RequiredStatus="USER_1"
+					ForbiddenStatus="UPGRADE_CRYSTAL_ATTACHED CLONED"
+					/>
+				<BroadcastObjectFilter
+					Rule="ALL"
+					Relationship="ALLIES"
+					Exclude="AIRCRAFT DO_NOT_STEALTH"/>
+			</InvisibilityBroadcastUpdate>
+			<!-- The broadcast should also add a dodge mod -->
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_DodgeModifierAura"
+				AttributeModifierName="Modifier_NODVehicleEStealthAuraDodgeBonus"
+				RefreshDelay="=$NOD_VEHICLE_E_STEALTH_BROADCAST_UPDATE_PERIOD"
+				Range="=$NOD_VEHICLE_E_STEALTH_BROADCAST_RANGE"
+				PartitionFilterTestType="CIRCLE"
+				AllowSelf="false">
+				<TriggeredBy>Upgrade_NODVehicleEImprovedStealth</TriggeredBy>
+				<UpdateStatusValidation
+					ForbiddenStatus="DISABLED_FOR_RECYCLE CLONED" />
+				<ObjectFilter
+					Rule="ALL"
+					Relationship="ALLIES"
+					Exclude="AIRCRAFT DO_NOT_STEALTH" />
+			</AttributeModifierAuraUpdate>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleMED_Death" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<AttributeModifierUpgrade
+				id="Upgrade_NODVehicleECrateUpgrade"
+				AttributeModifier="Modifier_NODVehicleECrateUpgrade">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<AttributeModifierUpgrade
+				id="Upgrade_NODVehicleECrawlerUpgrade"
+				AttributeModifier="Modifier_NODVehicleECrawlerUpgrade">
+				<TriggeredBy>Upgrade_NODVehicleEImprovedStealth</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NodVehicleEFunctions"/>
+
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<Nugget
+					ShowSubObjects="NUM_VehicleE_UPG"
+					Upgrade="Upgrade_Crate_Level1"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+			</SubObjectsUpgrade>    
+      
+			<FXListBehavior
+				  xmlns="uri:ea.com:eala:asset"
+				  id="ModuleTag_FXListUpgrade">
+				<TriggeredBy>Upgrade_NODVehicleEImprovedStealth</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeNODImprovedConceal" />
+			</FXListBehavior>
+
+			<!-- explode on death from ammo burst and damage nearby objects -->
+			<xi:include href="DATA:Includes/AmmoBurstWeaponDeath.xml" />
+
+			<xi:include href="DATA:Includes/FXListBehaviorCrateUpgrade.xml" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AiUpdate"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="true"
+					SympathyRange="200.0"
+					RotateToTargetWhenAiming="false" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="540" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<!-- no, since he's invisible <Key>LargeGroupAudioKey_Vehicle</Key> -->
+				<Key>LargeGroupAudioKey_TankMedium</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+ 		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "34.0"
+					 MinorRadius = "17.0"
+					 Height = "7.0"
+					 ContactPointGeneration = "VEHICLE" >
+				<Offset
+						x = "0.70182"
+						y = "0.149948"
+						z = "0.0" />
+			</Shape>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "8.0"
+					 MinorRadius = "11.0"
+					 Height = "20.0">
+				<Offset
+						x = "-4.27514"
+						y = "0.149947"
+						z = "15.7487" />
+			</Shape>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "15.0"
+					 MinorRadius = "12.5"
+					 Height = "8.83459"
+					 ContactPointGeneration = "VEHICLE" >
+				<Offset
+						x = "2.0539"
+						y = "0.149947"
+						z = "7.02478" />
+			</Shape>
+		</Geometry>
+		<ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_VoiceSprint">
+				<Override RequiredFlags="INVISIBLE_STEALTH">
+					<AudioArrayVoice>
+						<AudioEntry Sound="NOD_VehEStealthTank_VoiceMove" AudioType="voiceMove"/>
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_VehEStealthTank_VoiceAttack" AudioType="voiceAttack" />
+			<AudioEntry Sound="NOD_VehEStealthTank_VoiceMoveAttack" AudioType="voiceAttackAfterMoving" />
+			<AudioEntry Sound="NOD_VehEStealthTank_VoiceCreate" AudioType="voiceCreated" />
+			<AudioEntry Sound="NOD_VehEStealthTank_VoiceMove" AudioType="voiceGuard" />
+			<AudioEntry Sound="NOD_VehEStealthTank_VoiceMove" AudioType="voiceMove" />
+			<AudioEntry Sound="NOD_VehEStealthTank_VoiceRetreat" AudioType="voiceRetreatToCastle" />
+			<AudioEntry Sound="NOD_VehEStealthTank_VoiceSelectMS" AudioType="voiceSelect" />
+			<AudioEntry Sound="NOD_VehEStealthTank_VoiceSelectBattleMS" AudioType="voiceSelectBattle" />
+			<AudioEntry Sound="NOD_VehEStealthTank_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleMedium_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="NOD_StealthTank_VehE_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="NOD_StealthTank_VehE_IdleLoop" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="325"
+			ShroudClearingRange="500" />
+
+		<DisplayUpgrade>Upgrade_NODVehicleEImprovedStealth</DisplayUpgrade>
+	</GameObject>
+
+
+  <!-- ////////////////////////////////////////	-->
+  <!--    WEAPONS																-->
+  <!-- ////////////////////////////////////////	-->
+	<WeaponTemplate
+		id="NODVehicleERocket"
+		inheritFrom="BaseRocketWeapon" 
+		AttackRange="275.0"
+		AcceptableAimDelta="1d"
+		FireFX="FX_NODStealthMissileFire"
+		FireVeteranFX="FX_NODStealthMissileFire_Veteran"
+		FireStrongCounterFX="FX_NODStealthMissileFire_Veteran"
+		FireSound="NOD_StealthTank_VehE_RocketLaunch"
+		ClipSize="4"
+		ShotsPerBarrel="1"
+		AutoReloadsClip="ONE_AT_A_TIME"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT DRAW_AMMO_BAR">
+		<FiringDuration
+			MinSeconds="=$EPSILON_SECONDS"
+			MaxSeconds="=$EPSILON_SECONDS" />
+		<ClipReloadTime
+			MinSeconds="4.76s"
+			MaxSeconds="4.76s" />
+		<WeaponAiHintInfo
+			UseKitingBehavior="true"
+			HoldFireWhileKiting="true" 
+			ActivateKitingAmmoPercentage="10%"
+			DeactivateKitingAmmoPercentage="80%" />
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="NODVehicleERocketWarhead"
+				ProjectileTemplate="NODVehicleERocketProjectile">
+				<CombatChainProjectiles
+					CombatChain="STRONG"
+					ProjectileTemplate="NODVehicleERocketProjectile_Veteran" />
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Using GDI_RIFLE instead of NOD_MISSILE for FX_NONE, so the AOE fx can take over (Aram) -->
+	<WeaponTemplate
+		id="NODVehicleERocketWarhead"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY">
+		<Nuggets>
+			<DamageNugget
+				Damage="22.0"
+				Radius="10.0"
+				DamageType="ROCKET"
+				DamageFXType="GDI_RIFLE"
+				DeathType="NORMAL" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- The Crate Upgraded weapon.  Gives one more barrel along with a larger clip size. -->
+	<WeaponTemplate
+		id="NODVehicleERocket_Upgraded"
+		inheritFrom="NODVehicleERocket"
+		ClipSize="4">    
+	</WeaponTemplate>
+
+  <!-- ////////////////////////////////////////	-->
+  <!--   LOGIC COMMANDS AND COMMAND SET					-->
+  <!-- ////////////////////////////////////////	-->
+  <LogicCommandSet
+		id="NODVehicleECommandSet">
+	<Cmd>Command_Stop</Cmd>
+    <Cmd>Command_AttackMove</Cmd>
+  </LogicCommandSet>
+
+  <!-- ////////////////////////////////////////	-->
+  <!--   OBJECT CREATION LISTS									-->
+  <!-- ////////////////////////////////////////	-->
+	
+  <!-- ////////////////////////////////////////	-->
+  <!--   LOCOMOTORS															-->
+  <!-- ////////////////////////////////////////	-->
+  <LocomotorTemplate
+		id="NODVehicleELocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		TurnTimeSeconds="1.0s"
+		TurnTimeDamagedSeconds="1.0s"
+		MaxSpeedDamaged="100%"
+		AccelerationSeconds="0.2s"
+		BrakingSeconds="0.1s"
+		SlowTurnRadius="15.0"
+		FastTurnRadius="30.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="TREADS"
+		UseTerrainSmoothing="true"
+		AccelPitchLimit="2d"
+		PitchStiffness="0.5"
+		RollStiffness="0.25"
+		PitchDamping="0.8"
+		RollDamping="0.3"
+		ReverseMoveSpeed="100%"
+		ForwardAccelerationPitchFactor="0.0"
+		LateralAccelerationRollFactor="0.0"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		CanReverseMove="true"
+		/>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   EXPERIENCE LEVELS											-->
+	<!-- ////////////////////////////////////////	-->
+	<ExperienceLevelTemplate
+		id="NODVehicleEExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_01"
+		ExperienceAward="6">
+		<Target>NODVehicleE</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleEExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_02"
+		Prerequisite="NODVehicleEExperienceLevel_1"
+		RequiredExperience="12"
+		ExperienceAward="7">
+		<Target>NODVehicleE</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleEExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_03"
+		Prerequisite="NODVehicleEExperienceLevel_2"
+		RequiredExperience="30"
+		ExperienceAward="8">
+		<Target>NODVehicleE</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleEExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_04"
+		Prerequisite="NODVehicleEExperienceLevel_3"
+		RequiredExperience="54"
+		ExperienceAward="9">
+		<Target>NODVehicleE</Target>
+	</ExperienceLevelTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   ATTRIBUTE MODIFIERS										-->
+	<!-- ////////////////////////////////////////	-->
+	<AttributeModifier
+		id="Modifier_NODVehicleECrateUpgrade"
+		Category="NONE"
+		ObjectStatusToSet="WEAPON_UPGRADED_01">
+		<Modifier Type="DAMAGE_MULT" Value="125%" />
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="0%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_NODVehicleECrawlerUpgrade"
+		Category="NONE"
+		ObjectStatusToSet="USER_1"
+		ModelConditionsSet="STEALTH_FIELD_ACTIVE">
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="25%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_NODVehicleEStealthAuraDodgeBonus"
+		inheritFrom="Modifier_StealthDodgeTemporary" 
+		Duration="=$NOD_VEHICLE_E_STEALTH_BROADCAST_MODIFIER_DURATION">
+	</AttributeModifier>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   UPGRADE TEMPLATES											-->
+	<!-- ////////////////////////////////////////	-->
+	<UpgradeTemplate
+		id="Upgrade_NODVehicleEImprovedStealth"
+		Type="PLAYER"
+		DisplayName="UpgradeName:NODVehicleEImprovedStealth"
+		AcquireHint="UpgradePrereq:NODVehicleEImprovedStealth"
+		TypeDescription="UpgradeType:NODVehicleEImprovedStealth"
+		Description="UpgradeDesc:NODVehicleEImprovedStealth"
+		BuildTime="0.0s"
+		BuildCost="1"
+		ResearchSound="Upgrade_StealthField"
+		ResearchCompleteEvaEvent="UpgradeNodEngineer_UOStealthField"
+		NodIconImage="NOD_UP_StealthField">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</UpgradeTemplate>
+
+	<UpgradeTemplate
+		id="Upgrade_NODVehicleEDefaultUpgrade"
+		Type="OBJECT"/>
+
+
+</AssetDeclaration>

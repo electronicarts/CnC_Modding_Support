@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- GDI Support Medium Cannon T1 / Shepherd Tank -->
+
+	<!--
+	   
+	   DODGE_BOOST : dodge aura is active
+	   
+	   -->
+	
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GDI/Props/GDICannonProjectiles.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseMediumVehicle.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+
+		<!-- Art -->
+		<Include type="all" source="ART:GUVehicleAH_SKN.w3x" />
+		<Include type="all" source="ART:GUVehicleAH_SKL.w3x" />
+		<Include type="all" source="ART:GUVehicleAH_AIDA.w3x" />
+		<Include type="all"	source="ART:GUVehicleAH_AIDB.w3x" />
+		<Include type="all"	source="ART:GUVehicleAH_ATKA.w3x" />
+		<Include type="all"	source="ART:GUVehicleAH_MOVA.w3x" />
+		<Include type="all"	source="ART:GUVehicleAH_D.xml" />
+		<Include type="instance" source="ART:Dodge_Decal.xml" />
+		<Include type="instance" source="ART:EXTnkTrack.xml" />
+		<Include type="all"	source="ART:FXInvisBone.w3x" />
+	</Includes>
+	
+	<GameObject
+		id="GDIVehicleAH"
+		inheritFrom="BaseMediumVehicle"
+		HealthBoxHeightOffset="35"
+		SubGroupPriority="384"
+		SelectPortrait="Portrait_GDI_Vehicle_AH"
+		ButtonImage="Btn_GDI_Vehicle_AH"
+		Side="GDI"
+		ParticipationValue="=$GDIVEHICLEAH_PARTICIPATION_VALUE"
+		TransportSlotCount="2"		
+		CommandSet="GDIVehicleAHCommandSet"
+		CommandPoints="=$GDI_VEHICLE_AH_COMMANDPOINT_COST" 
+		BuildTime="12" 
+		EditorName="GDI_S1_Medium_Cannon(Shepherd)"
+		EditorSorting="UNIT"
+		WeaponCategory="CANNON"
+		Description="Desc:GDIVehicleAH"
+		TypeDescription="Type:GDIVehicleAH">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIVehicleAH</DisplayName>
+		<LocomotorSet
+			Locomotor="GDIVehicleAHLocomotor"
+			Condition="NORMAL"
+			Speed="110.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TankDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FXDamage01 FXDamage02 Barrel02 Barrel FXTracksL FXTracksR FXMUZZLEFLASH Bone_Tread_Front_Left Bone_Tread_Front_Right Bone_Tread_Rear_Left Bone_Tread_Rear_Right"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="FXTracksL"
+				TrackMarksRightBone="FXTracksR"
+				TrackMarkWidth="8"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT"
+					RetainSubObjects="true">
+					<Model
+						Name="GUVehicleAH_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="Barrel" />
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="Barrel02" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="Barrel" />
+					<Turret
+						TurretNameKey="Turret_01"
+						TurretPitch="Turret_01_pitch"
+						TurretID="1" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUVehicleAH_SKN" />
+					<Texture
+						Original="GUVehicleAH"
+						New="GUVehicleAH_D" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUVehicleAH_SKN" />
+					<Texture
+						Original="GUVehicleAH"
+						New="GUVehicleAH_D" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GUVehicleAH_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GUVehicleAH_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="5"
+						AnimationPriority="30"/>
+					<Animation
+						AnimationName="GUVehicleAH_AIDB"
+						AnimationMode="LOOP"
+						AnimationBlendTime="5"
+						AnimationPriority="30"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="GUVehicleAH_ATKA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="GUVehicleAH_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="5"
+						AnimationPriority="30"/>
+				</AnimationState>
+
+			</TankDraw>
+			
+			<TreadScrollDraw
+				id="ModuleTag_TreadDraw">
+				<TreadScrollingMap
+					LeftTrack="Bone_Tread_Front_Left"
+					RightTrack="Bone_Tread_Front_Right"
+					SpeedMultiplier="0.06"
+					TreadDriveSpeedFraction="10%"/>
+				<TreadScrollingMap
+					LeftTrack="Bone_Tread_Rear_Left"
+					RightTrack="Bone_Tread_Rear_Right"
+					SpeedMultiplier="0.06"
+					TreadDriveSpeedFraction="10%"/>
+			</TreadScrollDraw>
+			
+			<ScriptedModelDraw
+				id="ModuleTag_FX"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Selected_Dodge_Decal"
+				OkToChangeModelColor="true"
+				StaticModelLODMode="true"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RECYCLED">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DODGE_BOOST SELECTED">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="300"
+						SizeY="300"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Dodge_Decal"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehicleAHPrimary" />
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="40"
+						AllowsPitch="true"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_DodgeAura"
+				AttributeModifierName="Modifier_GDIVehicleAH_DodgeAura"
+				Range="150.0"
+				InitiallyActive="true"
+				AllowSelf="true"
+				RefreshDelay="2s">
+				<UpdateStatusValidation
+					ForbiddenStatus="DISABLED_FOR_RECYCLE CLONED" />
+				<ObjectFilter
+					Rule="ALL"
+					Relationship="ALLIES" />
+			</AttributeModifierAuraUpdate>
+
+			<!-- Accuracy Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleAH_AccuracyBoostUpgrade"
+				AttributeModifier="Modifier_GDIWeaponAccuracyUpgrade">
+				<TriggeredBy>Upgrade_GDI_Support_Accuracy</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Range Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleAH_WeaponRangeUpgrade"
+				AttributeModifier="Modifier_Generic_GDIWeaponRange_T1">
+				<TriggeredBy>Upgrade_GDI_Support_Range</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Speed Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleAH_SpeedBoostUpgrade"
+				AttributeModifier="Modifier_Generic_GDISpeedBoostUpgrade">
+				<TriggeredBy>Upgrade_GDI_Support_Speed</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplode_Medium" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					SympathyRange="100.0"
+					RotateToTargetWhenAiming="false" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="660" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+				<Key>LargeGroupAudioKey_TankMedium</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+
+		<!-- <ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior
+			id="ModuleTag_HiJackedSounds">
+			<Override
+				ExcludedFlags="HIJACKED">
+			</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors> -->
+
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "30.7665"
+					 MinorRadius = "18.2655"
+					 Height = "25.0"
+					 ContactPointGeneration = "VEHICLE" >
+				<Offset
+						x = "-1.09654"
+						y = "-0.56542"
+						z = "0.0" />
+			</Shape>
+		</Geometry>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_VehAHSheppard_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="GDI_VehAHSheppard_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="GDI_VehAHSheppard_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="GDI_VehAHSheppard_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="GDI_VehAHSheppard_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="GDI_VehAHSheppard_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="GDI_VehAHSheppard_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="GDI_VehAHSheppard_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleMedium_LoopMS" AudioType="soundAmbientReallyDamaged"/>
+			<AudioEntry Sound="GDI_Shepherd_VehAH_MoveStart" AudioType="soundMoveStart"/>
+			<AudioEntry Sound="GDI_Shepherd_VehAH_MoveLoop" AudioType="soundMoveLoop"/>
+			<!-- <AudioEntry Sound="GDI_Shepherd_VehAH_MoveStart" AudioType="soundRotateStart" /> -->
+			<AudioEntry Sound="GDI_Shepherd_VehAH_IdleLoop" AudioType="soundAmbient"/>
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_GDI_Support_Accuracy</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDI_Support_Range</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDI_Support_Speed</DisplayUpgrade>
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET			-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LogicCommandSet
+		  id="GDIVehicleAHCommandSet">
+		<Cmd>Command_AttackMove</Cmd>
+	</LogicCommandSet>	
+	
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOCOMOTORS								-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LocomotorTemplate
+		id="GDIVehicleAHLocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		TurnTimeSeconds="1.2s"
+		TurnTimeDamagedSeconds="1.2s"
+		MaxSpeedDamaged="100%"
+		AccelerationSeconds="0.4s"
+		BrakingSeconds="0.2s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="25.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="TREADS"
+		UseTerrainSmoothing="true"
+		CanReverseMove="true"
+		AccelPitchLimit="3d"
+		BounceKick="0.5d"
+		PitchStiffness="0.4"
+		RollStiffness="0.5"
+		PitchDamping="0.3"
+		RollDamping="0.5"
+		ForwardAccelerationPitchFactor="0.03"
+		LateralAccelerationRollFactor="0.0"
+		HasSuspension="true"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		ReverseMoveSpeed="100%"/>
+	
+	<!-- ////////////////////////////////////////	-->
+	<!--    MODIFIERS								-->
+	<!-- ////////////////////////////////////////	-->
+
+	<AttributeModifier
+		id="Modifier_GDIVehicleAH_DodgeAura"
+		Category="NONE"
+		Duration="2.5s"
+		ModelConditionsSet="DODGE_BOOST">
+		<BuffInfo Type="DEFENSE_POSITIVE" SourceString="Name:GDIVehicleAH" />
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="25%" />
+	</AttributeModifier>
+
+	
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS									-->
+	<!-- ////////////////////////////////////////	-->
+
+	<WeaponTemplate
+		id="GDIVehicleAHPrimary"
+		inheritFrom="BaseCannonWeapon" 
+		AttackRange="250.0"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		WeaponRecoil="5d"
+		AcceptableAimDelta="1d"
+		FireSound="GDI_Shepherd_VehAH_CannonWeaponFire"
+		FireFX="FX_GDIVehicleVCannon"
+		FireStrongCounterFX="FX_GDIVehicleVCannonHeroic">
+		<FiringDuration
+			MinSeconds="0.75s"
+			MaxSeconds="0.75s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="2.25s"
+			MaxSeconds="2.25s" />
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="GDIVehicleAHPrimaryWarhead"
+				ProjectileTemplate="GDIMediumCannonProjectile" >
+				<CombatChainProjectiles
+					CombatChain="STRONG"
+					ProjectileTemplate="GDIMediumCannonProjectile_Veteran"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIVehicleAHPrimaryWarhead">
+		<Nuggets>
+			<DamageNugget
+				Damage="36.0"
+				DamageType="CANNON"
+				DamageFXType="GDI_CANNON"
+				DeathType="NORMAL">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   EXPERIENCE LEVELS						-->
+	<!-- ////////////////////////////////////////	-->
+	
+	<ExperienceLevelTemplate
+		id="GDIVehicleAHExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="6">
+		<Target>GDIVehicleAH</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAHExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIVehicleAHExperienceLevel_1"
+		RequiredExperience="12"
+		ExperienceAward="7">
+		<Target>GDIVehicleAH</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAHExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIVehicleAHExperienceLevel_2"
+		RequiredExperience="30"
+		ExperienceAward="8">
+		<Target>GDIVehicleAH</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAHExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIVehicleAHExperienceLevel_3"
+		RequiredExperience="54"
+		ExperienceAward="9">
+		<Target>GDIVehicleAH</Target>
+	</ExperienceLevelTemplate>
+	
+</AssetDeclaration>

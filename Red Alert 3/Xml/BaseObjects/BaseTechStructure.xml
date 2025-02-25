@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+		<Include type="all"	source="ART:AU_Garrison_Flag.w3x" />
+		<Include type="all"	source="ART:SU_Garrison_Flag.w3x" />
+		<Include type="all"	source="ART:JU_Garrison_Flag.w3x" />			
+		<Include
+			type="all"
+			source="ART:NU_GarFlag.xml" />			
+	</Includes>
+	<GameObject
+		id="BaseTechStructure"
+		inheritFrom="BaseObject" 
+		CampnessValue="=$CAMPNESS_TECH_BUILDING"
+		UnitCategory="STRUCTURE"
+		Side="Neutral"
+		EditorSorting="STRUCTURE"
+		CommandSet="EmptyCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH ALWAYS_VISIBLE_IN_RADAR CAN_BUILD_ON_WATER CAN_BUILD_ON_DEEP_WATER"
+		RadarPriority="STRUCTURE"
+		>
+		
+		<ArmorSet
+			Armor="CryoBeamFrozenArmor"
+			DamageFX="VehicleDamageFX"
+			Conditions="SECONDARY_DAMAGE"/>	
+		
+		<Behaviors>
+			<AttributeModifierPoolUpdate 
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<ModelConditionUpgrade
+				id="ModuleTag_AlliesFaction"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_AlliesFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_SovietFaction"
+				AddConditionFlags="USER_2">
+				<TriggeredBy>Upgrade_SovietFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_JapanFaction"
+				AddConditionFlags="USER_3">
+				<TriggeredBy>Upgrade_JapanFaction</TriggeredBy>
+			</ModelConditionUpgrade>				
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="6s"
+				SinkRate="0.1"
+				DestructionDelay="6.1s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="0.0s" />	
+				
+			<SecondaryDamageTracker
+				id="ModuleTag_SecondaryDamageTracker"
+				UpdateDuration="1s"
+				DissipateAmount="25"
+				MaxDamageClampScaler="=$MAX_SECONDARY_DAMAGE_SCALER">
+				<Color R="1.0" G="1.0" B="1.75"/>
+				<EffectInfo
+					Fraction="0.2"
+					AttributeModifier="AttributeModifer_CryoBeam_02"
+				/>
+				<EffectInfo
+					Fraction="0.4"
+					AttributeModifier="AttributeModifer_CryoBeam_04"
+				/>
+				<EffectInfo
+					Fraction="0.6"
+					AttributeModifier="AttributeModifer_CryoBeam_06"
+				/>
+				<EffectInfo
+					Fraction="0.8"
+					AttributeModifier="AttributeModifer_CryoBeam_08"
+				/>
+				<EffectInfo
+					Fraction="1.0"
+					SetUpgradedArmor="true"
+					OnEnterDisable="true"
+					OnEnterCancelSpecialAbilities="true"
+					AttributeModifier="AttributeModifer_CryoBeam_10"
+				/>
+				<ObjectStatusValidation
+					ForbiddenStatus="UNDER_IRON_CURTAIN" />
+			</SecondaryDamageTracker>						
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="StructureAIStateMachine" >
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="DefaultBody"/>
+		</Body>
+		
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_IronCurtain">
+				<ModelConditionSound Sound="SOV_IronCurtain_LoopMS" RequiredFlags="IRONCURTAIN" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+
+		<AudioArrayVoice>
+			<AudioEntry EvaEvent="BuildingStolen" AudioType="voiceDefectingAway" />
+			<AudioEntry EvaEvent="EnemyBuildingCaptured" AudioType="voiceDefectingTowards" />
+		</AudioArrayVoice>
+
+		<EvaEventArray>
+			<EvaEntry EvaEvent="StructureUnderAttack" EvaType="damagedOwner" />
+			<EvaEntry EvaEvent="StructureSold" EvaType="soldOwner" />
+			<EvaEntry EvaEvent="StructureRepairing" EvaType="repairingOwner" />
+			<EvaEntry EvaEvent="EnemyCampSighted" EvaType="enemyObjectSighted" />
+		</EvaEventArray>
+						
+	</GameObject>
+
+</AssetDeclaration>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="BaseObject.xml" />
+	</Includes>
+	<GameObject
+		id="BaseStructure"
+		inheritFrom="BaseObject"
+		ReinvisibilityDelay="7s"
+		KindOf="STRUCTURE IMMOBILE SELECTABLE CAN_CAST_REFLECTIONS CONTROL_GROUP_ALLOWABLE"
+		UnitCategory="STRUCTURE"
+		EditorSorting="STRUCTURE"
+		RadarPriority="STRUCTURE">
+
+		<Behaviors>
+			<AttributeModifierPoolUpdate id="DefaultAttributeModifierPoolUpdate"/>
+			<StructureSellUpdate
+				id="ModuleTag_StructureSellUpdate"
+				SellTime="0.1s"
+				ActiveModelCondition="SOLD"/>
+			<!-- Required for Sell command, neutral structures shouldn't have
+			the logic command required to activate it -->
+			<SellSpecialPower
+				id="ModuleTag_SellSpecialPower"
+				DisabledTypesToIgnore="UNDERPOWERED"
+				SpecialPowerTemplate="SpecialPower_SellSelf"/>
+			<!-- Spawn a Veterancy Crate when the structure is sold.-->
+			<ChanceCreateObjectDie
+				id="ModuleTag_CreateVeterancyCrateOnObjectDie"
+				CreationList="OCL_CreateVeterancyCrate"
+				ChancePercentage="100">
+				<DieMuxData
+					DeathTypes="SUICIDED"/>
+			</ChanceCreateObjectDie>
+			<HealEffectManager
+				id="ModuleTag_HealEffectManager"
+				UpdateRate="0.25s" />
+
+			<!-- A necessity for the Reflection in the Active Body -->
+			<xi:include	href="DATA:Includes/GenericRefractionBehavior.xml" />
+
+		</Behaviors>
+
+		<Body>
+			<ActiveBody
+				id="DefaultBody" />			
+		</Body>
+
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_BuildingPlacedMS" AudioType="soundUnderConstruction" />
+		</AudioArraySound>
+		<AudioArraySound>
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_CrystallineShieldDisablesSelect">
+				<Override RequiredFlags="INVULNERABLE PARALYZED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="" AudioType="voiceSelect"/>
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+		<EvaEventArray>			
+			<EvaEntry EvaEvent="BuildingConstructionStarted" EvaType="productionStarted" />
+			<EvaEntry EvaEvent="BuildingConstructionComplete" EvaType="productionComplete" />
+			<EvaEntry EvaEvent="StructureUnderAttack" EvaType="damagedOwner" />
+			<EvaEntry EvaEvent="StructureSold" EvaType="soldOwner" />
+			<EvaEntry EvaEvent="StructureRepairing" EvaType="repairingOwner" />
+			<EvaEntry EvaEvent="GenericEnemyStructureSighted" EvaType="enemyObjectSighted" />
+			<EvaEntry EvaEvent="NewConstructionOptions" EvaType="availableForProduction" />
+			<EvaEntry EvaEvent="StructurePlacementFailed" EvaType="placementFailed" />
+			<EvaEntry EvaEvent="StructureCannotBuildDueToFullBuildQueue" EvaType="cannotBuildDueToFullBuildQueue" />
+			<EvaEntry EvaEvent="BuildOnHold" EvaType="buildOnHold" />
+			<EvaEntry EvaEvent="BuildCancelled" EvaType="buildCancelled" />
+			<EvaEntry EvaEvent="BuildingManuallyPoweredUp" EvaType="manuallyPoweredOn" />
+			<EvaEntry EvaEvent="BuildingManuallyPoweredDown" EvaType="manuallyPoweredOff" />			
+			<EvaEntry EvaEvent="BuildingStolen" EvaType="defectingAwayAllies" />			
+			<EvaEntry EvaEvent="EnemyBuildingCaptured" EvaType="defectingTowardsAllies" />			
+		</EvaEventArray>
+	</GameObject>
+</AssetDeclaration>

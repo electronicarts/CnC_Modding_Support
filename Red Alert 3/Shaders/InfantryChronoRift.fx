@@ -1,0 +1,10 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2008 Electronic Arts Inc
+//
+// FX Shader for Chrono Rifted infantry units
+//////////////////////////////////////////////////////////////////////////////
+
+#define SUPPORT_SSAO 1	// enable SSAO
+#define SUPPORT_CHRONORIFT 1 // Defined to change appearance of infantry to Chrono Rifted
+
+#include "BasicW3D.fxh"

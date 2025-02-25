@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:ABSuperweaponAdvancedProjectile.w3x" />
+        <!-- Base Object -->
+    <Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+	</Includes>
+	<!-- Removed the AlliedSuperWeaponAdvancedEffect becaise the implementation of the AlliedSuperWeaponAdvanced 
+			changed to be a series of projectiles fired in the quick succession	[tpreis - 08-18-2008]-->
+  <GameObject
+		id="ParticleCannonProjectile"
+		inheritFrom="BaseProjectile"
+		EditorName="ParticleCannonProjectile">
+      <Draws>
+          <ScriptedModelDraw
+			    id="ModuleTag_FXDraw">
+            <ModelConditionState
+				      ParseCondStateType="PARSE_DEFAULT">
+              <Model Name="ABSuperweaponAdvancedProjectile" />
+            </ModelConditionState>
+          </ScriptedModelDraw>
+      </Draws>
+      <Behaviors>
+          <ProjectileUpdate
+			      id="ModuleTag_ProjectileUpdate"
+			      StateMachine="StraightLineProjectile"
+			      MinTargetDistance="5">
+            <Movement>
+              <MoveInStraightLine
+					      MuzzleVelocity="120.0" />
+            </Movement>
+          </ProjectileUpdate>
+          <!-- fire weapon to take out any aircraft. -->
+          <FireWeaponUpdate
+			      id="ModuleTag_AntiAirWeapon"
+			      FireInterval="0.1s">
+            <FireWeaponNugget
+				      WeaponName="OrbitalRefuseProjectileWeapon" />
+          </FireWeaponUpdate>
+          <FireWeaponWhenDead
+			      id="ModuleTag_ImpactWarhead"
+			      InitiallyActive="true"
+			      DeathWeapon="ParticleAcceleratorFinalWeapon">
+            <DieMuxData
+				      DeathTypes="ALL" />
+          </FireWeaponWhenDead>
+
+					<!-- NOTE: This is a SlowDeath to keep it around for a short while.  
+					This is a necessary change for the Achievement System to properly score the kills. [tpreis - 08-01-2008] -->
+					<SlowDeath
+						id="ModuleTag_Die"
+						DestructionDelay="1s">
+						<DieMuxData
+							DeathTypes="ALL" />
+					</SlowDeath>
+				
+          <FXListBehavior
+            id="ModuleTag_FXList">
+            <DieMuxData
+              DeathTypes="ALL" />
+            <Event
+              Index="onDeath"
+              FX="FX_AlliedProtonColliderHit" />
+        </FXListBehavior>
+      </Behaviors>
+    </GameObject>
+
+	<GameObject
+		id="AlliedSuperWeaponAdvancedEffectShroudRevealer"
+		Side="Neutral"
+		EditorSorting="UNIT"
+		TransportSlotCount="0"
+		CommandSet="EmptyCommandSet"
+		IsTrainable="false"
+		KindOf="INERT_SHROUD_REVEALER INERT UNATTACKABLE NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY NO_COLLIDE"
+		RadarPriority="UNIT"
+		EditorName="AlliedSuperWeaponAdvancedEffectShroudRevealer">
+		<DisplayName>AlliedSuperWeaponAdvancedEffectShroudRevealer</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="BeaconFlare"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="BeaconSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_Lifetime"
+				MinLifetime="8s"
+				MaxLifetime="8s" />
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="100.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="5.0"
+				Height="5.0"/>
+		</Geometry>
+		<VisionInfo
+			VisionRange="250"
+			ShroudClearingRange="260" />
+	</GameObject>
+</AssetDeclaration>

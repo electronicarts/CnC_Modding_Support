@@ -1,0 +1,433 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	
+	<!-- GDI Infantry M / Medic -->
+	
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GUInfantryM_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_SKL.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_AIDA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_AIFA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_ATKA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_BATA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_BDIA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_BIDA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_BIFA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_CDTA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_CDTB.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_CHRC.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_DIEA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_DIEC.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_DSEL.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_FLYA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_GTPA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_LNDA.w3x" />
+		<Include
+			type="all"
+			source="ART:GUInfantryM_RUNA.w3x" />
+		
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseInfantry.xml" />
+	</Includes>
+	<GameObject
+		id="GDIInfantryM"
+		inheritFrom="BaseInfantry"
+		SelectPortrait="Portrait_GDIInfantryM"
+		ButtonImage="Portrait_GDIInfantryM"
+		Side="GDI"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildTime="5"
+		CommandSet="EmptyCommandSet"
+		IsTrainable="true"
+		KindOf="+SKIRMISH_AI_DONT_GARRISON +CAN_BE_FAVORITE_UNIT -CAN_ATTACK"
+		RadarPriority="UNIT"
+		ThreatLevel="5"
+		UnitCategory="INFANTRY"
+		VoicePriority="68"
+		EditorName="GDIInfantryM"
+		Description="Desc:GDIMedic"
+		TypeDescription="Type:GDIMedic">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="500"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIMedic</DisplayName>
+		<ArmorSet
+			Armor="GDIInfantryMArmor"
+			DamageFX="InfantryDamageFX" />
+		<LocomotorSet
+			Locomotor="HumanLocomotor"
+			Condition="NORMAL"
+			Speed="36" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUInfantryM_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="INSIDE_GARRISON">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<!-- no anim -->
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_OR_PREATTACK_A"
+					FrameForPristineBonePositions="4">
+					<Animation
+						AnimationName="GUInfantryM_ATKA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				
+				<AnimationState
+          ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="ATTACKING"
+          StateName="STATE_SelectedPose">
+					<Animation
+           	AnimationName="GUInfantryM_ATKA"
+            AnimationMode="MANUAL" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="GUInfantryM_RUNA"
+						AnimationMode="LOOP"
+						AnimationPriority="60"
+            AnimationBlendTime="15"/> 
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="true"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="GUInfantryM_BIDA"
+						AnimationMode="ONCE"
+            AnimationBlendTime="15"
+						AnimationPriority="80"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Animation
+						AnimationName="GUInfantryM_BIFA"
+						AnimationMode="ONCE"
+					  AnimationBlendTime="15"
+						AnimationPriority="1" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" or Prev == "TRANS_Deselected" then
+						--Do Nothing and Re-Pick Animation 
+						elseif Prev == "STATE_stunned_flailing" then
+						CurDrawableSetTransitionAnimState("STATE_stunned_landing")
+						else
+						CurDrawableSetTransitionAnimState("TRANS_Deselected")
+						end 
+					</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED"
+					StateName="STATE_SelectedPose"
+          Flags="RESTART_ANIM_WHEN_COMPLETE" >
+					<Animation
+						AnimationName="GUInfantryM_AIDA"
+						AnimationMode="ONCE"
+						AnimationPriority="5"
+						AnimationBlendTime="15" />
+					<Animation
+						AnimationName="GUInfantryM_AIFA"
+						AnimationMode="ONCE"
+						AnimationPriority="5"
+						AnimationBlendTime="10" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" then
+						CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STUNNED_FLAILING"
+					StateName="STATE_stunned_flailing">
+					<Animation
+						AnimationName="GUInfantryM_FLYA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					StateName="STATE_stunned_landing">
+					<Animation
+						AnimationName="GUInfantryM_LNDA"
+						AnimationMode="ONCE" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_stunned_landing" then
+						CurDrawableSetTransitionAnimState("STATE_getup")
+						end 
+					</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="EMOTION_CELEBRATING"
+          Flags="RESTART_ANIM_WHEN_COMPLETE" >
+					<Animation
+						AnimationName="GUInfantryM_CHRC"
+						AnimationMode="ONCE"
+            AnimationBlendTime="15"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+				</AnimationState>			
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					StateName="STATE_getup">
+					<Animation
+						AnimationName="GUInfantryM_GTPA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				
+				<AnimationState
+         ParseCondStateType="PARSE_TRANSITION"
+         StateName="TRANS_Deselected">
+          <Animation
+						AnimationName="GUInfantryM_DSEL"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+        </AnimationState>			
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FRONTCRUSHED">
+					<Animation
+						AnimationName="GUInfantryM_CDTA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BACKCRUSHED">
+					<Animation
+						AnimationName="GUInfantryM_CDTB"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING DEATH_1">
+					<Animation
+						AnimationName="GUInfantryM_DIEA"
+						AnimationMode="ONCE" />
+					<Animation
+						AnimationName="GUInfantryM_DIEC"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IdleToSelected">
+					<Animation
+						AnimationName="GUInfantryM_BATA"
+						AnimationMode="ONCE"
+            AnimationBlendTime="10"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+				</AnimationState>
+				
+				<!-- SWARMED "BUZZERS" DEATH ANIM
+				<AnimationState
+          ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="SWARMED">
+					<Animation
+           	AnimationName="GUInfantryM_BDIA"
+            AnimationMode="ONCE" />
+				</AnimationState>
+				-->
+				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			
+			<SlowDeath
+        id="ModuleTag_NormalDeath"
+        SinkDelay="3s"
+        SinkRate="2.4"
+        DeathFlags="DEATH_1"
+        DestructionDelay="4s">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="EXPLODED DETONATED CRUSHED BURNED" />
+				<Sound 
+					Type="INITIAL" 
+					List="Nod_InfantryA_VoiceDieMS" />
+			</SlowDeath>
+
+			<SlowDeath
+				id="ModuleTag_ExplodeDeath"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DeathFlags="DEATH_2"
+				DestructionDelay="4s">
+				<DieMuxData
+					DeathTypes="EXPLODED DETONATED" />
+				<Sound
+					Type="INITIAL"
+					List="Nod_InfantryA_VoiceDieMS" />
+			</SlowDeath>
+			
+			<SlowDeath
+				id="ModuleTag_Death_Crushed"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="4s">
+			<DieMuxData
+				DeathTypes="CRUSHED" />
+					<Sound
+						Type="INITIAL"
+						List="Nod_InfantryA_VoiceDieCrushMS" />
+			</SlowDeath>
+			
+			<SlowDeath
+				id="ModuleTag_Death_Burned"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="4s">
+			<DieMuxData
+				DeathTypes="BURNED" />
+					<Sound
+						Type="INITIAL"
+						List="Nod_InfantryA_VoiceDieFireMS" />
+			</SlowDeath>
+			<AutoHealBehavior
+				id="ModuleTag_HordeHeal"
+				AffectsContained="true"
+				NonStackable="true"
+				HealingAmount="3"
+				HealingDelay="2s"
+				StartHealingDelay="7s"
+				KindOf="INFANTRY"
+				HealOnlyIfNotInCombat="true"
+				InitiallyActive="true"
+			/>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_06"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_03"
+				MaxHealth="75.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="7.0"
+				MinorRadius="7.0"
+				Height="13.0">
+				<Offset
+					x="0"
+					y="0"
+					z="0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="GDI_Engineer_VoiceCreate"
+				AudioType="voiceCreated" />
+			<AudioEntry
+				Sound="GDI_Engineer_VoiceGarrison"
+				AudioType="voiceGarrison" />
+			<AudioEntry
+				Sound="GDI_Engineer_VoiceMove"
+				AudioType="voiceMove" />
+			<AudioEntry
+				Sound="GDI_Engineer_VoiceRepair"
+				AudioType="voiceRepair" />
+			<AudioEntry
+				Sound="GDI_Engineer_VoiceRetreat"
+				AudioType="voiceRetreatToCastle" />
+			<AudioEntry
+				Sound="GDI_Engineer_VoiceSelectMS"
+				AudioType="voiceSelect" />
+			<!-- Voice for being ordered to enter and repair or capture various things. The names are defined in the 
+			     various EngineerContain modules on the target objects -->
+			<NamedEntry
+				Sound="GDI_Engineer_VoiceRepair"
+				Name="VoiceEngineerRepair" />
+			<NamedEntry
+				Sound="GDI_Engineer_VoiceCaptureBuilding"
+				Name="VoiceCaptureBuilding" />
+			<NamedEntry
+				Sound="GDI_Engineer_VoiceCaptureHusk"
+				Name="VoiceCaptureHusk" />
+		</AudioArrayVoice>
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="50"
+			ShroudClearingRange="100" />
+	</GameObject>
+</AssetDeclaration>

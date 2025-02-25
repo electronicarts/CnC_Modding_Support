@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- GDI Seismic Disturbance player power  -->
+	<Includes>
+		<!-- Art Includes-->
+		<!-- TODO: Add art for effects :) -->
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<Defines>
+		<Define name="GDI_SEISMIC_DISTURBANCE_RADIUS" value="500" />
+	</Defines>
+
+	<GameObject
+		id="GDISeismicDisturbance"
+		EditorName="GDISeismicDisturbance"
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		KindOf="UNATTACKABLE INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER SKIRMISH_AI_ATTEMPT_TO_DODGE">
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$GDI_SEISMIC_DISTURBANCE_RADIUS + $AI_DODGE_SAFETY_BUFFER" >
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"
+				StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>		
+		<Behaviors>
+
+			<FXListBehavior
+				id="ModuleTag_FXListBehavior">
+				<Event
+					Index="onCreate"
+					FX="FX_Earthquake_CameraShake" />
+			</FXListBehavior>
+			
+			<!-- adds FX to burrowed baddies -->
+			<FireWeaponUpdate
+				id="ModuleTag_OneShotFX_FireWeaponUpdate"
+				FireInterval="30s">
+				<FireWeaponNugget
+					WeaponName="GDISeismicDisturbanceOneShotFXWeapon"/>
+			</FireWeaponUpdate>
+
+			<!-- fires weapon to unburrow and slow down objects. -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireAttributeModiferWeaponUpdate"
+				FireInterval="2.0s">
+				<FireWeaponNugget
+					WeaponName="GDISeismicDisturbanceAttributeModiferWeapon" />
+			</FireWeaponUpdate>
+
+			<!-- fires weapon to damage baddies. -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireDamageWeaponUpdate"
+				FireInterval="1.0s">
+				<FireWeaponNugget
+					WeaponName="GDISeismicDisturbanceDamageWeapon" />
+			</FireWeaponUpdate>
+
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="15s"
+				MaxLifetime="15s"
+				DeathType="SUICIDED" />
+
+			<DestroyDie 
+				id="ModuleTag_Die">
+				<DieMuxData 
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_Power_SeismicDisturbanceLoopMS" AudioType="soundAmbient"/>
+		</AudioArraySound>
+
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS									-->
+	<!-- ////////////////////////////////////////	-->
+
+	<WeaponTemplate
+		id="GDISeismicDisturbanceAttributeModiferWeapon"
+		RequiredAntiMask="ANTI_GROUND">
+		<Nuggets>
+			<ForceToggleToDefaultNugget
+				Radius="=$GDI_SEISMIC_DISTURBANCE_RADIUS">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ENEMIES"
+					StatusBitFlags="BURROWING">
+				</SpecialObjectFilter>
+			</ForceToggleToDefaultNugget>
+			<AttributeModifierNugget
+				Radius="=$GDI_SEISMIC_DISTURBANCE_RADIUS"
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifer_GDISeismicDisturbance">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ENEMIES"
+					Exclude="AIRCRAFT"
+					StatusBitFlagsExclude="AIRBORNE_TARGET">
+				</SpecialObjectFilter>
+			</AttributeModifierNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDISeismicDisturbanceDamageWeapon"
+		RequiredAntiMask="ANTI_GROUND">
+		<Nuggets>
+			<DamageNugget
+				Damage="20.0"
+				Radius="=$GDI_SEISMIC_DISTURBANCE_RADIUS">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ENEMIES"
+					Exclude="AIRCRAFT"
+					StatusBitFlagsExclude="AIRBORNE_TARGET">
+				</SpecialObjectFilter>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDISeismicDisturbanceOneShotFXWeapon"
+		RequiredAntiMask="ANTI_GROUND">
+		<Nuggets>
+			<AttributeModifierNugget
+				Radius="=$GDI_SEISMIC_DISTURBANCE_RADIUS"
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifer_GDISeismicDisturbanceOneShot">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ENEMIES"
+					Exclude="AIRCRAFT"
+					StatusBitFlags="BURROWING">
+				</SpecialObjectFilter>
+			</AttributeModifierNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   ATTRIBUTE MODIFIERS						-->
+	<!-- ////////////////////////////////////////	-->
+
+	<AttributeModifier
+		id="AttributeModifer_GDISeismicDisturbance"
+		Category="NONE"
+		Duration="2.0s"
+		StartFX="FX_SeismicSlow_SeismicDistrubance" 
+		ObjectStatusToSet="STEALTH_AND_BURROW_FORBIDDEN">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:SpecialPower_GDI_SeismicDisturbance" />
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-50%" />
+		<Modifier Type="SPEED" Value="50%" />
+	</AttributeModifier>
+	
+	<AttributeModifier
+		id="AttributeModifer_GDISeismicDisturbanceOneShot"
+		Category="NONE"
+		Duration="15.0s"
+		StartFX="FX_Earthquake_Cracks">
+	</AttributeModifier>
+	
+</AssetDeclaration>

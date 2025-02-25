@@ -1,0 +1,233 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// Main scene scrape script
+//////////////////////////////////////////////////////////////////////////////
+
+var camera Viewer
+
+#include "Common.scrapeh"
+#include "Shadow.scrapeh"
+#include "PostFX.scrapeh"
+#include "DepthMap.scrapeh"
+#include "WaterReflection.scrapeh"
+#include "OceanDisplacement.scrapeh"
+#include "UnderwaterDeferred.scrapeh"
+#include "Outlines.scrapeh"
+#include "RotateEnvironmentMap.scrapeh"
+#if defined(EA_PLATFORM_XENON)
+#include "MSAA.scrapeh"
+#endif
+
+
+//
+// InGame
+//
+proc InGame
+
+	callproc initCustomTextures
+	
+	callproc updateFrameRenderTargetToUse
+
+#if defined(EA_PLATFORM_XENON)
+	// As 99% of our shaders are pixel heavy give 'pixel shaders the most GPR's. 
+	// 3-4ms GPU time saving.
+	setgpr 48 80
+#endif
+
+	callproc updateShadowTexture
+	GPUFLUSH
+	callproc doRotateEnvironmentMaps
+	callproc updateWaterReflection
+	GPUFLUSH
+	callproc updateOceanDisplacement
+	GPUFLUSH
+	callproc updateDepthMap
+	GPUFLUSH
+
+	beginevent UpdateFrameBuffer
+	
+	callproc setFrameRenderTarget
+	callproc setFrameDepthBuffer
+	
+	setcamera Viewer
+	visibleobjects Frame
+
+	setclearcolor 0 0 0 1
+	setcleardepth 1.0
+
+#if defined(EA_PLATFORM_XENON)
+	callproc beginMSAATiling
+#else
+	clear
+#endif
+
+	// Enable shadow mapping
+	if Sas ShadowMappingEnabled
+		settexture Sas Shadow[0].ShadowMap ShadowMapTexture
+	endif
+	
+	renderTerrain
+	
+	renderRoads
+
+	// Render cliffs, sea walls, road segments over terrain but below scorch marks
+	renderbin TerrainLikeGroundObject
+
+	renderScorchMarks
+	
+	renderTerrainTracks
+
+	// Bridges go above terrain, but below decals
+	renderbin Bridge
+	
+	renderProps
+
+	renderUnits			// includes "renderbin UnitPlayer0" - "renderbin UnitPlayer19"
+
+	// Regular unassigned objects
+	renderbin Solid
+	
+	renderStructures	// includes "renderbin Structure"
+	
+	renderbin StaticSort5 // Underwater Sorting
+
+
+
+	if DebugToggle RenderUnderwater.IsEnabled
+		beginevent RenderUnderwater
+			// Apply underwater deferred shading, based on screen-depth texture
+			callproc renderUnderwaterDeferred
+
+			// Render transparent objects and particles that should be under water and apply non-deferred underwater-like shading themselves
+			renderbin Underwater
+			renderbin Underwater BinCommand_RenderParticles
+		endevent RenderUnderwater
+	endif
+
+	callproc updateWaterRefraction
+	renderWater
+	
+	renderDecals
+	
+	renderbin Transparent
+	
+	renderTransparentOutlineObjects
+
+	if DebugToggle RenderOutlines.IsEnabled
+		callproc renderOutlines	// render outlines onto the screen
+	endif
+	
+	renderBehindBuildingMarkers
+
+	callproc renderBinsStaticSort
+	
+	setbool Particle ReallyRenderSoftParticles true
+	if DebugToggle RenderParticles.IsEnabled
+		renderParticles
+	endif
+
+	renderTerrainUI
+	renderTracers
+	renderLasers
+	renderConnectionLines
+	renderRain
+        
+	// Fill debug pattern
+	//setshader PostEffectBloomShader DebugPattern
+	//renderfullquad
+
+	callproc renderPostEffects // PostEffects will change current render target to be FrameBuffer
+	
+	renderDebugSystems
+	renderTileFeedback
+	
+	renderIconLayers
+	renderUI
+	
+	renderDebugDisplays
+
+	//setshader OceanDisplacementShader DebugDisplayDisplacement
+	//renderfullquad
+	
+	endevent UpdateFrameBuffer
+endproc
+
+//
+// Main entry point for WorldBuilder rendering
+//
+proc Editor
+	callproc initCustomTextures
+
+	callproc updateFrameRenderTargetToUse
+
+	callproc updateShadowTexture
+	callproc updateWaterReflection
+	callproc updateDepthMap
+	
+	beginevent UpdateFrameBuffer
+	
+	callproc setFrameRenderTarget
+	callproc setFrameDepthBuffer
+
+	setcamera Viewer
+	visibleobjects Frame
+
+	setclearcolor		1 1 1 1
+	setcleardepth       1.0
+	clear
+
+	// Enable shadow mapping
+	if Sas ShadowMappingEnabled
+		settexture Sas Shadow[0].ShadowMap ShadowMapTexture
+	endif
+
+	renderTerrain
+	
+	renderRoads
+
+	// Render cliffs, sea walls, road segments over terrain but below scorch marks
+	renderbin TerrainLikeGroundObject
+
+	renderScorchMarks
+		
+	// Bridges go above terrain, but below decals
+	renderbin Bridge
+	
+	renderProps
+	
+	renderUnits			// includes "renderbin UnitPlayer0" - "renderbin UnitPlayer19"
+	
+	// Regular unassigned objects
+	renderbin Solid
+
+	renderStructures	// includes "renderbin Structure"
+	
+	renderbin StaticSort5 // Underwater Sorting
+
+	// Apply underwater deferred shading, based on screen-depth texture
+	callproc renderUnderwaterDeferred
+
+	// Render transparent objects that should be under water and apply non-deferred underwater-like shading themselves
+	renderbin Underwater
+
+	callproc updateWaterRefraction
+
+	renderWater
+	
+	renderDecals
+	
+	renderbin Transparent
+	
+	callproc renderOutlines // render outlines onto the screen
+	callproc renderBinsStaticSort
+	
+	renderTileFeedback
+	
+	renderEditorObjects
+	
+	callproc PostEffectBloom
+	callproc PostEffectLookupTable
+	
+	endevent UpdateFrameBuffer
+endproc

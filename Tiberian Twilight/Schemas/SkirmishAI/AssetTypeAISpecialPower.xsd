@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="AssetTypeAIStateHeuristic.xsd"/>
+	<xs:include schemaLocation="AssetTypeAIStateDefinition.xsd"/>
+	<xs:include schemaLocation="../Includes/ProductionQueue.xsd" />
+	<xs:include schemaLocation="../Includes/PlayerRelation.xsd"/>
+	<xs:include schemaLocation="../Includes/Ref.xsd"/>
+
+	<xs:complexType name="AISpecialPowerWeaponData">
+		<xs:complexContent>
+			<xs:extension base="AIWeaponData">
+				<xs:sequence />
+				<xs:attribute name="Weapon" type="WeaponRef" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="AISpecialPowerDecoyArmyData">
+		<xs:attribute name="AdditionalSpecialPowerTemplate" type="SpecialPowerWeakRef" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="AISpecialPowerAoeHealData">
+		<xs:attribute name="MinimumAmountToHeal" type="SageReal" use="required" />	<!-- If the Power will heal the Group of units has less health than this, then move on, because they are not worth healing -->
+		<xs:attribute name="InBattleWeight" type="SageReal" default="1.0" />		<!-- Scale the benefit of healing units that are currently in battle. -->
+		<xs:attribute name="MaximumHealthPerUnitToHeal" type="SageReal" use="optional" />  <!-- The maximum value on a per unit basis that this power can heal.  If absent, it is assumed to be unlimited -->
+	</xs:complexType>
+
+	<xs:complexType name="AISpecialPowerChokePointData">
+		<xs:attribute name="ChokePointScanDistanceIncrement" type="SageReal" default="100" />
+		<xs:attribute name="ChokePointScanDistanceIterations" type="SageUnsignedInt" default="2" />
+		<xs:attribute name="CandidateRegisteredObjectSet" type="RegisteredObjectSetId" default="CHOKE_POINTS" />
+	</xs:complexType>
+
+	<xs:complexType name="AISpecialPowerProductionBuffData">
+		<xs:attribute name="PlayerRelationshipsToBuff" type="PlayerRelationFlags" default="SAME_PLAYER ALLIES" />	
+		<xs:attribute name="CandidateRegisteredObjectSet" type="RegisteredObjectSetId" default="CRAWLERS" />
+		<xs:attribute name="PreventUseInSpawnZone" type="SageBool" default="true" />
+		<xs:attribute name="MinimumRemainingCommandPoints" type="SageInt" use="required" /> 
+	</xs:complexType>
+
+	<xs:complexType name="AISpecialPowerSummonAttackObjectAndInstanceCountPair">
+		<xs:sequence />
+		<xs:attribute name="ObjectTemplateSummoned" type="GameObjectRef" use="required" />		<!-- A reference to the Thing that is being summoned -->
+		<xs:attribute name="Instances" type="SageInt" use="required" />								<!-- How many instances are summoned? -->
+	</xs:complexType>
+
+	<xs:complexType name="AISpecialPowerSummonAttackObjectsData">
+		<xs:sequence>
+			<xs:element name="ObjectSummoned" type="AISpecialPowerSummonAttackObjectAndInstanceCountPair" minOccurs="1" maxOccurs="unbounded" />	<!-- What is being summoned? (needed for damage calculations )-->
+		</xs:sequence>
+		<xs:attribute name="TargetRegisteredObjectSet" type="RegisteredObjectSetId" default="UNITS_AND_STRUCTURES" />
+	</xs:complexType>
+
+	<!-- ////////////////////////////////// -->
+	<!-- CRAWLER PACK and UNPACK power info -->
+	<!-- ////////////////////////////////// -->
+	<xs:complexType name="CrawlerPackUnpackEnemiesNearbyInfo">
+		<xs:sequence />
+		<xs:attribute name="MinNumberOfEnemies" type="SageInt" default="1" />
+		<xs:attribute name="MaxDistanceFromCrawler" type="SageReal" default="100.0" />
+	</xs:complexType>
+
+	<xs:complexType name="CrawlerPackUnpackNearTargetInfo">
+		<xs:sequence>
+			<xs:element name="AIState" type="AIStateDefinitionWeakRef" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="MinDistanceFromTarget" type="SageReal" default="100.0" />
+	</xs:complexType>
+	
+	<xs:complexType name="BaseCrawlerPackUnpackData_InheritanceOnly">
+		<xs:sequence>
+			<!-- Avoid remaining immobile if too close to one of the given objects -->
+			<xs:element name="CrawlerAvoidTarget" type="AIAvoidanceRecord" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<!-- We consider ourselves near target if we are this far from our target point 
+										Should be same value as DefenseClassCrawlerAccuracy is AI Defense Coordinator-->
+		<xs:attribute name="CrawlerPackAndUnpackTargetDistanceForNearTarget" type="SageReal" default="100.0" />
+
+		<!-- Which production queues do we look at? -->
+		<xs:attribute name="CrawlerPackAndUnpackQueuesToExamine" type="ProductionQueueTypeBitFlags" default="" />
+		
+		<!-- How long should we wait, after being created, to trigger this power again -->
+		<xs:attribute name="CreationPowerDelay"	type="Time" default="0s" />
+	</xs:complexType>
+
+
+	<xs:complexType name="AISpecialPowerCrawlerPackData">
+		<xs:complexContent>
+			<xs:extension base="BaseCrawlerPackUnpackData_InheritanceOnly">
+				<xs:sequence>
+					<!-- If there are hostile enemies near the crawler we don't want to pack up just yet -->
+					<xs:element name="CrawlerDoNotPackIfEnemiesInVicinity" type="CrawlerPackUnpackEnemiesNearbyInfo" minOccurs="0" maxOccurs="1" />
+					<!-- If we are near the target, then stay put -->
+					<xs:element name="CrawlerDoNotPackIfNearTarget" type="CrawlerPackUnpackNearTargetInfo" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<!-- Don't pack up if a unit is more than this fraction finished -->
+				<xs:attribute name="CrawlerPackWaitIfUnitIsCloseToDonePercentage" type="Percentage" default="95%" />
+				<!-- Don't pack up if the production speed is reduced to this percent of the total or less (i.e. 10% of the total buildtime) -->
+				<xs:attribute name="CrawlerPackWaitIfProductionTimeIsReducedToPercentage" type="Percentage" default="30%" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AISpecialPowerCrawlerUnpackData">
+		<xs:complexContent>
+			<xs:extension base="BaseCrawlerPackUnpackData_InheritanceOnly">
+				<xs:sequence>
+					<!-- When unpacking, attempt to orient the crawler away from the specified base -->
+					<xs:element name="CrawlerUnpackOrientAwayFromBase" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1" />
+					
+					<!-- If there are hostile enemies near the crawler we want to unpack -->
+					<xs:element name="CrawlerUnpackIfEnemiesInVicinity" type="CrawlerPackUnpackEnemiesNearbyInfo" minOccurs="0" maxOccurs="1" />
+					
+					<!-- If we reached our target, then it is time to park the crawler down -->
+					<xs:element name="CrawlerUnpackIfNearTarget" type="CrawlerPackUnpackNearTargetInfo" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+
+				<!-- If we have this many units finished in the queue when we are in combat, we want to unpack -->
+				<xs:attribute name="CrawlerUnpackInCombatWhenUnitsFinished" type="SageInt" default="2" />
+				<!-- If we have this many units finished in the queue, we always want to unpack -->
+				<xs:attribute name="CrawlerUnpackWhenUnitsFinished" type="SageInt" default="3" />
+
+				<!-- If we are near our target and we have this many units 
+						 finished in the queue, we want to unpack -->
+				<xs:attribute name="CrawlerUnpackWhenNearTargetAndUnitsFinished" type="SageInt" default="1" />
+
+				<!-- How far in front of the crawler should we start looking for a place to settle down (a.k.a. unpack)?-->
+				<xs:attribute name="CrawlerUnpackSettleDownScanCenterBias" type="SageReal" default="50.0" />
+
+				<!-- How far away from the initial point should we look before we give up?-->
+				<xs:attribute name="CrawlerUnpackSettleDownScanMaxDistance" type="SageReal" default="500.0" />
+
+				<!-- How many steps do we take to reach that distance? -->
+				<xs:attribute name="CrawlerUnpackSettleDownScanSteps" type="SageInt" default="5" />
+
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- ////////////////////////////////// -->
+
+	<!-- ////////////////////////////////// -->
+	<!-- This data allows us to weight a given object or object type to make the super weapon more likely to attack that location -->
+	<xs:complexType name="AISpecialPowerSuperWeaponFiringData">
+		<xs:sequence>
+			<xs:element name="WeightedObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="WeightedObjectWeight" type="SageReal" default="1.0" />
+	</xs:complexType>
+	<!-- ////////////////////////////////// -->
+	
+	<!-- ////////////////////////////////////////////////////////// -->
+	<xs:complexType name="AISpecialPowerReactToSuperWeaponIndividualEffectData">
+		<xs:sequence>
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+			<xs:element name="WeaponTemplateUsed" type="WeaponWeakRef" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="RadiusOfEffect" type="SageReal" use="required" />
+		<xs:attribute name="ReactionDelay" type="Time" default="0s" />
+	</xs:complexType>
+
+	<xs:complexType name="AISpecialPowerReactToSuperWeaponData">
+		<xs:sequence>
+			<xs:element name="SuperWeaponsData" type="AISpecialPowerReactToSuperWeaponIndividualEffectData" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="MinValueAffectedByPower" type="SageReal" default="5.0" />
+	</xs:complexType>
+	<!-- ////////////////////////////////////////////////////////// -->
+
+	<xs:complexType name="AIToggleSpecialPowerInfo">
+		<xs:sequence >
+			<!-- for TOGGLE_WEAPON, TOGGLE_AOE_ATTACK -->
+			<xs:element name="StateWeapon" type="AISpecialPowerWeaponData" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="ToggleHint" type="ToggleStatusAiHint" use="required" />
+
+		<xs:attribute name="UseOnlyWhenPowerAdvantageIsAbove" type="SageReal" use="optional" />
+		<xs:attribute name="UseOnlyWhenPowerAdvantageIsBelow" type="SageReal" use="optional" />
+		<xs:attribute name="UseOnlyWhenValueAdvantageIsAbove" type="SageReal" use="optional" />
+		<xs:attribute name="UseOnlyWhenValueAdvantageIsBelow" type="SageReal" use="optional" />
+		<xs:attribute name="NeverUseWhenFurtherThanNUnitsFromTarget" type="SageReal" use="optional" />
+		<xs:attribute name="NeverUseWhenCloserThanNUnitsFromTarget" type="SageReal" use="optional" />
+		<xs:attribute name="NeverUseWhenHealthIsBelow" type="SageReal" use="optional" />
+		<xs:attribute name="OnlyUseWhenHaveTarget" type="SageBool" default="false" />
+		<xs:attribute name="MaxZDifferenceFromTarget" type="SageReal" use="optional" />
+		<xs:attribute name="NeverUseInState" type="MicroManagerStateList" default="" />
+		<xs:attribute name="NeverUseDuringTask" type="MicroManagerUnitTaskList" default="" />
+		<xs:attribute name="NeverUseWhenDodgingThreat" type="SageBool" default="false" />
+
+		<!-- "Clear" is defined here to mean that there are no enemies nearby and the team isn't near its tactical target.
+            Note that this is unfortuantely different from the MicroManager_IDLE state.  A team will stay in the IDLE state
+            if none of its members are able to attack any nearby target.  We don't want that situation to block a toggle from
+            activating because toggling may be what solves that problem (e.g. Japan Transforming units). -->
+		<xs:attribute name="NeverUseWhenClear" type="SageBool" default="false" />
+
+		<!-- For TOGGLE_DEFENSE_SELF_ONLY. If you set these, the defense will active when the amount of damage
+         taken in the last x seconds plus the damage expected in the next y seconds exceeds some fraction z
+         of our total health. If not, or if you don't set these, then the power will activate if we are being
+         targeted by an enemy unless DontUseIfInRange is set to true. -->
+		<xs:attribute name="SelfDefenseDamageLookAheadTime" type="Time" use="optional" />
+		<xs:attribute name="SelfDefenseDamageLookBehindTime" type="Time" use="optional" />
+		<xs:attribute name="SelfDefenseDamageFraction" type="SageReal" use="optional" />
+		<xs:attribute name="DontUseIfInRange" type="SageBool" default="false" />
+
+		<!-- For ONE_PER_TARGET power -->
+		<xs:attribute name="NumOtherAttackersOnTarget" type="SageInt" default="1" />
+
+		<!-- For TOGGLE_LEECH_HEALTH_AND_WEAPON: The upgrade used to test if we have already leeched a weapon. If this
+               upgrade is present, we will not switch to the LEECH state just to get someone's weapon. -->
+		<xs:attribute name="LeechWeaponUpgrade" type="UpgradeTemplateRef" default="" />
+		<!-- For TOGGLE_LEECH_HEALTH_AND_WEAPON: How close to death does the target need to be for us to use the 
+               "Let's switch to leech beam to get the target's weapon!" code. -->
+		<xs:attribute name="LeechWeaponTargetHealthFraction" type="SageReal" default="0.1" />
+		<!-- For TOGGLE_LEECH_HEALTH_AND_WEAPON: Reference to a SecondaryObjectListenerModule which knows which
+               types of objects we can leech weapons from. -->
+		<xs:attribute name="LeechWeaponSOLModuleId" type="Poid" xas:refType="ModuleData" use="optional" />
+
+		<!-- For TOGGLE_LEECH_HEALTH_AND_WEAPON: We turn the "leech health" abilities only when our power advantage
+               is above this. (Because then we expect to be gaining more health from the leech than we lose because we're
+                 killing the enemy slower.) -->
+		<xs:attribute name="LeechHealthActivatePowerAdvantage" type="SageReal" default="1.7" />
+		<!-- For TOGGLE_LEECH_HEALTH_AND_WEAPON: And we turn it off if the power advantage drops below this. We 
+             have some hysteresis in the state to avoid vibrating back and forth between states, since turning 
+             the power on may lower our power advantage. -->
+		<xs:attribute name="LeechHealthDeactivatePowerAdvantage" type="SageReal" default="1.2" />
+
+		<!-- For TOGGLE_STEALTH_OTHERS: Invisibility module we are using when stealthing others -->
+		<xs:attribute name="StealthOthersInvisibilityModuleId" type="Poid" xas:refType="ModuleData" use="optional" />
+
+		<!-- For TOGGLE_SHIELD: We must protect at least this much value of friendly units to bother with the shield -->
+		<xs:attribute name="ShieldMinValueProtected" type="SageInt" default="0" />
+
+		<!-- For TOGGLE_SHIELD: The enemy army's DPS against the protected units must be larger than this to bother
+               with the shield -->
+		<xs:attribute name="ShieldMinEnemyDPS" type="SageReal" default="1000.0" />
+
+		<!-- For TOGGLE_SHIELD: Units far away from the shield center are not counted as much when figuring 
+             ShieldMinValueProtected, because they won't be protected as long. Units closer than this are 
+             counted at full value (this distance is a fraction of the shield's radius): -->
+		<xs:attribute name="ShieldValueAdjustPastDistanceFraction" type="SageReal" default="0.5" />
+		<!-- and then there is a linear falloff until units are the edge of the shield radius have their Values
+             multiplied by: -->
+		<xs:attribute name="ShieldValueAdjustMultiplierAtEdge" type="SageReal" default="0.0" />
+
+		<!-- For TOGGLE_WEAPON -->
+		<xs:attribute name="EnemyMustBeInVisionRange" type="SageBool" default="false" />
+
+		<!-- Exclude a target by KindOf bit flag. For example, allows us to modify the behavior of a power -->
+		<!-- like the leech weapon so it cannot be used against infantry -->
+		<xs:attribute name="NeverUseWhenTargetIsAnyKindOf" type="KindOfBitFlags" />
+
+		<!-- Constrain toggling by the location/surface type of the object. For example, allows us 	-->
+		<!-- to modify the behavior of a special power like the JapanAntiAirShip tranfrom so that 	-->
+		<!-- it will only transform when located on Water but not on Land.                          -->
+		<xs:attribute name="Location" type="AITargetLocationBitFlags" default="Water Land"/>
+		
+		<!-- For TOGGLE_DEPLOY: Only deploy if the target is within a certain percentage of the unit's -->
+		<!-- maximum weapon range. -->
+		<xs:attribute name="MaxWeaponRangePercent" type="Percentage" default="0%" />
+		<xs:attribute name="DeployedUnitRangedWeaponType" type="AIDeployedUnitRangedWeaponType" default="SINGLE_TARGET" />
+		<xs:attribute name="TimeToWaitForTarget" type="Time" default="0s" />
+	</xs:complexType>
+
+	<xs:complexType name="AISpecialPowerInfo">
+		<xs:sequence>
+			<!-- Note that HeuristicChoice allows for 1 or more entries, to get none, just don't use StateHeuristic.
+				The heuristic evaluation will return 1.0 if this is not defined -->
+			<xs:element name="StateHeuristic" type="HeuristicChoice" minOccurs="0" maxOccurs="1"/>
+
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1"/>
+
+			<!-- If a power (but not a Support-class power) has one of these, then when the power attempts to
+				 fire, the AI will first check to see if it can use the given logic command at the chosen 
+				 point or object (if applicable). If so, that other logic command is fired instead, and
+				 this logic command is not fired. 
+				 If there are multiple elements of this type, they are checked in order. The first one
+				 to fire ends the search.
+				 NOTE: Both this LogicCommand and the target LogicCommand must be Type="SPECIAL_POWER" for
+				 this to work. -->
+			<xs:element name="OverrideAndUseLogicCommandInstead" type="LogicCommandRef" minOccurs="0" maxOccurs="unbounded" />
+			
+			<!-- For PlayerPowers:canTargetObject() - List of objects we should avoid targetting close to. -->
+			<xs:element name="AvoidTarget" type="AIAvoidanceRecord" minOccurs="0" maxOccurs="unbounded" />
+
+			<!-- For PlayerPowers:canTargetObject() Used to require a target to be within a certain radius of an object which passes the object filter -->
+			<xs:element name="MaxDistanceFilter" type="DistanceObjectFilter" minOccurs="0" maxOccurs="1" />
+
+			<!-- For PLAYER_TARGET_HEURISTICS - List of target heuristics, will select best one with a target -->
+			<xs:element name="TargetHeuristic" type="StateTargetHeuristic" minOccurs="0" maxOccurs="unbounded"/>
+
+			<!-- For PLAYER_DECOY_ARMY: -->
+			<xs:element name="DecoyArmyInfo" type="AISpecialPowerDecoyArmyData" minOccurs="0" maxOccurs="1" />
+
+			<!-- For PLAYER_AOE_HEAL: -->
+			<xs:element name="AOEHealInfo" type="AISpecialPowerAoeHealData" minOccurs="0" maxOccurs="1" />
+
+			<!-- For PLAYER_CHOKE_POINT: -->
+			<xs:element name="ChokePointInfo" type="AISpecialPowerChokePointData" minOccurs="0" maxOccurs="1" />
+			
+			<!-- For PLAYER_PRODUCTION_BUFF: -->
+			<xs:element name="ProductionBuffInfo" type="AISpecialPowerProductionBuffData" minOccurs="0" maxOccurs="1" />
+
+			<!-- For PLAYER_SUMMON_ATTACK_OBJECTS: -->
+			<xs:element name="SummonAttackObjectsInfo" type="AISpecialPowerSummonAttackObjectsData" minOccurs="0" maxOccurs="1" />
+
+			<!-- For SUPER_WEAPON: -->
+			<xs:element name="SuperWeaponFiringInfo" type="AISpecialPowerSuperWeaponFiringData" minOccurs="0" maxOccurs="1" />
+
+			<!-- For REACT_TO_SUPERWEAPON_FIRING: -->
+			<xs:element name="ReactToSuperWeaponInfo" type="AISpecialPowerReactToSuperWeaponData" minOccurs="0" maxOccurs="1" />
+
+			<!-- For CRAWLER_PACK: -->
+			<xs:element name="CrawlerPackInfo" type="AISpecialPowerCrawlerPackData" minOccurs="0" maxOccurs="1" />
+			<!-- For CRAWLER_UNPACK: -->
+			<xs:element name="CrawlerUnpackInfo" type="AISpecialPowerCrawlerUnpackData" minOccurs="0" maxOccurs="1" />
+			
+		</xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:pipelineOnly="true"/>
+		<xs:attribute name="Heuristic" type="AISpecialPowerHeuristic" use="required"/>
+		<xs:attribute name="Distance" type="xs:float" default="100.0"/>
+		<xs:attribute name="HealthFraction" type="xs:float" default="0.0"/>
+		<xs:attribute name="TargetObjectInclude" type="KindOfBitFlags" />
+		<xs:attribute name="TargetObjectExclude" type="KindOfBitFlags" />
+		<xs:attribute name="TargetObjectIncludeDisabledTypes" type="DisabledBitFlags" default="" />
+		<xs:attribute name="UseOnlyWhenPowerAdvantageIsAbove" type="SageReal" use="optional" />
+		<xs:attribute name="NeverUseWhileRetreating" type="SageBool" default="false" />
+		<xs:attribute name="NeverUseWhilePullingBack" type="SageBool" default="false" />
+		<xs:attribute name="UseIfNeedToDodgeThreat" type="SageBool" default="false" />
+
+
+		<!-- For CAPTURE powers -->
+		<!-- Some things (e.g. Conquer Vehicles in C&C4) capture by "docking" with a object (MSG_DOCK).
+			-  Other things (e.g. Engineers) capture by "entering" an object (MSG_ENTER).
+			-  For the most part, the rest of the AI doesn't care about the details 
+			-  of how the capture works - that's just a U&S implementation 
+			-  detail. So we have the same capture power do both types of capture.
+			-  This boolean determine which U&S interface we need to use to
+			-  do the capturing. Note that this means that the AI is probably screwed if an
+			-  object can capture some things via docking and others via entering... -->
+		<xs:attribute name="CaptureType" type="AiCaptureType" default="CAPTURE_BY_ENTERING" />
+		
+		<!-- Can this object capture husks? -->
+		<xs:attribute name="CanCaptureHusks" type="SageBool" default="true" />
+
+		<!-- For INVULNERABILITY power -->
+		<xs:attribute name="InvulnerabilityDamageLookAheadTime" type="Time" default="1s" />
+		<xs:attribute name="InvulnerabilityDamageLookBehindTime" type="Time" default="1s" />
+		<!-- The InvulnerabilityDamageFractions say: Activate the invulnerability power when the damage I took
+				 from instant weapons over the last n seconds plus the damage I expect to take in the next y seconds
+				 from delayed weapons is greater than some fraction of my current health. We have two fractions -
+				 one for when we are out of range of our target, and one for when we are in range. The invulnerability
+				 power often precludes use of our weapons, so we are much more willing to use the power when we are
+				 out of range than when we are in range. -->
+		<xs:attribute name="InvulnerabilityDamageFractionWhenOutOfRangeOfTarget" type="SageReal" default=".3" />
+		<xs:attribute name="InvulnerabilityDamageFractionWhenInRangeOfTarget" type="SageReal" default=".6" />
+		<!-- For INVULNERABILITY powers which prevent us from changing direction - a hack to try & avoid
+				 use until we are facing the correct direction. -->
+		<xs:attribute name="InvulnerabilityAvoidUseIfAngleToNextPathNodeIsMoreThan" type="Angle" default="360d" />
+
+		<!-- For PlayerPowers:canTargetObject() Prevents the power from being cast on anything moving over this speed.  This is useful
+				 for powers that have a delay between cast time and when they hit, which many of the player powers do.
+				 0.0 should be a common usage value, i.e. only pick stationary targets -->
+		<xs:attribute name="MaxTargetSpeed" type="SageReal" default="99999.0" />
+
+		<!-- For PlayerPowers:canTargetObject() Additionaly filters for potentential targest -->
+		<xs:attribute name="VitalKindOf" type="KindOfBitFlags"/>
+		<xs:attribute name="ForbiddenKindOf" type="KindOfBitFlags"/>
+		<xs:attribute name="VitalObjectStatus" type="ObjectStatusBitFlags"/>
+		<xs:attribute name="ForbiddenObjectStatus" type="ObjectStatusBitFlags"/>
+
+		<!-- For PlayerPowers:canTargetObject() -A Only select a target which has been under attack in the last n seconds. 
+				For stupid-internal-code reasons, this is an int not a SageTime. -->
+		<xs:attribute name="UnderAttackInLastNSeconds" type="SageInt" use="optional" />
+
+		<!-- For PlayerPowers:canTargetObject() - The target must be at least this far from the nearest enemy. -->
+		<xs:attribute name="MinDistanceFromEnemy" type="SageReal" default="0.0" />
+
+
+		<!-- For PlayerPowers:canTargetObject() - Allow ai to 'no longer see'/forget a target that is in the shroud -->
+		<xs:attribute name="ShroudRespect" type="xs:boolean" default="false"/>
+		<xs:attribute name="ShroudRememberTime" type="Time" default="0s" />
+
+		<!-- For PlayerPowers:canTargetObject() - Don't allow in a spawn zone (trigger area) -->
+		<xs:attribute name="AllowInSpawnZone" type="xs:boolean" default="true"/>
+		<xs:attribute name="RequireInSpawnZone" type="xs:boolean" default="false"/>
+
+		<!-- For PLAYER_AOE_ATTACK: Whether or not this power needs to be able to kill its targets.  This is normally on but
+				 needs to be turned off for powers that do more indirect damage such as the Desolator Bomb and Final Squadron.
+				 With these powers, the "MinTargetsHit" parameter is used instead of ValueRequired. -->
+		<xs:attribute name="RequireKillTargets" type="SageBool" default="true" />
+
+		<!-- For PLAYER_AOE_ATTACK: Requires that the power thinks it will be able to kill at least this amount worth of enemy assets.
+				 For PLAYER_WEALTH: As player wealth goes below ValueRequired, the heuristic rises : (ValueRequired - wealth) == value of using power    
+				 For PLAYER_POWER_MAGNETIC_SATELLITE - used as a threshold for the selection of a target for the Magnetic Satellite.
+				 This is useful for powerful player powers that we don't want to 'waste' by taking out a single unit for example. 			 -->
+		<xs:attribute name="ValueRequired" type="SageReal" default="0.0" />
+
+		<!-- For Player Powers: Requires that the power thinks it will be able to hit at least this many targets.
+				 This is useful for powerful player powers that we don't want to 'waste' by hitting a single unit for example. -->
+		<xs:attribute name="MinTargetsHit" type="SageInt" default="1" />
+
+		<!-- For Player Powers: Overrides the effect radius specified in the special power template -->
+		<xs:attribute name="SearchRadius" type="SageReal" use="optional" />
+
+		<!-- For PLAYER_AOE_BUFF: The minimum number of enemies we're fighting to use the buff on our team -->
+		<xs:attribute name="MinEnemiesNearby" type="SageInt" default="1" />
+
+		<!-- For SPEED_BOOST and CRAWLER_PACK/UNPACK-->
+		<xs:attribute name="UseInMicroManagerState" type="MicroManagerStateList" default="" />
+		<xs:attribute name="NeverUseInMicroManagerState" type="MicroManagerStateList" default="" />
+		<xs:attribute name="UseNearTacticalTarget" type="SageBool" default="false" />
+		<!-- Note that "out of ammo" only applies to aircraft that must reload at a structure, not units going through their normal auto-reloading clips -->
+		<xs:attribute name="UseWhenOutOfAmmo" type="SageBool" default="false" />
+
+		<!-- For Special Powers that require an update, i.e., Soviet Magnetic Satellite -->
+		<xs:attribute name="UpdateObject" type="GameObjectRef" use="optional"  />
+
+		<!-- Exclude a target by the location/surface type of the target. For example, allows us to modify the behavior -->
+		<!-- of a power like the Torpedo Spread so that it only targets units that are located on Water but not on Land  -->
+		<xs:attribute name="Location" type="AITargetLocationBitFlags" default="Water Land"/>
+
+		<!-- For RUSH_ATTACK and TOGGLE_DEFENSE_SELF_ONLY -->
+		<!-- Used to indicate the unit should use its special power for the Counter Garrison mechanic -->
+		<xs:attribute name="UseToCounterGarrison" type="SageBool" use="optional" />
+		
+		<!-- For SPEED_BOOST: How far from a garrsion target will be activate? -->
+		<xs:attribute name="UseWhenDistanceToGarrisonIsBelow" type="SageReal" use="optional" />
+
+		<!-- For SUPER WEAPON: Weapon incrementally charges but can be used prematurely. -->
+		<xs:attribute name="UseWhenChargeIsAtLeast" type="SageInt" default="0" />
+
+		<!-- FOR AOE_ATTACK: Force the ability to count this as the effect radius -->
+		<xs:attribute name="PowerEffectRadiusOverride" type="SageReal" use="optional" />
+		<!-- FOR AOE_ATTACK: Force the ability to count this as the casting range -->
+		<xs:attribute name="PowerCastingRadiusOverride" type="SageReal" use="optional" />
+	
+		<!-- FOR MAGNETIC_SATELLITE: Specifies the search radius when counting enemies -->
+		<xs:attribute name="MagneticSatelliteSearchRadius" type="SageReal" default="150.0" />
+
+		<!-- FOR MINEFIELD: If within this distance from target immediately deploy mines -->
+		<xs:attribute name="InnerDistanceForMineLaying" type="SageReal" default="200.0" />
+		<!-- FOR MINEFIELD: If within this distance from target find a point closer to the
+			   target to deploy mines. -->
+		<xs:attribute name="OuterDistanceForMineLaying" type="SageReal" default="500.0" />
+		<!-- FOR MINEFIELD: Do we deploy mines at the position of the "spellcaster"? -->
+		<xs:attribute name="DeployMinesAtCasterPosition" type="SageBool" default="false" />
+		
+	</xs:complexType>
+
+	<xs:complexType name="AISpecialPower">
+		<xs:sequence>
+			<xs:element name="SpecialPowerWeapon" type="AISpecialPowerWeaponData" minOccurs="0" maxOccurs="1" />
+			<xs:element name="AISpecialPowerInfo" type="AISpecialPowerInfo" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+
+		<xs:attribute name="Manager" type="AISpecialPowerManager" use="required"/>
+
+		<!-- For PLAYER_POWER_MAGNETIC_SATELLITE heuristic, we need to limit the number of updatables that are active.  It is tracked
+			at the AISpecialPower level, not each heuristic..	-->
+		<xs:attribute name="MaxUpdatables" type="SageInt" use="optional" />
+	</xs:complexType>
+
+</xs:schema>

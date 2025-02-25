@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+			
+		<Include
+			type="all"
+			source="ART:FXFireStream_Blue.xml" />
+		<Include
+			type="all"
+			source="ART:NUBlkHnd_UG.xml" />
+		<Include
+			type="all"
+			source="ART:HC_NUBlkHnd_UG.xml" />
+			
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:NOD/Units/NODBlackHand.xml" />
+	</Includes>
+	<GameObject
+		id="BlackHandBlackHand"
+		inheritFrom="NODBlackHand"
+		Side="BlackHand"
+		EditorSorting="UNIT"
+		EditorName="BlackHandBlackHand"
+		Description="Desc:BlackHandBlackHand"
+		WorldMapArmoryUpgradesAllowed="Upgrade_BlackHandSecretShrinePurifyingFlame"
+		TypeDescription="Type:BlackHandBlackHand">
+		<DisplayUpgrade>Upgrade_BlackHandSecretShrinePurifyingFlame</DisplayUpgrade>
+		<Draws>
+			<ScriptedModelDraw
+				xai:joinAction="Append"
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6">
+					<Model
+						Name="NU_BlkHnd_SKN" />
+					<Texture
+						Original="NUBlkHnd"
+						New="NUBlkHnd_UG" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			
+			<StreamDraw
+				xai:joinAction="Replace"
+				id="ModuleTag_StreamDraw"
+				UseDistortionShader="false"
+				Velocity="200.0"
+				ArcHeightFactor="0.0625"
+				UVWorldSize="100.0"
+				NumTubeSides="8"
+				TubeRadius="0.5"
+				HitFx="FX_NOD_BlackHandFlameWeaponHit">
+				<!-- HitFx="FX_BulletHitGDI" -->
+				<!-- FX_NOD_BlackHandFlameWeaponHit = FX_BulletHitGDI - the bullet ricochet sounds! -->
+				<FXShader
+					ShaderName="Stream.fx"
+					TechniqueIndex="1">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXFireStream</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXFireStream</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+				<ParticleSystems>
+					<ParticleSys>NUBlkHndStreamFlame</ParticleSys>
+					<ParticleSys>NUBlkHndStreamGlow</ParticleSys>
+					<ParticleSys>NUBlkHndStreamDistort</ParticleSys>
+				</ParticleSystems>
+				<ObjectStatusValidation
+					ForbiddenStatus="WEAPON_UPGRADED_01" />
+			</StreamDraw>
+			<StreamDraw
+				id="ModuleTag_UpgradedStreamDraw"
+				UseDistortionShader="false"
+				Velocity="200.0"
+				ArcHeightFactor="0.0625"
+				UVWorldSize="100.0"
+				NumTubeSides="8"
+				TubeRadius="0.5"
+				HitFx="FX_NOD_BlackHandFlameWeaponHit">
+				<!-- HitFx="FX_BulletHitGDI" -->
+				<!-- FX_NOD_BlackHandFlameWeaponHit = FX_BulletHitGDI - the bullet ricochet sounds! -->
+				<FXShader
+					ShaderName="Stream.fx"
+					TechniqueIndex="1">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXFireStream_Blue</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXFireStream_Blue</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+				<ParticleSystems>
+					<ParticleSys>NUBlkHndPurifyingStrmFlame</ParticleSys>
+					<ParticleSys>NUBlkHndPurifyingStrmGlow</ParticleSys>
+					<ParticleSys>NUBlkHndPurifyingStrmDistort</ParticleSys>
+				</ParticleSystems>
+				<ObjectStatusValidation
+					RequiredStatus="WEAPON_UPGRADED_01" />
+			</StreamDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				xai:joinAction="Replace">
+				<WeaponSlotHardpoint
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODBlackHandFlamethrower" />
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODBlackHandUpgradedFlamethrower"
+						ObjectStatus="WEAPON_UPGRADED_01" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<StatusBitsUpgrade
+				id="ModuleTag_UpgradeWeapon"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_BlackHandSecretShrinePurifyingFlame</TriggeredBy>
+			</StatusBitsUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_PurifyingFlameUpgrade"
+				AddConditionFlags="USER_6">
+				<TriggeredBy>Upgrade_BlackHandSecretShrinePurifyingFlame</TriggeredBy>
+			</ModelConditionUpgrade>
+		</Behaviors>
+	</GameObject>
+</AssetDeclaration>

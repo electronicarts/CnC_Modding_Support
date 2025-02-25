@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GBTechCen_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBTechCen_IDLA.w3x" />
+		<Include
+			type="all"
+			source="ART:GBTechCen_ASN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBTechCen_AAN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBTechCenD2_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBTechCenD2_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBTechCenD3_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBTechCenD3_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBTechCenSRF_SKN.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GDIArmory"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_GDITechCenter"
+		ButtonImage="Portrait_GDITechCenter"
+		Side="GDI"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="4000"
+		BuildTime="40"
+		EnergyProduction="-12"
+		CommandSet="GDIArmoryCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY POWERED FS_TECH_CENTER NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="315d"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="GDITechCenter"
+		Description="Desc:GDITechCenter"
+		TypeDescription="Type:GDIArmory">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDITechCenter</DisplayName>
+		<GameDependency>
+			<RequiredObject>GDICommandPost</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="GDIArmoryArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<ArmorSet
+			Conditions="PLAYER_UPGRADE"
+			Armor="GDIArmorySonicRepulsionFieldArmor"
+			DamageFX="NormalDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="SPREAD" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBTechCen_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="GBTechCen_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="GBTechCen_ASN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBTechCen_SKN" />
+					<Texture
+						Original="GBTechCen"
+						New="GBTechCen_D" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBTechCenD2_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBTechCenD3_SN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GBTechCen_IDLA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Script>
+						CurDrawableHideSubObject("UG_Rail")
+						CurDrawableHideSubObject("UG_Mortar")
+						CurDrawableHideSubObject("B_MortarRound_1")
+						CurDrawableHideSubObject("UG_Scan")
+						CurDrawableHideSubObject("UG_Boost")
+						CurDrawableHideSubObject("UG_Adaptive04")
+						CurDrawableHideSubObject("UG_Adaptive02")
+						CurDrawableHideSubObject("UG_Adaptive")
+						CurDrawableHideSubObject("UG_Adaptive01")
+					</Script>
+				</AnimationState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="GBTechCen_AAN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Medium"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBTechCenD3_AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Des_Medium"
+						FollowBone="false" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBTechCenD2_AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBTechCenD1"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Damaged" and Prev ~= "TRANS_IntoDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoDamaged")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoDamaged">
+					<Animation
+						AnimationName="GBTechCenD1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+-->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GBTechCenD2_AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBTechCenD3_AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			
+			<!-- Draw sonic repulsion field -->
+			
+			<ScriptedModelDraw
+				id="ModuleTag_DrawGDIWarfactorySRF"
+				OkToChangeModelColor="true"
+				UseStandardModelNames="true"
+				StaticModelLODMode="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT" >
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6 DYING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6 REALLYDAMAGED">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6 DAMAGED">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6">
+					<Model
+						Name="GBTechCenSRF_SKN" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<ModelConditionUpgrade
+				id="ModuleTag_UpgradeSonicRepulsion"
+				AddConditionFlags="USER_6">
+				<TriggeredBy>Upgrade_SonicRepulsionField</TriggeredBy>
+			</ModelConditionUpgrade>
+			
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />
+		
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<SubObjectsUpgrade
+				id="ModuleTag_Upgrade_Railguns"
+				ShowSubObjects="UG_Rail">
+				<CustomAnimAndDuration
+					AnimState="USER_1"></CustomAnimAndDuration>
+				<TriggeredBy>Upgrade_GDIArmoryRailgunTech</TriggeredBy>
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_Upgrade_Mortars"
+				ShowSubObjects="UG_Mortar B_MortarRound_1">
+				<CustomAnimAndDuration
+					AnimState="USER_2"></CustomAnimAndDuration>
+				<TriggeredBy>Upgrade_GDIArmoryPitbullMortar</TriggeredBy>
+			</SubObjectsUpgrade>
+			<!-- <SubObjectsUpgrade
+				id="ModuleTag_Upgrade_Sensor_Pods"
+				ShowSubObjects="UG_Scan">
+				<CustomAnimAndDuration
+					AnimState="USER_3"></CustomAnimAndDuration>
+				<TriggeredBy>Upgrade_OrcaSensorPod</TriggeredBy>
+			</SubObjectsUpgrade> -->
+			<SubObjectsUpgrade
+				id="ModuleTag_Upgrade_TungstenAAShells"
+				ShowSubObjects="UG_Scan">
+				<CustomAnimAndDuration
+					AnimState="USER_3"></CustomAnimAndDuration>
+				<TriggeredBy>Upgrade_GDITungstenAAShells</TriggeredBy>
+			</SubObjectsUpgrade>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				UnpackTime="1.5s" />
+
+			<OCLSpecialPower
+				id="ModuleTag_CallSupportHunterKillerTeam"
+				SpecialPowerTemplate="SpecialPowerCallSupportHunterKillerTeam"
+				TriggerFX="FX_GDICallForTransportFlare"
+				OCL="OCL_CallSupportHunterKillerTeam"
+				CreateLocation="CREATE_AT_EDGE_NEAR_SOURCE"
+			/>
+			<AISpecialPowerUpdate
+				id="ModuleTag_CommandPostCallHunterKillerAI"
+				CommandButtonName="Command_CommandPostCallHunterKiller"
+		        ReinforceDistance="400.0"
+				SpecialPowerRadius="300.0"
+				SpecialPowerAIType="SPECIAL_POWER_REINFORCEMENT" 
+			/>
+
+
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				Type="UPGRADE" 
+				GiveNoXP="true" />
+				
+			<xi:include
+				href="../../Includes/GDISonicRepulsionFieldArmorUpgrade.xml" />
+			<xi:include
+   				href="../../Includes/GDISonicRepulsionFieldStatusUpgrade.xml" />    
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="../../Includes/ArmoryGDIBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/ArmoryGDIBuildingSuicide.xml" />
+	
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModulTag_AIForLua"
+				AILuaEventsList="GDITechCenterFunctions" />
+		</AI>
+		<Body>
+ 		  <ActiveBody
+ 		   id="ModuleTag_Body"
+ 		   MaxHealth="10000.0">
+ 		   <DamageTrigger
+ 		    HealthLevelBelowPercent="66"
+ 		    RemoveUpgrade="Upgrade_SonicRepulsionField"/>
+ 		  </ActiveBody>
+ 		 </Body> 
+
+		<ClientUpdates>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="AnnounceHunterKillerTeamReady"
+				AnnouncementEventOwner="ReinforcementsReady"
+				SpecialPowerTemplate="SpecialPowerCallSupportHunterKillerTeam"
+				JustMonitorPercentReady="true" 
+			/>
+		</ClientUpdates>
+
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="46.0"
+				MinorRadius="46.0"
+				Height="23.0">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="13.0"
+				Height="73.0">
+				<Offset
+					x="15.0"
+					y="0.0"
+					z="0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-40.0"
+					y="40.0"
+					z="26" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="40.0"
+					y="40.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="40.0"
+					y="-40.0"
+					z="26" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="40.0"
+					y="40.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-40.0"
+					y="-40.0"
+					z="26" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="40.0"
+					y="40.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-40.0"
+					y="-40.0"
+					z="26" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-40.0"
+					y="40.0"
+					z="0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="AudioEvent:GDI_ArmorySelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="250.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

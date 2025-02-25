@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+
+		<Include
+			type="all"
+			source="ART:JBWallHub_A.w3x" />
+		<Include
+			type="all"
+			source="ART:JBWall_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:JBWall_BLD.w3x" />
+		<Include
+			type="all"
+			source="ART:JBWallHub_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:JBWallHub_SKL.w3x" />			
+
+
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseWallPiece.xml" />
+	</Includes>
+	<!-- Wall Piece (these alternate between Wall hubs and Wall segments on a case by case basis) -->
+	<GameObject
+		id="JapanWallPiece"
+		inheritFrom="BaseWallPiece"
+		Side="Japan"
+		EditorSorting="STRUCTURE"
+		BuildTime="0"
+		SelectPortrait="Portrait_JapanWall"
+		ButtonImage="Button_JapanWall"
+		EnergyProduction="0"
+		CommandSet="EmptyCommandSet"
+		PlacementViewAngle="225d"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="JapanWallHub"
+		Description="Desc:JapanWallPiece"
+		TypeDescription="Type:JapanWallPiece">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:JapanWallPiece</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="10"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="JapanWallArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="FRONT" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				StaticModelLODMode="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08">
+
+				<!-- __WALL HUB MODEL__ -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JBWallHub_SKN" />
+				</ModelConditionState>
+				<!-- BUILD UP -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING WALL_SEGMENT">
+					<Model
+						Name="JBWall_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="JBWallHub_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD WALL_SEGMENT">
+					<Model
+						Name="JBWall_SKN" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="JBWallHub_SKN" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="WALL_SEGMENT">
+					<Model
+						Name="JBWall_SKN" />
+				</ModelConditionState>		
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING WALL_SEGMENT">
+					<Animation
+						AnimationName="JBWall_BLD"
+						AnimationMode="MATCH_UNPACKING" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="JBWallHub_A"
+						AnimationMode="MATCH_UNPACKING" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD WALL_SEGMENT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="JBWall_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="JBWallHub_A"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s" />
+				</AnimationState>	
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_JAP_WallSegment_Die" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_None" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_None" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_None" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieHub"
+				CreationList="JBWallHub_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" 
+					DeathTypesForbidden="SUICIDED"
+					ExemptStatus="WALL_SEGMENT"/>
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieWall"
+				CreationList="JBWall_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" 
+					DeathTypesForbidden="SUICIDED"
+					RequiredStatus="WALL_SEGMENT"/>
+			</CreateObjectDie>	
+	
+		<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+			</DestroyDie>	
+			<WallBuilderBehavior
+				id="ModuleTag_WallBuilder"
+				MaxNumSegments="10">
+				<ConnectingObjectFilter
+					Rule="NONE" >
+					<IncludeThing>JapanWallPiece</IncludeThing>
+					<IncludeThing>JapanWallSegmentPiece</IncludeThing>
+				</ConnectingObjectFilter>
+			</WallBuilderBehavior>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="5s" />
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="300" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_WallSegmentSelect">
+				<Override RequiredFlags="WALL_SEGMENT">
+					<AudioArrayVoice>
+						<AudioEntry Sound="JAP_WallSegment_Select" AudioType="voiceSelect" />
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior> 
+		</ClientBehaviors>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				Name="Geom_Orig"
+				MajorRadius="15.0"
+				MinorRadius="0.0"
+				Height="25.0">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="JAP_WallHub_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="JAP_Wall_Placed" AudioType="soundUnderConstruction" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="10"
+			ShroudClearingRange="50" />
+	</GameObject>
+</AssetDeclaration>

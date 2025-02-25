@@ -1,0 +1,880 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- NOD Heavy Laser T3 /NOD Aircraft N / Nullifier / Basilisk -->
+	<Includes>
+		<!-- Art Includes -->
+		<Include type="all" source="ART:NUL_AircraftN_FP.w3x" />
+		<Include type="all" source="ART:NUL_AircraftN_SKN.w3x" />
+		<Include type="all" source="ART:NUL_AircraftN_AIDA.w3x" />
+		<Include type="all" source="ART:NUL_AircraftN_AIDD.w3x" />
+		<Include type="all" source="ART:NUL_AircraftN_ATKA.w3x" />
+		<Include type="all" source="ART:NUL_AircraftN_MOVA.w3x" />
+		<Include type="all" source="ART:NUL_AircraftN_MOVD.w3x" />
+		<Include type="all" source="ART:NUL_AircraftN_RVRS.w3x" />
+		<Include type="all" source="ART:NUL_AircraftN_TRNL.w3x" />
+		<Include type="all" source="ART:NUL_AircraftN_TRNR.w3x" />
+
+		<Include type="instance" source="ART:FXNodLaser.xml" />
+		<Include type="instance" source="ART:FXNodLaser_Veteran.xml" />
+		<Include type="instance" source="ART:FXEnergyBeam.xml" />
+
+		<!-- Data Includes -->
+		<Include type="instance" source="DATA:NOD/Props/NODAircraftNProps.xml" />
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseHeavyAircraft.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NODAIRCRAFTN_STASISFIELD_RADIUS" value="100.0"/>
+		<Define name="NODAIRCRAFTN_STASISFIELD_DURATION" value="10.0s"/>
+	</Defines>
+	<GameObject
+		id="NODAircraftN"
+		inheritFrom="BaseHeavyAircraft"
+		SubGroupPriority="133"
+		HealthBoxHeightOffset="65"
+		HealthBar="Large"
+		SelectPortrait="Portrait_NOD_Aircraft_N_tech1"
+		ButtonImage="Btn_NOD_Aircraft_N_tech1"
+		Side="NOD"
+		ParticipationValue="=$NODAIRCRAFTN_PARTICIPATION_VALUE"
+		BuildTime="15"
+		CommandSet="NODAircraftNCommandSet"
+		CommandPoints="=$NOD_AIRCRAFT_N_COMMANDPOINT_COST"
+		KindOf="+ASSAULT_AIRCRAFT +NO_COLLIDE +HAS_BUILDING_DESTRUCT_BEHAVIOR"
+		ThreatLevel="10"
+		WeaponCategory="LASER"
+		VoicePriority="148"
+		EditorName="NOD_S3_Heavy_Laser(Nullifier)"
+		Description="Desc:NODAircraftN"
+		TypeDescription="Type:NODAircraftN">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODAircraftN</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+		<LocomotorSet
+			Locomotor="NODAircraftNLocomotor"
+			Condition="NORMAL"
+			Speed="90.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="=$NODAIRCRAFTN_DAMAGE_BONE_NAMES + ' FXEngineWing01 FXEngineWing02 FX_weapon01 FX_weapon02 NAN_LASER_TURRET NAN_LASER_PITCH'"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUL_AircraftN_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_weapon01" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_weapon01" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="SECONDARY_WEAPON"
+						BoneName="FX_weapon02" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="SECONDARY_WEAPON"
+						BoneName="FX_weapon02" />
+
+					<ParticleSysBone
+						BoneName="FXEngineWing01"
+						FXParticleSystemTemplate="NODAircraft_HoverFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXEngineWing01"
+						FXParticleSystemTemplate="orcaexhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXEngineWing02"
+						FXParticleSystemTemplate="NODAircraft_HoverFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXEngineWing02"
+						FXParticleSystemTemplate="orcaexhaust"
+						FollowBone="true" />
+					<Turret
+						TurretNameKey="NAN_LASER_TURRET"
+						TurretPitch="NAN_LASER_PITCH"
+						TurretID="1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="NUL_AircraftN_FP"	/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NUL_AircraftN_SKN" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="orcadamagefire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="orcadamagesmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="orcadamagesmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUL_AircraftN_SKN" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="orcadamagefire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="orcadamagesmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="orcadamagesmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXEngineWing01"
+						FXParticleSystemTemplate="NODAircraft_HoverFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXEngineWing01"
+						FXParticleSystemTemplate="orcaexhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXEngineWing02"
+						FXParticleSystemTemplate="NODAircraft_HoverFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXEngineWing02"
+						FXParticleSystemTemplate="orcaexhaust"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NUL_AircraftN_SKN" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="orcadamagesmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXEngineWing01"
+						FXParticleSystemTemplate="NODAircraft_HoverFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXEngineWing01"
+						FXParticleSystemTemplate="orcaexhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXEngineWing02"
+						FXParticleSystemTemplate="NODAircraft_HoverFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXEngineWing02"
+						FXParticleSystemTemplate="orcaexhaust"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="NUL_AircraftN_AIDA"
+						AnimationMode="ONCE"
+						AnimationPriority="90"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING BACKING_UP">
+					<Animation
+						AnimationName="NUL_AircraftN_RVRS"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING REALLYDAMAGED">
+					<Animation
+						AnimationName="NUL_AircraftN_MOVD"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					ConditionsYes="REALLYDAMAGED">
+					<Animation
+						AnimationName="NUL_AircraftN_AIDD"
+						AnimationMode="ONCE"
+						AnimationPriority="90"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_LEFT">
+					<Animation
+						AnimationName="NUL_AircraftN_TRNL"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_RIGHT">
+					<Animation
+						AnimationName="NUL_AircraftN_TRNR"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="NUL_AircraftN_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BETWEEN_FIRING_SHOTS_A">
+					<Animation
+						AnimationName="NUL_AircraftN_ATKA"
+						AnimationBlendTime="15"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BETWEEN_FIRING_SHOTS_B">
+					<Animation
+						AnimationName="NUL_AircraftN_ATKA"
+						AnimationBlendTime="15"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<!-- LASER CHARGEUP -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_A">
+					<Animation
+						AnimationName="NUL_AircraftN_ATKA"
+						AnimationBlendTime="15"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<!-- LASER CHARGEUP -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_B">
+					<Animation
+						AnimationName="NUL_AircraftN_ATKA"
+						AnimationBlendTime="15"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="NUL_AircraftN_ATKA"
+						AnimationBlendTime="15"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_B">
+					<Animation
+						AnimationName="NUL_AircraftN_ATKA"
+						AnimationBlendTime="15"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+			<LaserDraw
+				id="ModuleTag_LaserDraw1"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="20"
+				LightMin="10"
+				LightMax="20"
+				CombatChainCounter="EQUAL WEAK"
+				LaserStateID="101">
+				<LightColor R="1.0" G="0.0" B="0.5" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+			<!-- Perfect Hit Laser Draw -->
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw1_Strong"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="10"
+				LightMin="10"
+				LightMax="20"
+				CombatChainCounter="STRONG"
+				LaserStateID="101">
+				<LightColor R="1.0" G="0.0" B="0.5" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser_Veteran</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate 
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1"
+					AllowInterleavedFiring="true"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="SELECT_AT_RANDOM">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODAircraftNLaserWeapon"
+						ForbiddenObjectStatus="WEAPON_UPGRADED_01" />
+					<Weapon
+						Ordering="SECONDARY_WEAPON"
+						Template="NODAircraftNLaserWeapon"
+						ForbiddenObjectStatus="WEAPON_UPGRADED_01" />
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODAircraftNBounceLaserWeapon"
+						ObjectStatus="WEAPON_UPGRADED_01" />
+					<Weapon
+						Ordering="SECONDARY_WEAPON"
+						Template="NODAircraftNBounceLaserWeapon"
+						ObjectStatus="WEAPON_UPGRADED_01" />
+					<TurretSettings
+						MaxDeflectionAntiClockwise="5d"
+						MaxDeflectionClockwise="5d"
+						TurretTurnRate="180"
+						TurretPitchRate="200"
+						AllowsPitch="true"
+						MinimumPitch="-90d"
+						PitchHeight="90%"
+						IdleRequiresModelConditions="SELECTED MOVING">
+						<TurretAITargetChooserData
+								CanPickTargetsOutOfTurretAngle="true"/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<Physics
+				id="ModuleTag_Physics" />
+			<ReturnToProducerSpecialPower
+				id="ModuleTag_ReturnToProducerSpecialPower"
+				SpecialPowerTemplate="SpecialPowerReturnToProducer" />
+
+			<SpecialPower
+				id="ModuleTag_StasisFieldAbility"
+				SpecialPowerTemplate="SpecialPower_NODAircraftNStasisFieldAbility"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="NODAircraftNStasisFieldAbilitySpecialPowerObjectFilter"
+				TriggerFX="FX_NODStasisHit"/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_StasisFieldAbility_Update"
+				SpecialPowerTemplate="SpecialPower_NODAircraftNStasisFieldAbility"
+				SpecialWeapon="NODAircraftNStasisFieldWeapon"
+				UnpackTime="0.1s"
+				UnpackSound="NOD_Basilisk_AirN_StasisWeaponFire"
+				PackTime="0.6s"
+				StartAbilityRange="375.0"
+				BusyForDuration="1.0s"
+				StartRechargeOnExit="true"/>
+
+			<LaserState
+				id="ModuleTag_DefaultLaserState"
+				LaserId="101" />
+
+			<!-- Spawn Debris as this unit takes damage-->
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="200.0"
+					FX="FX_GDIVehicleL_Damage"/>
+			</BuildingDestructionBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NODAircraftN_Dying_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODAircraftNFunctions"/>
+
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_NODAircraftNWeaponUpgrade</TriggeredBy>
+				<Nugget
+					ShowSubObjects="UPgrade"
+					HideSubObjects="SmallGuns"
+					Upgrade="Upgrade_NODAircraftNWeaponUpgrade"
+          FadeTime="0.0s"
+          SkipFlashOnCreate="false"
+          UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+          FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+
+			<StatusBitsUpgrade
+				id="ModuleTag_UpdateWeaponStatusOnUpgrade"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_NODAircraftNWeaponUpgrade</TriggeredBy>
+			</StatusBitsUpgrade>
+
+			<FXListBehavior
+				  xmlns="uri:ea.com:eala:asset"
+				  id="ModuleTag_FXListUpgrade">
+				<TriggeredBy>Upgrade_NODAircraftNWeaponUpgrade</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					  Index="onUpgraded"
+					  FX="FX_UpgradeNODSpectrumBeam" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_JetAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="HelicopterAIStateMachine">
+				<UnitAITargetChooserData
+					RotateToTargetWhenAiming="true"
+					CanPickDynamicTargets="false"/>
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="1000" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_AirplaneLarge</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MoveLoop">
+				<ModelConditionSound Sound="NOD_Basilisk_AirN_MoveLoopMS" RequiredFlags="MOVING" ExcludedFlags="RECYCLED DECELERATE DYING" />
+				<ModelConditionSound Sound="NOD_Basilisk_AirN_IdleLoopMS" RequiredFlags="FLYING" ExcludedFlags="RECYCLED MOVING DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_FlyingLoop">
+				<ModelConditionSound Sound="NOD_Basilisk_AirN_IdleLoop2MS" RequiredFlags="FLYING" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_TakeoffLanding">
+				<ModelConditionSound Sound="NOD_Basilisk_AirN_MoveStart" RequiredFlags="LANDING" ExcludedFlags="RECYCLED DYING" />
+				<ModelConditionSound Sound="NOD_Basilisk_AirN_MoveStart" RequiredFlags="TAKING_OFF" ExcludedFlags="RECYCLED DYING" />
+				<ModelConditionSound Sound="NOD_Basilisk_AirN_MoveStart" RequiredFlags="CLIMBING" ExcludedFlags="TAKING_OFF RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+
+		<xi:include	href="DATA:NOD/Includes/NODAircraftNGeometry.xml" />
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_AirNBasilisk_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="NOD_AirNBasilisk_VoiceAttackMismatch" AudioType="voiceAttackMismatchLight"/>
+			<AudioEntry Sound="NOD_AirNBasilisk_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="NOD_AirNBasilisk_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="NOD_AirNBasilisk_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="NOD_AirNBasilisk_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="NOD_AirNBasilisk_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="NOD_AirNBasilisk_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="NOD_AirNBasilisk_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+			<NamedEntry Sound="NOD_AirNBasilisk_VoiceAttackSpecial" Name="VoiceAttackSpecialStasisField"/>
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<!-- <AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbientReallyDamaged" /> none as of 12/15 -->
+			<AudioEntry Sound="NOD_Basilisk_AirN_MoveLoop2MS" AudioType="soundMoveLoop" />
+			<AudioEntry Sound="NOD_Basilisk_AirN_MoveStart" AudioType="soundMoveStart" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="600"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_NODAircraftNWeaponUpgrade</DisplayUpgrade>
+	</GameObject>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		WEAPONS															-->
+	<!-- //////////////////////////////////////	-->
+	<WeaponTemplate
+		id="NODAircraftNLaserWeapon"
+		inheritFrom="BaseLaserWeapon"
+		AttackRange="550.0"
+		MinimumAttackRange="50.0"
+		FireSound="NOD_Basilisk_AirN_LaserWeaponFire"
+		FireFX="FX_NODLaserMedium_Fire"
+		PreAttackFX="FX_NODLaserMedium_PreFire"
+		FireStrongCounterFX="FX_NODLaserMedium_Fire_Veteran"
+		AcceptableAimDelta="1d">
+		<PreAttackDelay
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="4.0s"
+			MaxSeconds="4.0s" />
+		<WeaponAiHintInfo
+			UseLongLockOnTimeCode="true"/>
+		<Nuggets>
+			<ActivateLaserNugget
+				id="NuggetTag_ActivateLaser"
+				Lifetime="0.75s"
+				LaserId="101"
+				HitGroundFX="FX_NODSpitfireHit"
+				OverShootDistance="0.0"/>
+			<LineDamageNugget
+				id="NuggetTag_LineDamage"
+				Damage="60.0"
+				LineWidth="5.0"
+				DamageType="LASER"
+				DamageFXType="NOD_LASER"
+				DeathType="LASERED"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter"
+				OverShootDistance="0.0">
+			</LineDamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODAircraftNBounceLaserWeapon"
+		inheritFrom="NODAircraftNLaserWeapon" >
+		<Nuggets>
+			<!-- The Ground version only scatters amongst ground units -->
+			<WeaponScatterEffectNugget
+				id="NuggetTag_ScatterGround"
+				WeaponOCL="OCL_NODAircraftNBounceLaserNodeStart_Ground"
+				ModuleId="Base_ScatterEffect">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ENEMIES NEUTRAL"
+					Exclude="AIRCRAFT UNATTACKABLE NOT_AUTOACQUIRABLE"
+					StatusBitFlagsExclude="AIRBORNE_TARGET" />
+			</WeaponScatterEffectNugget>
+
+			<!-- The Air version only scatters amongst air units -->
+			<WeaponScatterEffectNugget
+				id="NuggetTag_ScatterAir"
+				WeaponOCL="OCL_NODAircraftNBounceLaserNodeStart_Air"
+				ModuleId="Base_ScatterEffect">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES"
+					Include="AIRCRAFT VEHICLE"
+					Exclude="UNATTACKABLE NOT_AUTOACQUIRABLE"
+					StatusBitFlags="AIRBORNE_TARGET"/>
+			</WeaponScatterEffectNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- NOTE: Weapon range is set by the Special power template -->
+	<WeaponTemplate
+		id="NODAircraftNStasisFieldWeapon"
+		AttackRange="99999.0"
+		WeaponSpeed="99999"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		FireFX="FX_NODSpecialPowerCast"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		RadiusDamageAffects="ALLIES NEUTRALS ENEMIES"
+		CanFireWhileMoving="true">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ParalyzeNugget
+				Radius="=$NODAIRCRAFTN_STASISFIELD_RADIUS"
+				DurationSeconds="=$NODAIRCRAFTN_STASISFIELD_DURATION"
+				ParalyzeType="STASIS_FIELD"
+				PartitionFilterTestType="CIRCLE"
+				ObjectFilterRef="NODAircraftNStasisFieldAbilitySpecialPowerObjectFilter"/>
+			<AttributeModifierNugget
+				AttributeModifierName="Modifier_NODAircraftNStasisField"
+				Radius="=$NODAIRCRAFTN_STASISFIELD_RADIUS"
+				PartitionFilterTestType="CIRCLE"
+				ObjectFilterRef="NODAircraftNStasisFieldAbilitySpecialPowerObjectFilter"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		OBJECT CREATION LISTS								-->
+	<!-- //////////////////////////////////////	-->
+	<!-- NOTE: This FlingObject module has to be after the InheritVelocityFromParent module 
+				or the object will not be flung, the InheritVelocity does not do anything to the physics 
+				of the object it only copies the current velocity -->
+	<ObjectCreationList
+		id="OCL_NODAircraftNDying_FallingObject">
+		<OCLModule>
+			<Modules>
+				<CreateObject
+					ObjectTemplate="NODAircraftNDying_FallingObject"/>
+				<CopyParentLayer/>
+				<InheritVelocityFromParent/>
+				<FlingObject/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_NODAircraftNBounceLaserNodeStart_Ground">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODAircraftNBounceLaserNodeManager_Ground"/>
+				<CopyParentUpgrades/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_NODAircraftNBounceLaserNodeStart_Air">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODAircraftNBounceLaserNodeManager_Air"/>
+				<CopyParentUpgrades/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+	<ObjectCreationList
+		id="NODAircraftN_Dying_OCL">
+		<OCLModule>
+			<Modules>
+				<CreateObject
+					ObjectTemplate="NODAircraftN_Dying"/>
+				<CopyParentLayer/>
+				<CopyParentUpgrades/>
+				<CopyBuildingDestructionBehaviorState/>
+				<InheritVelocityFromParent/>
+				<FlingObject/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		ATTRIBUTE MODIFIERS									-->
+	<!-- //////////////////////////////////////	-->
+	<AttributeModifier
+		id="Modifier_NODAircraftNStasisField"
+		Category="NONE"
+		Duration="=$NODAIRCRAFTN_STASISFIELD_DURATION"
+		ObjectStatusToSet="IN_STASIS UNATTACKABLE NO_AUTO_ACQUIRE NO_ATTACK_FROM_AI IMMOBILE"
+		ModelConditionsSet="IN_STASIS">
+		<Modifier Type="SPEED" Value="0%" />
+		<Modifier Type="INVULNERABLE" Value="100%"/>
+		<!-- Anything caught in it is invulnerable -->
+	</AttributeModifier>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		SPECIAL POWER TEMPATES							-->
+	<!-- //////////////////////////////////////	-->
+	<ObjectFilterAsset
+		 id="NODAircraftNStasisFieldAbilitySpecialPowerObjectFilter">
+		<Filter
+			Rule="ALL"
+			Relationship="ALLIES NEUTRAL ENEMIES"
+			Exclude="DEBRIS"
+			StatusBitFlagsExclude="IN_STASIS">
+			<ExcludeThing>GDIStructureIStasisField</ExcludeThing>
+		</Filter>
+	</ObjectFilterAsset>
+
+	<!--	NOTE: If the effect size is altered, please update the Stasis Field weapon -->
+	<SpecialPowerTemplate
+		id="SpecialPower_NODAircraftNStasisFieldAbility"
+		ReloadTime="60s"
+		TargetType="LOCATION"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceAttackSpecialStasisField"
+		RadiusCursorRadius="100"
+		MaxCastRange="200.0">
+	</SpecialPowerTemplate>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		LOCOMOTORS													-->
+	<!-- //////////////////////////////////////	-->
+	<LocomotorTemplate
+		id="NODAircraftNLocomotor"
+		Surfaces="AIR"
+		TurnTimeSeconds="2.0s"
+		TurnTimeDamagedSeconds="2.0s"
+		AccelerationSeconds="1.2s"
+		Lift="120%"
+		LiftDamaged="80%"
+		BrakingSeconds="0.6s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="40.0"
+		MinTurnSpeed="0%"
+		PreferredHeight="115"
+		PreferredHeightDamping=".1"
+		PreferredHeightPitchingEpsilon="9"
+		AllowMotiveForceWhileAirborne="true"
+		BehaviorZ="SURFACE_RELATIVE_HEIGHT"
+		Appearance="HOVER"
+		PitchStiffness="0.5"
+		RollStiffness="0.1"
+		PitchDamping="0.9"
+		RollDamping="0.9"
+		ForwardVelocityPitchFactor="-0.2"
+		LateralVelocityRollFactor="-0.05"
+		Apply2DFrictionWhenAirborne="true"
+		AirborneTargetingHeight="30"
+		LocomotorWorksWhenDead="true"
+		LookAheadMult="2.0"
+		TakeOffAndLandingSpeed="=$AIR_CREATION_UNIT_LANDING_SPEED"
+		TakeOffAndLandingSlowDownDelta="0.25"
+		TakeOffAndLandingSlowDownTime="0.1s"
+		RudderCorrectionDegree="0.169"
+		RudderCorrectionRate="0.027"
+		ElevatorCorrectionDegree="0.103"
+		ElevatorCorrectionRate="0.016"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		CanReverseMove="true"/>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		LOGIC COMMANDS AND SETS							-->
+	<!-- //////////////////////////////////////	-->
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_NODAircraftNStasisFieldAbility"
+		Options="NEED_TARGET_POS">
+		<SpecialPower>SpecialPower_NODAircraftNStasisFieldAbility</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<SpecialPowerWeapon
+				Weapon="NODAircraftNStasisFieldWeapon"
+				TotalValueGreaterThan="300"
+				AoeAttackPowerType="DISABLING_ATTACK"
+				AoeAttackPowerLocationPreference="PREFER_MAXIMUM_DAMAGE"/>
+			<AISpecialPowerInfo	Heuristic="AOE_ATTACK">
+			</AISpecialPowerInfo>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="NODAircraftNCommandSet">
+		<Cmd>Command_NODAircraftNStasisFieldAbility</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+	</LogicCommandSet>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		EXPERIENCE LEVEL TEMPLATES					-->
+	<!-- //////////////////////////////////////	-->
+	<ExperienceLevelTemplate
+		id="NODAircraftNExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_NOD_Rank_01"
+		ExperienceAward="10">
+		<Target>NODAircraftN</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODAircraftNExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_NOD_Rank_02"
+		Prerequisite="NODAircraftNExperienceLevel_1"
+		RequiredExperience="20"
+		ExperienceAward="12">
+		<Target>NODAircraftN</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODAircraftNExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_NOD_Rank_03"
+		Prerequisite="NODAircraftNExperienceLevel_2"
+		RequiredExperience="40"
+		ExperienceAward="14">
+		<Target>NODAircraftN</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODAircraftNExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_NOD_Rank_04"
+		Prerequisite="NODAircraftNExperienceLevel_3"
+		RequiredExperience="70"
+		ExperienceAward="16">
+		<Target>NODAircraftN</Target>
+	</ExperienceLevelTemplate>
+</AssetDeclaration>

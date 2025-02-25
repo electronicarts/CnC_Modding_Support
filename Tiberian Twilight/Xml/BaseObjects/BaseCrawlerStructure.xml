@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="BaseCrawlerObject.xml" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		
+		<Include type="all"	source="ART:Decal_Sensor_CO.xml" />		
+	</Includes>
+	<GameObject
+		id="BaseCrawlerStructure"
+		inheritFrom="BaseCrawlerObject"
+		CampnessValue="=$CAMPNESS_ALWAYS_CAMP"
+		CampnessValueRadius="=$CRAWLER_DEPLOYED_AOE_HEAL_RADIUS"		
+		RadarPriority="STRUCTURE"
+		EditorName="CrawlerBaseStructre(DONOTPLACE)"
+		KindOf="+STRUCTURE +CONSTRUCTION_YARD +IMMOBILE +AUTO_RALLYPOINT +IGNORES_SELECT_ALL +CAN_ATTACK"
+		Description="Desc:CrawlerBaseStructre"
+		TypeDescription="Desc:CrawlerBaseStructre">
+		<ArmorSet
+			id="BaseCrawlerStructure_Armor"
+			Armor="NonDirectionalAssaultArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BuildingPlacementType="CenterDefault" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Selected_Repair_Decal"
+				OkToChangeModelColor="true"
+				StaticModelLODMode="true"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$CRAWLER_DEPLOYED_AOE_HEAL_DECAL_RADIUS"
+						SizeY="=$CRAWLER_DEPLOYED_AOE_HEAL_DECAL_RADIUS"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Rig_CO"/>
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RECYCLED">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_9">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$CRAWLER_DEPLOYED_AOE_HEAL_UPGRADED_DECAL_RADIUS"
+						SizeY="=$CRAWLER_DEPLOYED_AOE_HEAL_UPGRADED_DECAL_RADIUS"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Rig_CO"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Selected_Repair_Decal_Enemies"
+				OkToChangeModelColor="true"
+				StaticModelLODMode="true"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RECYCLED">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$CRAWLER_DEPLOYED_AOE_HEAL_DECAL_RADIUS"
+						SizeY="=$CRAWLER_DEPLOYED_AOE_HEAL_DECAL_RADIUS"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED USER_9">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$CRAWLER_DEPLOYED_AOE_HEAL_UPGRADED_DECAL_RADIUS"
+						SizeY="=$CRAWLER_DEPLOYED_AOE_HEAL_UPGRADED_DECAL_RADIUS"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Behaviors>
+			<!-- Children generally won't have to overide any of these -->
+			<SpecialPower
+				id="SpecialPower_CrawlerPack"
+				SpecialPowerTemplate="SpecialPower_CrawlerPack" />
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="=$CRAWLER_UNPACK_TIME" />
+			<SlowDeath
+				id="ModuleTag_StructureDeath"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<!-- <Sound Type="INITIAL" List="GDI_CrawlerBVehicle_DieExplosionMS" /> -->
+				<DieMuxData
+					DeathTypes="ALL"/>
+			</SlowDeath>
+			<!-- Exit interfaces for everything else -->
+			<QueueProductionExitUpdate
+				id="ModuleTag_QueueProduction"
+				ExitDelaySeconds="1s"
+				FlipExitCoordinatesAsVehicle="true"
+				MaximumUnitSize="6"
+				AllowAirborneCreation="true">
+				<UnitCreatePoint
+					x="-3.0"
+					y="0.0"
+					z="0.0" />
+				<NaturalRallyPoint
+					x="140.0"
+					y="0.0"
+					z="0.0" />
+				<AircraftCreatePoint
+					x="0.0"
+					y="0.0"
+					z="350.0" />
+				<AircraftCreatePointObjectFilter
+					Rule="NONE">
+					<IncludeThing>GDIAircraftF</IncludeThing>
+					<IncludeThing>GDIAircraftH</IncludeThing>
+					<IncludeThing>GDIAircraftD</IncludeThing>
+					<IncludeThing>GDIAircraftQ</IncludeThing>
+					<IncludeThing>NODAircraftK</IncludeThing>
+					<IncludeThing>NODAircraftM</IncludeThing>
+					<IncludeThing>NODAircraftN</IncludeThing>
+					<IncludeThing>NODAircraftO</IncludeThing>
+					<IncludeThing>NODAircraftC</IncludeThing>
+				</AircraftCreatePointObjectFilter>
+				<StealthInfo
+					Duration="1.5s"
+					InvisibilityTemplate="TemporaryInvisibilityTemplate">
+					<ObjectStatusValidation RequiredStatus="STEALTHED" ForbiddenStatus="DETECTED" />
+				</StealthInfo>
+		</QueueProductionExitUpdate>
+
+			<!-- Children should override one or more values in each of the following modules -->
+			<!-- unpack update. Children should only override this to add the ReplacementTemplate element -->
+			<ReplaceSelfSpecialAbility
+				id="SpecialPower_CrawlerPackUpdate"
+				SpecialPowerTemplate="SpecialPower_CrawlerPack"
+				Options="RECONSTITUTE_STORED_COMMAND"
+				NewObjectUnpackTime="=$CRAWLER_PACK_TIME"
+				ReplaceOptions="COPY_UPGRADES DISABLE_NEW_OBJECT_DURING_UNPACK TRANSFER_BUILDING_DESTRUCTION_STATE PRESERVE_HOTKEY_SQUAD_NUMBER COPY_STANCES">
+			</ReplaceSelfSpecialAbility>
+
+			<AutoHealBehavior
+				id="ModuleTag_RadiusHeal"
+				HealFXList="FX_Repair"
+				InitiallyActive="true"
+				HealingAmount="10"
+				HealingDelay="1s"
+				Radius="=$CRAWLER_DEPLOYED_AOE_HEAL_RADIUS">
+				<ObjectStatusValidation
+					ForbiddenStatus="DISABLED_FOR_RECYCLE" />
+				<HealObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE VEHICLE INFANTRY AIRCRAFT"
+					Exclude="NEUTRAL_TECH"
+					StatusBitFlagsExclude="NO_HEALING">
+					<ExcludeThing>GDIPointDefenseShield</ExcludeThing>
+				</HealObjectFilter>
+				<!-- don't show the FX on crawlers only-->
+				<HealFXObjectFilter
+					Rule="ALL"
+					Exclude="CRAWLER">
+				</HealFXObjectFilter>
+			</AutoHealBehavior>
+
+			<SelectiveVisibilityBehavior
+				id="ModuleTag_RepairDecalSelectiveVisibility"
+				DrawModuleId="ModuleTag_Draw_Selected_Repair_Decal"
+				UpdateRate="0.5s"
+				AllowedPlayers="ALLIES" />
+
+			<SelectiveVisibilityBehavior
+				id="ModuleTag_RepairDecalSelectiveVisibility_Selected"
+				DrawModuleId="ModuleTag_Draw_Selected_Repair_Decal_Enemies"
+				UpdateRate="0.5s"
+				AllowedPlayers="ENEMIES" />
+			
+		</Behaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="OffensiveStructureAIStateMachine"/>
+		</AI>
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>		
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="all" source="ART:FXStasisShieldB.w3x" />
+	</Includes>
+	<Defines>
+		<Define name="STASIS_OBJECT_KINDOFS" value="VEHICLE INFANTRY STRUCTURE AIRCRAFT MINE" />
+	</Defines>
+	<GameObject
+		id="GDIStructureIStasisField"
+		Side="GDI"
+		EditorSorting="STRUCTURE"
+		CommandSet="EmptyCommandSet"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE IMMOBILE CAN_CAST_REFLECTIONS STRUCTURE RESIST_EMP IGNORED_IN_FINDPOSITIONAROUND"
+		RadarPriority="NOT_ON_RADAR"
+		EditorName="GDIStructureIStasisField">
+		<DisplayName>Name:GDIStructureIStasisField</DisplayName>
+		<ArmorSet
+			Armor="NoArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXStasisShieldB" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData DeathTypes="ALL"/>
+			</DestroyDie>
+				
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="=$GDI_STRUCTURE_I_STASIS_PULSE_DELAY">
+				<FireWeaponNugget
+					WeaponName="GDIStructureIStasisFieldWeapon"/>
+			</FireWeaponUpdate>
+			
+			<LifetimeUpdate
+				id="ModuleTag_Lifetime"
+				DeathType="FADED"
+				MinLifetime="20s"
+				MaxLifetime="20s" />
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<!-- add a small amount from the effect range so units near the edge (who may
+					 already be pathing around the effect) don't get zapped. -->
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$GDI_STRUCTURE_I_STASIS_FIELD_RANGE + 25"
+				Height="10"/>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_CrystalShield_StrI_StasisShieldLoop" AudioType="soundAmbient"/>
+		</AudioArraySound>
+	</GameObject>
+
+	<WeaponTemplate
+		id="GDIStructureIStasisFieldWeapon"
+		AttackRange="50000.0"
+		FireFX="FX_GDIStasisField" 
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		RadiusDamageAffects="NOT_SIMILAR ALLIES ENEMIES NEUTRALS">
+		<Nuggets>
+			<ParalyzeNugget
+				Radius="=$GDI_STRUCTURE_I_STASIS_FIELD_RANGE"
+				PartitionFilterTestType="SPHERE"
+				DurationSeconds="=$GDI_STRUCTURE_I_STASIS_PULSE_DURATION"
+				ParalyzeType="USER_PARALYZE">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="=$STASIS_OBJECT_KINDOFS"/>
+			</ParalyzeNugget>
+			<AttributeModifierNugget
+				Radius="=$GDI_STRUCTURE_I_STASIS_FIELD_RANGE"
+				PartitionFilterTestType="SPHERE"
+				AttributeModifierName="AttributeModifier_GDIStructureIStasisField">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="=$STASIS_OBJECT_KINDOFS"/>
+			</AttributeModifierNugget>
+			<TintObjectsNugget
+				Radius="=$GDI_STRUCTURE_I_STASIS_FIELD_RANGE"
+				PartitionFilterTestType="SPHERE"
+				PreColorTime="0s"
+				SustainedColorTime="=$GDI_STRUCTURE_I_STASIS_PULSE_DURATION"
+				PostColorTime="0s"
+				Frequency="0"
+				Amplitude="0">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="=$STASIS_OBJECT_KINDOFS"/>
+				<Color R="0.1" G="-0.0" B="0.25"/>
+			</TintObjectsNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+</AssetDeclaration>

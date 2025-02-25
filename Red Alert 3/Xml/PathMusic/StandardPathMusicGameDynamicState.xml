@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- This is the Standard PathMusic Dynamic State Set.  It features the full range of Transitions that
+	might occur throughout the course of a game.  It is designed to take care of all the music changes by
+	itself, without needing lots of specifically scripted events.  Usually this is used in Multiplayer
+	maps, but in some cases it may be used on Campaign maps as well.  -->
+	
+	
+	
+	<!--	******************************************************************************
+					TOTAL STATE SET 
+				******************************************************************************	--> 
+	<PathMusicGameDynamicStateSet id="Standard_Full" Category="STANDARD">	
+		<State>BaseBuilding</State>
+		<State>ThreatLevel1</State>
+		<State>ThreatLevel1_1</State>
+		<State>GeneralCombat</State>
+		<State>DisadvantageCombat</State>
+		<State>EvenCombat</State>
+		<State>AdvantageCombat</State>
+		<State>VacuumBombTragedy</State>
+		<State>DecimatorTragedy</State>
+		<State>ParticleBeamTragedy</State>
+	</PathMusicGameDynamicStateSet>
+
+	
+	<!--	******************************************************************************
+					STATES 
+				******************************************************************************	-->
+	
+	<!-- BaseBuilding : The initial State before anything has happened yet. -->
+	<PathMusicGameDynamicState id="BaseBuilding" EnterEvent="Base">
+		<Transition>BaseBuilding_to_ThreatLevel1</Transition>
+		<Transition>BaseBuilding_to_GeneralCombat</Transition>
+		<Transition>Anywhere_to_VacuumBombTragedy</Transition>
+		<Transition>Anywhere_to_DecimatorTragedy</Transition>
+		<Transition>Anywhere_to_ParticleBeamTragedy</Transition>
+	</PathMusicGameDynamicState>
+
+	<!-- ThreatLevel1 : Indicates first contact, a very minor skirmish -->
+	<PathMusicGameDynamicState id="ThreatLevel1" EnterEvent="Threat1">
+		<Transition>ThreatLevel1_to_GeneralCombat</Transition>
+		<Transition>Anywhere_to_VacuumBombTragedy</Transition>
+		<Transition>Anywhere_to_DecimatorTragedy</Transition>
+		<Transition>Anywhere_to_ParticleBeamTragedy</Transition>
+	</PathMusicGameDynamicState>
+
+	<!-- ThreatLevel1_1 : Basically the same as ThreatLevel1, except that it lacks the punchy intro.  
+	 This is what you fall back to when serious combat has ended -->
+	<PathMusicGameDynamicState id="ThreatLevel1_1" EnterEvent="Threat1_1">
+		<Transition>ThreatLevel1_1_to_GeneralCombat</Transition>
+		<Transition>Anywhere_to_VacuumBombTragedy</Transition>
+		<Transition>Anywhere_to_DecimatorTragedy</Transition>
+		<Transition>Anywhere_to_ParticleBeamTragedy</Transition>
+	</PathMusicGameDynamicState>
+
+	<!-- GeneralCombat : This is the gateway state for combat, you always enter through here.  This requires
+	 that a significant amount of fighting is going on to trigger.  It has a particularly notable intro as 
+		well -->
+	<PathMusicGameDynamicState id="GeneralCombat" EnterEvent="Combat">
+		<Transition>GeneralCombat_to_ThreatLevel1_1</Transition>
+		<Transition>GeneralCombat_to_AdvantageCombat</Transition>
+		<Transition>GeneralCombat_to_DisadvantageCombat</Transition>
+		<Transition>Anywhere_to_VacuumBombTragedy</Transition>
+		<Transition>Anywhere_to_DecimatorTragedy</Transition>
+		<Transition>Anywhere_to_ParticleBeamTragedy</Transition>
+	</PathMusicGameDynamicState>
+
+	<!-- AdvantageCombat : This implies that you have a clear advantage, and are about to win.  It is
+	 particularly epic, so not something we want to play for minor victories -->
+	<PathMusicGameDynamicState id="AdvantageCombat" EnterEvent="SetAdvantagePlayer">
+		<Transition>AdvantageCombat_to_ThreatLevel1_1</Transition>
+		<Transition>AdvantageCombat_to_EvenCombat</Transition>
+		<Transition>Anywhere_to_VacuumBombTragedy</Transition>
+		<Transition>Anywhere_to_DecimatorTragedy</Transition>
+		<Transition>Anywhere_to_ParticleBeamTragedy</Transition>
+	</PathMusicGameDynamicState>
+
+	<!-- DisadvantageCombat : You are in the midst of Combat, and are generally losing.  Sad music. -->
+	<PathMusicGameDynamicState id="DisadvantageCombat" EnterEvent="SetAdvantageEnemy">
+		<Transition>DisadvantageCombat_to_ThreatLevel1_1</Transition>
+		<Transition>DisadvantageCombat_to_EvenCombat</Transition>
+		<Transition>DisadvantageCombat_to_AdvantageCombat</Transition>
+		<Transition>Anywhere_to_VacuumBombTragedy</Transition>
+		<Transition>Anywhere_to_DecimatorTragedy</Transition>
+		<Transition>Anywhere_to_ParticleBeamTragedy</Transition>
+	</PathMusicGameDynamicState>
+
+	<!-- EvenCombat : You are in the midst of combat, and are doing OK.  Similar to GeneralCombat, but
+	 without qutie so much intro -->
+	<PathMusicGameDynamicState id="EvenCombat" EnterEvent="ResetAdvantage">
+		<Transition>EvenCombat_to_AdvantageCombat</Transition>
+		<Transition>EvenCombat_to_DisadvantageCombat</Transition>
+		<Transition>EvenCombat_to_ThreatLevel1_1</Transition>
+		<Transition>Anywhere_to_VacuumBombTragedy</Transition>
+		<Transition>Anywhere_to_DecimatorTragedy</Transition>
+		<Transition>Anywhere_to_ParticleBeamTragedy</Transition>
+	</PathMusicGameDynamicState>
+
+	<!-- VacuumBombTragedy : A group of your units have just been hit by the Soviet Super Weapon. Up yours! -->
+	<PathMusicGameDynamicState id="VacuumBombTragedy" EnterEvent="UpYoursSoviet">
+		<Transition>VacuumBombTragedy_to_ThreatLevel1_1</Transition>
+	</PathMusicGameDynamicState>
+
+	<!-- DecimatorTragedy : A group of your units have just been hit by the Japanese Super Weapon. Up yours! -->
+	<PathMusicGameDynamicState id="DecimatorTragedy" EnterEvent="UpYoursEmpire">
+		<Transition>DecimatorTragedy_to_ThreatLevel1_1</Transition>
+	</PathMusicGameDynamicState>
+
+	<!-- ParticleBeamTragedy : A group of your units have just been hit by the Allied Super Weapon. Up yours! -->
+	<PathMusicGameDynamicState id="ParticleBeamTragedy" EnterEvent="UpYoursAllied">
+		<Transition>ParticleBeamTragedy_to_ThreatLevel1_1</Transition>
+	</PathMusicGameDynamicState>
+	
+
+	<!--	******************************************************************************
+					TRANSITIONS
+				******************************************************************************	-->
+	<PathMusicGameDynamicTransition id="BaseBuilding_to_ThreatLevel1" DestinationState="ThreatLevel1">
+		<Condition>SkirmishSmall</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="BaseBuilding_to_GeneralCombat" DestinationState="GeneralCombat">
+		<Condition>SkirmishMediumOnScreen</Condition>
+	</PathMusicGameDynamicTransition>
+
+	
+	<PathMusicGameDynamicTransition id="ThreatLevel1_to_GeneralCombat" DestinationState="GeneralCombat">
+		<Condition>ThreatLevel1_to_GeneralCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+
+	<PathMusicGameDynamicTransition id="ThreatLevel1_1_to_GeneralCombat" DestinationState="GeneralCombat">
+		<Condition>ThreatLevel1_1_to_GeneralCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+	
+	
+	<PathMusicGameDynamicTransition id="GeneralCombat_to_AdvantageCombat" DestinationState="AdvantageCombat">
+		<Condition>GeneralCombat_to_AdvantageCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="GeneralCombat_to_DisadvantageCombat" DestinationState="DisadvantageCombat">
+		<Condition>GeneralCombat_to_DisadvantageCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="GeneralCombat_to_ThreatLevel1_1" DestinationState="ThreatLevel1_1">
+		<Condition>GeneralCombat_to_ThreatLevel1_1_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+	
+
+	<PathMusicGameDynamicTransition id="AdvantageCombat_to_ThreatLevel1_1" DestinationState="ThreatLevel1_1">
+		<Condition>AdvantageCombat_to_ThreatLevel1_1_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="AdvantageCombat_to_EvenCombat" DestinationState="EvenCombat">
+		<Condition>AdvantageCombat_to_EvenCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+
+	<PathMusicGameDynamicTransition id="DisadvantageCombat_to_EvenCombat" DestinationState="EvenCombat">
+		<Condition>DisadvantageCombat_to_EvenCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="DisadvantageCombat_to_AdvantageCombat" DestinationState="AdvantageCombat">
+		<Condition>DisadvantageCombat_to_AdvantageCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="DisadvantageCombat_to_ThreatLevel1_1" DestinationState="ThreatLevel1_1">
+		<Condition>DisadvantageCombat_to_ThreatLevel1_1_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+
+	<PathMusicGameDynamicTransition id="EvenCombat_to_AdvantageCombat" DestinationState="AdvantageCombat">
+		<Condition>EvenCombat_to_AdvantageCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="EvenCombat_to_DisadvantageCombat" DestinationState="DisadvantageCombat">
+		<Condition>EvenCombat_to_DisadvantageCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="EvenCombat_to_ThreatLevel1_1" DestinationState="ThreatLevel1_1">
+		<Condition>EvenCombat_to_ThreatLevel1_1_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+
+	<PathMusicGameDynamicTransition id="VacuumBombTragedy_to_ThreatLevel1_1" DestinationState="ThreatLevel1_1">
+		<Condition>VacuumBombTragedy_to_ThreatLevel1_1_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="DecimatorTragedy_to_ThreatLevel1_1" DestinationState="ThreatLevel1_1">
+		<Condition>DecimatorTragedy_to_ThreatLevel1_1_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="ParticleBeamTragedy_to_ThreatLevel1_1" DestinationState="ThreatLevel1_1">
+		<Condition>ParticleBeamTragedy_to_ThreatLevel1_1_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+	
+
+	<PathMusicGameDynamicTransition id="Anywhere_to_VacuumBombTragedy" DestinationState="VacuumBombTragedy">
+		<Condition>Anywhere_to_VacuumBombTragedy_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="Anywhere_to_DecimatorTragedy" DestinationState="DecimatorTragedy">
+		<Condition>Anywhere_to_DecimatorTragedy_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="Anywhere_to_ParticleBeamTragedy" DestinationState="ParticleBeamTragedy">
+		<Condition>Anywhere_to_ParticleBeamTragedy_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+
+	<!--	******************************************************************************
+					CONDITIONS : General-Reuseable 
+				******************************************************************************	-->
+	<MusicScriptConditionNugget_Not id="NoEngagement" >
+		<Condition>AnyEngagement</Condition>
+	</MusicScriptConditionNugget_Not>
+	
+	<MusicScriptConditionNugget_Or id="AnyEngagement" >
+		<Condition>PlayerUnitsEngagedSmall</Condition>
+		<Condition>EnemyUnitsEngagedSmall</Condition>
+	 </MusicScriptConditionNugget_Or>
+	
+	<MusicScriptConditionNugget_Not id="NoSkirmish" >
+		<Condition>SkirmishSmall</Condition>
+	</MusicScriptConditionNugget_Not>
+
+	<MusicScriptConditionNugget_And id="SkirmishSmall" >
+		<Condition>PlayerUnitsEngagedSmall</Condition>
+		<Condition>EnemyUnitsEngagedSmall</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_EngagementCount id="PlayerUnitsEngagedSmall"
+		Count="1"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="false"
+		CountOnlyEngagementsByTheLocalPlayer="true"
+		RequiredScreenStatus="ON_OR_OFF_SCREEN"
+		TimeBetweenConditionChecks="0.5s"
+		TargetFilter="PathMusicGameDynamicCombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_EngagementCount id="EnemyUnitsEngagedSmall"
+		Count="1"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="true"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_OR_OFF_SCREEN"
+		TimeBetweenConditionChecks="0.5s"
+		TargetFilter="PathMusicGameDynamicCombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_Not id="NoEngagementLongDuration" >
+		<Condition>AnyEngagementLongDuration</Condition>
+	</MusicScriptConditionNugget_Not>
+
+	<MusicScriptConditionNugget_Or id="AnyEngagementLongDuration" >
+		<Condition>PlayerUnitsEngagedSmallLongDuration</Condition>
+		<Condition>EnemyUnitsEngagedSmallLongDuration</Condition>
+	</MusicScriptConditionNugget_Or>
+	
+	<MusicScriptConditionNugget_EngagementCount id="PlayerUnitsEngagedSmallLongDuration"
+		Count="1"
+		Time="60s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="false"
+		CountOnlyEngagementsByTheLocalPlayer="true"
+		RequiredScreenStatus="ON_OR_OFF_SCREEN"
+		TimeBetweenConditionChecks="0.5s"
+		TargetFilter="PathMusicGameDynamicCombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_EngagementCount id="EnemyUnitsEngagedSmallLongDuration"
+		Count="1"
+		Time="60s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="true"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_OR_OFF_SCREEN"
+		TimeBetweenConditionChecks="0.5s"
+		TargetFilter="PathMusicGameDynamicCombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_And id="SkirmishMediumOnScreen" >
+		<Condition>PlayerUnitsEngagedMediumOnScreen</Condition>
+		<Condition>EnemyUnitsEngagedMediumOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_EngagementCount id="PlayerUnitsEngagedMediumOnScreen"
+		Count="3"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="false"
+		CountOnlyEngagementsByTheLocalPlayer="true"
+		RequiredScreenStatus="ON_SCREEN"
+		TimeBetweenConditionChecks="0.5s"
+		TargetFilter="PathMusicGameDynamicCombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_EngagementCount id="EnemyUnitsEngagedMediumOnScreen"
+		Count="3"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="true"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_SCREEN"
+		TimeBetweenConditionChecks="0.5s"
+		TargetFilter="PathMusicGameDynamicCombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_EngagementCount id="AnyUnitsEngagedMediumOnScreen"
+		Count="10"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="false"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_SCREEN"
+		TimeBetweenConditionChecks="0.5s"
+		TargetFilter="PathMusicGameDynamicCombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_LocalPlayerKillRatio id="PlayerWinningBattleModerate"
+			Time="20s"
+			Ratio="2.0"
+			RatioOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_LocalPlayerKillRatio>
+
+	<MusicScriptConditionNugget_ScoredKillCount id="PlayerScoredKillsMedium"
+			Count="3"
+			Time="20s"
+			CountOnlyKillsAgainstTheLocalPlayer="false"
+			CountOnlyKillsByTheLocalPlayer="true" >
+	</MusicScriptConditionNugget_ScoredKillCount>
+
+	<MusicScriptConditionNugget_LocalPlayerKillRatio id="EnemyWinningBattleModerate"
+			Time="20s"
+			Ratio="0.5"
+			RatioOp="LESS_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_LocalPlayerKillRatio>
+
+	<MusicScriptConditionNugget_ScoredKillCount id="EnemyScoredKillsMedium"
+			Count="3"
+			Time="20s"
+			CountOnlyKillsAgainstTheLocalPlayer="true"
+			CountOnlyKillsByTheLocalPlayer="false" >
+	</MusicScriptConditionNugget_ScoredKillCount>
+
+	<MusicScriptConditionNugget_And id="EvenBattle" >
+		<Condition>EvenBattleLowerBound</Condition>
+		<Condition>EvenBattleUpperBound</Condition>
+	</MusicScriptConditionNugget_And>
+	
+	<MusicScriptConditionNugget_LocalPlayerKillRatio id="EvenBattleLowerBound"
+			Time="20s"
+			Ratio="0.9"
+			RatioOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_LocalPlayerKillRatio>
+
+	<MusicScriptConditionNugget_LocalPlayerKillRatio id="EvenBattleUpperBound"
+			Time="20s"
+			Ratio="1.1"
+			RatioOp="LESS_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_LocalPlayerKillRatio>
+
+	<MusicScriptConditionNugget_ScoredKillCount id="PlayerDestroyedManyImportantStructures"
+			Count="5"
+			Time="120s"
+			CountOnlyKillsAgainstTheLocalPlayer="false"
+			CountOnlyKillsByTheLocalPlayer="true"
+			Filter="PathMusicGameDynamicImportantStructures" >
+	</MusicScriptConditionNugget_ScoredKillCount>
+
+	<MusicScriptConditionNugget_HitBySuperWeapon id="PlayerUnitsHitByVacuumBomb"
+			TrackedWeapon="VacuumBombIncrementalWeapon"
+			Count="3"
+			Time="0.5s"
+			CountOnlyHitsAgainstTheLocalPlayer="true"
+			TargetFilter="PathMusicGameDynamicSuperWeaponTargets" >
+	</MusicScriptConditionNugget_HitBySuperWeapon>
+
+	<MusicScriptConditionNugget_HitBySuperWeapon id="PlayerUnitsHitByDecimator"
+			TrackedWeapon="TelekineticExplosion"
+			Count="3"
+			Time="0.5s"
+			CountOnlyHitsAgainstTheLocalPlayer="true"
+			TargetFilter="PathMusicGameDynamicSuperWeaponTargets" >
+	</MusicScriptConditionNugget_HitBySuperWeapon>
+
+	<MusicScriptConditionNugget_HitBySuperWeapon id="PlayerUnitsHitByParticleBeam"
+			TrackedWeapon="ParticleAcceleratorFinalWeapon"
+			Count="3"
+			Time="0.5s"
+			CountOnlyHitsAgainstTheLocalPlayer="true"
+			TargetFilter="PathMusicGameDynamicSuperWeaponTargets" >
+	</MusicScriptConditionNugget_HitBySuperWeapon>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="ThreatLevel1ExitedWhileAgo"
+		TrackedState="ThreatLevel1"
+		TrackedStateChange="EXIT"
+		TimeSinceLastActive="60s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="ThreatLevel1EnteredMomentAgo"
+		TrackedState="ThreatLevel1"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="ThreatLevel1_1EnteredMomentAgo"
+		TrackedState="ThreatLevel1_1"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="GeneralCombatEnteredMomentAgo"
+		TrackedState="GeneralCombat"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="DisadvantageCombatEnteredMomentAgo"
+		TrackedState="DisadvantageCombat"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="EvenCombatEnteredMomentAgo"
+	 TrackedState="EvenCombat"
+	 TrackedStateChange="ENTER"
+	 TimeSinceLastActive="20s"
+	 TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="AdvantageCombatEnteredWhileAgo"
+		TrackedState="AdvantageCombat"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="120s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="AdvantageCombatExitedWhileAgo"
+		TrackedState="AdvantageCombat"
+		TrackedStateChange="EXIT"
+		TimeSinceLastActive="120s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_And id="AllTragediesExitedLongTimeAgo" >
+		<Condition>VacuumBombTragedyExitedLongTimeAgo</Condition>
+		<Condition>DecimatorTragedyExitedLongTimeAgo</Condition>
+		<Condition>ParticleBeamTragedyExitedLongTimeAgo</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="VacuumBombTragedyExitedLongTimeAgo"
+		TrackedState="VacuumBombTragedy"
+		TrackedStateChange="EXIT"
+		TimeSinceLastActive="3600s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="DecimatorTragedyExitedLongTimeAgo"
+		TrackedState="DecimatorTragedy"
+		TrackedStateChange="EXIT"
+		TimeSinceLastActive="3600s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="ParticleBeamTragedyExitedLongTimeAgo"
+		TrackedState="ParticleBeamTragedy"
+		TrackedStateChange="EXIT"
+		TimeSinceLastActive="3600s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="VacuumBombTragedyEnteredShortWhileAgo"
+		TrackedState="VacuumBombTragedy"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="60s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="DecimatorTragedyEnteredShortWhileAgo"
+		TrackedState="DecimatorTragedy"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="60s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="ParticleBeamTragedyEnteredShortWhileAgo"
+		TrackedState="ParticleBeamTragedy"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="60s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="GeneralCombatCurrentlyActive"
+		TrackedState="GeneralCombat" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+	
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="AdvantageCombatCurrentlyActive"
+		TrackedState="AdvantageCombat" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="VacuumBombTragedyCurrentlyActive"
+		TrackedState="VacuumBombTragedy" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="DecimatorTragedyCurrentlyActive"
+		TrackedState="DecimatorTragedy" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="ParticleBeamTragedyCurrentlyActive"
+		TrackedState="ParticleBeamTragedy" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_Not id="AdvantageCombatNotCurrentlyActive" >
+		<Condition>AdvantageCombatCurrentlyActive</Condition>
+	</MusicScriptConditionNugget_Not>
+	
+	
+
+	<!--	******************************************************************************
+					CONDITIONS : Transition-Specific Combinations 
+				******************************************************************************	-->
+
+	<MusicScriptConditionNugget_And id="ThreatLevel1_to_GeneralCombat_Allowed" >
+		<Condition>ThreatLevel1EnteredMomentAgo</Condition>
+		<Condition>SkirmishMediumOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+	
+	
+	<MusicScriptConditionNugget_And id="ThreatLevel1_1_to_GeneralCombat_Allowed" >
+		<Condition>ThreatLevel1_1EnteredMomentAgo</Condition>
+		<Condition>SkirmishMediumOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+	
+	<MusicScriptConditionNugget_And id="GeneralCombat_to_ThreatLevel1_1_Allowed" >
+		<Condition>GeneralCombatCurrentlyActive</Condition>
+		<Condition>GeneralCombatEnteredMomentAgo</Condition>
+		<Condition>NoEngagementLongDuration</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="GeneralCombat_to_DisadvantageCombat_Allowed" >
+		<Condition>GeneralCombatCurrentlyActive</Condition>
+		<Condition>GeneralCombatEnteredMomentAgo</Condition>
+		<Condition>EnemyWinningBattleModerate</Condition>
+		<Condition>EnemyScoredKillsMedium</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="GeneralCombat_to_AdvantageCombat_Allowed" >
+		<Condition>GeneralCombatCurrentlyActive</Condition>
+		<Condition>GeneralCombatEnteredMomentAgo</Condition>
+		<Condition>PlayerDestroyedManyImportantStructures</Condition>
+		<Condition>AdvantageCombatNotCurrentlyActive</Condition>
+		<Condition>AdvantageCombatExitedWhileAgo</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<MusicScriptConditionNugget_And id="DisadvantageCombat_to_ThreatLevel1_1_Allowed" >
+		<Condition>DisadvantageCombatEnteredMomentAgo</Condition>
+		<Condition>NoEngagementLongDuration</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="DisadvantageCombat_to_EvenCombat_Allowed" >
+		<Condition>DisadvantageCombatEnteredMomentAgo</Condition>
+		<Condition>PlayerWinningBattleModerate</Condition>
+		<Condition>PlayerScoredKillsMedium</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="DisadvantageCombat_to_AdvantageCombat_Allowed" >
+		<Condition>DisadvantageCombatEnteredMomentAgo</Condition>
+		<Condition>PlayerDestroyedManyImportantStructures</Condition>
+		<Condition>AdvantageCombatNotCurrentlyActive</Condition>
+		<Condition>AdvantageCombatExitedWhileAgo</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<MusicScriptConditionNugget_And id="EvenCombat_to_ThreatLevel1_1_Allowed" >
+		<Condition>EvenCombatEnteredMomentAgo</Condition>
+		<Condition>NoEngagementLongDuration</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="EvenCombat_to_DisadvantageCombat_Allowed" >
+		<Condition>EvenCombatEnteredMomentAgo</Condition>
+		<Condition>EnemyWinningBattleModerate</Condition>
+		<Condition>EnemyScoredKillsMedium</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="EvenCombat_to_AdvantageCombat_Allowed" >
+		<Condition>EvenCombatEnteredMomentAgo</Condition>
+		<Condition>PlayerDestroyedManyImportantStructures</Condition>
+		<Condition>AdvantageCombatNotCurrentlyActive</Condition>
+		<Condition>AdvantageCombatExitedWhileAgo</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<MusicScriptConditionNugget_And id="AdvantageCombat_to_ThreatLevel1_1_Allowed" >
+		<Condition>AdvantageCombatEnteredWhileAgo</Condition>
+		<Condition>AdvantageCombatCurrentlyActive</Condition>
+		<Condition>NoEngagementLongDuration</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="AdvantageCombat_to_EvenCombat_Allowed" >
+		<Condition>AdvantageCombatEnteredWhileAgo</Condition>
+		<Condition>AdvantageCombatCurrentlyActive</Condition>
+		<Condition>AnyEngagementLongDuration</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<MusicScriptConditionNugget_And id="VacuumBombTragedy_to_ThreatLevel1_1_Allowed" >
+		<Condition>VacuumBombTragedyEnteredShortWhileAgo</Condition>
+		<Condition>VacuumBombTragedyCurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="DecimatorTragedy_to_ThreatLevel1_1_Allowed" >
+		<Condition>DecimatorTragedyEnteredShortWhileAgo</Condition>
+		<Condition>DecimatorTragedyCurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="ParticleBeamTragedy_to_ThreatLevel1_1_Allowed" >
+		<Condition>ParticleBeamTragedyEnteredShortWhileAgo</Condition>
+		<Condition>ParticleBeamTragedyCurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+	
+
+	<MusicScriptConditionNugget_And id="Anywhere_to_VacuumBombTragedy_Allowed" >
+		<Condition>AllTragediesExitedLongTimeAgo</Condition>
+		<Condition>PlayerUnitsHitByVacuumBomb</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="Anywhere_to_DecimatorTragedy_Allowed" >
+		<Condition>AllTragediesExitedLongTimeAgo</Condition>
+		<Condition>PlayerUnitsHitByDecimator</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="Anywhere_to_ParticleBeamTragedy_Allowed" >
+		<Condition>AllTragediesExitedLongTimeAgo</Condition>
+		<Condition>PlayerUnitsHitByParticleBeam</Condition>
+	</MusicScriptConditionNugget_And>
+	
+
+	<!--	******************************************************************************
+					EXTRA DATA : Stuff that isn't specific to PathMusicGameDynamic State 
+				******************************************************************************	-->
+	<ObjectFilterAsset id="PathMusicGameDynamicImportantStructures">
+		<Filter 
+			 Rule="ANY" 
+			 Include="STRUCTURE"
+			 Exclude="FS_BASE_DEFENSE DEFENSIVE_WALL WALL_UPGRADE WALL_PIECE WALL_HUB WALL_SEGMENT SCALEABLE_WALL WALL_GATE SUMMONED">
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="PathMusicGameDynamicActiveStructures">
+		<Filter
+			 Rule="ANY"
+			 Include="STRUCTURE"
+			 Exclude="DEFENSIVE_WALL WALL_UPGRADE WALL_PIECE WALL_HUB WALL_SEGMENT SCALEABLE_WALL WALL_GATE SUMMONED">
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="PathMusicGameDynamicCombatTargets">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES">
+		</Filter>
+	</ObjectFilterAsset>
+	
+	<ObjectFilterAsset id="PathMusicGameDynamicSuperWeaponTargets">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES">
+		</Filter>
+	</ObjectFilterAsset>
+	
+</AssetDeclaration>

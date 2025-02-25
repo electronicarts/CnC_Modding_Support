@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude" >
+	<Tags></Tags>
+	<Includes>
+		<!-- <Include type="instance" source="DATA:SkirmishAI/States/NodBaseStates.xml" /> -->
+	</Includes>
+
+<!-- ReleaseType="RELEASE_TO_PRIORITY NEVER_RELEASE" -->
+<!-- Priority="SCRIPTED DEFENSE_CRITICAL HIGH DEFENSE_HIGH STANDARD LOW DEFENSE" -->
+
+	<AIBuildingPlacementStateDefinition
+		id="BuildingPlacementDefense_Campaign"
+		BuildingPlacementType="DefenseDefault"
+		BaseBuildingLocation="DEFENSE"
+		MaxPlacementDistanceFromDefenseClassTarget="500">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<MustBeWithinTrigger>AREA_AIBuildTurrets_A</MustBeWithinTrigger>
+		<MustBeWithinTrigger>AREA_AIBuildTurrets_B</MustBeWithinTrigger>
+		<MustBeWithinTrigger>AREA_AIBuildTurrets_C</MustBeWithinTrigger>
+		<MustBeWithinTrigger>AREA_evac_route_c</MustBeWithinTrigger>
+	</AIBuildingPlacementStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_GDI_2_1_Nod_Alpha_CrawlerController_Early"
+		MaxInactiveCopies="1"
+		PathfindingCheckType="None"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="15s"
+		CreateMcvPowerCanUse="true"	>
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="AIFLAG_GDI_2_1_Nod_Alpha_CrawlerControl_Early"/>
+		</Heuristic>
+		<!-- Note that this target heuristic is called again every few seconds to keep updating the position -->
+		<TargetHeuristic TargetHeuristic="AITarget_GDI_2_1_Nod_Alpha_A" Priority="15"/>
+		<TargetHeuristic TargetHeuristic="AITarget_GDI_2_1_Nod_Alpha_B" Priority="15"/>
+		<TargetHeuristic TargetHeuristic="AITarget_GDI_2_1_Nod_Alpha_C" Priority="15"/>
+		<Tactic
+			id="Controller"
+			Tactic="SimpleMovement"
+			EndBehavior="DISBAND"
+			EndIfStateTurnsOff="true"
+			UpdateTime="1.3s"
+			CountForFrontLines="false"
+			UseAestheticsManager="false">
+			<TeamTemplate MinUnits="1" MaxUnits="1"
+										RegisteredObjectSet="CRAWLERS"
+										IncludeKindOf="CRAWLER"
+										ExcludeKindOf=""
+										Priority="HIGH" AlwaysRecruit="true">
+				<MicroManager
+					MicroManager="CrawlerMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_GDI_2_1_Nod_Alpha_CrawlerController_Late"
+		MaxInactiveCopies="1"
+		PathfindingCheckType="None"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="15s"
+		CreateMcvPowerCanUse="true"	>
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="AIFLAG_GDI_2_1_Nod_Alpha_CrawlerControl_Late"/>
+		</Heuristic>
+		<!-- Note that this target heuristic is called again every few seconds to keep updating the position -->
+		<TargetHeuristic TargetHeuristic="AITarget_GDI_2_1_Nod_Alpha_D" Priority="15"/>
+		<TargetHeuristic TargetHeuristic="AITarget_GDI_2_1_Nod_Alpha_C" Priority="15"/>
+		<Tactic
+			id="Controller"
+			Tactic="SimpleMovement"
+			EndBehavior="DISBAND"
+			EndIfStateTurnsOff="true"
+			UpdateTime="1.3s"
+			CountForFrontLines="false"
+			UseAestheticsManager="false">
+			<TeamTemplate MinUnits="1" MaxUnits="1"
+										RegisteredObjectSet="CRAWLERS"
+										IncludeKindOf="CRAWLER"
+										ExcludeKindOf=""
+										Priority="HIGH" AlwaysRecruit="true">
+				<MicroManager
+					MicroManager="CrawlerMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+
+	<AIStrategicStateDefinition
+		id="AIState_GDI_2_1_Nod_Alpha_Attack"
+		MaxTargets="1">
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="AIFLAG_GDI_2_1_Nod_Alpha_Attack"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="AITarget_EnemyCrawler_Deployed" Priority="50"/>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="40"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="AITarget_EnemyCrawler_Mobile" Priority="20"/>
+		<Tactic
+			id="Attack"
+			Tactic="SimpleAttack"
+			EndBehavior="RAMPAGE"
+			UseAestheticsManager="true">
+			<TeamTemplate
+				MinUnits="2" MaxUnits="6"
+				MinCommandPoints="1" MaxCommandPoints="50"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="CAN_CAPTURE"
+				AlwaysRecruit="false"
+				SortByDistance="true"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				Priority="STANDARD">
+				<MicroManager MicroManager="FearlessMicroManager_MEDIUM"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_GDI_2_1_Nod_Alpha_AttackRefugees"
+		MaxTargets="2">
+		<Heuristic>
+			<ConstantHeuristic/>
+			<!--<ScriptedFlagHeuristic FlagName="AIState_GDI_2_1_Nod_Alpha_AttackRefugees"/>-->
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="AITarget_GDI_2_1_Roadblock_A1" Priority="50"/>
+		<TargetHeuristic TargetHeuristic="AITarget_GDI_2_1_Roadblock_A3" Priority="50"/>
+		<TargetHeuristic TargetHeuristic="AITarget_GDI_2_1_Roadblock_B2" Priority="50"/>
+		<Tactic
+			id="Defend"
+			Tactic="StaticDefense"
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="999"
+			Distance="350"
+			UseAestheticsManager="false">
+			<TeamTemplate
+				MinUnits="2" MaxUnits="6"
+				MinCommandPoints="1" MaxCommandPoints="50"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf=""
+				AlwaysRecruit="true"
+				SortByDistance="true"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				Priority="HIGH">
+				<MicroManager
+					MicroManager="DefenseMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIPowerUseStateDefinition id="NodPowerUseStateEarlyGame" BeaconResponse="NodBeaconResponseTest">
+		<Heuristic>
+			<TimerHeuristic StartTime="0s" EndTime="240s"/>
+		</Heuristic>
+		<!--Rank 1-->
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_ObeliskOfLife"		Weight="1.0"/>
+		<!--Rank 2-->
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_BurrowMines"			Weight="1.0"/>
+		<!--Rank 3-->
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_DecoyArmy"			Weight="1.0"/>
+		<!--Rank 4-->
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_SubterraneanStrike"	Weight="1.0"/>
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_Megalisk"				Weight="1.0"/>
+		<!--Rank 5-->
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_VeinDetonation"		Weight="1.0"/>
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_MarkOfKane"			Weight="1.0"/>
+	</AIPowerUseStateDefinition>
+
+
+	<AIPowerUseStateDefinition id="NodPowerUseStatePostEarlyGame" BeaconResponse="NodBeaconResponseTest">
+		<Heuristic>
+			<TimerHeuristic StartTime="240s" EndTime="-1s"/>
+		</Heuristic>
+		<!--Rank 1-->
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_ObeliskOfLife"		Weight="1.0"/>
+		<!--Rank 2-->
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_BurrowMines"			Weight="1.0"/>
+		<!--Rank 3-->
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_DecoyArmy"			Weight="1.0"/>
+		<!--Rank 4-->
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_SubterraneanStrike"	Weight="1.0"/>
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_Megalisk"				Weight="1.0"/>
+		<!--Rank 5-->
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_VeinDetonation"		Weight="1.0"/>
+		<PowerUseEntry SpecialPower="SpecialPower_NOD_MarkOfKane"			Weight="1.0"/>
+	</AIPowerUseStateDefinition>
+
+</AssetDeclaration>

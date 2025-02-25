@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset">
+	
+	<Tags />
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/AttributeModifier_PlayerPowers.xml" />
+	</Includes>
+
+	<!--
+*** PLEASE READ THIS FIRST ****
+
+Attribute Modifers are confusing, and it's easy to screw them up.  You need to know the following rules:
+
+* If an attribute modifier's value is > 100%, it's added together with other attribute modifiers of the same type that are > 100%. 
+(i.e. 120% RATE_OF_FIRE & 125% RATE_OF_FIRE = 145% RATE_OF_FIRE.)  
+
+* Health is the exception to this rule - Health modifiers are always multiplied, positive or negative.
+
+* Hit percentage and dodge percentage are also exceptions. They're additive and can be negative (50% + -35% = 15%).
+
+* If an attribute modifier's value is < 100%, it's multiplied by other attribute modifiers of the same type, positive or negative.
+-->
+
+	<AttributeModifier
+		id="Modifier_HardSupportHandicap"
+		Category="NONE">
+		<Modifier Type="DAMAGE_MULT" Value="125%"/>
+		<Modifier Type="HEALTH_MULT" Value="125%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_BrutalSupportHandicap"
+		Category="NONE">
+		<Modifier Type="DAMAGE_MULT" Value="125%"/>
+		<Modifier Type="HEALTH_MULT" Value="125%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		 id="RaiderSpeedArmor"
+		 Category="NONE">
+		<Modifier Type="ARMOR" Value="80%" />
+	</AttributeModifier>
+	
+	<!-- Attribute modifiers for the Tiberium Core mechanic -->
+	<AttributeModifier
+		id="Modifier_GDIVehicleVUpgrade2"
+		Category="NONE">
+		<Modifier Type="RATE_OF_FIRE" Value="110"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_GenericCoreUpgradeLevel1"
+		Category="NONE">
+		<Modifier Type="DAMAGE_MULT" Value="110%"/>
+	</AttributeModifier>
+	
+	<AttributeModifier
+		id="Modifier_GenericCoreUpgradeLevel2"
+		Category="NONE">
+		<Modifier Type="RATE_OF_FIRE" Value="110"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_RaiderDeploy"
+		Category="NONE">
+		<Modifier Type="ARMOR" Value="100%"/>
+	</AttributeModifier>
+
+	<!-- This Burrow toggle is a temporary att mod meant for playing the animations -->
+	<AttributeModifier
+		id="AttributeModifier_BurrowToggle_Transformation"
+		Category="NONE"
+		ModelConditionsSet="BURROWING_TRANSITION"
+		Duration="=$BURROW_TRANSITION_TIME">
+	</AttributeModifier>
+	
+	<AttributeModifier
+		id="Modifier_BurrowingVehicle"
+		Category="NONE"
+		ObjectStatusToSet="BURROWING CANNOT_BE_RECYCLED"
+		ModelConditionsSet="BURROWING">
+		<Modifier Type="ARMOR" Value="75%"/>
+		<Modifier Type="SPEED" Value="100%"/>
+		<!-- Burrowing units aren't crushable -->
+		<Modifier Type="CRUSHABLE_LEVEL" Value="=$UNCRUSHABLE"/>
+		<Modifier Type="SHROUD_CLEARING_HEIGHT" Value="150%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_BurrowingStructure"
+		Category="NONE"
+		Shader="ShaderOverride_BurrowingStructure"
+		ObjectStatusToSet="BURROWING"
+		ModelConditionsSet="BURROWING">
+		<Modifier Type="SHROUD_CLEARING" Value="10%" />
+		<Modifier Type="ARMOR" Value="75%" />
+		<!-- Burrowing units aren't crushable -->
+		<Modifier Type="CRUSHABLE_LEVEL" Value="=$UNCRUSHABLE"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_StealthDodge"
+		Category="NONE" >
+		<BuffInfo Type="DEFENSE_POSITIVE" />
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="=$STEALTH_DODGE_BONUS"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_CloakingFieldStealthDodge"
+		inheritFrom="Modifier_StealthDodge" 
+		Duration="30s"/>
+
+	<AttributeModifier
+		id="Modifier_StealthDodgeTemporary"
+		inheritFrom="Modifier_StealthDodge"
+		Duration="=$ATTRIBUTE_MODIFIER_AURA_DURATION"/>
+
+	<AttributeModifier
+		id="Modifier_AdvancedStealthDodgeTemporary"
+		inheritFrom="Modifier_StealthDodgeTemporary"/>
+	
+	<AttributeModifier
+		id="Modifier_DefaultGuardObject"
+		Category="NONE"
+		ObjectStatusToSet="GUARDING_OBJECT EXCLUDE_FROM_SELECT_ALL" >
+		<Modifier Type="SHROUD_CLEARING" Value="110%"/>
+		<Modifier Type="VISION" Value="110%"/>
+	</AttributeModifier>	
+
+	<AttributeModifier
+		id="Unit_Veteran"
+		Category="LEVEL" >
+		<Modifier Type="ARMOR" Value="90%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Unit_Elite"
+		Category="LEVEL" >
+		<Modifier Type="ARMOR" Value="80%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Unit_Heroic"
+		Category="LEVEL" >
+		<Modifier Type="ARMOR" Value="70%"/>
+		<Modifier Type="DAMAGE_MULT" Value="110%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Mammoth_AmmoPacks"
+		Category="INNATE_ARMOR">
+		<Modifier Type="RATE_OF_FIRE" Value="50"/>
+		<Modifier Type="DAMAGE_MULT" Value="150"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Mammoth_Spotlight_Vision"
+		Category="INNATE_VISION">
+		<Modifier Type="SHROUD_CLEARING" Value="5"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="FortifiedBuilding_Bonus"
+		Category="STRUCTURE">
+		<Modifier Type="HEALTH_MULT" Value="200"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="CitizenDispositionModulatorAttributeModifier"
+		Category="SPELL"
+		Duration="6s">
+		<Modifier Type="DAMAGE_MULT" Value="150"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_TiberiumInfusion"
+		Category="NONE">
+		<Modifier Type="HEALTH_MULT" Value="125"/>
+		<Modifier Type="SPEED" Value="125"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_ChargeDefenses"
+		Category="NONE"
+		StackingLimit="4">
+		<Modifier Type="SHROUD_CLEARING" Value="110%"/>
+		<Modifier Type="RATE_OF_FIRE" Value="110%"/>
+		<Modifier Type="VISION" Value="110%"/>
+		<Modifier Type="RANGE" Value="110%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_Hallucinate"
+		Category="NONE"
+		Duration="20s"
+		ModelConditionsSet="EMOTION_DISSIDENT" >
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_Cloned"
+		Category="NONE"	>
+		<Modifier Type="HEALTH_MULT" Value="1%" />
+		<Modifier Type="DAMAGE_MULT" Value="1%" />
+		<Modifier Type="VISION" Value="50%"/>
+		<Modifier Type="SHROUD_CLEARING" Value="50%" />
+	</AttributeModifier>
+
+	<!-- Decreased armor when the bunker spawn is firing -->
+	<AttributeModifier
+		id="Modifier_RocketBunkerWeaponFiring"
+		Category="NONE"
+		Duration="2s" >
+		<Modifier Type="ARMOR" Value="150%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Confessor_Militant_AttributeModifier"
+		Category="NONE"
+		Duration="6s">
+		<Modifier Type="RATE_OF_FIRE" Value="150"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_NODDozerBlades"
+		Category="NONE">
+		<Modifier Type="ARMOR" Value="75%"/>
+		<!-- 100% means add 1, 200% means add 2 (this is done in code). -->
+		<Modifier Type="CRUSHER_LEVEL" Value="100%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_NodVehicleIDeployed"
+		Category="NONE">
+		<Modifier Type="ARMOR" Value="75%"/>
+	</AttributeModifier>
+
+	<!--ION STORM-->
+	<AttributeModifier
+		id="Modifier_IonStorm"
+		Category="SPELL"
+		ModelConditionsSet="USER_5"
+		Duration="10s">
+		<Modifier Type="DAMAGE_MULT" Value="125%"/>
+		<Modifier Type="ARMOR" Value="75%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_Garrisoned"
+		Category="NONE">
+		<Modifier Type="RANGE" Value="125%"/>
+		<Modifier Type="VISION" Value="125%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_AlienPhaseField"
+		Category="NONE"
+		Duration="40s"
+		StartFX="FX_ALI_PhaseGenerator_Begin"
+		EndFX="FX_ALI_PhaseGenerator_End"
+		ObjectStatusToSet="NO_ATTACK OUT_OF_PHASE">
+		<Modifier Type="DAMAGE_MULT" Value="0%"/>
+		<Modifier Type="HEALTH_MULT" Value="10000%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_AlienPhaseField_Propagated"
+		inheritFrom="AttributeModifier_AlienPhaseField"
+		Duration="=$PHASE_SHIELD_PROPAGATE_DURATION"
+	/>
+
+	<AttributeModifier
+		id="AttributeModifier_AlienCrystalShield"
+		Category="NONE"
+		ObjectStatusToSet="NO_ATTACK UNATTACKABLE CANNOT_BE_SOLD IN_STASIS"
+		ModelConditionsSet="INVULNERABLE"
+		Duration="1.25s">
+		<Modifier Type="INVULNERABLE" Value="100%"/>
+		<Modifier Type="DAMAGE_MULT" Value="0%"/>
+		<Modifier Type="SPEED" Value="0%"/>
+		<Modifier Type="RESIST_EMP" Value="100%"/>
+	</AttributeModifier>
+
+	<!-- twice as vulnerable to damage -->
+	<AttributeModifier
+		id="Modifier_AlienAircraftD_Busy"
+		Duration="=$ALIEN_AIRCRAFT_D_ATTACK_HOLD_DURATION_TOTAL"
+		Category="SPELL">
+		<Modifier Type="ARMOR" Value="200%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_TibGoo"
+		Category="NONE"
+		Duration="2.0s"
+		>
+		<Modifier Type="SPEED" Value="50%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_CyberneticLegs"
+		Category="NONE">
+		<Modifier Type="SPEED" Value="200%"/>
+	</AttributeModifier>
+
+
+
+	<AttributeModifier
+		id="AttributeModifier_Leadership"
+		Category="NONE"
+		StackingLimit="1"
+		Duration="1.5s">
+		<Modifier Type="ARMOR" Value="75%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_GDIVehicleV_Leadership"
+		Category="NONE"
+		StackingLimit="1"
+		Duration="1.5s">
+		<Modifier Type="ARMOR" Value="80%"/>
+		<Modifier Type="RATE_OF_FIRE" Value="125"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_TargetPainter"
+		Category="NONE"
+		StackingLimit="1"
+		Duration="1.2s">
+		<Modifier Type="ARMOR" Value="120%"/>
+	</AttributeModifier>
+
+	<!-- Place other common attribute modifiers here -->
+	<AttributeModifier
+		 id="AttributeModifier_GDIDefenseCEMPImmunity"
+		 Category="NONE"
+		 Duration="1.2s">
+		<Modifier Type="RESIST_EMP" Value="100%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_NODInfantryV_GarrisonBuff"
+		Category="NONE">
+		<BuffInfo Type="DEFENSE_POSITIVE" SourceString="NAME:NODInfantryV" />
+		<Modifier Type="ARMOR" Value="75%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_RefractorArmorUpgradeShader"
+		Category="NONE"
+		RenderBuffEffectFlags="MIRROR_COAT"/>
+	
+	<!--
+	// Handicap penalty settings for multiplayer/skirmish. Handicapping Build speed for each setting is done in GameData.ini under "HandicapBuildSpeed".
+	//  Note: HandicapPercent5 currently corresponds to a -5% handicap setting in the UI. Likewise for all the other settings.
+	//  The UI currently denotes handicap settings as negatives. Internally I've left handicap settings as positive values.
+	//  For example full handicap mode is the -100% setting in the UI. This corresponds to HandicapPercent100. Just wanted to make that clear.
+	-->
+	<AttributeModifier
+		id="HandicapPercent5"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="95%"/>
+		<Modifier Type="HEALTH_MULT" Value="95%"/>
+		<Modifier Type="RECHARGE_TIME" Value="105%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent10"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="90%"/>
+		<Modifier Type="HEALTH_MULT" Value="90%"/>
+		<Modifier Type="RECHARGE_TIME" Value="110%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent15"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="85%"/>
+		<Modifier Type="HEALTH_MULT" Value="85%"/>
+		<Modifier Type="RECHARGE_TIME" Value="115%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent20"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="80%"/>
+		<Modifier Type="HEALTH_MULT" Value="80%"/>
+		<Modifier Type="RECHARGE_TIME" Value="120%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+	id="HandicapPercent25"
+	Category="LEVEL"
+	Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="75%"/>
+		<Modifier Type="HEALTH_MULT" Value="75%"/>
+		<Modifier Type="RECHARGE_TIME" Value="125%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent30"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="70%"/>
+		<Modifier Type="HEALTH_MULT" Value="70%"/>
+		<Modifier Type="RECHARGE_TIME" Value="130%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent35"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="65%"/>
+		<Modifier Type="HEALTH_MULT" Value="65%"/>
+		<Modifier Type="RECHARGE_TIME" Value="135%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent40"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="60%"/>
+		<Modifier Type="HEALTH_MULT" Value="60%"/>
+		<Modifier Type="RECHARGE_TIME" Value="140%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent45"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="55%"/>
+		<Modifier Type="HEALTH_MULT" Value="55%"/>
+		<Modifier Type="RECHARGE_TIME" Value="145%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent50"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="50%"/>
+		<Modifier Type="HEALTH_MULT" Value="50%"/>
+		<Modifier Type="RECHARGE_TIME" Value="150%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent55"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="45%"/>
+		<Modifier Type="HEALTH_MULT" Value="45%"/>
+		<Modifier Type="RECHARGE_TIME" Value="155%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent60"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="40%"/>
+		<Modifier Type="HEALTH_MULT" Value="40%"/>
+		<Modifier Type="RECHARGE_TIME" Value="160%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent65"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="35%"/>
+		<Modifier Type="HEALTH_MULT" Value="35%"/>
+		<Modifier Type="RECHARGE_TIME" Value="165%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent70"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="30%"/>
+		<Modifier Type="HEALTH_MULT" Value="30%"/>
+		<Modifier Type="RECHARGE_TIME" Value="170%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent75"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="25%"/>
+		<Modifier Type="HEALTH_MULT" Value="25%"/>
+		<Modifier Type="RECHARGE_TIME" Value="175%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent80"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="20%"/>
+		<Modifier Type="HEALTH_MULT" Value="20%"/>
+		<Modifier Type="RECHARGE_TIME" Value="180%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent85"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="15%"/>
+		<Modifier Type="HEALTH_MULT" Value="15%"/>
+		<Modifier Type="RECHARGE_TIME" Value="185%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent90"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="10%"/>
+		<Modifier Type="HEALTH_MULT" Value="10%"/>
+		<Modifier Type="RECHARGE_TIME" Value="190%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent95"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="5%"/>
+		<Modifier Type="HEALTH_MULT" Value="5%"/>
+		<Modifier Type="RECHARGE_TIME" Value="195%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="HandicapPercent100"
+		Category="LEVEL"
+		Duration="0s">
+		<Modifier Type="DAMAGE_MULT" Value="1%"/>
+		<Modifier Type="HEALTH_MULT" Value="1%"/>
+		<Modifier Type="RECHARGE_TIME" Value="200%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_GDIStructureIStasisField"
+		Category="NONE"
+		ObjectStatusToSet="NO_ATTACK UNATTACKABLE CANNOT_BE_SOLD IN_STASIS"
+		ModelConditionsSet="INVULNERABLE"
+		Duration="=$GDI_STRUCTURE_I_STASIS_PULSE_DURATION">
+		<Modifier Type="INVULNERABLE" Value="100%"/>
+		<Modifier Type="SPEED" Value="0%"/>
+		<Modifier Type="RESIST_EMP" Value="100%"/>
+	</AttributeModifier>
+
+	<!-- broadcast by GDI Crawlers to decrease bomber reload time when they are near crawlers -->
+	<AttributeModifier
+		id="Modifier_GDICrawler_BomberReload"
+		Category="NONE"
+		Duration="0.5s">
+		<Modifier Type="CLIP_RELOAD_TIME" Value="30"/>
+	</AttributeModifier>
+
+	<!-- broadcast by Nod Crawlers to decrease bomber reload time when they are near crawlers -->
+	<AttributeModifier
+		id="Modifier_NODCrawler_BomberReload"
+		Category="NONE"
+		Duration="0.5s">
+		<Modifier Type="CLIP_RELOAD_TIME" Value="30"/>
+	</AttributeModifier>	
+
+	<AttributeModifier
+		id="UnpackingAttributeModifier"
+		Category="NONE"
+		ObjectStatusToSet="IDLE_UNPACKING"
+		ModelConditionsSet="UNPACKING">
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="DeployedAttributeModifier"
+		Category="NONE"
+		ObjectStatusToSet="IDLE_DEPLOYED"
+		ModelConditionsSet="DEPLOYED">
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="PackingAttributeModifier"
+		Category="NONE"
+		ObjectStatusToSet="PACKING"
+		ModelConditionsSet="PACKING">
+	</AttributeModifier>
+
+	<!-- Base Accuracy Upgrade Modifier -->
+	<AttributeModifier
+		id="Modifier_BaseWeaponAccuracyUpgrade"
+		Category="NONE">
+		<Modifier Type="HIT_PERCENTAGE_ADD" Value="50%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_GDIWeaponAccuracyUpgrade"
+		inheritFrom="Modifier_BaseWeaponAccuracyUpgrade"
+		StartFX="FX_UpgradeGDIAccuracyBoost">
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_NODWeaponAccuracyUpgrade"
+		inheritFrom="Modifier_BaseWeaponAccuracyUpgrade"
+		StartFX="FX_UpgradeNODAccuracyBoost">
+	</AttributeModifier>
+
+	<!-- Weapon Reload Upgrade Modifier -->
+	<AttributeModifier
+		id="Modifier_GDIWeaponReloadUpgrade"
+		Category="NONE"
+		StartFX="FX_UpgradeGDIRefireBoost">
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_NODWeaponReloadUpgrade"
+		Category="NONE"
+		StartFX="FX_UpgradeNODRefireBoost">
+	</AttributeModifier>
+
+	<!-- Speed Boost Upgrade Modifier -->
+	<AttributeModifier
+		id="Modifier_GDISpeedBoostUpgrade"
+		Category="NONE"
+		StartFX="FX_UpgradeGDISpeedBoost">
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_NODSpeedBoostUpgrade"
+		Category="NONE"
+		StartFX="FX_UpgradeNODSpeedBoost">
+	</AttributeModifier>
+
+	<!-- Weapon Range Upgrade Modifier -->
+	<AttributeModifier
+		id="Modifier_GDIWeaponRangeUpgrade"
+		Category="NONE"
+		StartFX="FX_UpgradeGDIRangeBoost">
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_NODWeaponRangeUpgrade"
+		Category="NONE"
+		StartFX="FX_UpgradeNODRangeBoost">
+	</AttributeModifier>
+
+	<!-- NOD Defense Infantry Equipment upgrade -->
+	<AttributeModifier
+		id="Modifier_NODDefenseInfantryEquipmentUpgrade"
+		Category="NONE"
+		StartFX="FX_UpgradeNODDarkArmaments">
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_DesperationSpeedBoostUpgrade"
+		Category="NONE"
+		StartFX="FX_UpgradeGDISpeedBoost">
+		<Modifier Type="SPEED" Value="125%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_DesperationArmorBoostUpgrade"
+		Category="NONE"
+		StartFX="FX_UpgradeNODRangeBoost">
+		<Modifier Type="ARMOR" Value="75%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_DesperationDamageBoostUpgrade"
+		Category="NONE"
+		StartFX="FX_UpgradeNODRefireBoost">
+		<Modifier Type="DAMAGE_MULT" Value="125%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_GDIDefenseInfantrySprint"
+		Category="NONE"
+		ModelConditionsSet="USER_1"
+		Duration="10s">
+		<Modifier Type="SPEED" Value="150%"/>
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="50%"/>
+	</AttributeModifier>
+
+
+	<!-- standard shared attribute mods -->
+
+	<AttributeModifier
+		id="Modifier_Generic_GDISpeedBoostUpgrade"
+		inheritFrom="Modifier_GDISpeedBoostUpgrade">
+		<Modifier Type="SPEED" Value="125%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_Generic_GDIWeaponRange_T1"
+		inheritFrom="Modifier_GDIWeaponRangeUpgrade">
+		<Modifier Type="SHROUD_CLEARING" Value="125%" />
+		<Modifier Type="VISION" Value="125%" />
+		<Modifier Type="RANGE" Value="125%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_Generic_GDIReloadUpgrade"
+		inheritFrom="Modifier_GDIWeaponReloadUpgrade">
+		<Modifier Type="CLIP_RELOAD_TIME" Value="50%"/>
+	</AttributeModifier>
+
+	
+	<AttributeModifier
+		id="Modifier_Generic_NODSpeedBoostUpgrade"
+		inheritFrom="Modifier_NODSpeedBoostUpgrade">
+		<Modifier Type="SPEED" Value="125%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_Generic_NODWeaponRange_T1"
+		inheritFrom="Modifier_NODWeaponRangeUpgrade">
+		<Modifier Type="SHROUD_CLEARING" Value="125%" />
+		<Modifier Type="VISION" Value="125%" />
+		<Modifier Type="RANGE" Value="125%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_Generic_Clip_NODReloadUpgrade"
+		inheritFrom="Modifier_NODWeaponReloadUpgrade">
+		<Modifier Type="CLIP_RELOAD_TIME" Value="50%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_Generic_PreAttack_NODReloadUpgrade"
+		inheritFrom="Modifier_NODWeaponReloadUpgrade">
+		<Modifier Type="PREATTACK_DELAY" Value="50%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_StandardAttackEntersTargetAttMod"
+		ObjectStatusToSet="ATTACK_MAY_ENTER_TARGET"/>
+
+</AssetDeclaration>

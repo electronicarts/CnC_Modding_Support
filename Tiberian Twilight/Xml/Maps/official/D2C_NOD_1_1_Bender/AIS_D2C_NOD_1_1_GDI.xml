@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude" >
+    <Tags></Tags>
+    <Includes>
+        <!-- <Include type="instance" source="DATA:SkirmishAI/States/NodBaseStates.xml" /> -->
+    </Includes>
+
+    <!-- ReleaseType="RELEASE_TO_PRIORITY NEVER_RELEASE" -->
+    <!-- Priority="SCRIPTED DEFENSE_CRITICAL HIGH DEFENSE_HIGH STANDARD LOW DEFENSE" -->
+
+    <!--GDI Defense Crawler-->
+
+    <AIStrategicStateDefinition
+        id="AIState_D2C_Nod_1_1_CrawlerController_Defense"
+        MaxInactiveCopies="1"
+        PathfindingCheckType="None"
+        CreateMcvPowerCanUse="true">
+        <Heuristic>
+            <ScriptedFlagHeuristic FlagName="GDI_1/FLAG - Defense_AI"/>
+        </Heuristic>
+        <TargetHeuristic TargetHeuristic="AITarget_D2C_Nod_1_1_Defense_Point" />
+        <Tactic
+            id="Controller"
+            Tactic="SimpleMovement"
+            EndBehavior="DISBAND"
+            CountForFrontLines="false"
+            UseAestheticsManager="false"
+            EndIfStateTurnsOff="true">
+            <TeamTemplate MinUnits="1" MaxUnits="1"
+                RegisteredObjectSet="CRAWLERS"
+		                IncludeKindOf="CRAWLER"
+		                ExcludeKindOf=""
+                Priority="STANDARD" AlwaysRecruit="true" >
+                <MicroManager
+                    MicroManager="Nod_2_2_FearlessCrawlerMicromanager" />
+            </TeamTemplate>
+        </Tactic>
+    </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+  id="GDIDefensesBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="GDIStructureC">
+      <BuildHeuristic Type="BEST_UNIT_EXPECTED"/>
+    </BuildEntry>
+    <BuildEntry Build="GDIStructureD">
+      <BuildHeuristic Type="BEST_UNIT_EXPECTED"/>
+    </BuildEntry>
+    <BuildEntry Build="GDIStructureF">
+      <BuildHeuristic Type="BEST_UNIT_EXPECTED"/>
+    </BuildEntry>
+    <BuildEntry Build="GDIStructureG">
+      <BuildHeuristic Type="BEST_UNIT_EXPECTED"/>
+    </BuildEntry>
+    <BuildEntry Build="GDIStructureH">
+      <BuildHeuristic Type="BEST_UNIT_EXPECTED"/>
+    </BuildEntry>
+    <BuildEntry Build="GDIStructureI">
+      <BuildHeuristic Type="BEST_UNIT_EXPECTED"/>
+    </BuildEntry>
+    <BuildEntry Build="GDIStructureJ">
+      <BuildHeuristic Type="BEST_UNIT_EXPECTED"/>
+    </BuildEntry>
+  </AIBuildStateDefinition>
+
+  <!--Offense-->
+  
+    <AIStrategicStateDefinition
+        id="AIState_D2C_Nod_1_1_CrawlerController_Offense"
+        MaxTargets="1"
+        PathfindingCheckType="None"
+        CreateMcvPowerCanUse="true">
+        <Heuristic>
+            <ScriptedFlagHeuristic FlagName="GDI_2/FLAG - Offense_AI"/>
+        </Heuristic>
+      <TargetHeuristic TargetHeuristic="AITarget_D2C_Nod_1_1_Offense_Target" Priority="99"/>
+        <Tactic
+          id="Controller"
+          Tactic="SimpleMovement"
+          EndBehavior="DISBAND"
+          CountForFrontLines="false"
+          UseAestheticsManager="false"
+          EndIfStateTurnsOff="true">
+          <TeamTemplate MinUnits="1" MaxUnits="1"
+            RegisteredObjectSet="CRAWLERS"
+                IncludeKindOf="CRAWLER"
+                ExcludeKindOf=""
+            Priority="STANDARD" AlwaysRecruit="true" >
+            <MicroManager
+              MicroManager="Nod_2_2_FearlessCrawlerMicromanager" />
+        </TeamTemplate>
+      </Tactic>
+    </AIStrategicStateDefinition>
+
+
+  <AIStrategicStateDefinition
+id="AIState_D2C_Nod_1_1_Defense_Attack"
+  TargetHeuristicReevaluationInterval="PERIODICALLY"
+  TargetHeuristicReevaluationTime="15s"
+  CreateMcvPowerCanUse="true"
+  MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="GDI_1/FLAG - Defense_AI_Attack"/>
+      <TimerHeuristic StartTime="10s" EndTime="-1s" CountFrom="AI_START"/>
+      <IntervalHeuristic IntervalTime="120s" ActiveTime="15s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="40"/>
+    <Tactic
+			id="Attack"
+			Tactic="SimpleAttack"
+			EndBehavior="DISBAND"
+			UseAestheticsManager="true">
+      <TeamTemplate
+				MinUnits="2" MaxUnits="4"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="CAN_CAPTURE"
+				AlwaysRecruit="false"
+				SortByDistance="true"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				Priority="DEFENSE_HIGH">
+        <MicroManager
+          MicroManager="FearlessMicroManager_MEDIUM" />
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+
+  <AIStrategicStateDefinition
+  id="AIState_D2C_Nod_1_1_Offense_Attack"
+    TargetHeuristicReevaluationInterval="PERIODICALLY"
+    TargetHeuristicReevaluationTime="15s"
+    CreateMcvPowerCanUse="true"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="GDI_2/FLAG - Offense_AI_Attack"/>
+      <TimerHeuristic StartTime="10s" EndTime="-1s" CountFrom="AI_START"/>
+      <IntervalHeuristic IntervalTime="120s" ActiveTime="15s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="40"/>
+    <Tactic
+			id="Attack"
+			Tactic="SimpleAttack"
+			EndBehavior="DISBAND"
+			UseAestheticsManager="true">
+      <TeamTemplate
+				MinUnits="2" MaxUnits="4"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="CAN_CAPTURE"
+				AlwaysRecruit="false"
+				SortByDistance="true"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				Priority="DEFENSE_HIGH">
+        <MicroManager
+          MicroManager="FearlessMicroManager_MEDIUM" />
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+id="AIState_D2C_Nod_1_1_Offense_Attack2"
+  TargetHeuristicReevaluationInterval="PERIODICALLY"
+  TargetHeuristicReevaluationTime="15s"
+  CreateMcvPowerCanUse="true"
+  MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="GDI_2/FLAG - Offense_AI_Attack2"/>
+      <TimerHeuristic StartTime="10s" EndTime="-1s" CountFrom="AI_START"/>
+      <IntervalHeuristic IntervalTime="120s" ActiveTime="15s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="40"/>
+    <Tactic
+			id="Attack"
+			Tactic="SimpleAttack"
+			EndBehavior="DISBAND"
+			UseAestheticsManager="true">
+      <TeamTemplate
+				MinUnits="2" MaxUnits="5"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="CAN_CAPTURE"
+				AlwaysRecruit="false"
+				SortByDistance="true"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				Priority="DEFENSE_HIGH">
+        <MicroManager
+          MicroManager="FearlessMicroManager_MEDIUM" />
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+id="AIState_D2C_Nod_1_1_Offense_Attack3"
+  TargetHeuristicReevaluationInterval="PERIODICALLY"
+  TargetHeuristicReevaluationTime="15s"
+  CreateMcvPowerCanUse="true"
+  MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="GDI_2/FLAG - Offense_AI_Attack3"/>
+      <TimerHeuristic StartTime="10s" EndTime="-1s" CountFrom="AI_START"/>
+      <IntervalHeuristic IntervalTime="120s" ActiveTime="15s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="40"/>
+    <Tactic
+			id="Attack"
+			Tactic="SimpleAttack"
+			EndBehavior="DISBAND"
+			UseAestheticsManager="true">
+      <TeamTemplate
+				MinUnits="2" MaxUnits="6"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="CAN_CAPTURE"
+				AlwaysRecruit="false"
+				SortByDistance="true"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				Priority="DEFENSE_HIGH">
+        <MicroManager
+          MicroManager="FearlessMicroManager_MEDIUM" />
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+</AssetDeclaration>

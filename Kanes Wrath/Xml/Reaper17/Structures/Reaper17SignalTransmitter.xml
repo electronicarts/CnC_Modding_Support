@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:Alien/Structures/AlienSignalTransmitter.xml" />
+	</Includes>
+	<!-- TransmissionTower -->
+	<GameObject
+		id="Reaper17SignalTransmitter"
+		inheritFrom="AlienSignalTransmitter"
+		Side="Reaper17"
+		EditorSorting="STRUCTURE"
+		CommandSet="Reaper17SignalTransmitterCommandSet"
+		EditorName="Reaper17SignalTransmitter"
+		Description="Desc:Reaper17SignalTransmitter"
+		TypeDescription="Type:Reaper17SignalTransmitter">
+		<GameDependency
+			xai:joinAction="Replace">
+			<RequiredObject>Reaper17Reactor</RequiredObject>
+		</GameDependency>
+		<Behaviors>
+
+<!-- wormhole not available for Reaper17 -->
+			<OCLSpecialPower
+				xai:joinAction="Remove"
+				id="ModuleTag_WormHolePower"
+				SpecialPowerTemplate="SpecialPower_WormHole"
+				OCL="OCL_AlienWormHole"
+				CreateLocation="CREATE_AT_LOCATION" />
+
+			<!-- mothership -->
+			<OCLSpecialPower
+				xai:joinAction="Replace"
+				id="ModuleTag_SummonMothership"
+				SpecialPowerTemplate="SpecialPower_SummonMothership"
+				OCL="OCL_SummonMothership"
+				CreateLocation="USE_SECONDARY_OBJECT_LOCATION">
+				<NearestSecondaryObjectFilter
+					Rule="ANY">
+					<IncludeThing>Reaper17SignalTransmitter</IncludeThing>
+				</NearestSecondaryObjectFilter>
+			</OCLSpecialPower>
+			
+			<!-- shock trooper drop pods-->
+			<OCLSpecialPower
+				id="ModuleTag_OCLShockPods"
+				SpecialPowerTemplate="SpecialPower_AlienShockPods"
+				TriggerFX="FX_AlienMMTP" 
+				OCL="OCL_AlienShockPods"
+				CreateLocation="CREATE_AT_LOCATION"
+			/>
+			
+			<AISpecialPowerUpdate
+				id="ModuleTag_AlienShockPodsAI"
+				CommandButtonName="Command_AlienShockPods"
+				ReinforceDistance="100.0" 
+		        	SpecialPowerRadius="300.0"
+				SpecialPowerAIType="SPECIAL_POWER_REINFORCEMENT" 
+			/>
+			<xi:include
+			xai:joinAction="Remove"
+				href="../../Includes/AdvancedAlienBuildingDestruction.xml" />
+			<xi:include
+			xai:joinAction="Remove"			
+				href="../../Includes/AdvancedAlienBuildingSuicide.xml" />
+			<xi:include
+				href="../../Includes/AdvancedReaper17BuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/AdvancedReaper17BuildingSuicide.xml" />
+		</Behaviors>
+	</GameObject>
+</AssetDeclaration>

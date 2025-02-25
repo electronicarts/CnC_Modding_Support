@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:NURprDrn_SKN.w3x" />
+		<Include type="all"	source="ART:NURprDrn_ACCL.w3x" />
+		<Include type="all"	source="ART:NURprDrn_DECL.w3x" />
+		<Include type="all"	source="ART:NURprDrn_IDLA.w3x" />
+		<Include type="all"	source="ART:NURprDrn_MOVA.w3x" />
+		<Include type="all"	source="ART:NURprDrn_RPRA.w3x" />			
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseRepairDrone.xml" />
+	</Includes>
+	<GameObject
+		id="NODRepairDrone"
+		inheritFrom="BaseRepairDrone"
+		Side="NOD"
+		KindOf="=$FACTORY_REPAIR_DRONE_KINDOF"
+		EditorName="NODRepairDrone"
+		Description="Desc:NODRepairDrone">
+		<LocomotorSet
+			id="DefaultLocomotor"
+			Locomotor="NODRepairDroneLocomotor"
+			Condition="NORMAL"
+			Speed="75.0" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NURprDrn_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="true"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="NURprDrn_IDLA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<!-- placeholder until we get some real art -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NURprDrn_RPRA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ATTACHED"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NURprDrn_RPRA"
+						AnimationMode="LOOP"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="HealingFX"
+						FollowBone="true" />
+				</AnimationState>		
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NURprDrn_ACCL"
+						AnimationMode="ONCE"
+						Distance="30" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NURprDrn_DECL"
+						AnimationMode="ONCE"
+						Distance="30" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NURprDrn_MOVA"
+						AnimationMode="LOOP"
+						AnimationPriority="30"
+						Distance="30" />
+				</AnimationState>					
+			</ScriptedModelDraw>
+		</Draws>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_GDI_RepairDrone_sparks_delayedLoop">
+				<ModelConditionSound Sound="GDI_RepairDrone_sparks_delayedLoop" RequiredFlags="ATTACHED" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+	</GameObject>
+</AssetDeclaration>

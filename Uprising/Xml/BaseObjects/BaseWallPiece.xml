@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<!-- Wall Piece (these alternate between Wall hubs and Wall segments on a case by case basis) -->
+	<GameObject
+		id="BaseWallPiece"
+		inheritFrom="BaseStructure"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE WALL_PIECE NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER IGNORE_FOR_VICTORY CAN_CAST_REFLECTIONS RESIST_EMP CLASSIFY_ENTIRE_FOOTPRINT ACTIVATE_AFTER_UNPACK"
+		RadarPriority="NOT_ON_RADAR"
+		CampnessValue="=$CAMPNESS_WALL">
+		<Behaviors>
+			<SquishCollide
+				id ="DefaultSquishCollide"
+				AllowAllyCrush="true"/>
+			<Physics
+				id="ModuleTag_Physics" />
+			<xi:include
+				href="../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../Includes/GenericAlliedBuildingDestructionNoSpawn.xml" />
+			<xi:include
+				href="../Includes/GenericAlliedBuildingSuicideNoSpawn.xml" />
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_WallDieExplosion" />
+			</FXListBehavior>
+		</Behaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		
+		<!-- Curshable level should be the same across factions so no one has an advantage -->
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrushableLevel="25" />
+	</GameObject>
+</AssetDeclaration>

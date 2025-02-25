@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags/>
+	
+	<Includes>
+		<Include 
+			source = "DATA:GlobalData\Armor.xml"
+			type = "instance"/>
+		<Include 
+			source = "DATA:GDI\Units\GDIV35Ox_Summoned.xml"
+			type = "instance"/>
+		<Include 
+			source = "DATA:GDI\Units\GDISurveyor.xml"
+			type = "instance"/>
+		<Include 
+			source = "DATA:GDI\Units\GDIFirehawk.xml"
+			type = "instance"/>
+		<Include 
+			source = "DATA:GDI\Units\GDIBattleBaseRepairDrone.xml"
+			type = "instance"/>
+		<Include 
+			source = "DATA:GDI\Structures\GDIBattleBase.xml"
+			type = "instance"/>
+		<Include 
+			source = "DATA:NOD\Units\NODVenom.xml"
+			type = "instance"/>
+		<Include
+			source = "DATA:NOD\Structures\NODLaserCannon.xml"
+			type="instance"/>
+	</Includes>
+
+	<Defines>
+		<Define name="BATTLEBASE_REPAIR_DRONE_LEASH_DISTANCE_SP" value="225" />
+		<Define name="BATTLEBASE_REPAIR_DRONE_DECAL_MARGIN_SP" value="65" />
+		<Define name="BATTLEBASE_REPAIR_DRONE_HOME_DECAL_SIZE_SP" value="= ( $BATTLEBASE_REPAIR_DRONE_LEASH_DISTANCE_SP * 2 ) + $BATTLEBASE_REPAIR_DRONE_DECAL_MARGIN_SP" />
+	</Defines>
+
+	<ArmorTemplate
+		id="GDIRigArmor" inheritFrom="GDIRigArmor"
+		xai:joinAction="Replace"
+		SideDamageScalar="100"
+		RearDamageScalar="100">
+		<Armor
+			Damage="CANNON"
+			Percent="80" />
+		<Armor
+			Damage="ROCKET"
+			Percent="60" />
+		<Armor
+			Damage="GRENADE"
+			Percent="20" />
+		<Armor
+			Damage="GUN"
+			Percent="20" />
+		<Armor
+			Damage="SNIPER"
+			Percent="1" />
+	</ArmorTemplate>
+
+	<ArmorTemplate
+		id="GDIBattleBaseArmor" inheritFrom="GDIBattleBaseArmor"
+		xai:joinAction="Replace">
+		<Armor
+			Damage="CANNON"
+			Percent="80" />
+		<Armor
+			Damage="ROCKET"
+			Percent="20" />
+		<Armor
+			Damage="GRENADE"
+			Percent="80" />
+		<Armor
+			Damage="GUN"
+			Percent="20" />
+		<Armor
+			Damage="SNIPER"
+			Percent="1" />
+	</ArmorTemplate>
+
+	<GameObject
+		id = "GDIV35Ox_Summoned" inheritFrom="GDIV35Ox_Summoned">
+		<Behaviors>
+			<HordeTransportContain
+				id = "ModuleTag_Contain"
+				ContainMax = "6"
+				Slots = "6" />
+		</Behaviors>	
+	</GameObject>
+
+	<GameObject
+		id = "GDISurveyor" inheritFrom="GDISurveyor">
+		<LocomotorSet
+			Locomotor="GDISurveyorLocomotor"
+			Condition="NORMAL"
+			Speed="100.0" />
+	</GameObject>
+
+	<GameObject
+		id = "GDIFireHawk" inheritFrom="GDIFireHawk">
+		<GameDependency xai:joinAction="Replace">
+			<RequiredObject>GDIAirTower</RequiredObject>
+		</GameDependency>
+	</GameObject>
+
+	<GameObject
+		id = "GDIBattleBaseRepairDrone" inheritFrom="GDIBattleBaseRepairDrone">
+		<Behaviors>
+			<PassiveAreaEffectBehavior
+				id="ModuleTag_PassiveAreaEffect"
+				HealingPercentPerSecond="15"
+				AffectUnderAttack="true">
+			</PassiveAreaEffectBehavior>
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Range="=$BATTLEBASE_REPAIR_DRONE_LEASH_DISTANCE_SP"
+				Flags="UNCONTAINED_ONLY SAME_PLAYER_ONLY" 
+				InitialAttachDelay="0.5s">
+			</AttachUpdate>
+		</Behaviors>	
+	</GameObject>
+
+	<GameObject
+		id = "GDIBattleBase" inheritFrom="GDIBattleBase">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Selected_Repair_Decal"
+				xai:joinAction="Replace"
+				OkToChangeModelColor="true"
+				UseStandardModelNames="true"
+				StaticModelLODMode="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$BATTLEBASE_REPAIR_DRONE_HOME_DECAL_SIZE_SP"
+						SizeY="=$BATTLEBASE_REPAIR_DRONE_HOME_DECAL_SIZE_SP"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Rig_CO" 
+					/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+	</GameObject>
+
+	<GameObject
+		id = "NODVenom" inheritFrom="NODVenom"
+		BuildTime="30">
+	</GameObject>
+
+	<GameObject id="NODLaserCannon" inheritFrom="NODLaserCannon">
+		<Behaviors>
+			<GatherSlavesUpdate
+				id="ModuleTag_GatherSlaves"
+				xai:joinAction="Replace"
+				SlaveTemplate="NODLaserCannonSpawn"
+				Radius="380.0"
+				Amount="3" />
+		</Behaviors>
+	</GameObject>
+
+	<MissionObjectiveList id="MissionObjectives">
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_3_3_Objective_1"
+			Description="SCRIPT:GDI_3_3_Objective_1_Detail" >
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_1"
+				Dialog = "MG33_GDIEVA16"
+				UseDynamicZoom = "false">
+				<CameraStartAngle>25d</CameraStartAngle>
+				<CameraEndAngle>35d</CameraEndAngle>
+				<CameraFieldOfView>65d</CameraFieldOfView>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_3_3_Objective_2"
+			Description="SCRIPT:GDI_3_3_Objective_2_Detail" >
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_2"
+				Dialog = "MG33_GDIEVA17"
+				UseDynamicZoom = "false">
+				<CameraStartAngle>65d</CameraStartAngle>
+				<CameraEndAngle>75d</CameraEndAngle>
+				<CameraFieldOfView>45d</CameraFieldOfView>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_3_3_Objective_3"
+			Description="SCRIPT:GDI_3_3_Objective_3_Detail" >
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_3_A"
+				Dialog = "MG33_GDIEVA18">
+				<Duration>3s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_3_B">
+				<Duration>3s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_3_C">
+				<Duration>3s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_3_3_Objective_4"
+			Description="SCRIPT:GDI_3_3_Objective_4_Detail" >
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_4"
+				Dialog = "MG33_GDIEVA19"
+				UseDynamicZoom = "false">
+				<Duration>10s</Duration>				
+				<CameraStartAngle>280d</CameraStartAngle>
+				<CameraEndAngle>290d</CameraEndAngle>
+				<CameraFieldOfView>55d</CameraFieldOfView>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_3_3_Objective_5"
+			Description="SCRIPT:GDI_3_3_Objective_5_Detail" >
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_5_A"
+				Dialog = "MG33_GDIEVA20"
+				UseDynamicZoom = "false">
+				<Duration>2s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+				<CameraFieldOfView>55d</CameraFieldOfView>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_5_B"
+				UseDynamicZoom = "false">
+				<Duration>2s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_5_C"
+				UseDynamicZoom = "false">
+				<Duration>2s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_5_D"
+				UseDynamicZoom = "false">
+				<Duration>2s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_5_E"
+				UseDynamicZoom = "false">
+				<Duration>2s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_3_3_Objective_5_F"
+				UseDynamicZoom = "false">
+				<Duration>2s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:GDI_3_3_Bonus_Objective_1"
+			Description="SCRIPT:GDI_3_3_Bonus_Objective_1_Detail" >
+			<PresentationSettings
+				ID = "GDI_3_3_Bonus_Objective_1_A"
+				Dialog = "MG33_GDIEVA10"
+				UseDynamicZoom = "false">
+				<Duration>2s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_3_3_Bonus_Objective_1_B"
+				UseDynamicZoom = "false">
+				<Duration>2s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_3_3_Bonus_Objective_1_C"
+				UseDynamicZoom = "false">
+				<Duration>2s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_3_3_Bonus_Objective_1_D"
+				UseDynamicZoom = "false">
+				<Duration>2s</Duration>
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:GDI_3_3_Bonus_Objective_2"
+			Description="SCRIPT:GDI_3_3_Bonus_Objective_2_Detail" >
+			<PresentationSettings
+				ID = "GDI_3_3_Bonus_Objective_2"
+				Dialog = "MG33_GDIEVA22">
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:GDI_3_3_Bonus_Objective_3"
+			Description="SCRIPT:GDI_3_3_Bonus_Objective_3_Detail" >
+			<PresentationSettings
+				ID = "GDI_3_3_Bonus_Objective_3"
+				Dialog = "MG33_GDIEVA23">
+				<CameraStartAngle>0d</CameraStartAngle>
+				<CameraEndAngle>10d</CameraEndAngle>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:GDI_3_3_Bonus_Objective_5"
+			Description="SCRIPT:GDI_3_3_Bonus_Objective_5_Detail" >
+			<PresentationSettings
+				ID = "GDI_3_3_Bonus_Objective_5"
+				Dialog = "MG33_GDIEVA44">
+				<CameraStartAngle>230d</CameraStartAngle>
+				<CameraEndAngle>240d</CameraEndAngle>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+	</MissionObjectiveList>
+  
+  <!-- Start in Explore mode; timeout of zero -->
+  <MusicScriptConditionNugget_TimeFromStartOfLevel
+		id="MusicScriptCondition_ExploreCheckTime"
+		Timeout="-1s" />
+
+</AssetDeclaration>

@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+    <Include type="instance" source="DATA:SkirmishAI\States\JapanFleetCommandStates.xml" />
+  </Includes>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_Defend_Harbors"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - FLAG - Phase 3"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_1" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Harbor_2" Priority="10"/>
+    <Tactic id="Defend" Tactic="StaticDefense" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="5" MaxUnits="9" 
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="AIR WATER AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="true"
+                    MicroManager="J04_DefenseMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_J04_Defend_Statues"
+    MaxTargets="3">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_3_Unique" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_2_Unique" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Statue_1_Unique" Priority="10"/>
+    <Tactic id="Defend" Tactic="StaticDefense" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="5" MaxUnits="13" 
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="LAND AIR AMPHIBIOUS"
+                    Priority="DEFENSE_HIGH"
+                    AlwaysRecruit="true"
+                    MicroManager="J04_DefenseMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_Aggressive_Land"
+    MaxTargets="2">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="5"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="6"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="LAND AIR AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_Aggressive_Water"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Allied02/Allied02 - FLAG - Phase 2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristic" Priority="5"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="6"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="AIR AMPHIBIOUS WATER"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_J04_Aggressive_Water_End"
+		MaxTargets="1">
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - End Game"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristicAllEnemies" Priority="5"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+			<TeamTemplate MinUnits="6"
+										IncludeKindOf="CAN_ATTACK"
+										ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+										AllowedLocomotorTypes="AIR AMPHIBIOUS WATER"
+										Priority="HIGH"
+										AlwaysRecruit="true"
+										MicroManager="FearlessMicroManager"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_BaseDefenseEggs_3-4"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/Player_2 - FLAG - HS - Obj3-4"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_HotSpot_Statue4"/>
+    <Tactic id="Attack" Tactic="SimpleExpansion" Distance="100">
+      <TeamTemplate MinUnits="1" MaxUnits="1" 
+      							IncludeKindOf="EGG UNPACKS_INTO_BUILDING FS_BASE_DEFENSE"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="LAND AIR AMPHIBIOUS WATER"
+                    Priority="HOTSPOT"
+                    AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager">
+        <CreateUnits UnitName="JapanBaseDefenseEgg"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_BaseDefenseEggs_3-5"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/Player_2 - FLAG - HS - Obj3-5"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_HotSpot_Statue5"/>
+    <Tactic id="Attack" Tactic="SimpleExpansion" Distance="100">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+      							IncludeKindOf="EGG UNPACKS_INTO_BUILDING FS_BASE_DEFENSE"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="LAND AIR AMPHIBIOUS WATER"
+                    Priority="HOTSPOT"
+                    AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager">
+        <CreateUnits UnitName="JapanBaseDefenseEgg"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_J04_JapanEggUnpacker"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - Unpack Normally"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BuildingPlacementHeuristic"/>
+    <Tactic
+				id="BuildEggUnpacker"
+				Tactic="SimpleExpansion">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+										IncludeKindOf="UNPACKS_INTO_BUILDING"
+										ExcludeKindOf="HARVESTER"
+                    Priority="STANDARD" AlwaysRecruit="false"
+										MicroManager="StandardMicroManager" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_Unpack_Barracks"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - Unpack Barracks"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Unpack_Barracks"/>
+    <Tactic
+				id="BuildEggUnpacker"
+				Tactic="SimpleExpansion"
+				Distance="100"
+        EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+										IncludeKindOf="EGG UNPACKS_INTO_BUILDING"
+										ExcludeKindOf="MCV FS_BASE_DEFENSE HARVESTER"
+                    Priority="HIGH" AlwaysRecruit="false"
+										MicroManager="StandardMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>JapanBarracksEgg</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_Unpack_WarFactory"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - Unpack WarFactory"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Unpack_WarFactory"/>
+    <Tactic
+				id="BuildEggUnpacker"
+				Tactic="SimpleExpansion"
+				Distance="100"
+        EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+										IncludeKindOf="EGG UNPACKS_INTO_BUILDING"
+										ExcludeKindOf="MCV FS_BASE_DEFENSE HARVESTER"
+                    Priority="HIGH" AlwaysRecruit="false"
+										MicroManager="StandardMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>JapanWarFactoryEgg</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_Unpack_NavalYard"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - Unpack Naval Yard"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J04_Unpack_NavalYard"/>
+    <Tactic
+				id="BuildEggUnpacker"
+				Tactic="SimpleExpansion"
+        EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+										IncludeKindOf="EGG UNPACKS_INTO_BUILDING"
+										ExcludeKindOf="MCV FS_BASE_DEFENSE HARVESTER"
+                    Priority="HIGH" AlwaysRecruit="false"
+										MicroManager="StandardMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>JapanNavalYardEgg</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J04_Unpack_MCV"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="15s" EndTime="45s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BuildingPlacementHeuristic"/>
+    <Tactic
+				id="BuildEggUnpacker"
+				Tactic="SimpleExpansion"
+				Distance="100"
+        EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+										IncludeKindOf="UNPACKS_INTO_BUILDING MCV"
+										ExcludeKindOf="EGG FS_BASE_DEFENSE HARVESTER"
+                    Priority="HIGH" AlwaysRecruit="false"
+										MicroManager="StandardMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+</AssetDeclaration>
+
+

@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<!-- NOD Gideon's (Defense) Crawler, Vehicle Mode -->
+	<!-- local model conditions (in nodcrawleracommonmodules.xml include)
+		USER_1: tech2
+		USER_2: tech3
+		-->
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:NUX_CRAWLERA_SKN.w3x" />
+		<Include type="all" source="ART:NUX_CRAWLERA_IDLA.w3x" />
+		<Include type="all" source="ART:NUX_CRAWLERA_IDLD.w3x" />
+		<Include type="all" source="ART:NUX_CRAWLERA_MOVA.w3x" />
+		<Include type="all" source="ART:NUX_CRAWLERA_MOVD.w3x" />
+		<Include type="all" source="ART:NUX_CRAWLERA_SPWN.w3x" />
+		<Include type="all" source="ART:NUX_CRAWLERA_DIGA.w3x" />
+		<Include type="all" source="ART:NUX_CRAWLERA_DPLY.w3x" />
+		<Include type="all" source="ART:NSX_CRAWLERA_SKN.w3x" />
+		<Include type="all"	source="ART:NSX_CRAWLERA_UT1.w3x" />
+		<Include type="all"	source="ART:NSX_CRAWLERA_UT2.w3x" />
+		<Include type="all" source="ART:NSX_CRAWLERA_UT3.w3x" />
+		<Include type="all" source="ART:NSX_CRAWLERA_UT3_CLSD.w3x" />
+		<Include type="all"	source="ART:NUX_CrawlerA_Gideon.xml" />
+		<Include type="all" source="ART:Decal_Rig_CO.xml" />
+		<Include type="all" source="ART:FXInvisBone.w3x" />
+		<Include type="all" source="ART:Decal_Sensor_CO.xml" />
+		<Include type="all" source="ART:FXShieldNODCrawler.w3x" />
+		<Include type="all" source="ART:FXShieldNODCrawlerUpgrade.w3x" />
+
+		<!-- for burrowing -->
+		<Include type="all" source="ART:NOD_CrawlerBurrowingPod_SKN.w3x" />
+		<Include type="all" source="ART:NOD_CrawlerBurrowingPod_MOVA.w3x" />
+		
+		<Include type="instance" source="ART:FXAlienMuzzleOrange.xml" />
+		<Include type="instance" source="ART:FXEnergyBeam.xml" />
+
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/Locomotor.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseCrawlerVehicle.xml" />
+		<Include type="instance" source="DATA:Nod/MapSpecific/NODGideonsCrawler.xml" />
+
+	</Includes>
+	<Defines>
+		<Define
+			name="NODGIDEONSCRAWLER_VEHICLE_DAMAGE_BONE_NAMES"
+			value="
+				BONE_CONTACT_POINT_01
+				BONE_CONTACT_POINT_02
+				BONE_CONTACT_POINT_03
+				BONE_CONTACT_POINT_04
+				BONE_CONTACT_POINT_05
+				BONE_CONTACT_POINT_06
+				BONE_CONTACT_POINT_07
+				BONE_CONTACT_POINT_08
+				BONE_CONTACT_POINT_09
+				BONE_CONTACT_POINT_10
+				BONE_CONTACT_POINT_11
+				BONE_CONTACT_POINT_12
+				BONE_CONTACT_POINT_13
+				BONE_CONTACT_POINT_14
+				BONE_CONTACT_POINT_15
+				BONE_CONTACT_POINT_16
+				BONE_CONTACT_POINT_17
+				BONE_CONTACT_POINT_18
+				BONE_CONTACT_POINT_19
+				BONE_CONTACT_POINT_20
+				BONE_CONTACT_POINT_21
+"/>
+	</Defines>
+	<GameObject
+		id="NODGideonsCrawlerVehicle"
+		inheritFrom="BaseCrawlerVehicle"
+		CommandSet="NODGideonsCrawlerVehicleCommandSet"
+		Description="Desc:NODGideonsCrawler"
+		TypeDescription="Type:NODGideonsCrawler"
+		SelectPortrait="Portrait_NOD_Crawler_A_vhcl_tech1"
+		ButtonImage="Btn_NOD_Crawler_A_vhcl_tech1"
+		Side="NOD"
+		ParticipationValue="=$NODCRAWLERA_PARTICIPATION_VALUE"
+		HealthBoxHeightOffset="40"
+		HealthBar="Large"
+		SubGroupPriority="31"
+		EditorName="NODGideonsCrawlerVehicle"
+		EditorSorting="CAMPAIGN_UNITS">
+		<DisplayName>Name:NODGideonsCrawler</DisplayName>
+		
+		<!-- Override base armor -->
+		<ArmorSet
+			id="BaseCrawlerVehicle_Armor"
+			Armor="NODGideonsCrawlerArmor"
+			DamageFX="VehicleDamageFX" />
+		
+		<LocomotorSet
+			Locomotor="CrawlerVehicleLocomotor"
+			Condition="NORMAL"
+			Speed="60.0" />
+
+		<!-- The speed is modified by Modifier_BurrowingVehicle, so leave it equal to its normal locomotor speed here -->
+		<LocomotorSet
+			id="NODGideonsCrawlerBurrowingLocomotor"
+			Locomotor="NODGideonsCrawlerBurrowingLocomotor"
+			Condition="BURROWING"
+			Speed="60.0" />
+		
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_MainDraw"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="TireLR_03"
+				TrackMarksRightBone="TireRR_03"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="=$NODGIDEONSCRAWLER_VEHICLE_DAMAGE_BONE_NAMES"
+				Options="RENDER_BUFF_EFFECTS">
+
+				<TireBoneGroup
+					TireGroupSettings="FRONT"
+					LeftTireBone="TireLF_01"
+					RightTireBone="TireRF_01"
+					WheelTurnAngle="18d"/>
+				<TireBoneGroup
+					TireGroupSettings="FRONT"
+					LeftTireBone="TireLF_02"
+					RightTireBone="TireRF_02"/>
+				<TireBoneGroup
+					TireGroupSettings="FRONT"
+					LeftTireBone="TireLF_03"
+					RightTireBone="TireRF_03"/>
+
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="TireLR_01"
+					RightTireBone="TireRR_01"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="TireLR_02"
+					RightTireBone="TireRR_02"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="TireLR_03"
+					RightTireBone="TireRR_03"/>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUX_CRAWLERA_SKN" />
+					<Texture
+						Original="NUX_CrawlerA"
+						New="NUX_CrawlerA_Gideon"/>
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CRAWLER_TRANSITION_1">
+					<Model
+						Name="NSX_CRAWLERA_SKN" />
+					<Texture
+						Original="NUX_CrawlerA"
+						New="NUX_CrawlerA_Gideon"/>
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NUX_CRAWLERA_SKN" />
+					<Texture
+						Original="NUX_CrawlerA"
+						New="NUX_CrawlerA_Gideon"/>
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUX_CRAWLERA_SKN" />
+					<Texture
+						Original="NUX_CrawlerA"
+						New="NUX_CrawlerA_Gideon"/>
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODDamagedFire"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NUX_CRAWLERA_IDLA"
+						AnimationBlendTime="0"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NUX_CRAWLERA_MOVD"
+						AnimationMode="LOOP"
+						Distance="65" />
+					<ParticleSysBone
+						BoneName="TireRF_01"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="TireLF_01"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="TireRR_01"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="TireLR_01"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NUX_CRAWLERA_MOVA"
+						AnimationMode="LOOP"
+						Distance="65" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODWheelDustHeavy"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="TireRF_01"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="TireLF_01"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="TireRR_01"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="TireLR_01"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+				</AnimationState>
+
+				<!-- crawler packup, phase 1 -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CRAWLER_TRANSITION_1"
+					Flags="MAINTAIN_FRAME_ACROSS_STATES START_FRAME_LAST">
+					<Animation
+						AnimationName="NSX_CrawlerA_UT3_CLSD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationSpeedFactorMin="1.0"
+						AnimationSpeedFactorMax="1.0"/>
+					<!-- UNBURROWING -->
+					<FXEvent
+						Frame="90"
+						FireWhenSkipped="true"
+						Effect="FX_NOD_BurrowC_Large"
+						Bone="" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CRAWLER_TRANSITION_2"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NUX_CRAWLERA_DPLY"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationBlendTime="0" />
+					<!-- UNBURROWING -->
+					<FXEvent
+						Frame="25"
+						FireWhenSkipped="true"
+						Effect="FX_NOD_Burrow_Large"
+						Bone="" />
+				</AnimationState>
+
+				<!-- prevents animations during burrowed-to-surfaced transition -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING BURROWING">
+					<Animation
+						AnimationName="NUX_CRAWLERA_IDLA"
+						AnimationBlendTime="0"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BURROWING BURROWING_TRANSITION">
+					<Animation
+						AnimationName="NUX_CRAWLERA_IDLD"
+						AnimationBlendTime="0"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				
+				<!-- BURROWING -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName="NUX_CRAWLERA_DIGA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<FXEvent
+						Frame="14"
+						FireWhenSkipped="true"
+						Effect="FX_NOD_BurrowDeploy"
+						Bone="" />
+				</AnimationState>
+				
+				<!-- UNBURROWING -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BURROWING_TRANSITION">
+					<Animation
+						AnimationName="NUX_CRAWLERA_SPWN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_NOD_BurrowDeploy"
+						Bone="" />
+				</AnimationState>
+			
+			</TruckDraw>
+
+			<!-- Burrowing Pod Draw Module -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="" 
+				Options="IGNORE_FLASH_SHADER">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CRAWLER_TRANSITION_2">
+					<Model
+						Name="" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CRAWLER_TRANSITION_1">
+					<Model
+						Name="" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BURROWING BURROWING_TRANSITION">
+					<Model
+						Name="" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING BURROWING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BURROWING_TRANSITION">
+					<Model
+						Name="NOD_CrawlerBurrowingPod_SKN" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="DropPodSteam"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Model
+						Name="NOD_CrawlerBurrowingPod_SKN" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="DropPodSteam"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+
+				<!-- BURROWING (UNPACKING is set during ability unpack time )-->
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CRAWLER_TRANSITION_2">
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CRAWLER_TRANSITION_1">
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NOD_CrawlerBurrowingPod_MOVA"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationSpeedFactorMin="1.3"
+						AnimationSpeedFactorMax="1.3"
+						AnimationBlendTime="0" />
+					<FXEvent
+						Frame="30"
+						FireWhenSkipped="true"
+						Effect="FX_NOD_Burrow_Large"
+						Bone="" />					
+				</AnimationState>				
+
+				<!-- UNBURROWING -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BURROWING_TRANSITION">
+					<Animation
+						AnimationName="NOD_CrawlerBurrowingPod_MOVA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_NOD_Burrow_Large"
+						Bone="" />
+				</AnimationState>
+			</ScriptedModelDraw>		
+			
+			<!-- temporary decal to represent bubble -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawDecal"
+				OkToChangeModelColor="true"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPHERE_MODULE_ACTIVE">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$NOD_CRAWLER_A_SHIELD_DECAL_SIZE + 50 "
+						SizeY="=$NOD_CRAWLER_A_SHIELD_DECAL_SIZE + 50 "
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			
+			<!-- Shield Geometry -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawShield"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name=""/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPHERE_MODULE_ACTIVE">
+					<Model Name="FXShieldNODCrawlerUpgrade"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Behaviors>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GideonCrawlerFunctions"/>
+		
+			<!-- Statis Field ability -->
+			<SpecialPower
+				id="ModuleTag_StatisFieldPower"
+				SpecialPowerTemplate="SpecialPower_NODGideonsCrawler_StatisField"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="NODGideonsCrawlerStasisFieldAbilitySpecialPowerObjectFilter" />
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_StatisFieldPowerUpdate"
+				SpecialPowerTemplate="SpecialPower_NODGideonsCrawler_StatisField"
+				SpecialWeapon="NODGideonsCrawlerStasisFieldWeapon"
+				UnpackTime="0.1s"
+				UnpackSound="NOD_Basilisk_AirN_StasisWeaponFire"
+				PackTime="0.6s"
+				StartAbilityRange="375.0"
+				BusyForDuration="1.0s"
+				StartRechargeOnExit="true" />
+
+			<!-- burrowing -->
+			<InvisibilityBehavior
+				id="ModuleTag_Invisibility"
+				InvisibilityTemplate="NODVehicleBurrowInvisibilityTemplate" />
+			
+			<!-- Burrow ability -->
+			<SpecialPower
+				id="ModuleTag_ToggleBurrowingTrigger"
+				SpecialPowerTemplate="SpecialPower_NODGideonsCrawlerBurrow"/>			
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleBurrowing"
+				SpecialPowerTemplate="SpecialPower_NODGideonsCrawlerBurrow"
+				UnpackTime="4.0s"
+				Options="BUSY_DURING_UNPACK"
+				TriggerAttributeModifier="AttributeModifier_BurrowToggle_Transformation"
+				AttributeModifierDuration="=$BURROW_TRANSITION_TIME">
+				<ToggleState
+					LocomotorSet="NORMAL"
+					ModelConditions="USER_3"
+					InitiateIntentToExitStateSound="Burrow_VehicleMS">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_DEFAULT">
+					</SkirmishAiInfo>
+				</ToggleState>
+				<ToggleState
+					LocomotorSet="BURROWING"
+					AttributeModifier="Modifier_BurrowingVehicle"
+					InitiateIntentToExitStateSound="UnBurrow_VehicleMS">
+					<ObjectStatusValidation
+						ForbiddenStatus="STEALTH_AND_BURROW_FORBIDDEN" />
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_UNIT_BURROW">
+					</SkirmishAiInfo>
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+
+			<!-- Unpack Modules -->
+			<ReplaceSelfSpecialAbility
+				id="ModuleTag_CrawlerUnpackUpdate"
+				NewObjectUnpackTime="=$NOD_DEFENSE_CRAWLER_DEPLOY_DISABLE_TIME">
+				<ReplacementTemplate>NODGideonsCrawlerStructure</ReplacementTemplate>
+			</ReplaceSelfSpecialAbility>
+			<ReplaceSelfSpecialAbility
+				id="ModuleTag_CrawlerImmediateUnpackUpdate"
+				NewObjectUnpackTime="=$NOD_DEFENSE_CRAWLER_DEPLOY_DISABLE_TIME">
+				<ReplacementTemplate>NODGideonsCrawlerStructure</ReplacementTemplate>
+			</ReplaceSelfSpecialAbility>
+			<!-- make sure this comes before the BuildingDestructionBehavior -->
+			<SpecialModelConditionReplaceOfotherBehavior
+				id="ModuleTag_SpecialModelConditions">
+				<ModelCondition ModelCondition="CRAWLER_TRANSITION_1" Duration="1s"/>
+				<ModelCondition ModelCondition="CRAWLER_TRANSITION_2" Duration="2s"/>
+			</SpecialModelConditionReplaceOfotherBehavior>
+
+			<!-- Shield Modules -->
+			<ShieldSphereUpdate
+				id="ModuleTag_ShieldSphereUpdate"
+				SphereModuleOptions="INCLUDE_SELF"
+				Options="ALLOW_ALLIES_PROJECTILE_GOTHROUGH ABSORB_ALL_DAMAGE_ON_KILLING_BLOW"
+				RadiusMin="=$NOD_CRAWLER_A_SHIELD_RADIUS"
+				RadiusMax="=$NOD_CRAWLER_A_SHIELD_RADIUS"
+				ScanFrequency="2s"
+				MaxDamage="2000"
+				DamageChangePerSecond="-5"
+				DamageTypesToAbsorb="LASER CANNON GUN BLAST ROCKET"
+				ShieldRegenerateThresholdPercent="90%">
+				<ObjectFilter
+					Rule="ALL"/>
+			</ShieldSphereUpdate>
+			<ShieldSphereUpgrade
+				id="ModuleTag_ShieldSphereUpgrade">
+				<TriggeredBy>Upgrade_NODGideonsCrawlerShield</TriggeredBy>
+			</ShieldSphereUpgrade>			
+
+			<AttributeModifierUpgrade
+				id="ModuleTag_NODGideonsCrawlerEnhancedRepair"
+				AttributeModifier="AttributeModifier_NODGideonsCrawlerEnhancedRepair">
+				<TriggeredBy>Upgrade_NODDefenseEnhancedRepair</TriggeredBy>
+			</AttributeModifierUpgrade>			
+			
+			<SlowDeath
+				id="ModuleTag_VehicleDeath"
+				SinkDelay="0.0s"
+				SinkRate="0.0"
+				DestructionDelay="0.0s">
+				<OCL
+					Type="FINAL">
+					<OCL>NODGideonsCrawlerVehicle_Die_OCL</OCL>
+				</OCL>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_VehicleFXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODCrawler_Death" />
+				<Event Index="onDeath" FX="FX_GDI_CrawlerBVehicle_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<!-- make sure this comes after the SpecialModelConditionReplaceOfotherBehavior -->
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				AssociatedModule="ModuleTag_MainDraw"
+				PreventBoneUpdateModelConditionFlag="CRAWLER_TRANSITION_1"
+				BoneOpacitySourceDrawModule="ModuleTag_MainDrawModule">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="175.0"
+					FX="FX_GDIVehicleL_Damage">
+					<!-- 1 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_01</BoneName>
+					</NamedBoneInfo>
+					<!-- 2 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_02</BoneName>
+						<BoneName>bone_contact_point_11</BoneName>
+					</NamedBoneInfo>
+					<!-- 3 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_03</BoneName>
+					</NamedBoneInfo>
+					<!-- 4 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_04</BoneName>
+					</NamedBoneInfo>
+					<!-- 5 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_05</BoneName>
+					</NamedBoneInfo>
+					<!-- 6 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_06</BoneName>
+						<BoneName>bone_contact_point_26</BoneName>
+						<BoneName>bone_contact_point_27</BoneName>
+					</NamedBoneInfo>
+					<!-- 7 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_07</BoneName>
+					</NamedBoneInfo>
+					<!-- 8 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_08</BoneName>
+						<BoneName>bone_contact_point_18</BoneName>
+						<BoneName>bone_contact_point_31</BoneName>
+					</NamedBoneInfo>
+					<!-- 9 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_09</BoneName>
+					</NamedBoneInfo>
+					<!-- 10 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_10</BoneName>
+					</NamedBoneInfo>
+					<!-- 11 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_12</BoneName>
+						<BoneName>bone_contact_point_13</BoneName>
+						<BoneName>bone_contact_point_14</BoneName>
+						<BoneName>bone_contact_point_15</BoneName>
+						<BoneName>bone_contact_point_24</BoneName>
+					</NamedBoneInfo>
+					<!-- 12 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_16</BoneName>
+					</NamedBoneInfo>
+					<!-- 13 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_17</BoneName>
+					</NamedBoneInfo>
+					<!-- 14 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_19</BoneName>
+					</NamedBoneInfo>
+					<!-- 15 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_20</BoneName>
+						<BoneName>bone_contact_point_29</BoneName>
+					</NamedBoneInfo>
+					<!-- 16 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_28</BoneName>
+					</NamedBoneInfo>
+					<!-- 17 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_30</BoneName>
+					</NamedBoneInfo>
+				</Item>
+			</BuildingDestructionBehavior>
+
+			<xi:include
+				href="DATA:Includes/GenericReflectedWeaponTracker.xml" />
+
+			<xi:include
+				href="DATA:Includes/DefenseCrawlerCommonModules.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:Behaviors/child::*)" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI">
+				<UnitAITargetChooserData
+					SympathyRange="200.0" />
+			</AIUpdate>
+		</AI>		
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="15000" />
+		</Body>
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="Nod_CrawlerExhumePod_High1" Animation="NOD_CrawlerBurrowingPod_MOVA" Frame="5"/>
+				<Sound Sound="Nod_CrawlerExhumePod_Low1" Animation="NOD_CrawlerBurrowingPod_MOVA" Frame="1"/>
+				<Sound Sound="Nod_CrawlerExhumePod_High2" Animation="NOD_CrawlerBurrowingPod_MOVA" Frame="42"/>
+				<Sound Sound="Nod_CrawlerExhumePod_Low2" Animation="NOD_CrawlerBurrowingPod_MOVA" Frame="56"/>
+			</AnimationSoundClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_NOD_CrawlerADefenseUndeploy">
+				<ModelConditionSound Sound="NOD_CrawlerADefense_UndeployMS" RequiredFlags="UNPACKING" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ShieldLoop">
+				<ModelConditionSound Sound="NOD_CrawlerADefense_ShieldLoopMS" RequiredFlags="SPHERE_MODULE_ACTIVE" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_UpgradeTier1">
+				<ModelConditionSound Sound="GDI_CrawlerAVehicle_UpgradeTier2" RequiredFlags="USER_1" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_UpgradeTier2">
+				<ModelConditionSound Sound="GDI_CrawlerAVehicle_UpgradeTier2" RequiredFlags="USER_2" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionSoundSelectorClientBehavior
+			id="ModuleTag_HiJackedSounds">
+				<Override
+					RequiredFlags="REALLYDAMAGED" 
+					ExcludedFlags="HIJACKED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="NOD_CrawlerADefense_VoiceHelpMe" AudioType="voiceSelect" />
+					</AudioArrayVoice>
+				</Override>
+				<Override
+					ExcludedFlags="HIJACKED">
+					<AudioArrayVoice>
+					<!-- Triggered when created by being packed from a ConYard -->
+						<AudioEntry Sound="NOD_CrawlerADefense_VoiceSelectMS" AudioType="voiceCreated" />
+						<AudioEntry Sound="NOD_CrawlerADefense_VoiceAttack" AudioType="voiceAttack" />
+						<AudioEntry Sound="NOD_CrawlerADefense_VoiceHelpMe" AudioType="voiceFear" />
+						<AudioEntry Sound="NOD_CrawlerADefense_VoiceRetreat" AudioType="voiceRetreatToCastle" />
+						<AudioEntry Sound="NOD_CrawlerADefense_VoiceMove" AudioType="voiceGuard" />
+						<AudioEntry Sound="NOD_CrawlerADefense_VoiceMove" AudioType="voiceMove" />
+						<AudioEntry Sound="NOD_CrawlerADefense_VoiceMoveAttack" AudioType="voiceAttackAfterMoving" />
+						<AudioEntry Sound="NOD_CrawlerADefense_VoiceSelectMS" AudioType="voiceSelect" />
+						<AudioEntry Sound="NOD_CrawlerADefense_VoiceSelectBattleMS" AudioType="voiceSelectBattle" />
+						<AudioEntry Sound="NOD_CrawlerADefense_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" />
+						<NamedEntry Sound="NOD_CrawlerADefense_VoiceDeploy" Name="VoiceDeploy" />
+						<NamedEntry Sound="NOD_CrawlerADefense_ImmediateVoiceDeploy" Name="ImmediateVoiceDeploy" />
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+		<Geometry>
+			<!-- Do not exceed 42 for any side to stay within 6x6 pathfind footprint -->
+			<Shape
+				Type="BOX"
+				MajorRadius="42.0"
+				MinorRadius="42.0"
+				Height="65.0"
+				ContactPointGeneration="VEHICLE"/>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry 
+				Sound="Fire1_VehicleLarge_LoopMS" 
+				AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry
+				Sound="NOD_CrawlerADefense_MoveStart"
+				AudioType="soundMoveStart" />
+			<AudioEntry
+				Sound="NOD_CrawlerADefense_IdleLoop"
+				AudioType="soundAmbient" />
+			<AudioEntry
+				Sound="NOD_CrawlerADefense_MoveLoopMS"
+				AudioType="soundMoveLoop" />
+			<AudioEntry
+				Sound="GDI_VehicleL_DamagedMoveLoop"
+				AudioType="soundMoveLoopDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="=$CRAWLER_VISION_RANGE"
+			ShroudClearingRange="=$NOD_DEFENSE_CRAWLER_SHROUD_CLEARING_RANGE" />
+		<DisplayUpgrade>Upgrade_NODDefenseEnhancedRepair</DisplayUpgrade>
+	</GameObject>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		LOGIC COMMANDS AND SETS			-->
+	<!-- //////////////////////////////////////	-->
+	
+	<LogicCommand
+		id="Command_NODGideonsCrawlerBurrow"
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPower_NODGideonsCrawlerBurrow</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo Heuristic="TOGGLE" />
+		</AISpecialPower>
+	</LogicCommand>	
+	
+	<LogicCommandSet
+		id="NODGideonsCrawlerVehicleCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+		<Cmd>Command_NODCrawlerImmediateUnpack</Cmd>
+		<!-- Commented out so other buttons appear <Cmd>Command_CrawlerUnpack</Cmd> -->
+		<Cmd>Command_NODGideonsCrawlerStasisFieldAbility</Cmd>
+		<Cmd>Command_NODGideonsCrawlerBurrow</Cmd>		
+	</LogicCommandSet>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		Burrowing						-->
+	<!-- //////////////////////////////////////	-->
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NODGideonsCrawlerBurrow"
+		ReloadTime="1s"
+		TargetType="NONE"
+		WaypointModeTerminal="false">
+	</SpecialPowerTemplate>	
+	
+	<LocomotorTemplate
+		id="NODGideonsCrawlerBurrowingLocomotor"
+		inheritFrom="CrawlerVehicleLocomotor"
+		Surfaces="GROUND CLIFF CRUSHABLE_OBSTACLE"
+		ActiveObjectStatus="BURROWING"
+		PreferredHeight="-70" />	
+	
+	
+	<!-- OCL -->
+	<ObjectCreationList
+		id="NODGideonsCrawlerVehicle_Die_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODCrawlerAVehicle_Collapse</ObjectTemplate>
+					<ObjectTemplate>NODDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectTemplate>NODDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset />
+					<ObjectOffset />
+					<ObjectOffset />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+</AssetDeclaration>

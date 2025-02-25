@@ -1,0 +1,887 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	
+	<!-- GDI Aircraft R / Stratospheric Transport / MISSION OBJECTIVE STRUCTURE VERSION (GDIAircraftR_B is the Aircraft Unit) -->
+	<!-- ModelCondition usage:
+		'USER_1' - initial damage state
+		'USER_2' - secondary damage state   
+		'USER_3' - tertiary damage state
+		'USER_4' - preparing to take off (for fx) (done in script)
+		'USER_5' - starting crane animation for repair (done in script)
+	-->
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+
+		<!-- ART -->
+		<Include type="all"	source="ART:GUX_AircraftR_SKN.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_AIDA.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_TKOF2.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_D1.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_D2.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_D3.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_D1_D0.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_D2_D1.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_D3-D2.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_D1_LOOP.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_D2_LOOP.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_D3_LOOP.w3x" />
+		
+		<Include type="all"	source="ART:GUX_AircraftR_Crane_SKN.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_Crane_IDLA.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_Crane_RPRA.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_Crane_STRT.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_Crane_STWA.w3x" />
+
+		<Include type="all"	source="ART:GUX_AircraftR_FX_IDLA.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_FX_STRT.w3x" />
+
+	</Includes>
+	<GameObject
+		id="GDIAircraftR"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		SelectPortrait="Portrait_GDI_Aircraft_R"
+		ButtonImage="Btn_GDI_Aircraft_R"
+		Side="GDI"
+		TransportSlotCount="0"
+		BuildTime="12"
+		CommandSet="GDIAircraftRCommandSet"
+		CommandPoints="0" 
+		KindOf="+ASSAULT_AIRCRAFT +NO_COLLIDE +LEAVE_PARKING_ON_BUILD_COMPLETE +STRUCTURE"
+		ThreatLevel="10"
+		WeaponCategory="MISSILE"
+		VoicePriority="148"
+		EditorName="GDIAircraftR"
+		Description="Desc:GDIAircraftR"
+		TypeDescription="Type:GDIAircraftR">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="900"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIAircraftR</DisplayName>
+		<ArmorSet
+			id="DefaultArmor"	 
+			Armor="HeavyArmor"
+			DamageFX="VehicleDamageFX" />
+		
+		<!-- <LocomotorSet
+			Locomotor="BasicHelicopterTaxiLocomotor"
+			Condition="TAXIING"
+			Speed="10" />
+		
+		<LocomotorSet
+			Locomotor="GDIAircraftRLocomotor"
+			Condition="NORMAL"
+			Speed="175.0" /> -->
+		
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			   
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 
+					BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 
+					BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 
+					BONE_CONTACT_POINT_13 
+					Frame04 Frame07 Frame11 Frame13 
+					Bone_Engine_Front_R Bone_Engine_Rear_R Bone_Engine_Front_L Bone_Engine_Rear_L EngineBlock 
+					FX_LRearEngine_FXBONE FX_LFrontEngine_FXBONE FX_RRearEngine_FXBONE FX_RFrontEngine_FXBONE
+					FX_RFrontEngineLight_FXBONE FX_RRearEngineLight_FXBONE FX_LFrontEngineLight_FXBONE FX_LRearEngineLight_FXBONE 
+					FX_RearEngineL_BONE FX_RearEngineR_BONE"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUX_AIRCRAFTR_SKN" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_IDLE">
+					<Animation
+						AnimationName="GUX_AIRCRAFTR_AIDA"
+						AnimationBlendTime="12"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_DamageLevel1" then
+						CurDrawableSetTransitionAnimState("TRANS_DamageLevel1_to_NoDamage")
+						end
+					</Script>
+				</AnimationState>
+
+				<!-- Takeoff -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4"
+					StateName="STATE_Takeoff">
+					<Animation
+						AnimationName="GUX_AircraftR_TKOF2"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="1.3"
+						AnimationSpeedFactorMax="1.3"  />
+					<ParticleSysBone
+						BoneName="FX_LRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_Burner"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_LRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_LRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_LRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight02"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_LRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_Embers"
+						FollowBone="true" />
+
+					<ParticleSysBone
+						BoneName="FX_LFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_Burner"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_LFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_LFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_LFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight02"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_LFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_Embers"
+						FollowBone="true" />
+
+					<ParticleSysBone
+						BoneName="FX_RRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_Burner"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight02"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_Embers"
+						FollowBone="true" />
+
+					<ParticleSysBone
+						BoneName="FX_RFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_Burner"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight02"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_Embers"
+						FollowBone="true" />
+					
+					<ParticleSysBone
+						BoneName="FX_RearEngineL_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_Burner"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineL_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineL_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineL_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight02"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineL_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_Embers"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineR_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_Burner"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineR_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineR_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineR_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight02"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineR_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_Embers"
+						FollowBone="true" />
+					
+					<ParticleSysBone
+						BoneName="Bone_Engine_Front_R"
+						FXParticleSystemTemplate="GDIAircraftR_TakeoffChunks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_Front_R"
+						FXParticleSystemTemplate="GDIAircraftR_TakeoffDust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_Rear_R"
+						FXParticleSystemTemplate="GDIAircraftR_TakeoffChunks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_Rear_R"
+						FXParticleSystemTemplate="GDIAircraftR_TakeoffDust"
+						FollowBone="true" />
+
+					<ParticleSysBone
+						BoneName="Bone_Engine_Front_L"
+						FXParticleSystemTemplate="GDIAircraftR_TakeoffChunks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_Front_L"
+						FXParticleSystemTemplate="GDIAircraftR_TakeoffDust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_Rear_L"
+						FXParticleSystemTemplate="GDIAircraftR_TakeoffChunks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_Rear_L"
+						FXParticleSystemTemplate="GDIAircraftR_TakeoffDust"
+						FollowBone="true" />
+
+					<ParticleSysBone
+						BoneName="EngineBlock"
+						FXParticleSystemTemplate="GDIAircraftR_TakeoffChunks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="EngineBlock"
+						FXParticleSystemTemplate="GDIAircraftR_TakeoffDust"
+						FollowBone="true" />
+				</AnimationState>
+				
+				<!-- Vehicle damage levels -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_3"
+					StateName="STATE_DamageLevel3">
+					<Animation
+						AnimationName="GUX_AircraftR_D3_LOOP"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_DamageLevel2" then
+						CurDrawableSetTransitionAnimState("TRANS_DamageLevel2_to_DamageLevel3")
+						end
+					</Script>
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_DamageSmall"
+						Bone="FX_LRearEngineLight_FXBONE" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_DamageSmall"
+						Bone="FX_RFrontEngineLight_FXBONE" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_Damage"
+						Bone="Frame07" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_DamageSmall"
+						Bone="Frame11" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_DamageSmall"
+						Bone="Frame04" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_Damage"
+						Bone="Frame13" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2"
+					StateName="STATE_DamageLevel2">
+					<Animation
+						AnimationName="GUX_AircraftR_D2_LOOP"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_DamageLevel1" then
+						CurDrawableSetTransitionAnimState("TRANS_DamageLevel1_to_DamageLevel2")
+						end
+						if Prev == "STATE_DamageLevel3" then
+						CurDrawableSetTransitionAnimState("TRANS_DamageLevel3_to_DamageLevel2")
+						end
+					</Script>
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_Damage"
+						Bone="Frame07" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_DamageSmall"
+						Bone="Frame11" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="STATE_DamageLevel1">
+					<Animation
+						AnimationName="GUX_AircraftR_D1_LOOP"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_IDLE" then
+						CurDrawableSetTransitionAnimState("TRANS_NoDamage_to_DamageLevel1")
+						end
+						if Prev == "STATE_DamageLevel2" then
+						CurDrawableSetTransitionAnimState("TRANS_DamageLevel2_to_DamageLevel1")
+						end
+					</Script>
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_Damage"
+						Bone="Frame07" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_NoDamage_to_DamageLevel1">
+					<Animation
+						AnimationName="GUX_AIRCRAFTR_D1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_DamageLevel1_to_NoDamage">
+					<Animation
+						AnimationName="GUX_AIRCRAFTR_D1_D0"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_DamageLevel1_to_DamageLevel2">
+					<Animation
+						AnimationName="GUX_AIRCRAFTR_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_DamageLevel2_to_DamageLevel1">
+					<Animation
+						AnimationName="GUX_AIRCRAFTR_D2_D1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_DamageLevel2_to_DamageLevel3">
+					<Animation
+						AnimationName="GUX_AIRCRAFTR_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_DamageLevel3_to_DamageLevel2">
+					<Animation
+						AnimationName="GUX_AIRCRAFTR_D3-D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>				
+				
+			</ScriptedModelDraw>
+
+			<!-- Crane Model -->
+			<ScriptedModelDraw
+				id="ModuleTag_CraneDraw"
+				AttachToBoneInAnotherModule="Bone_GUX_AircraftR"
+				ExtraPublicBone="FX_CraneBone01 FX_CraneBone02 FX_CraneBone03"
+				Options="RENDER_BUFF_EFFECTS IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUX_AircraftR_Crane_SKN" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_IDLE">
+					<Animation
+						AnimationName="GUX_AircraftR_Crane_IDLA"
+						AnimationBlendTime="12"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4"
+					StateName="STATE_PutAway">
+					<Animation
+						AnimationName="GUX_AircraftR_Crane_STWA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="60" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_5"
+					StateName="STATE_Repairing">
+					<Animation
+						AnimationName="GUX_AircraftR_Crane_RPRA"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_IDLE" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRepairing")
+						end
+					</Script>						   
+					<FXEvent
+						Frame="105"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_CraneWelding"
+						Bone="FX_CraneBone01" />
+					<FXEvent
+						Frame="21"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_CraneWelding"
+						Bone="FX_CraneBone02" />
+					<FXEvent
+						Frame="118"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_CraneWelding"
+						Bone="FX_CraneBone03" />
+
+					<FXEvent
+						Frame="328"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_CraneWelding"
+						Bone="FX_CraneBone01" />
+					<FXEvent
+						Frame="269"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_CraneWelding"
+						Bone="FX_CraneBone02" />
+					<FXEvent
+						Frame="343"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_CraneWelding"
+						Bone="FX_CraneBone03" />
+
+					<FXEvent
+						Frame="610"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_CraneWelding"
+						Bone="FX_CraneBone01" />
+					<FXEvent
+						Frame="585"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_CraneWelding"
+						Bone="FX_CraneBone02" />
+					<FXEvent
+						Frame="580"
+						FireWhenSkipped="true"
+						Effect="FX_GDIAircraftR_CraneWelding"
+						Bone="FX_CraneBone03" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRepairing">
+					<Animation
+						AnimationName="GUX_AircraftR_Crane_STRT"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>				
+			</ScriptedModelDraw>
+			
+			<!-- Engine FX model 
+			<ScriptedModelDraw
+				id="ModuleTag_EngineFX_Draw"
+				ExtraPublicBone="">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Model
+						Name="GUX_AircraftR_FX_IDLA" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4">
+					<Model
+						Name="GUX_AircraftR_FX_STRT" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					 no anim 
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="GUX_AircraftR_FX_IDLA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4">
+					<Animation
+						AnimationName="GUX_AircraftR_FX_STRT"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			-->
+			
+		</Draws>
+		<Behaviors>
+
+			<Physics id="ModuleTag_Physics" />
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIAircraftR_Explode" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0.0s"
+				SinkRate="0.0"
+				DestructionDelay="0.5s">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Sound
+					Type="INITIAL"
+					List="GDI_GST_AirRB_DieExplosion" />
+			</SlowDeath>
+			
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="200.0"
+					FX="FX_GDIVehicleL_Damage"/>
+			</BuildingDestructionBehavior>			
+			
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_AI"
+				NeedsRunway="false"
+				KeepsParkingSpaceWhenAirborne="false"
+				StateMachine="JetAIStateMachine"
+				AutoAcquireEnemiesWhenIdle="NO">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					RotateToTargetWhenAiming="false"
+					SympathyRange="0.0" />
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="20000"
+				InitialHealth="20000">
+				<!-- These attribute modifiers are used to enable model conditions based on health -->
+				<DamageRangeModifier
+					Max="90"
+					Min="0"
+					AttributeModifier="Modifier_GDIAircraftR_Damaged_1" />
+				<DamageRangeModifier
+					Max="70"
+					Min="0"
+					AttributeModifier="Modifier_GDIAircraftR_Damaged_2" />
+				<DamageRangeModifier
+					Max="40"
+					Min="0"
+					AttributeModifier="Modifier_GDIAircraftR_Damaged_3" />				
+			</ActiveBody>
+			
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_TakeOff">
+				<ModelConditionSound Sound="GDI_AircraftR_TakeOffMS" RequiredFlags="USER_4"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_DamagedFirstTime">
+				<ModelConditionSound Sound="GDI_GST_AirRB_Damaged1" RequiredFlags="USER_1"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Damaged">
+				<ModelConditionSound Sound="GDI_GST_AirRB_ReallyDamaged" RequiredFlags="REALLYDAMAGED" ExcludedFlags="RECYCLED DYING"/>
+				<ModelConditionSound Sound="GDI_GST_AirB_DamagedState" RequiredFlags="DAMAGED" ExcludedFlags="REALLYDAMAGED RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<!-- <ModelConditionAudioLoopClientBehavior id="ModuleTag_TakeOffBed">
+				<ModelConditionSound Sound="GDI_AircraftR_TakeOff_Bed" RequiredFlags="USER_5"/>
+			</ModelConditionAudioLoopClientBehavior> -->
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<!-- <Sound Sound="GDI_AircraftR_TakeOff1" Animation="GUX_AircraftR_TKOF2" Frame="150" />
+				<Sound Sound="GDI_AircraftR_TakeOff2" Animation="GUX_AircraftR_TKOF2" Frame="223" />
+				<Sound Sound="GDI_AircraftR_TakeOff5" Animation="GUX_AircraftR_TKOF2" Frame="275" />
+				<Sound Sound="GDI_AircraftR_TakeOff4" Animation="GUX_AircraftR_TKOF2" Frame="350" /> -->
+				 
+				<Sound Sound="GDI_AircraftR_TakeOff1" Animation="GUX_AircraftR_TKOF2" Frame="400" />
+				<Sound Sound="GDI_AircraftR_TakeOff2" Animation="GUX_AircraftR_TKOF2" Frame="492" />
+				<Sound Sound="GDI_AircraftR_TakeOff3" Animation="GUX_AircraftR_TKOF2" Frame="658" />
+				<Sound Sound="GDI_AircraftR_TakeOff4" Animation="GUX_AircraftR_TKOF2" Frame="642" />
+				<Sound Sound="GDI_AircraftR_TakeOff5" Animation="GUX_AircraftR_TKOF2" Frame="795" />
+								
+				<Sound Sound="GDI_RepairArm1_servoA" Animation="GUX_AircraftR_Crane_RPRA" Frame="0" />
+				<Sound Sound="GDI_RepairArm1_servoB" Animation="GUX_AircraftR_Crane_RPRA" Frame="227" />
+				<Sound Sound="GDI_RepairArm1_servoC" Animation="GUX_AircraftR_Crane_RPRA" Frame="338" />
+				<Sound Sound="GDI_RepairArm1_servoD" Animation="GUX_AircraftR_Crane_RPRA" Frame="454" />
+				<Sound Sound="GDI_RepairArm1_servoE" Animation="GUX_AircraftR_Crane_RPRA" Frame="562" />
+				<Sound Sound="GDI_RepairArm1_servoF" Animation="GUX_AircraftR_Crane_RPRA" Frame="705" />
+				<Sound Sound="GDI_RepairArm1_stopA" Animation="GUX_AircraftR_Crane_RPRA" Frame="86" />
+				<Sound Sound="GDI_RepairArm1_stopB" Animation="GUX_AircraftR_Crane_RPRA" Frame="308" />
+				<Sound Sound="GDI_RepairArm1_stopC" Animation="GUX_AircraftR_Crane_RPRA" Frame="536" />
+				<Sound Sound="GDI_RepairArm1_stopD" Animation="GUX_AircraftR_Crane_RPRA" Frame="675" />
+				<Sound Sound="GDI_RepairArm1_stopE" Animation="GUX_AircraftR_Crane_RPRA" Frame="770" />
+
+				<Sound Sound="GDI_RepairArm3_servoA" Animation="GUX_AircraftR_Crane_RPRA" Frame="0" />
+				<Sound Sound="GDI_RepairArm3_servoB" Animation="GUX_AircraftR_Crane_RPRA" Frame="91" />
+				<Sound Sound="GDI_RepairArm3_servoC" Animation="GUX_AircraftR_Crane_RPRA" Frame="173" />
+				<Sound Sound="GDI_RepairArm3_servoD" Animation="GUX_AircraftR_Crane_RPRA" Frame="247" />
+				<Sound Sound="GDI_RepairArm3_servoE" Animation="GUX_AircraftR_Crane_RPRA" Frame="304" />
+				<Sound Sound="GDI_RepairArm3_servoF" Animation="GUX_AircraftR_Crane_RPRA" Frame="417" />
+				<Sound Sound="GDI_RepairArm3_servoG" Animation="GUX_AircraftR_Crane_RPRA" Frame="487" />
+				<Sound Sound="GDI_RepairArm3_servoH" Animation="GUX_AircraftR_Crane_RPRA" Frame="695" />
+				<Sound Sound="GDI_RepairArm3_stopA" Animation="GUX_AircraftR_Crane_RPRA" Frame="54" />
+				<Sound Sound="GDI_RepairArm3_stopB" Animation="GUX_AircraftR_Crane_RPRA" Frame="144" />
+				<Sound Sound="GDI_RepairArm3_stopC" Animation="GUX_AircraftR_Crane_RPRA" Frame="226" />
+				<Sound Sound="GDI_RepairArm3_stopD" Animation="GUX_AircraftR_Crane_RPRA" Frame="288" />
+				<Sound Sound="GDI_RepairArm3_stopE" Animation="GUX_AircraftR_Crane_RPRA" Frame="401" />
+				<Sound Sound="GDI_RepairArm3_stopF" Animation="GUX_AircraftR_Crane_RPRA" Frame="468" />
+				<Sound Sound="GDI_RepairArm3_stopG" Animation="GUX_AircraftR_Crane_RPRA" Frame="564" />
+				<Sound Sound="GDI_RepairArm3_stopH" Animation="GUX_AircraftR_Crane_RPRA" Frame="797" />
+
+				<Sound Sound="GDI_RepairArms_STRT" Animation="GUX_AircraftR_Crane_STRT" Frame="0" />
+				<Sound Sound="GDI_RepairArm3_servoA" Animation="GUX_AircraftR_Crane_STRT" Frame="26" />
+				<Sound Sound="GDI_RepairArm3_servoB" Animation="GUX_AircraftR_Crane_STRT" Frame="82" />
+				<Sound Sound="GDI_RepairArm3_stopB" Animation="GUX_AircraftR_Crane_STRT" Frame="95" />
+				<Sound Sound="GDI_RepairArm3_stopA" Animation="GUX_AircraftR_Crane_STRT" Frame="141" />
+
+				<Sound Sound="GDI_RepairArms_STWA" Animation="GUX_AircraftR_Crane_STWA" Frame="0" />
+				<Sound Sound="GDI_RepairArm3_servoE" Animation="GUX_AircraftR_Crane_STWA" Frame="44" />
+				<Sound Sound="GDI_RepairArm3_servoG" Animation="GUX_AircraftR_Crane_STWA" Frame="140" />
+				<Sound Sound="GDI_RepairArm3_stopF" Animation="GUX_AircraftR_Crane_STWA" Frame="92" />
+				<Sound Sound="GDI_RepairArm3_stopE" Animation="GUX_AircraftR_Crane_STWA" Frame="135" />
+				<Sound Sound="GDI_RepairArm3_stopH" Animation="GUX_AircraftR_Crane_STWA" Frame="199" />
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		<Geometry>
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "107.145"
+				 MinorRadius = "246.831"
+				 Height = "121.265"
+				 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-132.402"
+					y = "-0.852081"
+					z = "13.8166" />
+			</Shape>
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "396.835"
+				 MinorRadius = "133.422"
+				 Height = "121.265"
+				 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-52.0022"
+					y = "0.0"
+					z = "13.8166" />
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_GST_AirR_FireDamagedLoop" AudioType="soundAmbientDamaged"/>
+			<AudioEntry Sound="GDI_GST_AirR_FireReallyDamagedLoop" AudioType="soundAmbientReallyDamaged"/>
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="250"
+			ShroudClearingRange="300" />
+	</GameObject>
+
+	<!-- This object is spawned when the unit takes off from the ground and fires a meta impact weapon -->
+	<GameObject
+		id="GDIAircraftRTakeoffWeaponObject"
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE NO_COLLIDE INERT PASS_EXPERIENCE_TO_PRODUCER"
+		EditorName="GDIAircraftRTakeoffWeaponObject">
+		<DisplayName>GDIAircraftRTakeoffWeaponObject</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+		</Draws>
+		<Behaviors>
+
+			<!-- kills object so weapon is fired -->
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="0.1s"
+				MaxLifetime="0.1s" />
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_TeraSweepExp_Lg" />
+			</FXListBehavior>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+	</GameObject>
+
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET			-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LogicCommandSet
+		id="GDIAircraftRCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+	</LogicCommandSet>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOCOMOTORS								-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LocomotorTemplate
+		id="GDIAircraftRLocomotor"
+		Surfaces="AIR"
+		TurnTimeSeconds="4.0s"
+		TurnTimeDamagedSeconds="5.0s"
+		SlowTurnRadius="50.0"
+		FastTurnRadius="50.0"
+		AccelerationSeconds="1.5s"
+		Lift="10%"
+		LiftDamaged="10%"
+		BrakingSeconds="1.5s"
+		MinTurnSpeed="0%"
+		PreferredHeight="275"
+		PreferredHeightDamping="2.0"		
+		AllowMotiveForceWhileAirborne="true"
+		BehaviorZ="SURFACE_RELATIVE_HEIGHT"
+		Appearance="HOVER"
+		
+		PitchByZVelCoef="0.0"
+		PitchStiffness="0.0"
+		RollStiffness="0.1"
+		PitchDamping="0.0"
+		RollDamping="0.5"
+		ForwardVelocityPitchFactor="0.0"
+		LateralVelocityRollFactor="0.0"
+		Apply2DFrictionWhenAirborne="true"
+		AirborneTargetingHeight="2"
+		LocomotorWorksWhenDead="true"
+		
+		TakeOffAndLandingSpeed="10.0"
+		TakeOffAndLandingSlowDownDelta="35.0"
+		TakeOffAndLandingSlowDownTime="3.0s"
+
+		EasingTakeOffAndLanding="true"
+		EasingPercentage="50%"
+
+		RudderCorrectionDegree="0.169"
+		RudderCorrectionRate="0.027"
+		ElevatorCorrectionDegree="0.103"
+		ElevatorCorrectionRate="0.016"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		/>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    MODIFIERS AND UPGRADES		 			-->
+	<!-- ////////////////////////////////////////	-->
+
+	<!-- These attribute modifiers are used to set model conditions based on health -->
+	<AttributeModifier
+		id="Modifier_GDIAircraftR_Damaged_1"
+		Category="NONE"
+		ModelConditionsSet="USER_1">
+	</AttributeModifier>
+	<AttributeModifier
+		id="Modifier_GDIAircraftR_Damaged_2"
+		Category="NONE"
+		ModelConditionsSet="USER_2">
+	</AttributeModifier>
+	<AttributeModifier
+		id="Modifier_GDIAircraftR_Damaged_3"
+		Category="NONE"
+		ModelConditionsSet="USER_3">
+	</AttributeModifier>
+	
+</AssetDeclaration>

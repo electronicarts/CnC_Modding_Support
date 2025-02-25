@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GUGarFlag.w3x" />
+		<Include
+			type="all"
+			source="ART:NUGarFlag.w3x" />
+		<Include
+			type="all"
+			source="ART:AUGarFlag.w3x" />
+		<Include
+			type="all"
+			source="ART:GUGarArmor.w3x" />
+		<Include
+			type="all"
+			source="ART:NUGarArmor.w3x" />
+		<Include
+			type="all"
+			source="ART:AUGarArmor.w3x" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+	</Includes>
+	<GameObject
+		id="BaseCivilianStructure"
+		inheritFrom="BaseObject" 
+		SelectPortrait="Portrait_Neutral_Garrisoned_GDI"
+		ButtonImage="Portrait_Neutral_Garrisoned_GDI"
+		CommandSet="GarrisonableNeutralBuildingCommandSet"
+		Side="Civilian"
+		EditorSorting="STRUCTURE"
+		KindOf="SELECTABLE STRUCTURE PRELOAD IMMOBILE CAN_CAST_REFLECTIONS GARRISON KEEP_CLASSIFIED_WHEN_DEAD IGNORE_FOR_VICTORY CIVILIAN_BUILDING NOT_SELLABLE CONTROL_GROUP_ALLOWABLE"
+		RadarPriority="STRUCTURE"
+		UnitCategory="STRUCTURE"
+		Description="Desc:CivilianBuildingGarrisonable"
+		TypeDescription="Type:CivilianBuildingGarrisonable"
+		>
+		<DisplayName>Name:CivilianBuildingGarrisonable</DisplayName>
+
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="ReinforcedArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				AffectedByStealth="false" />
+		</Draws>
+
+		<Behaviors>
+			<ModelConditionUpgrade
+				id="ModuleTag_GDIFaction"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_NODFaction"
+				AddConditionFlags="USER_2">
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_AlienFaction"
+				AddConditionFlags="USER_3">
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<CommandSetUpgrade
+				id="ModuleTag_SwapCommandSet"
+				CommandSet="GarrisonableNeutralFortifiedBuildingCommandSet"
+				Permanent="true">
+				<TriggeredBy>Upgrade_FortifyBuilding</TriggeredBy>
+			</CommandSetUpgrade>
+			<!--<SubObjectsUpgrade
+				id="ModuleTag_ShowForceField"
+				ShowSubObjects="ARMOR"
+				Permanent="true">
+				<TriggeredBy>Upgrade_FortifyBuilding</TriggeredBy>
+			</SubObjectsUpgrade>-->
+			<AttributeModifierUpgrade
+				id="ModuleTag_AddAttributes"
+				AttributeModifier="FortifiedBuilding_Bonus"
+				Permanent="true">
+				<TriggeredBy>Upgrade_FortifyBuilding</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+
+
+
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_AttributeModifierAura"
+				InitiallyActive="true"
+				AttributeModifierName="AttributeModifier_Garrisoned"
+				RefreshDelay="0.5s"
+				AllowSelf="false"
+				AffectContainedOnly="true">
+				<ObjectFilter
+					Rule="ALL"
+					Exclude="SURPRISE_ATTACKER"/>
+			</AttributeModifierAuraUpdate>
+
+			<HordeGarrisonContain
+				id="ModuleTag_HordeGarrison"
+				ObjectStatusOfContained="UNSELECTABLE CAN_ATTACK ENCLOSED"
+				ContainMax="3"
+				EnterSound="GenericBuilding_Garrison"
+				ExitSound="GenericBuilding_Ungarrison"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="false"
+				AllowNeutralInside="true"
+				AllowOwnPlayerInsideOverride="true"
+				ShowPips="true"
+				KillPassengersOnDeath="false"
+				AllowedBodyDamageTypes="PRISTINE DAMAGED REALLY_DAMAGED">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY"
+					StatusBitFlagsExclude="UPGRADE_CRYSTAL_ATTACHED">
+					<IncludeThing>NODVehicleAE</IncludeThing>
+				</PassengerFilter>
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="BONEGARRISON">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY"
+						StatusBitFlagsExclude="UPGRADE_CRYSTAL_ATTACHED">
+						<IncludeThing>NODVehicleAE</IncludeThing>
+					</Filter>
+				</PassengerData>
+				<ExitOffset
+					y="-80" />
+
+				<xi:include
+					href="DATA:Includes/NodInfantryVGarrisonAttributeModifier.xml"
+					xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:OpenContain/child::*)"/>
+			</HordeGarrisonContain>
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					FX="FX_ScorchMedium" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />
+
+			<!-- Garrisoned units with the STEALTH_GARRISON kindof are invisible when they are inside a building, this InvisibilityUpdate is the module that contols it. -->
+			<InvisibilityBehavior
+				id="ModuleTag_Invisibility"
+				InvisibilityTemplate="StealthGarrisonInvisibilityTemplate"
+			/>
+
+			<KeepObjectDie
+				id="ModuleTag_KeepObjectForRepair">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</KeepObjectDie>
+			<InitiateRepairDie
+				id="ModuleTag_InitiateRepair"
+				DelayTime="120s"
+				Options="REPAIR_INSTANT"
+				InstantRepairModelCondition="USER_1"
+				InstantRepairAnimDuration="1.5s"
+				MasterDeadDieFX="FX_TEMPLarge">
+				<Die
+					DeathTypes="ALL" />
+			</InitiateRepairDie>
+
+		</Behaviors>
+
+		<Body>
+			<ActiveBody
+				id="DefaultBody" 
+				MaxHealth="=$CIV_HEALTH_MEDIUM"
+				InitialHealth="=$CIV_HEALTH_MEDIUM" />
+		</Body>
+		<AudioArrayVoice>
+			<AudioEntry Sound="GenericBuilding_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+		<VisionInfo
+			VisionRange="600"
+			ShroudClearingRange="600" />
+
+	</GameObject>
+
+</AssetDeclaration>

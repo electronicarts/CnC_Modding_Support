@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GBWing2.W3X" />
+		<Include
+			type="all"
+			source="ART:GBWing2_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:GBWing2_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:GBWing2_D3.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+	</Includes>
+	<GameObject
+		id="GDI_Wing2"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		SelectPortrait="Portrait_GDIWing2"
+		ButtonImage="Portrait_GDIWing2"
+		EditorName="GDI_Wing2"
+		KindOf="SELECTABLE STRUCTURE PRELOAD IMMOBILE CAN_CAST_REFLECTIONS  COVER KEEP_CLASSIFIED_WHEN_DEAD IGNORE_FOR_VICTORY CIVILIAN_BUILDING NOT_SELLABLE"
+		Browser="REGION GDI_STRUCTURES STRUCTURE">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:SonicAirAttackJet</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				AffectedByStealth="false"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBWing2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBWing2_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBWing2_D2" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIImpFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIImpDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpDist"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBWing2_D1" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBWing2_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBWing2_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GBWing2_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBWing2_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<xi:include
+				href="../../Includes/GarrisonFlagArmorDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonArmorDraws/child::*)" />
+		</Draws>
+		<Behaviors>
+<!--
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="8s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+-->			
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_GDIMammothExplode" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_ScorchMedium" />
+			</FXListBehavior>	
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_02"
+				MaxHealth="8000.0" />
+		</Body>
+    <Geometry
+			IsSmall="false">
+      <Shape 
+     Type= "BOX"
+     MajorRadius = "20.25"
+     MinorRadius = "15.75"
+     Height = "8.1" >
+        <Offset
+            x = "0.0"
+            y = "0.0"
+            z = "0.0" />
+      </Shape>
+    </Geometry>
+    <AudioArraySound>
+      <AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+      <AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+    </AudioArraySound> 
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="320" />
+	</GameObject>
+</AssetDeclaration>

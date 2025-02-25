@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:BombBarrel.w3x" />
+	</Includes>
+
+  <!-- ******************************************************************** -->
+  <!-- ** Exploding Barrel with a delay, to create chained explosions    ** -->
+  <!-- ******************************************************************** -->
+  <GameObject
+		id="ExplodingBarrel_Delay"
+		Side="Neutral"
+		KindOf="IMMOBILE SELECTABLE STRUCTURE CLASSIFY_ENTIRE_FOOTPRINT IMMUNE_TO_CAPTURE CAN_CAST_REFLECTIONS NOT_AUTOACQUIRABLE"
+		EditorName="ExplodingBarrel_Delay"
+		SelectPortrait="Portrait_Neutral_Exploding_Barrel"
+		ButtonImage="Button_Neutral_Exploding_Barrel"
+		EditorSorting="MISC_MAN_MADE"
+		HealthBoxHeightOffset="15" 
+		Description="Desc:ExplodingBarrel">
+		<DisplayName>Name:ExplodingBarrel</DisplayName>		
+		<ArmorSet Armor="NoArmor"/>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="BombBarrel" 
+					/>
+				</ModelConditionState>
+			  <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+				<Model
+					Name="BombBarrel" />
+				<!-- FXParticleSystemTemplate="KirovDamageFire01" -->
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="BombBarrelDyingFire"
+						FollowBone="true" />
+			  </ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+		  <SlowDeath
+			id="ModuleTag_Death"
+			SinkDelay="0s"
+			SinkRate="0.01"
+			DestructionDelay="3.0s">
+			<FX
+			  Type="FINAL">
+			  <FX>FX_BombBarrelExplosion</FX>
+			</FX>
+			<Weapon
+			  Type="FINAL">
+			  <Weapon>ExplodingBarrelDelayWeapon</Weapon>
+			</Weapon>
+			<DieMuxData
+				DeathTypes="ALL"
+				DeathTypesForbidden="EXPLODED"/>
+		  </SlowDeath>
+		  <SlowDeath
+			id="ModuleTag_ExplodeDeath"
+			SinkDelay="0s"
+			SinkRate="0.01"
+			DestructionDelay="0.20s">
+			<FX
+			  Type="FINAL">
+			  <FX>FX_BombBarrelExplosion</FX>
+			</FX>
+			<Weapon
+			  Type="FINAL">
+			  <Weapon>ExplodingBarrelDelayWeapon</Weapon>
+			</Weapon>
+			<DieMuxData
+				DeathTypes="EXPLODED"/>
+		  </SlowDeath>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1.0" 
+			/>
+		</Body>
+	<ClientBehaviors>
+		<ModelConditionAudioLoopClientBehavior id="ModuleTag_IgniteFlameLoop">
+			<ModelConditionSound Sound="S01_BarrelTankIgnite_Loop" RequiredFlags="DYING" />
+		</ModelConditionAudioLoopClientBehavior>
+	</ClientBehaviors>
+    <Geometry
+	  IsSmall="false">
+      <Shape
+           Type= "BOX"
+           MajorRadius = "5.0"
+           MinorRadius = "5.0"
+           Height = "15.487"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "0.0406923"
+            y = "0.0467458"
+            z = "0.0" />
+      </Shape>
+    </Geometry>
+	<VisionInfo
+			VisionRange="75"
+			ShroudClearingRange="75"/>
+	<CrusherInfo
+		id="id_CrusherInfo"
+		CrusherLevel="0"
+		CrushableLevel="0" 
+	/>
+
+  </GameObject>
+
+</AssetDeclaration>

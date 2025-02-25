@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- Purifier (was Avatar) Husk -->
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NUMechH_SKN.W3X" />
+		<Include
+			type="all"
+			source="ART:NUMech_DIEB.W3X" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseHusk.xml" />
+	</Includes>
+	<GameObject
+		id="NODVehicleGHusk"
+		inheritFrom="BaseHusk"
+		SelectPortrait="Portrait_NodAvatarHusk"
+		ButtonImage="Portrait_NodAvatarHusk"
+		Side="NOD"
+		EditorName="NODVehicleGHusk"
+		Description="Desc:AvatarWarmechHusk">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:AvatarWarmechHusk</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUMechH_SKN" />
+					<ParticleSysBone
+						BoneName="B_UArmL"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NUMECH_DIEB"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="0" />					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2">
+					<Animation
+						AnimationName="NUMECH_DIEB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0s"
+				SinkRate="2.4"
+				DestructionDelay="4s">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<OCL
+					Type="INITIAL">
+					<OCL>OCL_NODVehicleGHuskDebris</OCL>
+				</OCL>						
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplodeNoScorch" />
+			</FXListBehavior>
+
+			<!-- Override base capture functionality with revive specific OCL -->
+			<CaptureContain
+				id="ModuleTag_CaptureHusk"
+				OnCaptureOCL="NODVehicleGHuskReplace"
+				/>				
+
+<!-- somehow we need to display the upgrade the model had when it was dead -->
+			
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowStealth">
+				<TriggeredBy>Upgrade_AvatarInvisibility</TriggeredBy>
+				<Nugget
+					ShowSubObjects="S_GENERATOR"
+					Upgrade="Upgrade_AvatarInvisibility" />
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowFlamer">
+				<TriggeredBy>Upgrade_AvatarFlamer</TriggeredBy>
+				<Nugget
+					ShowSubObjects="FLAMETANK"
+					Upgrade="Upgrade_AvatarFlamer" />
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowBeamCannon">
+				<TriggeredBy>Upgrade_AvatarBeamCannon</TriggeredBy>
+				<Nugget
+					ShowSubObjects="NUBEAM"
+					Upgrade="Upgrade_AvatarBeamCannon" />
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowStealthDetect">
+				<TriggeredBy>Upgrade_AvatarStealthDetect</TriggeredBy>
+				<Nugget
+					ShowSubObjects="S_DETECTOR"
+					Upgrade="Upgrade_AvatarStealthDetect" />
+			</SubObjectsUpgrade>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODVehicleGHuskFunctions"
+			/>
+			<CreateObjectOnHealed
+				id="ModuleTag_CreateObjectOnHealed"
+				CreationList="NODVehicleGHuskReplace"/>
+			<AutoHealBehavior
+				id="ModuleTag_BackupSystemsHeal"
+				HealingAmount="=$MECH_HUSK_HEAL_PER_SECOND"/>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$MECH_HUSK_HEALTH" />
+		</Body>
+		<Geometry>
+			<Shape
+				Type="BOX"
+				MajorRadius="30.0"
+				MinorRadius="14.0"
+				Height="13.0">
+				<Offset
+					x="30.0"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   OBJECT CREATION LISTS									-->
+	<!-- ////////////////////////////////////////	-->
+	<ObjectCreationList
+		id="NODVehicleGHuskReplace">
+		<OCLModule>
+			<Modules>
+				<ClearRemovables/>
+				<CreateObject
+					ObjectTemplate="NODVehicleG"/>
+				<CopyParentExperience/>
+				<CopyParentLayer/>
+				<CopyParentUpgrades/>
+				<SetBusyState
+					Duration="2.5s"
+					DisableWhileBusy="true"/>
+				<SetHealthToParentPercent/>
+				<SetStatus
+					Status="NO_EXPERIENCE_LEVEL_ON_CREATTION"/>
+				<SetTimedModelCondition
+					ModelCondition="USER_5"
+					Duration="2.5s"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+</AssetDeclaration>

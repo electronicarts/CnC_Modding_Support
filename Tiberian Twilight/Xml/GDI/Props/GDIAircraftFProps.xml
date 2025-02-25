@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Art Includes -->
+		<Include type="all"	source="ART:GUAircraftF_SKN.w3x" />
+		<Include type="all"	source="ART:GUAircraftF_AIDD.W3X" />
+		
+		<!-- Data Includes -->
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+
+	<Defines>
+		<Define
+			name="GDIAIRCRAFTF_DAMAGE_BONE_NAMES"
+			value="
+				BONE_CONTACT_POINT_01
+				BONE_CONTACT_POINT_02
+				BONE_CONTACT_POINT_03
+				BONE_CONTACT_POINT_04
+				BONE_CONTACT_POINT_05
+				BONE_CONTACT_POINT_06
+				BONE_CONTACT_POINT_07
+				BONE_CONTACT_POINT_08
+				BONE_CONTACT_POINT_09
+				BONE_CONTACT_POINT_10
+				BONE_CONTACT_POINT_11
+				BONE_CONTACT_POINT_12
+				BONE_CONTACT_POINT_13
+				BONE_CONTACT_POINT_14
+				BONE_CONTACT_POINT_15
+				"/>
+	</Defines>
+	
+	<!--    /////////////////////////////////////   -->
+	<!--		The Collapsing ship which falls					-->
+	<!--		from the sky when the unit is killed		-->
+	<GameObject
+		id="GDIAircraftF_Dying"
+		EditorName="GDIAircraftF_Dying"
+		Description="Desc:GDIAircraftF_Dying"
+		Side="GDI"
+		KindOf="=$BASE_DYING_AIRCRAFT_KINDOF">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="=$GDIAIRCRAFTF_DAMAGE_BONE_NAMES" >
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUAircraftF_SKN" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_L"
+						FXParticleSystemTemplate="VenomDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_L"
+						FXParticleSystemTemplate="VenomDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_2ndturbine"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_2ndturbine"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_Rreactor"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_Rreactor"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GUAircraftF_AIDD"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.2"
+						AnimationSpeedFactorMax="0.2" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+				
+			<Physics
+				id="ModuleTag_Physics"
+				TumbleRandomly="true"
+				MaxXRotationVelocity="25"
+				MaxYRotationVelocity="5"
+				MaxZRotationVelocity="0"
+				KillWhenRestingOnGround="true"/>
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIArtilleryHitBIG" />
+				<Event Index="onDeath" FX="FX_GDI_AircraftF_DieExplosion" />
+			</FXListBehavior>
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Aircraft_Large_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			
+			<FireWeaponWhenDead
+				id="ModuleTag_DeathWeapon"
+				DeathWeapon="GDIDyingAircraft_DeathWeapon_Large"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<!-- Needed to copy damage from the original object during a swap -->
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				AssociatedModule="ModuleTag_Draw">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="175.0"
+					FX="FX_GDIVehicleL_Damage">
+					<!-- 1 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_10</BoneName>
+						<BoneName>bone_contact_point_15</BoneName>
+						<BoneName>bone_contact_point_11</BoneName>
+						<BoneName>bone_contact_point_12</BoneName>
+					</NamedBoneInfo>
+					<!-- 2 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_13</BoneName>
+						<BoneName>bone_contact_point_14</BoneName>
+					</NamedBoneInfo>
+					<!-- 3 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_03</BoneName>
+						<BoneName>bone_contact_point_04</BoneName>
+						<BoneName>bone_contact_point_05</BoneName>
+						<BoneName>bone_contact_point_06</BoneName>
+					</NamedBoneInfo>
+					<!-- 4 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_09</BoneName>
+					</NamedBoneInfo>
+					<!-- 5 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_07</BoneName>
+					</NamedBoneInfo>
+					<!-- 6 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_08</BoneName>
+					</NamedBoneInfo>
+					<!-- 7 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_01</BoneName>
+					</NamedBoneInfo>
+					<!-- 8 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_02</BoneName>
+					</NamedBoneInfo>
+				</Item>
+			</BuildingDestructionBehavior>
+			
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="Tag_PropBody"/>
+		</Body>
+
+		<xi:include	href="DATA:GDI/Includes/GDIAircraftFGeometry.xml" />
+
+		<VisionInfo
+			VisionRange="650"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

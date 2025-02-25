@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+  <xs:include schemaLocation="includes/RegisteredObjectSetId.xsd"/>
+
+  <xs:simpleType name="RegisteredObjectSetType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="GLOBAL" />
+      <xs:enumeration value="PLAYER" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="RegisteredObjectSet" xas:typeGroup="Xml">
+    <xs:complexContent>
+      <xs:extension base="BaseInheritableAsset">
+        
+        <!-- This is supposed to work to put a TestObject() function in the 
+             SageBinaryData::RegisteredObjectSet struct that can be called instead of accessing the
+             ObjectFilter directly, so that in the future this could be expanded beyond always using
+             a single ObjectFilter.  (Eg, multiple ObjectFilters, some other custom criteria, etc).
+             BUT, there appears to be a bug in the header generation so it doesn't work yet.
+             -->
+        <xs:annotation>
+          <xs:appinfo source="GameData.xsd">
+            <GameData xmlns="uri:ea.com:eala:asset:gamedata">
+              <Function name="TestObject" return="bool">
+                <Parameter name="object" type="::Object" const="true" modifier="*"/>
+                <Parameter name="playerOwningRegistry" type="::Player" const="true" modifier="*" defaultValue="NULL"/>
+              </Function>
+            </GameData>
+          </xs:appinfo>
+        </xs:annotation>
+        
+        <xs:sequence>
+          <xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="SetId" type="RegisteredObjectSetId" use="required" />
+        <xs:attribute name="Type" type="RegisteredObjectSetType" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+</xs:schema>

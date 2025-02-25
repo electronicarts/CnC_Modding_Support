@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+  </Includes>
+
+<!-- Soviet 02 - Initial Base -->
+
+  <AIStrategicStateDefinition
+    id="AIState_A09_ReactiveDefense">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+		<Tactic id="Defense" Tactic="ReactiveDefense" Targetless="true">
+			<TeamTemplate 
+										MinUnits="1" 
+										IncludeKindOf="CAN_ATTACK" 
+										ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER FIGHTER_AIRCRAFT"
+                    Priority="DEFENSE" 
+                    AlwaysRecruit="true" 
+                    SortByDistance="false"
+                    MicroManager="FearlessDefenseMicroManager_EASY"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+  
+	<AIStrategicStateDefinition
+		id="AIState_A09_Garrison"
+    MaxTargets="1">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="GarrisonHeuristic"/>
+		<Tactic id="Garrison" Tactic="GarrisonBuilding" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" 
+      							MaxUnits="2" 
+      							IncludeKindOf="CAN_ATTACK INFANTRY" 
+      							ExcludeKindOf="SKIRMISH_AI_DONT_GARRISON IGNORES_SELECT_ALL HARVESTER" 
+      							Priority="STANDARD" 
+      							AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_EASY"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- Soviet03 - Manages Tesla Base -->
+  
+  <AIStrategicStateDefinition
+    id="AIState_A09_TeslaAttack01"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+      <ScriptedFlagHeuristic FlagName="AIFLAG_Attack_Tesla"/>
+      <IntervalHeuristic IntervalTime="150s" ActiveTime="60s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundHarvesterHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" GatherWaypoint="AIWP_SimpleAttack01">
+      <TeamTemplate MinUnits="6" MaxUnits="6"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER VEHICLE"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_EASY"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A09_TeslaAttack02"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="500s" EndTime="-1s" CountFrom="AI_START"/>
+      <ScriptedFlagHeuristic FlagName="AIFLAG_Attack_Tesla"/>
+      <IntervalHeuristic IntervalTime="150s" ActiveTime="60s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundHarvesterHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" GatherWaypoint="AIWP_SimpleAttack01">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+      							IncludeKindOf="CAN_ATTACK VEHICLE"
+      							ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_EASY"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- Soviet04 - Manages Naval Base and Kirov Base -->
+
+  <AIStrategicStateDefinition
+ 		id="AIState_A09_WaterAttack"
+ 		MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+    	<ScriptedFlagHeuristic FlagName="AIFLAG_Attack_Naval"/>
+    	<IntervalHeuristic IntervalTime="120s" ActiveTime="60s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToWaterUnitHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RETURN_HOME_AND_DISBAND">
+      <TeamTemplate MinUnits="4" MaxUnits="8"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager_EASY"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_A09_WaterBlockade01"
+    MaxTargets="1">
+    <Heuristic>
+    	<ScriptedFlagHeuristic FlagName="AIFLAG_Attack_Naval"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A09_Naval_Blockade01" Priority="20"/>
+    <Tactic id="Defend" Tactic="StaticDefense" Distance="300" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="6"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="true"
+                    MicroManager="A09_WaterBlockadeMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_A09_WaterBlockade02"
+    MaxTargets="1">
+    <Heuristic>
+    	<ScriptedFlagHeuristic FlagName="AIFLAG_Attack_Naval"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A09_Naval_Blockade02" Priority="20"/>
+    <Tactic id="Defend" Tactic="StaticDefense" Distance="300" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="6"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="true"
+                    MicroManager="A09_WaterBlockadeMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+   id="AIState_A09_KirovAttack"
+   MaxTargets="1">
+    <Heuristic>
+        <TimerHeuristic StartTime="200s" EndTime="-1s" CountFrom="AI_START"/>
+        <ScriptedFlagHeuristic FlagName="AIFLAG_Attack_Kirovs"/>
+			  <IntervalHeuristic IntervalTime="200s" ActiveTime="100s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="20"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="2"
+      							IncludeKindOf="CAN_ATTACK BOMBER_AIRCRAFT"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="KirovMicroManager">
+                    <CreateUnits UnitName="SovietBomberAircraft" MinUnits="1" MaxUnits="2"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <!-- Soviet05 - Manages Air Base -->
+  
+  <AIStrategicStateDefinition
+   id="AIState_A09_TwinbladeAttack"
+   MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+      <ScriptedFlagHeuristic FlagName="AIFLAG_Attack_Air"/>
+      <IntervalHeuristic IntervalTime="120s" ActiveTime="60s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirUnitHeuristic" Priority="20"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="2" MaxUnits="4"
+      							IncludeKindOf="CAN_ATTACK ASSAULT_AIRCRAFT"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER BOMBER_AIRCRAFT FIGHTER_AIRCRAFT"
+      							AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="TwinbladeMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+
+  <AIStrategicStateDefinition
+   	id="AIState_A09_MigAttack"
+   	MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+      <ScriptedFlagHeuristic FlagName="AIFLAG_Attack_Air"/>
+      <IntervalHeuristic IntervalTime="120s" ActiveTime="60s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestAircraftHeuristic" Priority="20"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RETURN_HOME_AND_DISBAND">
+      <TeamTemplate MinUnits="2" MaxUnits="4"
+      							IncludeKindOf="CAN_ATTACK FIGHTER_AIRCRAFT"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER BOMBER_AIRCRAFT"
+      							AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A09_CommandoDefense">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A09_IronCurtain04" Priority="10"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="400" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+										IncludeKindOf="CAN_ATTACK COMMANDO"
+										ExcludeKindOf="IGNORES_SELECT_ALL VEHICLE AIRCRAFT"
+                    Priority="LOW"
+                    AlwaysRecruit="true"
+                    SortByDistance="false"
+                    MicroManager="FearlessDefenseMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+
+  <!-- Removed by arao 4/1/08
+            <ScriptedFlagHeuristic FlagName="Soivet05/AIFLAG_CommandoAttack"/>
+  -->
+  <AIStrategicStateDefinition
+    id="AIState_A09_CommandoAttack">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+    	<IntervalHeuristic IntervalTime="180s" ActiveTime="90s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundHarvesterHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+			<TeamTemplate MinUnits="1" 
+										IncludeKindOf="CAN_ATTACK COMMANDO" 
+										ExcludeKindOf="IGNORES_SELECT_ALL VEHICLE AIRCRAFT"
+                    Priority="STANDARD" 
+                    AlwaysRecruit="false" 
+                    MicroManager="A09_CommandoMicroManager"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+  
+  <!-- Soviet06 - Manages Vehicle Base -->
+  
+  <AIStrategicStateDefinition
+    id="AIState_A09_VehicleAttack01"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+			<ScriptedFlagHeuristic FlagName="AIFLAG_Attack_Vehicles"/>
+      <IntervalHeuristic IntervalTime="90s" ActiveTime="60s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundHarvesterHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" GatherWaypoint="AIWP_SimpleAttack02">
+      <TeamTemplate MinUnits="4" MaxUnits="10" MaxTypesOfUnits="2" 
+      							IncludeKindOf="CAN_ATTACK" 
+      							ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER" 
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" 
+                    AlwaysRecruit="false" 
+                    MicroManager="FearlessMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+	<!-- Soviet07 - Manages Infantry Base -->
+
+  <AIStrategicStateDefinition
+    id="AIState_A09_InfantryAttack01"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+			<ScriptedFlagHeuristic FlagName="AIFLAG_Attack_Infantry"/>
+      <IntervalHeuristic IntervalTime="90s" ActiveTime="60s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundHarvesterHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" GatherWaypoint="AIWP_SimpleAttack01">
+      <TeamTemplate MinUnits="3" MaxUnits="12" MaxTypesOfUnits="2"
+      							IncludeKindOf="CAN_ATTACK" 
+      							ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER" 
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" 
+                    AlwaysRecruit="false" 
+                    MicroManager="StandardMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_A09_Garrison02"
+		MaxTargets="1">
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="AIFLAG_Attack_Infantry"/>
+			<IntervalHeuristic IntervalTime="45s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="GarrisonHeuristic"/>
+		<Tactic id="Garrison" Tactic="GarrisonBuilding" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="2" 
+      							IncludeKindOf="CAN_ATTACK INFANTRY" 
+      							ExcludeKindOf="SKIRMISH_AI_DONT_GARRISON IGNORES_SELECT_ALL HARVESTER" 
+      							Priority="STANDARD" 
+      							AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_EASY"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A09_Migs"
+    MaxTargets="4">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestAircraftHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="2"
+      							IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="AIR"
+                    Priority="HIGH" AlwaysRecruit="false"
+                    MicroManager="FearlessFighterAircraftMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>SovietFighterAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A09_Apocs"
+    MaxTargets="4">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="2" MaxUnits="4"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>SovietAntiVehicleVehicleTech3</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+  id="AIState_A09_GroundAttacks"
+  MaxTargets="2">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack">
+      <TeamTemplate MinUnits="4" MaxUnits="10" MaxTypesOfUnits="2" 
+      							IncludeKindOf="CAN_ATTACK" 
+      							ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER" 
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" 
+                    AlwaysRecruit="false" 
+                    MicroManager="FearlessMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_A09_KrukovWarFactory">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="SovietAntiVehicleVehicleTech3" Heuristic="FEWEST_UNIT"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+  id="AIState_A09_KrukovAirfield">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="SovietFighterAircraft" Heuristic="FEWEST_UNIT"/>
+    <!--
+    <BuildEntry Build="SovietBomberAircraft" Heuristic="FEWEST_UNIT"/>
+    -->
+  </AIBuildStateDefinition>
+
+</AssetDeclaration>
+
+

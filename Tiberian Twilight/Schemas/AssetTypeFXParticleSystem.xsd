@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!-- All the modules -->
+	<xs:include schemaLocation="FXParticleSystem/FXParticleBase.xsd" />
+	<xs:include schemaLocation="FXParticleSystem/DrawModules.xsd" />
+	<xs:include schemaLocation="FXParticleSystem/VolumeModules.xsd" />
+	<xs:include schemaLocation="FXParticleSystem/VelocityModules.xsd" />
+	<xs:include schemaLocation="FXParticleSystem/EventModules.xsd" />
+	<xs:include schemaLocation="FXParticleSystem/UpdateModules.xsd" />
+
+	<xs:complexType name="RandomAlphaKeyframe">
+		<xs:complexContent>
+			<xs:extension base="ClientRandomVariable">
+				<xs:sequence />
+				<xs:attribute name="RelativeAge" type="Percentage" />
+				<xs:attribute name="Frame" type="SageUnsignedInt" default="1000" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="RGBColorKeyframe">
+		<xs:sequence>
+			<xs:element name="Color" type="Color3f" minOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="RelativeAge" type="Percentage" />
+		<xs:attribute name="Frame" type="SageUnsignedInt" default="1000" />
+	</xs:complexType>
+
+	<xs:complexType name="FXParticlePhysicsBase">
+		<xs:complexContent>
+			<xs:extension base="FXParticleBaseModule" />
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="FXParticleDefaultPhysics">
+		<xs:complexContent>
+			<xs:extension base="FXParticlePhysicsBase">
+				<xs:sequence>
+					<xs:element name="VelocityDamping" type="ClientRandomVariable" minOccurs="0" maxOccurs="1" xas:byValue="true" />
+					<xs:element name="DriftVelocity" type="Vector3" minOccurs="0" maxOccurs="1" xas:byValue="true" />
+				</xs:sequence>
+				<xs:attribute name="Gravity" type="SageReal" />
+				<xs:attribute name="Swirly" type="SageBool" />
+				<xs:attribute name="ParticlesAttachToBone" type="SageBool" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+    <xs:complexType name="FXParticleSwarmPhysics">
+        <xs:complexContent>
+            <xs:extension base="FXParticlePhysicsBase">
+                <xs:attribute name="AttractStrength" type="SageReal" default="0.0" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="FXParticleAlpha">
+		<xs:sequence>
+			<xs:element name="Alpha" type="RandomAlphaKeyframe" minOccurs="0" maxOccurs="8" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="FXParticleColor">
+		<xs:sequence>
+			<xs:element name="Color" type="RGBColorKeyframe" minOccurs="0" maxOccurs="8" />
+			<xs:element name="ColorScale" type="ClientRandomVariable" minOccurs="0" xas:byValue="true" />
+        </xs:sequence>
+        <xs:attribute name="UseHouseColor" type="SageBool" default="false" />
+        <xs:attribute name="HouseColorSaturation" type="SageReal" default="1.0" />
+    </xs:complexType>
+
+	<xs:complexType name="FXParticlePhysicsModule">
+		<xs:choice minOccurs="0" maxOccurs="1">
+			<!--xs:element name="Advanced" type="FXParticleSystemAdvancedPhysicsModule" /-->
+			<xs:element name="Default" type="FXParticleDefaultPhysics" />
+            <xs:element name="Swarm" type="FXParticleSwarmPhysics" />
+        </xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="FXParticleWind">
+		<xs:attribute name="Motion" type="FXParticleSystem_WindMotion" default="NOT_USED" />
+		<xs:attribute name="Strength" type="SageReal" default="2.0" />
+		<xs:attribute name="FullStrengthDist" type="SageReal" default="75.0" />
+		<xs:attribute name="ZeroStrengthDist" type="SageReal" default="200.0" />
+		<xs:attribute name="AngleChangeMin" type="SageReal" default=".15" />
+		<xs:attribute name="AngleChangeMax" type="SageReal" default=".45" />
+		<xs:attribute name="PingPongStartAngleMin" type="SageReal" default="0.0" />
+		<xs:attribute name="PingPongStartAngleMax" type="SageReal" default="0.7853981633974483"/>
+		<xs:attribute name="PingPongEndAngleMin" type="SageReal" default="5.4977871437821381" />
+		<xs:attribute name="PingPongEndAngleMax" type="SageReal" default="6.2831853071795864" />
+		<xs:attribute name="TurbulenceAmplitude" type="SageReal" default="0" />
+		<xs:attribute name="TurbulenceFrequency" type="SageReal" default="0" />
+	</xs:complexType>
+
+	<xs:complexType name="FXParticleSystemTemplate" xas:runtimeWrapper="::FXParticleSystem::ParticleSystemTemplate" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+					<xs:sequence>
+						<xs:element name="SlavePosOffset" type="Vector3" minOccurs="0" xas:byValue="true" />
+						<xs:element name="Lifetime" type="ClientRandomVariable" minOccurs="0" xas:byValue="true" />
+						<xs:element name="Size" type="ClientRandomVariable" minOccurs="0" xas:byValue="true" />
+						<xs:element name="StartSizeRate" type="ClientRandomVariable" minOccurs="0" xas:byValue="true" />
+						<xs:element name="BurstDelay" type="ClientRandomVariable" minOccurs="0" xas:byValue="true" />
+						<xs:element name="BurstCount" type="ClientRandomVariable" minOccurs="0" xas:byValue="true" />
+						<xs:element name="InitialDelay" type="ClientRandomVariable" minOccurs="0" xas:byValue="true" />
+						<xs:element name="Alphas" type="FXParticleAlpha" minOccurs="0" />
+						<xs:element name="Colors" type="FXParticleColor" minOccurs="0" />
+						<xs:element name="Wind" type="FXParticleWind" minOccurs="0" />
+						<xs:element name="Physics" type="FXParticlePhysicsModule" minOccurs="1" />
+						<xs:element name="Draw" type="FXParticleDrawModule" minOccurs="1" />
+						<xs:element name="Volume" type="FXParticleVolumeModule" minOccurs="1" />
+						<xs:element name="Velocity" type="FXParticleVelocityModule" minOccurs="1" />
+						<xs:element name="Event" type="FXParticleEventModule" minOccurs="0" xas:byValue="true" />
+						<xs:element name="Update" type="FXParticleUpdateModule" minOccurs="0" xas:byValue="true" />
+					</xs:sequence>
+					<xs:attribute name="Priority" type="FXParticleSystem_Priority" default="ULTRA_HIGH_ONLY" />
+					<xs:attribute name="IsOneShot" type="SageBool" default="false" />
+					<xs:attribute name="Shader" type="FXParticleSystem_ShaderType" default="ADDITIVE" />
+					<xs:attribute name="Type" type="FXParticleSystem_Type" default="PARTICLE"/>
+					<xs:attribute name="ParticleTexture" type="TextureRef" />
+					<xs:attribute name="Drawable" type="RenderObjectRef" />
+					<xs:attribute name="SlaveSystem" type="FXParticleSystemWeakRef" />
+					<xs:attribute name="PerParticleAttachedSystem" type="FXParticleSystemWeakRef" />
+					<xs:attribute name="SystemLifetime" type="SageUnsignedInt" default="0" />
+					<xs:attribute name="SortLevel" type="SageUnsignedInt" default="0" />
+					<xs:attribute name="IsGroundAligned" type="SageBool" default="false" />
+					<xs:attribute name="IsEmitAboveGroundOnly" type="SageBool" default="false" />
+					<xs:attribute name="IsParticleUpTowardsEmitter" type="SageBool" default="false" />
+					<xs:attribute name="UseMaximumHeight" type="SageBool" default="false" />
+					<xs:attribute name="EmitterSound" type="AudioEventInfoRef" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	<xs:include schemaLocation="../Includes/PlayerClassType.xsd"/>
+	<xs:include schemaLocation="../Includes/FactionType.xsd"/>
+	
+	<!-- 
+		ClassEntitlements are unique to a faction/class combination 
+		Some entitlements are not inheritently specific to a faction or class 
+		(ie, tech upgrades) but we may want to require the player to purchase 
+		the entitlement for each faction/class.  The ClassEntitlement type 
+		packages an entitlement with class and faction attributes to give us
+		that flexibility.
+	-->
+	<xs:complexType name="ClassEntitlement">
+		<xs:attribute name="Entitlement" type="EntitlementTemplateRef" />
+	</xs:complexType>
+	
+	
+	<xs:complexType name="PlayerLevel" xas:runtimeWrapper="::PlayerLevelStore::PlayerLevelWrapper" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">		
+				<xs:sequence>
+					<!-- Players will be able to purchase PurchaseableEntitlements with Battle Merits once they have reached this level -->
+					<xs:element name="PurchasableEntitlement" type="ClassEntitlement"  minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+
+				<xs:attribute name="Level" type="SageUnsignedInt" use="required" />
+				<xs:attribute name="Experience" type="SageUnsignedInt" use="required" />
+				
+				<xs:attribute name="GdiRank" type="xs:string" use="required" />
+				<xs:attribute name="GdiRankIcon" type="ImageWeakRef" use="required" />
+				<xs:attribute name="NodRank" type="xs:string" use="required" />
+				<xs:attribute name="NodRankIcon" type="ImageWeakRef" use="required" />
+				
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

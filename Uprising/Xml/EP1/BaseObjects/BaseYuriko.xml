@@ -1,0 +1,792 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+		<Include type="all" source="ART:FXYurikoShield.w3x" />
+		<Include type="all" source="ART:FXYurikoShieldUpgrade.w3x" />
+		<Include type="all"	source="ART:AUAntiStructureVehicle_FX.w3x" />
+		
+	<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseInfantry.xml" />
+	</Includes>
+  
+	<GameObject
+		id="BaseYuriko"
+		inheritFrom="BaseInfantry"		
+		Side="Japan"
+		SubGroupPriority="230"
+		EditorSorting="UNIT"
+		KindOf="SELECTABLE CAN_ATTACK CAN_CAST_REFLECTIONS INFANTRY COMMANDO SCORE UNIQUE_UNIT SKIRMISH_AI_DONT_GARRISON IGNORE_FORCE_MOVE CAN_CAPTURE SNIPER CAN_BE_FAVORITE_UNIT NO_GARRISON CANNOT_HIJACK"
+		ThreatLevel="10"
+		WeaponCategory="GUN"
+		VoicePriority="120"
+		MaxSimultaneousOfType="1"
+		HealthBoxHeightOffset="0">
+		<ArmorSet
+			id="DefaultArmorSet"
+			Armor="BaseYurikoArmor"
+			DamageFX="InfantryDamageFX" />
+		<Draws> 
+			<!-- MODELCONDITION USAGE: 					 
+					USER_4 - Set while Lvl 1 YurikoShield is active
+					USER_5 - Set while Lvl 2/3 YurikoShield is active
+			  -->
+			
+			<!-- DRAW FX FOR ATTRIBUTE MODIFIERS -->
+			<!-- SPEED PARTICLES -->
+			<ScriptedModelDraw
+				id="ModuleTag_Speed_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						 Name="AUAntiStructureVehicle_FX" />
+				</ModelConditionState>				
+			</ScriptedModelDraw>
+
+			<!-- HEALTH PARTICLES -->
+			<ScriptedModelDraw
+				id="ModuleTag_Health_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						 Name="AUAntiStructureVehicle_FX" />
+				</ModelConditionState>		
+			</ScriptedModelDraw>
+
+			<!-- DAMAGE PARTICLES -->
+			<ScriptedModelDraw
+				id="ModuleTag_Damage_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						 Name="AUAntiStructureVehicle_FX" />
+				</ModelConditionState>				
+			</ScriptedModelDraw>
+			
+			<!-- include parachute draw module. -->
+			<xi:include
+				href="DATA:Includes/ParachuteDrawJapan.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ParachuteDraws/child::*)" />				
+		</Draws>
+		
+		<Behaviors>
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="YurikoStanceTemplate" />
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="JapanCommandoTech1PsyonicCrush_EP1" />
+				</WeaponSlotHardpoint>
+				<WeaponSlotHardpoint
+					ID="2">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="YurikoPsyonicAirborneKiller_EP1"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<SpecialPower
+				id="ModuleTag_PsyonicBlast"
+				SpecialPowerTemplate="SpecialPower_PsyonicBlast_EP1"
+				TriggerFX="FX_JapanCommandoSecondaryFire" 				
+				UpdateModuleStartsAttack="true"
+				DisabledTypesToIgnore="FROZEN"/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_PsyonicBlastUpdate"
+				SpecialPowerTemplate="SpecialPower_PsyonicBlast_EP1"
+				SpecialWeapon="JapanCommandoTech1PsyonicBlast_EP1"				
+				Options="BUSY_DURING_PACK"
+				UnpackTime="0s"
+				PackTime="0s"/>
+ 			<Physics
+				id="ModuleTag_Physics"
+				ShockStunnedTimeLow="0.25s"
+				ShockStunnedTimeHigh="0.25s"
+				ShockStandingTime="0.5s"/>
+
+			<!-- Lure behavior -->
+			<AddObjectsToLureUpdateSpecialPower
+				id="ModuleTag_SpecialPower_ActivateYurikoLureRank1"
+				SpecialPowerTemplate="SpecialPower_ActivateYurikoLureRank1"
+				Radius="60"
+				AvailableAtStart="true"
+				LureObjectLinkID="101"
+				CanAffectObjectFilter="YurikoLureSpecialPowerObjectFilter"
+				DisabledTypesToIgnore="FROZEN"
+			  />
+			<LureObjectsUpdate
+				id="ModuleTag_YurikoLureRank1"
+				LureObjectLinkID="101"
+				GuardStatus="UNSELECTABLE"
+			 GuardAttackRange="175.0" 
+				GuardMarkerObjectRef="YurikoLureMarker" >
+				<GuardOffset x="60.0" y="0.0" z="0.0" />
+				<GuardOffset x="45.0" y="45.0" z="0.0" />
+				<GuardOffset x="45.0" y="-45.0" z="0.0" />
+			</LureObjectsUpdate>
+
+			<AddObjectsToLureUpdateSpecialPower
+				id="ModuleTag_SpecialPower_ActivateYurikoLureRank2"
+				SpecialPowerTemplate="SpecialPower_ActivateYurikoLureRank2"
+				Radius="90"
+				AvailableAtStart="true"
+				LureObjectLinkID="102"
+				CanAffectObjectFilter="YurikoLureSpecialPowerObjectFilter"
+				DisabledTypesToIgnore="FROZEN"
+			  />
+			<LureObjectsUpdate
+				id="ModuleTag_YurikoLureRank2"
+				LureObjectLinkID="102"
+				GuardStatus="UNSELECTABLE"
+			GuardAttackRange="175.0" 
+				GuardMarkerObjectRef="YurikoLureMarker" 
+				DisabledTypesToProcess="FROZEN">
+				<GuardOffset x="60.0" y="0.0" z="0.0" />
+				<GuardOffset x="45.0" y="45.0" z="0.0" />
+				<GuardOffset x="45.0" y="-45.0" z="0.0" />
+				<GuardOffset x="30.0" y="60.0" z="0.0" />
+				<GuardOffset x="30.0" y="-60.0" z="0.0" />
+			</LureObjectsUpdate>
+
+			<AddObjectsToLureUpdateSpecialPower
+				id="ModuleTag_SpecialPower_ActivateYurikoLureRank3"
+				SpecialPowerTemplate="SpecialPower_ActivateYurikoLureRank3"
+				Radius="120"
+				AvailableAtStart="true"
+				LureObjectLinkID="103"
+				CanAffectObjectFilter="YurikoLureSpecialPowerObjectFilter"
+				DisabledTypesToIgnore="FROZEN"
+			  />
+			<LureObjectsUpdate
+				id="ModuleTag_YurikoLureRank3"
+				LureObjectLinkID="103"
+				GuardStatus="UNSELECTABLE"
+			GuardAttackRange="175.0" 
+				GuardMarkerObjectRef="YurikoLureMarker" >
+				<GuardOffset x="80.0" y="45.0" z="0.0" />
+				<GuardOffset x="80.0" y="-45.0" z="0.0" />
+				<GuardOffset x="60.0" y="0.0" z="0.0" />
+				<GuardOffset x="45.0" y="45.0" z="0.0" />
+				<GuardOffset x="45.0" y="-45.0" z="0.0" />
+				<GuardOffset x="30.0" y="60.0" z="0.0" />
+				<GuardOffset x="30.0" y="-60.0" z="0.0" />
+			</LureObjectsUpdate>
+
+			<!-- psychic slam power behaviors -->
+			<AddObjectsToLiftUpdateSpecialPower
+				id="ModuleTag_PsychicSlamSelectSpecialPower_Rank1"
+				SpecialPowerTemplate="SpecialPowerPsychicSlamSelect_Rank1"
+				Radius="15"
+				TeleportLinkID="101"
+				LiftObjectLinkID="101"
+				AvailableAtStart="true"
+				CanAffectObjectFilter="YurikoPsychicSlamSelectSpecialPowerObjectFilter"
+				DisabledTypesToIgnore="FROZEN"/>
+			<AddObjectsToLiftUpdateSpecialPower
+				id="ModuleTag_PsychicSlamSelectSpecialPower_Rank2"
+				SpecialPowerTemplate="SpecialPowerPsychicSlamSelect_Rank2"
+				Radius="20"
+				TeleportLinkID="102"
+				LiftObjectLinkID="101"
+				AvailableAtStart="true"
+				CanAffectObjectFilter="YurikoPsychicSlamSelectSpecialPowerObjectFilter"
+				DisabledTypesToIgnore="FROZEN"/>
+			<AddObjectsToLiftUpdateSpecialPower
+				id="ModuleTag_PsychicSlamSelectSpecialPower_Rank3"
+				SpecialPowerTemplate="SpecialPowerPsychicSlamSelect_Rank3"
+				Radius="25"
+				TeleportLinkID="103"
+				LiftObjectLinkID="101"
+				AvailableAtStart="true"
+				CanAffectObjectFilter="YurikoPsychicSlamSelectSpecialPowerObjectFilter"
+				DisabledTypesToIgnore="FROZEN"/>
+			<FlingStoredObjectsSpecialPower
+				id="ModuleTag_PsychicSlamThrowSpecialPower_Rank1"
+				SpecialPowerTemplate="SpecialPowerPsychicSlamThrow_Rank1"
+				StoreObjectsLinkID="101"
+				LiftObjectLinkID="101"
+				AvailableAtStart="true"
+				MinimumVelocity="800"
+				MaximumVelocity="800"
+				CanAffectObjectFilter="YurikoPsychicSlamThrowSpecialPowerObjectFilter"
+				DisabledTypesToIgnore="FROZEN">
+				<xi:include
+					href="DATA:EP1/Includes/YurikoPsychicSlamThrowObjectMaps.xml"
+					xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ObjectMaps/child::*)" />
+			</FlingStoredObjectsSpecialPower>
+			<FlingStoredObjectsSpecialPower
+				id="ModuleTag_PsychicSlamThrowSpecialPower_Rank2"
+				SpecialPowerTemplate="SpecialPowerPsychicSlamThrow_Rank2"
+				StoreObjectsLinkID="102"
+				LiftObjectLinkID="101"
+				AvailableAtStart="true"
+				MinimumVelocity="825"
+				MaximumVelocity="825"
+				CanAffectObjectFilter="YurikoPsychicSlamThrowSpecialPowerObjectFilter"
+				DisabledTypesToIgnore="FROZEN">
+				<xi:include
+					href="DATA:EP1/Includes/YurikoPsychicSlamThrowObjectMaps.xml"
+					xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ObjectMaps/child::*)" />
+			</FlingStoredObjectsSpecialPower>
+			<FlingStoredObjectsSpecialPower
+				id="ModuleTag_PsychicSlamThrowSpecialPower_Rank3"
+				SpecialPowerTemplate="SpecialPowerPsychicSlamThrow_Rank3"
+				StoreObjectsLinkID="103"
+				LiftObjectLinkID="101"
+				AvailableAtStart="true"
+				MinimumVelocity="850" 
+				MaximumVelocity="850" 
+				CanAffectObjectFilter="YurikoPsychicSlamThrowSpecialPowerObjectFilter"
+				DisabledTypesToIgnore="FROZEN">
+				<xi:include
+					href="DATA:EP1/Includes/YurikoPsychicSlamThrowObjectMaps.xml"
+					xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ObjectMaps/child::*)" />
+			</FlingStoredObjectsSpecialPower>
+			<LiftObjectUpdate
+				id="ModuleTag_PsychicSlamLiftObjectUpdate"
+				LiftObjectLinkID="101"
+				LiftVelocity="4.0"
+				RotationSpeed="0.1"
+				MaxElevationFromGround="90.0"
+				TimeIncrement="20.0s"
+				MaxTimeLifted="20.0s"
+				ShakeIntensity="0.002"
+				ShakeRadius="-1.0"
+				Shader="ShaderOverride_PsychicSlam"
+				DisabledTypesToProcess="FROZEN">
+				<ModelStateObjectFilters>
+					<LiftedUnitModelState
+						ModelState="REACT_5"/>
+				</ModelStateObjectFilters>
+			</LiftObjectUpdate>
+
+			<!-- Yuriko Shield Rank 1 -->
+			<ActivateModuleSpecialPower
+				id="ModuleTag_SpecialPower_ActivateYurikoShieldRank1"
+				SpecialPowerTemplate="SpecialPower_ActivateYurikoShieldRank1"
+				DisabledTypesToIgnore="FROZEN">
+				<Modules
+					ModuleId="ModuleTag_YurikoShieldRank1"
+					TriggerAtTargetPosition="false"
+					TriggerType="SELF_POSITION" />
+			</ActivateModuleSpecialPower>
+			<YurikoShieldSphereUpdate
+				id="ModuleTag_YurikoShieldRank1"
+				InitiallyActive="false"
+				RadiusMin="24"
+				RadiusMax="24"
+				ScanFrequency="0.25s"
+				Duration="5s"				
+				MaxDamage="9999999999"
+				DamageTypesNotToAbsorb="HEALING RADIATION"
+				ObjectStatus="GENERIC_TOGGLE_STATE IGNORING_STEALTH"
+				ModelCondition="USER_4"
+				AttributeModifierName="AttributeModifier_YurikoShieldShockwaveResist" 
+				SphereBoneName="SHIELDSMALL"
+				MajorShieldHitFX="FX_YurikoShieldHitSmallMajor"
+				MinorShieldHitFX="FX_YurikoShieldHitSmallMinor"
+				MinorShieldDamageTypes="GUN CANNON LASER UNDEFINED MAGIC PIERCE">
+				<ObjectFilter Rule="ANY" Relationship="ALLIES" Include="INFANTRY VEHICLE STRUCTURE" />
+				<!-- Damage from a unit inside the shield going to a unit inside the shield is 
+						 not absorbed because it doesn't pass through the shield. -->				
+				<IgnoreInsideToInsideCheck
+							Rule="ALL" >
+				</IgnoreInsideToInsideCheck>
+			</YurikoShieldSphereUpdate>
+
+			<!-- Yuriko Shield Rank 2 -->
+			<ActivateModuleSpecialPower
+				id="ModuleTag_SpecialPower_ActivateYurikoShieldRank2"
+				SpecialPowerTemplate="SpecialPower_ActivateYurikoShieldRank2"
+				DisabledTypesToIgnore="FROZEN">
+				<Modules
+					ModuleId="ModuleTag_YurikoShieldRank2"
+					TriggerAtTargetPosition="false"
+					TriggerType="SELF_POSITION" />
+			</ActivateModuleSpecialPower>
+			<YurikoShieldSphereUpdate
+				id="ModuleTag_YurikoShieldRank2"
+				InitiallyActive="false"
+				RadiusMin="24"
+				RadiusMax="24"
+				ScanFrequency="0.25s"
+				Duration="7s"
+				MaxDamage="9999999999"
+				DamageTypesNotToAbsorb="HEALING RADIATION"
+				ObjectStatus="GENERIC_TOGGLE_STATE IGNORING_STEALTH"
+				ModelCondition="USER_4"
+				AttributeModifierName="AttributeModifier_YurikoShieldShockwaveResist"
+				SphereBoneName="SHIELDSMALL"
+				MajorShieldHitFX="FX_YurikoShieldHitSmallMajor"
+				MinorShieldHitFX="FX_YurikoShieldHitSmallMinor"
+				MinorShieldDamageTypes="GUN CANNON LASER UNDEFINED MAGIC PIERCE">
+				<ObjectFilter Rule="ANY" Relationship="ALLIES" Include="INFANTRY VEHICLE STRUCTURE" />
+				<!-- Damage from a unit inside the shield going to a unit inside the shield is 
+						 not absorbed because it doesn't pass through the shield. -->
+				<IgnoreInsideToInsideCheck
+							Rule="ALL" >
+				</IgnoreInsideToInsideCheck>
+			</YurikoShieldSphereUpdate>
+
+			<!-- Yuriko Shield Rank 3 -->
+			<ActivateModuleSpecialPower
+				id="ModuleTag_SpecialPower_ActivateYurikoShieldRank3"
+				SpecialPowerTemplate="SpecialPower_ActivateYurikoShieldRank3"
+				DisabledTypesToIgnore="FROZEN">
+				<Modules
+					ModuleId="ModuleTag_YurikoShieldRank3"
+					TriggerAtTargetPosition="false"
+					TriggerType="SELF_POSITION" />
+			</ActivateModuleSpecialPower>
+			<YurikoShieldSphereUpdate
+				id="ModuleTag_YurikoShieldRank3"
+				InitiallyActive="false"
+				RadiusMin="24"
+				RadiusMax="24"
+				ScanFrequency="0.25s"
+				Duration="9s"
+				MaxDamage="9999999999"
+				DamageTypesNotToAbsorb="HEALING RADIATION"
+				ObjectStatus="GENERIC_TOGGLE_STATE IGNORING_STEALTH"
+				ModelCondition="USER_4"
+				AttributeModifierName="AttributeModifier_YurikoShieldShockwaveResist"
+				SphereBoneName="SHIELDSMALL"
+				MajorShieldHitFX="FX_YurikoShieldHitSmallMajor"
+				MinorShieldHitFX="FX_YurikoShieldHitSmallMinor"
+				MinorShieldDamageTypes="GUN CANNON LASER UNDEFINED MAGIC PIERCE">
+				<ObjectFilter Rule="ANY" Relationship="ALLIES" Include="INFANTRY VEHICLE STRUCTURE" />
+				<!-- Damage from a unit inside the shield going to a unit inside the shield is 
+						 not absorbed because it doesn't pass through the shield.-->
+				<IgnoreInsideToInsideCheck
+							Rule="ALL" >
+				</IgnoreInsideToInsideCheck>
+			</YurikoShieldSphereUpdate>
+
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="20s"
+				SinkRate="0.01"
+				DestructionDelay="30s">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="ELECTROCUTED LASERED BURNED IRRADIATED"
+					ExemptStatus="OVER_WATER"/>
+				<Sound Type="INITIAL" List="JAP_Yuriko_VoiceDie" />
+			</SlowDeath>
+
+			<SlowDeath
+				id="ModuleTag_DeathWater"
+        		Fade="true"
+        		FadeDelay="6s"
+        		FadeTime="2s"
+				SinkDelay="0.5s"
+				SinkRate="1.2"
+				DestructionDelay="10.0s">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="OVER_WATER"/>
+				<Sound Type="INITIAL" List="JAP_Yuriko_VoiceDie" />
+			</SlowDeath>
+
+			<SlowDeath
+				id="ModuleTag_TeslaDeath"
+				DeathFlags="DEATH_1"
+				SinkDelay="7s"
+				SinkRate="2.4"
+				DestructionDelay="8.5s">
+				<DieMuxData
+					DeathTypes="ELECTROCUTED"
+					DeathTypesForbidden="LASERED BURNED STABBED IRRADIATED"/>
+				<Sound Type="INITIAL" List="JAP_Yuriko_VoiceDieShock" />
+			</SlowDeath>
+
+			<SlowDeath
+				id="ModuleTag_LaserDeath"
+				DeathFlags="DEATH_2"
+				SinkDelay="7s"
+				SinkRate="2.4"
+				DestructionDelay="8.5s">
+				<DieMuxData
+					DeathTypes="LASERED"
+					DeathTypesForbidden="ELECTROCUTED BURNED STABBED IRRADIATED"
+					ExemptStatus="OVER_WATER"/>
+				<Sound Type="INITIAL" List="JAP_Yuriko_VoiceDie" />
+			</SlowDeath>
+
+			<SlowDeath
+				id="ModuleTag_FireDeath"
+				DeathFlags="DEATH_3"
+				SinkDelay="7s"
+				SinkRate="2.4"
+				DestructionDelay="8.5s">
+				<DieMuxData
+					DeathTypes="BURNED"
+					DeathTypesForbidden="ELECTROCUTED LASERED STABBED IRRADIATED"
+					ExemptStatus="OVER_WATER"/>
+				<Sound Type="INITIAL" List="JAP_Yuriko_VoiceDieFire" />
+			</SlowDeath>
+
+			<SlowDeath
+				id="ModuleTag_RadiationDeath"
+				DeathFlags="DEATH_5"
+				SinkDelay="7s"
+				SinkRate="2.4"
+				DestructionDelay="8.5s">
+				<DieMuxData
+					DeathTypes="IRRADIATED"
+					DeathTypesForbidden="ELECTROCUTED LASERED BURNED STABBED"
+					ExemptStatus="OVER_WATER"/>
+				<Sound Type="INITIAL" List="JAP_Yuriko_VoiceDie" />
+			</SlowDeath>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL"/>
+				<Event
+					Index="onDeath"
+					FX="FX_JapanYurikoDeath" />
+			</FXListBehavior>
+
+			<LiftObjectUpdate
+				id="ModuleTag_PsyonicCrushLiftUpdate"
+				CrusherModifiesVelocity="false"
+				LiftObjectLinkID="1"
+				LiftVelocity="1.0"
+				MaxElevationFromGround="75.0"
+				TimeIncrement="0.5s"
+				MaxTimeLifted="0.5s"
+				MaxStructureShakeVelocity="0.25"
+                AirplaneCrashWeapon="JapanCommandoTech1AirplaneCrashWeapon"
+				SoftLandingWeapon="JapanCommandoSoftLanding"
+				Shader="ShaderOverride_PsychicCrush">
+				<ModelStateObjectFilters>
+					<LiftedUnitModelState
+						ModelState="REACT_1">
+						<ObjectFilter
+							Rule="ANY"
+							Include="INFANTRY"
+							StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+					</LiftedUnitModelState>
+					<LiftedUnitModelState
+						ModelState="REACT_2">
+						<ObjectFilter
+							Rule="ANY"
+							Include="VEHICLE"
+							StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+					</LiftedUnitModelState>
+					<LiftedUnitModelState
+						ModelState="REACT_3">
+						<ObjectFilter
+							Rule="ANY"
+							Include="STRUCTURE"/>
+					</LiftedUnitModelState>
+					<LiftedUnitModelState
+						ModelState="REACT_1">
+						<ObjectFilter
+							Rule="ANY"
+							Include="VEHICLE INFANTRY"
+							StatusBitFlags="AIRBORNE_TARGET"/>
+					</LiftedUnitModelState>
+					<LiftedUnitModelState
+						ModelState="REACT_4"/>
+				</ModelStateObjectFilters>
+			</LiftObjectUpdate>
+			<StatusBitsUpgrade
+				id="ModuleTag_VeterancyUpgrade"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_Veterancy_HEROIC</TriggeredBy>
+			</StatusBitsUpgrade>
+
+			<SuppressionUpdate
+				id="ModuleTag_SuppressionUpdate"
+				xai:joinAction="Remove"/>
+
+			<AutoHealBehavior
+				id="Upgrade_HeroicHeal"
+				InitiallyActive="false"
+				HealOnlyIfNotInCombat="true"
+				HealOnlyIfNotUnderAttack="true"
+				StartHealingDelay="3s"
+				HealingAmount="1"
+				HealingDelay=".5s">
+				<TriggeredBy>Upgrade_YurikoAutoHeal</TriggeredBy>
+			</AutoHealBehavior>
+
+			<!-- Allied Parachute Behaviors -->
+			<ModelConditionUpgrade
+				id="ModuleTag_JapanFaction"
+				AddConditionFlags="USER_8">
+				<TriggeredBy>Upgrade_AlliesFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_SovietFaction"
+				AddConditionFlags="USER_9">
+				<TriggeredBy>Upgrade_SovietFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+
+			<SecondaryDamageTracker
+				id="ModuleTag_SecondaryDamageTracker"
+				xai:joinAction="Replace"
+				UpdateDuration="1s"
+				DissipateAmount="100"
+				MaxDamageClampScaler="150%">
+				<Color R="1.0" G="1.0" B="1.75"/>
+				<EffectInfo
+					Fraction="0.2"
+					AttributeModifier="AttributeModifer_CryoBeam_02"/>
+				<EffectInfo
+					Fraction="0.4"
+					AttributeModifier="AttributeModifer_CryoBeam_04"/>
+				<EffectInfo
+					Fraction="0.6"
+					AttributeModifier="AttributeModifer_CryoBeam_06"/>
+				<EffectInfo
+					Fraction="0.8"
+					AttributeModifier="AttributeModifer_CryoBeam_08"/>
+				<EffectInfo
+					Fraction="1.0"
+					SetUpgradedArmor="false"
+					OnEnterDisable="true"
+					OnEnterCancelSpecialAbilities="true"
+					AttributeModifier="AttributeModifer_CryoBeam_10"/>
+			</SecondaryDamageTracker>
+			
+			<AttributeModifierUpgrade
+				id="ModuleTag_AttributeModifier_YurikoSpeed01"
+				AttributeModifier="AttributeModifier_YurikoSpeed01">
+				<TriggeredBy>Upgrade_YurikoSpeed01</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<AttributeModifierUpgrade
+				id="ModuleTag_AttributeModifier_YurikoSpeed02"
+				AttributeModifier="AttributeModifier_YurikoSpeed02">
+				<TriggeredBy>Upgrade_YurikoSpeed02</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<AttributeModifierUpgrade
+				id="ModuleTag_AttributeModifier_YurikoHealth01"
+				AttributeModifier="AttributeModifier_YurikoHealth01">
+				<TriggeredBy>Upgrade_YurikoHealth01</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<AttributeModifierUpgrade
+				id="ModuleTag_AttributeModifier_YurikoHealth02"
+				AttributeModifier="AttributeModifier_YurikoHealth02">
+				<TriggeredBy>Upgrade_YurikoHealth02</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<AttributeModifierUpgrade
+				id="ModuleTag_AttributeModifier_YurikoDamage01"
+				AttributeModifier="AttributeModifier_YurikoAttackDamage01">
+				<TriggeredBy>Upgrade_YurikoAttackDamage01</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<AttributeModifierUpgrade
+				id="ModuleTag_AttributeModifier_YurikoDamage02"
+				AttributeModifier="AttributeModifier_YurikoAttackDamage02">
+				<TriggeredBy>Upgrade_YurikoAttackDamage02</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_Upgrade_YurikoSpeed01_Aura"
+				InitiallyActive="false"
+				Range="600.0"
+				RefreshDelay=".2s"
+				AllowSelf="false"
+				AttributeModifierName="AttributeModifier_YurikoSpeed01_Aura">
+				<ObjectFilter
+					Rule="ALL"
+					Relationship="SAME_PLAYER ALLIES"/>
+				<TriggeredBy>Upgrade_YurikoSpeed01</TriggeredBy>
+			</AttributeModifierAuraUpdate>
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_Upgrade_YurikoSpeed02_Aura"
+				InitiallyActive="false"
+				Range="600.0"
+				RefreshDelay=".2s"
+				AllowSelf="false"
+				AttributeModifierName="AttributeModifier_YurikoSpeed02_Aura">
+				<ObjectFilter
+					Rule="ALL"
+					Relationship="SAME_PLAYER ALLIES"/>
+				<TriggeredBy>Upgrade_YurikoSpeed02</TriggeredBy>
+			</AttributeModifierAuraUpdate>
+
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_Upgrade_YurikoHealth01_Aura"
+				InitiallyActive="false"
+				Range="600.0"
+				RefreshDelay=".2s"
+				AllowSelf="false"
+				AttributeModifierName="AttributeModifier_YurikoHealth01_Aura">
+				<ObjectFilter
+					Rule="ALL"
+					Relationship="SAME_PLAYER ALLIES"/>
+				<TriggeredBy>Upgrade_YurikoHealth01</TriggeredBy>
+			</AttributeModifierAuraUpdate>
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_Upgrade_YurikoHealth02_Aura"
+				InitiallyActive="false"
+				Range="600.0"
+				RefreshDelay=".2s"
+				AllowSelf="false"
+				AttributeModifierName="AttributeModifier_YurikoHealth02_Aura">
+				<ObjectFilter
+					Rule="ALL"
+					Relationship="SAME_PLAYER ALLIES"/>
+				<TriggeredBy>Upgrade_YurikoHealth02</TriggeredBy>
+			</AttributeModifierAuraUpdate>
+
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_Upgrade_YurikoAttackDamage01_Aura"
+				InitiallyActive="false"
+				Range="600.0"
+				RefreshDelay=".2s"
+				AllowSelf="false"
+				AttributeModifierName="AttributeModifier_YurikoAttackDamage01_Aura">
+				<ObjectFilter
+					Rule="ALL"
+					Relationship="SAME_PLAYER ALLIES"/>
+				<TriggeredBy>Upgrade_YurikoAttackDamage01</TriggeredBy>
+			</AttributeModifierAuraUpdate>
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_Upgrade_YurikoAttackDamage02_Aura"
+				InitiallyActive="false"
+				Range="600.0"
+				RefreshDelay=".2s"
+				AllowSelf="false"
+				AttributeModifierName="AttributeModifier_YurikoAttackDamage02_Aura">
+				<ObjectFilter
+					Rule="ALL"
+					Relationship="SAME_PLAYER ALLIES"/>
+				<TriggeredBy>Upgrade_YurikoAttackDamage02</TriggeredBy>
+			</AttributeModifierAuraUpdate>
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					IdleScanDelay="=$SLOW_IDLE_SCAN_DELAY"/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="350" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_YurikoVoiceDieFall">
+				<ModelConditionSound Sound="JAP_Yuriko_VoiceDieYurikoFall" RequiredFlags="IMPENDING_DOOM" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_YurikoVoiceUp">
+				<ModelConditionSound Sound="JAP_Yuriko_VoiceDieYurikoUp" RequiredFlags="STUNNED_FLAILING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_PyschicShield">
+				<ModelConditionSound Sound="JAP_Yuriko_PsychicShieldLoop" RequiredFlags="USER_4" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_PyschicSlamLiftLoop">
+				<ModelConditionSound Sound="JAP_Yuriko_PsychicSlamLoop" RequiredFlags="REACT_5" />
+			</ModelConditionAudioLoopClientBehavior>
+
+<!--
+			<AnimationSoundClientBehavior
+				id="AnimationSoundCB" >
+				<Sound Sound="BodyfallGenericDirt" ExcludedMC="OVER_WATER" Animation="JUCommandoTech1_DTBA" Frame="45" />
+				<Sound Sound="BodyfallGenericDirt" ExcludedMC="OVER_WATER" Animation="JUCommandoTech1_DTBB" Frame="40" />
+				<Sound Sound="BodyfallGenericDirt" ExcludedMC="OVER_WATER" Animation="JUCommandoTech1_DTFA" Frame="64" />
+				<Sound Sound="BodyfallGenericDirt" ExcludedMC="OVER_WATER" Animation="JUCommandoTech1_DTPA" Frame="33" />
+				<Sound Sound="BodyfallGenericDirt" ExcludedMC="OVER_WATER" Animation="JUCommandoTech1_LNDA" Frame="4" />
+				<Sound Sound="BodyfallGenericDirt" ExcludedMC="OVER_WATER" Animation="JUCommandoTech1_RNDB" Frame="49" />
+			</AnimationSoundClientBehavior>
+-->
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="7.0"
+				Height="25.0"
+				ContactPointGeneration="SQUAD_MEMBER"/>
+		</Geometry>
+		<!--
+		<AudioArrayVoice>
+			<AudioEntry Sound="JAP_Yuriko_VoiceAttack" AudioType="voiceAttack" />
+			<AudioEntry Sound="JAP_Yuriko_VoiceCreate" AudioType="voiceCreated" />
+			<AudioEntry Sound="JAP_Yuriko_VoiceFear" AudioType="voiceFear" />
+			<AudioEntry Sound="JAP_Yuriko_VoiceGarrison" AudioType="voiceGarrison" />
+			<AudioEntry Sound="JAP_Yuriko_VoiceMove" AudioType="voiceMove" />
+			<AudioEntry Sound="JAP_Yuriko_VoiceMoveAttack" AudioType="voiceAttackAfterMoving" />
+			<AudioEntry Sound="JAP_Yuriko_VoiceSelectMS" AudioType="voiceSelect" />
+			<AudioEntry Sound="JAP_Yuriko_VoiceSelectBattleMS" AudioType="voiceSelectBattle" />
+			<AudioEntry Sound="JAP_Yuriko_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" />
+			<NamedEntry Sound="JAP_Yuriko_VoicePsyonicBlastMS" Name="VoicePsyonicBlast" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="JAP_YurikoOmega_MoveStart" AudioType="soundMoveStart" />
+		</AudioArraySound>
+
+		<EvaEventArray>
+			<EvaEntry EvaEvent="YurikoLost" EvaType="dieOwner" />
+			<EvaEntry EvaEvent="EnemyCommandoDetected" EvaType="enemyObjectSighted" />
+		</EvaEventArray>
+			-->
+
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="400" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrusherLevel="0"
+			CrushableLevel="50" />
+	</GameObject>
+
+	<ArmorTemplate
+		id="BaseYurikoArmor">
+		<Armor
+			Damage="ROCKET"
+			Percent="20" />
+		<Armor
+			Damage="FLAK"
+			Percent="10" />
+		<Armor
+			Damage="PRISM"
+			Percent="50" />
+		<Armor
+			Damage="GUN"
+			Percent="100" />
+		<Armor
+			Damage="AUTO_CANNON"
+			Percent="100" />
+		<Armor
+			Damage="MELEE"
+			Percent="33" />
+		<Armor
+			Damage="TESLA"
+			Percent="100" />
+		<Armor
+			Damage="SNIPER"
+			Percent="4" />
+		<Armor
+			Damage="CANNON"
+			Percent="25" />
+		<Armor
+			Damage="RADIATION"
+			Percent="100" />
+		<Armor
+			Damage="EXPLOSIVE"
+			Percent="50" />
+	</ArmorTemplate>
+	
+</AssetDeclaration>

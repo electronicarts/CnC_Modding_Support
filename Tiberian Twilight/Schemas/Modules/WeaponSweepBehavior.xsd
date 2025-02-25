@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="../Modules/BaseModules.xsd"/>
+	
+	<xs:simpleType name="WeaponSweepDirectionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SWEEP_HORIZONTAL" />
+			<xs:enumeration value="SWEEP_VERTICAL" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="WeaponSweepOptionsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="MOVE_BACK_AND_FORTH" />
+			<xs:enumeration value="FIRE_EACH_WEAPON_IN_SUCCESSION" />
+			<xs:enumeration value="CONFORM_TO_TERRAIN" />
+			<xs:enumeration value="NOT_WHILE_MOVING" />
+			<xs:enumeration value="BUSY_WHILE_SWEEP_ACTIVE" />
+			<xs:enumeration value="NO_AUTO_ACQUIRE_WHILE_SWEEP_ACTIVE" />
+			<xs:enumeration value="SET_WEAPON_BARREL_TO_CURRENT_SHOT" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponSweepOptionsBitFlags">
+		<xs:list itemType="WeaponSweepOptionsType"/>
+	</xs:simpleType>
+
+	<xs:complexType name="WeaponToFireData">
+		<xs:sequence>
+			<xs:element name="Offset" type="Vector3" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="WeaponName" type="WeaponRef" />
+		<xs:attribute name="SlotType" type="WeaponSlotType" default="PRIMARY_WEAPON" />
+		<xs:attribute name="SlotID" type="SageUnsignedInt" default="0" />
+	</xs:complexType>
+
+	<xs:complexType name="WeaponSweepBehaviorModuleData">
+		<xs:complexContent>
+			<xs:extension base="BehaviorModuleData">
+				<xs:sequence>
+					<!-- The Start Offset is how far from the target location to begin the attack 
+							 negative values start in front of the target (along the sweep) and positive values, behind it-->
+					<xs:element name="StartOffset" type="Vector3" minOccurs="0" maxOccurs="1" />
+					<xs:element name="WeaponToFire" type="WeaponToFireData" minOccurs="1" maxOccurs="unbounded" />
+					<xs:element name="ObjectStatusValidation" type="ObjectStatusValidationDataType" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="NumFiresPerSweep" type="SageInt" default="1"/>
+				<!-- This decides how much the sweep position moves each update -->
+				<xs:attribute name="DistanceBetweenEachFiring" type="SageReal" default="20.0"/>
+				<xs:attribute name="DelayBetweenEachFiring" type="Time" default="0.0s"/>
+				<xs:attribute name="SweepDirectionality" type="WeaponSweepDirectionType" default="SWEEP_VERTICAL"/>
+				<xs:attribute name="WeaponSweepOptions" type="WeaponSweepOptionsBitFlags" default=""/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

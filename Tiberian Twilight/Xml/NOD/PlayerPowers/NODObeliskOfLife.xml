@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!--	Nod Support Power / Obelisk Of Life  -->
+	<Includes>
+		<!-- Art Includes-->
+		<Include type="all" source="ART:NSM_StructureK_SKN.w3x" />
+		<Include type="all" source="ART:NSM_StructureK_BLDA.w3x" />
+		<Include type="all" source="ART:NSM_StructureK_DMG.xml" />
+		
+		<Include type="all" source="ART:FXLaserOverlay.xml" />
+		<Include type="all" source="ART:NBObeliskCrstl.w3x" />
+		<Include type="all" source="ART:FXObeliskLaser.xml" />
+
+		<Include type="all"	source="ART:FXGDIHealingBeam.xml" />
+		<Include type="all"	source="ART:FXHealingSpotlight.xml" />
+
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+	</Includes>
+
+	<GameObject
+		id="NODObeliskOfLife"
+		inheritFrom="BaseDefensiveStructure"
+		SelectPortrait="Portrait_NOD_Structure_K"
+		ButtonImage="Btn_NOD_Structure_K"
+		Side="NOD"
+		BuildTime="0.0"
+		EnergyProduction="0"
+		CommandSet="NODObeliskOfLifeCommandSet"
+		KindOf="+CAN_ATTACK +CAN_SEE_THROUGH_STRUCTURE -POWERED -SKIRMISH_AI_DELETE_TO_FREE_UP_ENERGY +CAN_ATTACK_STEALTHED"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="NOD_PlayerPower(Obelisk Of Life)"
+		EditorSorting="STRUCTURE"
+		WeaponCategory="LASER"
+		Description="Desc:NODObeliskOfLife"
+		TypeDescription="Type:NODObeliskOfLife">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODObeliskOfLife</DisplayName>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			MethodOfRemoving="CANNOT_REMOVE"/>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FXBONE01 FXWeapon01"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NSM_StructureK_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NSM_StructureK_SKN" />
+					<Texture
+						Original="NSM_StructureK"
+						New="NSM_StructureK_DMG" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="NODObDamagedSteam"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="NODObDamagedDist"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NSM_StructureK_SKN" />
+					<Texture
+						Original="NSM_StructureK"
+						New="NSM_StructureK_DMG" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="NODObDamagedSpew"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="NODObDamagedSpewDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="NODObDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NSM_StructureK_BLDA"
+						AnimationBlendTime="0"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<!-- BUILD UP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING"
+					StateName="STATE_Buildup">
+					<Animation
+						AnimationName="NSM_StructureK_BLDA"
+						AnimationBlendTime="0" 
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile="5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="5"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="10"
+				LightMin="5"
+				LightMax="10"
+				WeaponSlotID="1"
+				LaserStateID="1">
+				<LightColor R="0.86" G="0.86" B="0.07" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDIHealingBeam</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODObeliskOfLifeHealWeapon"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s"
+				DisplayInUI="false" />
+
+			<!-- Used for healing weapon -->
+			<LaserState
+				id="ModuleTag_LaserState"
+				LaserId="1">
+				<LaserEndParticleSystem>HealingBeamHit</LaserEndParticleSystem>
+			</LaserState>
+
+			<!-- Structure fires unburrowing weapon once -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate">
+				<FireWeaponNugget
+					WeaponName="NODObeliskOfLifeUnburrowWeapon"
+					OneShot="true" />
+			</FireWeaponUpdate>			
+			
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				Flags="DRAW_LIFETIME_BAR"
+				MinLifetime="20s"
+				MaxLifetime="20s"
+				DeathType="SUICIDED" />
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Small" />
+				<Event
+					Index="onDeath"
+					FX="FX_NOD_DefensiveTurret_Explode_NoSound" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					TargetInvalidAtFullHealth="true"
+					AutoAcquireAllies="true"
+					CanPickDynamicTargets="true"
+					SympathyRange="100.0" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="100.0" />
+		</Body>
+		<Geometry>
+			<PlacementShape
+				Type= "BOX"
+				MajorRadius = "20.0"
+				MinorRadius = "20.0"
+				Height = "42.0" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</PlacementShape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="16.0"
+				Height="27.0"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="-3.0"
+					y="0.0"
+					z="0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_ObeliskOfLife_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="450"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET			-->
+	<!-- ////////////////////////////////////////	-->
+	
+	<LogicCommandSet
+		id="NODObeliskOfLifeCommandSet">
+		<Cmd>Command_Stop</Cmd>
+	</LogicCommandSet>
+
+	
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS									-->
+	<!-- ////////////////////////////////////////	-->
+	
+	<WeaponTemplate
+		id="NODObeliskOfLifeHealWeapon"
+		AcceptableAimDelta="180d"
+		AttackRange="350.0"
+		CanFireWhileMoving="false"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT IGNORE_FORCE_FIRE"
+		FireSound="NOD_ObeliskOfLife_RepairWeaponBeamFireMS"
+		FireFX="FX_HealingBeam"
+		RadiusDamageAffects="ALLIES"
+		ReAcquireDetailType="PER_CLIP"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		WeaponSpeed="999999.0">
+		<NuggetObjectFilter
+			Rule="ALL"
+			Exclude="HUSK" />
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.8s"
+				LaserId="1">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE VEHICLE INFANTRY AIRCRAFT"
+					Exclude="NEUTRAL_TECH"
+					StatusBitFlagsExclude="NO_HEALING">
+				</SpecialObjectFilter>
+			</ActivateLaserNugget>
+			<HOTNugget
+				DamageFXType="NOD_HEAL"
+				HealDuration="1.0s"
+				AlwaysActive="true"
+				Damage="30.0">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE VEHICLE INFANTRY AIRCRAFT"
+					Exclude="NEUTRAL_TECH"
+					StatusBitFlagsExclude="NO_HEALING">
+				</SpecialObjectFilter>
+			</HOTNugget>
+		</Nuggets>		
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODObeliskOfLifeUnburrowWeapon"
+		FireFX="FX_NOD_Structure_UnburrowWeapon"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND">
+		<Nuggets>
+			<DamageNugget
+				Damage="0.0"
+				Radius="50"
+				DelayTimeSeconds="0.0s"
+				DamageType="BLAST"
+				DamageFXType="GDI_BOMB"
+				DeathType="EXPLODED" >
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>	
+	
+	
+</AssetDeclaration>

@@ -1,0 +1,1118 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Tags></Tags>
+  <Includes></Includes>
+
+  <AIStrategicStateDefinition
+    id="AlliedScout"
+    MaxTargets="2"
+		CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <TimerHeuristic StartTime="0s" EndTime="90s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestStructureHeuristic"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+                    RegisteredObjectSet="INFANTRY"
+                    IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="LOW" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="ScoutMicroManager">
+        <CreateUnits UnitName="AlliedScoutInfantry" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedStealthDetector"
+    MaxTargets="2">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+					Relationship="ENEMIES"
+					Rule="ANY" >
+          <IncludeThing>AlliedInfiltrationInfantry</IncludeThing>
+          <IncludeThing>JapanLightTransportVehicle</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestFriendlyConyardHeuristic"/>
+    <Tactic id="Attack" Tactic="StaticDefense" Distance="600" EndBehavior="DISBAND" EndIfStateTurnsOff="true"
+            UseAestheticsManager="true" AestheticsManagerPatrolIdleTime="0s" AestheticsManagerMinDistanceFromHarvester="0.0">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+                    RegisteredObjectSet="INFANTRY"
+                    IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="StealthDetectorMicroManager">
+        <CreateUnits UnitName="AlliedScoutInfantry" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="ACVHarrassment"
+    MaxTargets="2">
+    <Heuristic>
+      <EnemyNearbyHeuristic Distance="900.0" EnemyNearby="false"/>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedAntiInfantryVehicle</IncludeThing>
+          <IncludeThing>AlliedAntiInfantryVehicle_Ground</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToSurfaceSurveyorHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToSurfaceHarvesterHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="3" MaxUnits="6" MinPowerAdvantage="1.25"
+                    RegisteredObjectSet="VEHICLES"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="HarrassmentMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedAntiInfantryVehicle</IncludeThing>
+          <IncludeThing>AlliedAntiInfantryVehicle_Ground</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="IFVHarrassment"
+    MaxTargets="1">
+    <Heuristic>
+      <EnemyNearbyHeuristic Distance="900.0" EnemyNearby="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundSurveyorHeuristic" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundHarvesterHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundPowerPlantHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="0" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="10" MaxUnits="10" MinPowerAdvantage="0.5"
+                    RegisteredObjectSet="INFANTRY"
+                    IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="HarrassmentMicroManager">
+        <CreateUnits UnitName="AlliedAntiAirVehicleTech1" MinUnits="5" MaxUnits="5"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!--Send an engineer to capture a husk on water -->
+  <AIStrategicStateDefinition
+    id="AlliedCaptureWaterHusks"
+    MaxTargets="1"
+    PathfindingCheckType="None">
+    <Heuristic>
+      <EnemyNearbyHeuristic Distance="450.0" EnemyNearby="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="WaterHuskHeuristic"/>
+    <Tactic id="Garrison" Tactic="GarrisonBuilding" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="1" MinPowerAdvantage="0.5"
+                    RegisteredObjectSet="INFANTRY"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="CaptureHuskMicroManager">
+        <CreateUnits UnitName="AlliedEngineer" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedCaptureTech"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="15s" EndTime="-1s" CountFrom="AI_START"/>
+      <EnemyNearbyHeuristic Distance="700.0" EnemyNearby="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestTechBuildingHeuristic"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1">
+      <TeamTemplate MinUnits="1" MaxUnits="4" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="CaptureTechMicroManager">
+        <CreateUnits UnitName="AlliedEngineer" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedCaptureTech_EASY"
+    MaxTargets="1">
+    <Heuristic>
+      <IsBuildingHeuristic KindOf="FS_TECHNOLOGY SUPER_WEAPON" PassIfBuilding="false"/>
+      <EnemyNearbyHeuristic Distance="700.0" EnemyNearby="false"/>
+      <TechBuildingShareHeuristic PercentOfFairShare="75%" Above="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestTechBuildingHeuristic"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1">
+      <TeamTemplate MinUnits="1" MaxUnits="4" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    MicroManager="CaptureTechMicroManager">
+        <CreateUnits UnitName="AlliedEngineer" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedCaptureTech_MEDIUM"
+    MaxTargets="1">
+    <Heuristic>
+      <IntervalHeuristic IntervalTime="120s" ActiveTime="30s" CountFrom="AI_START"/>
+      <IsBuildingHeuristic KindOf="FS_TECHNOLOGY SUPER_WEAPON" PassIfBuilding="false"/>
+      <EnemyNearbyHeuristic Distance="700.0" EnemyNearby="false"/>
+      <TechBuildingShareHeuristic PercentOfFairShare="100%" Above="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestTechBuildingHeuristic"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="4" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    MicroManager="CaptureAnythingMicroManager">
+        <CreateUnits UnitName="AlliedEngineer" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+      id="AlliedCapturePriorityTech_HARD"
+      MaxTargets="1">
+    <Heuristic>
+      <IsBuildingHeuristic KindOf="FS_TECHNOLOGY SUPER_WEAPON" PassIfBuilding="false"/>
+      <EnemyNearbyHeuristic Distance="500.0" EnemyNearby="false"/>
+      <TechBuildingShareHeuristic PercentOfFairShare="125%" Above="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestMoneyTechHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestVeterancyTechHeuristic" Priority="10"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="8" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    MicroManager="CaptureAnythingMicroManager">
+        <CreateUnits UnitName="AlliedEngineer" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedCaptureNonPriorityTech_HARD"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="240s" EndTime="-1s" CountFrom="AI_START"/>
+      <IsBuildingHeuristic KindOf="STRUCTURE" PassIfBuilding="false"/>
+      <EnemyNearbyHeuristic Distance="800.0" EnemyNearby="false"/>
+      <TechBuildingShareHeuristic PercentOfFairShare="125%" Above="false"/>
+      <PowerAdvantageHeuristic Value="2.0" Above="true" IncludeOwnDefenses="false" IncludeEnemyDefenses="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestNonPriorityTechHeuristic"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="3" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    MicroManager="CaptureAnythingMicroManager">
+        <CreateUnits UnitName="AlliedEngineer" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedCapturePriorityTech_BRUTAL"
+    MaxTargets="1">
+    <Heuristic>
+      <IsBuildingHeuristic KindOf="FS_TECHNOLOGY SUPER_WEAPON" PassIfBuilding="false"/>
+      <EnemyNearbyHeuristic Distance="500.0" EnemyNearby="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestMoneyTechHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestVeterancyTechHeuristic" Priority="10"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="12" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    MicroManager="CaptureAnythingMicroManager">
+        <CreateUnits UnitName="AlliedEngineer" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedCaptureNonPriorityTech_BRUTAL"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="240s" EndTime="-1s" CountFrom="AI_START"/>
+      <IsBuildingHeuristic KindOf="STRUCTURE" PassIfBuilding="false"/>
+      <EnemyNearbyHeuristic Distance="800.0" EnemyNearby="false"/>
+      <TechBuildingShareHeuristic PercentOfFairShare="125%" Above="false"/>
+      <PowerAdvantageHeuristic Value="2.0" Above="true" IncludeOwnDefenses="false" IncludeEnemyDefenses="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestNonPriorityTechHeuristic"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="5" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    MicroManager="CaptureAnythingMicroManager">
+        <CreateUnits UnitName="AlliedEngineer" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedCaptureVehicleHealTech"
+    MaxTargets="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimerHeuristic StartTime="240s" EndTime="-1s" CountFrom="AI_START"/>
+      <IsBuildingHeuristic KindOf="FS_TECHNOLOGY SUPER_WEAPON" PassIfBuilding="false"/>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+          Relationship="SAME_PLAYER"
+          Rule="ANY"
+          Include="VEHICLE">
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+      <!-- Only  Capture 1, they don't stack -->
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="false">
+        <ObjectFilter
+          Relationship="SAME_PLAYER">
+          <IncludeThing>GarageTechStructure</IncludeThing>
+          <IncludeThing>AirportTechStructure</IncludeThing>
+          <IncludeThing>ShipYardTechStructure</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+      <EnemyNearbyHeuristic Distance="500.0" EnemyNearby="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestVehicleHealTechHeuristic" Priority="10"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="8" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    MicroManager="CaptureAnythingMicroManager">
+        <CreateUnits UnitName="AlliedEngineer" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedExpansion"
+    MaxRunningCopies="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimerHeuristic StartTime="90s" EndTime="-1s" CountFrom="AI_START"/>
+      <EnemyNearbyHeuristic Distance="600.0" EnemyNearby="false"/>
+      <AllNearbyNodesFullHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ExpansionHeuristic"/>
+    <Tactic id="Expand" Tactic="SimpleExpansion" Distance="200">
+      <TeamTemplate MinUnits="1" MaxUnits="8" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="ExpansionMicroManager">
+        <CreateUnits UnitName="AlliedMiner" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedExpansion_MEDIUM"
+    MaxRunningCopies="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimeSinceLastExpansionHeuristic Time="240s"/>
+      <IsBuildingHeuristic KindOf="FS_TECHNOLOGY FS_FACTORY SUPER_WEAPON" PassIfBuilding="false"/>
+      <EnemyNearbyHeuristic Distance="600.0" EnemyNearby="false"/>
+      <AllNearbyNodesFullHeuristic/>
+      <ResourceNodeShareHeuristic PercentOfFairShare="100%" Above="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ExpansionHeuristic"/>
+    <Tactic id="Expand" Tactic="SimpleExpansion" Distance="200">
+      <TeamTemplate MinUnits="1" MaxUnits="8" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="ExpansionMicroManager">
+        <CreateUnits UnitName="AlliedMiner" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedExpansion_HARD"
+    MaxRunningCopies="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimeSinceLastExpansionHeuristic Time="120s"/>
+      <IsBuildingHeuristic KindOf="FS_TECHNOLOGY FS_FACTORY SUPER_WEAPON" PassIfBuilding="false"/>
+      <EnemyNearbyHeuristic Distance="600.0" EnemyNearby="false"/>
+      <AllNearbyNodesFullHeuristic/>
+      <ResourceNodeShareHeuristic PercentOfFairShare="125%" Above="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ExpansionHeuristic"/>
+    <Tactic id="Expand" Tactic="SimpleExpansion" Distance="200">
+      <TeamTemplate MinUnits="1" MaxUnits="8" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="ExpansionMicroManager">
+        <CreateUnits UnitName="AlliedMiner" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedExpansion_BRUTAL"
+    MaxRunningCopies="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimeSinceLastExpansionHeuristic Time="60s"/>
+      <IsBuildingHeuristic KindOf="FS_TECHNOLOGY FS_FACTORY SUPER_WEAPON" PassIfBuilding="false"/>
+      <EnemyNearbyHeuristic Distance="600.0" EnemyNearby="false"/>
+      <AllNearbyNodesFullHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ExpansionHeuristic"/>
+    <Tactic id="Expand" Tactic="SimpleExpansion" Distance="200">
+      <TeamTemplate MinUnits="1" MaxUnits="8" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="ExpansionMicroManager">
+        <CreateUnits UnitName="AlliedMiner" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedInfiltration"
+    MaxTargets="1">
+    <Heuristic>
+      <IntervalHeuristic IntervalTime="129s" ActiveTime="30s"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+                    RegisteredObjectSet="INFANTRY"
+                    IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="FearlessMicroManager">
+        <CreateUnits UnitName="AlliedInfiltrationInfantry" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedTransportAttack"
+    MaxTargets="1">
+    <Heuristic>
+      <IntervalHeuristic IntervalTime="87s" ActiveTime="30s"/>
+      <EnemyNearbyHeuristic Distance="600.0" EnemyNearby="false"/>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedAntiInfantryInfantry</IncludeThing>
+          <IncludeThing>AlliedAntiVehicleInfantry</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+      <PathToTargetHeuristic PathExists="false" ObjectTypeToUseForTest="AlliedAntiInfantryInfantry" LocomotorConditionToUseForTest="NORMAL" />
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="1">
+      <TeamTemplate MinUnits="4" MaxUnits="6"
+                    RegisteredObjectSet="INFANTRY"
+                    IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="true"
+                    MicroManager="StandardMicroManager">
+        <CreateUnits UnitName="AlliedAntiInfantryVehicle" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="TanyaController"
+    MaxTargets="1">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedCommandoTech1</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic"/>
+    <TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="1" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="INFANTRY"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="TanyaMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedCommandoTech1</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AlliedAirDrop"
+    MaxTargets="1">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="5" MaxUnits="5" IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER" AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="SCRIPTED" AlwaysRecruit="false"
+                    MicroManager="BomberAircraftMicroManager" >
+        <CreateUnits UnitName="AlliedBomberAircraft" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="VindicatorDefense"
+    MaxTargets="4">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+      <EnemyNearbyHeuristic Distance="1600.0" EnemyNearby="true"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestSurfaceUnitHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="4"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="HIGH" AlwaysRecruit="false" SortByDistance="true"
+                    MicroManager="FearlessVindicatorMicroManager" >
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="VindicatorAttack"
+    MaxTargets="6">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirSurfaceVehicleHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirPowerPlantHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirBarracksHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic_NonUnique" Priority="5"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="4" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="VindicatorMicroManager" >
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="VindicatorAttack_MEDIUM"
+    MaxTargets="2">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic_NonUnique" Priority="5"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="2" MaxUnits="4"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="VindicatorMicroManager_MEDIUM" >
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="VindicatorAttack_EASY"
+    MaxTargets="1">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestEnemyConyardHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic_NonUnique" Priority="5"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="2"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="VindicatorMicroManager_EASY">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="VindicatorAttack_Closest"
+    MaxTargets="4">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestSurfaceUnitHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristicAllEnemies_NonUnique" Priority="5"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="4"
+                    RegisteredObjectSet="AIRCRAFT"
+      							IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="VindicatorMicroManager" >
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="CenturyBomberAttack"
+    MaxTargets="4">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedBomberAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirSurfaceVehicleHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirPowerPlantHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic_NonUnique" Priority="5"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="2" MinPowerAdvantage="0.5"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="CenturyBomberMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedBomberAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AlliedNavalBase">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <EnemyNearbyHeuristic Distance="1000.0" EnemyNearby="false"/>
+      <ObjectOfTypeExistsHeuristic
+				PassIfExists="false" >
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>AlliedNavalYard</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+      <CanBuildBuildingsOnSurfaceHeuristic
+					 Surfaces="WATER DEEP_WATER"
+					 MinPlacementGridCells="0"
+					 MaxPlacementGridCells="0" />
+    </Heuristic>
+    <!-- First try to get somewhere near resources on water. If that doesn't work, fall back to just
+			   anywhere on water. First try somewhere close to home with few enemies, then move to 
+				 further away with few enemies if there is no water near home -->
+    <TargetHeuristic TargetHeuristic="WaterExpansionHeuristic" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="NearbyWaterPointHeuristic" Priority="25"/>
+    <TargetHeuristic TargetHeuristic="MediumDistanceWaterExpansionHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="MediumDistanceWaterPointHeuristic" Priority="15"/>
+    <TargetHeuristic TargetHeuristic="DistantWaterExpansionHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="DistantWaterPointHeuristic" Priority="5" />
+    <Tactic id="NavalExpansion" Tactic="SimpleExpansion"
+						Distance="400">
+      <!-- Distance should be a bit less than output's build radius -->
+      <TeamTemplate MinUnits="1" MaxUnits="5" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+ 										AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    MicroManager="DefenseMicroManager">
+        <CreateUnits UnitName="AlliedMiner" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedStructureBuildState">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <BuildEntry Build="AlliedPowerPlant" Heuristic="POWER"/>
+    <BuildEntry Build="AlliedRefinery" Heuristic="REFINERY"/>
+    <BuildEntry Build="AlliedBarracks" Heuristic="FACTORY"/>
+    <BuildEntry Build="AlliedWarFactory" Heuristic="FACTORY"/>
+    <BuildEntry Build="AlliedNavalYard" Heuristic="FACTORY"/>
+    <BuildEntry Build="AlliedAirfield" Heuristic="FACTORY"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedNonPathDependentStructureBuildState">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <BuildEntry Build="AlliedPowerPlant" Heuristic="POWER"/>
+    <BuildEntry Build="AlliedRefinery" Heuristic="REFINERY"/>
+    <BuildEntry Build="AlliedBarracks" Heuristic="FACTORY"/>
+    <BuildEntry Build="AlliedAirfield" Heuristic="FACTORY"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedAntiInfantryOnlyBuildState">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+          Relationship="ENEMIES"
+          Rule="ANY"
+          Include="INFANTRY">
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    
+    <BuildEntry Build="AlliedScoutInfantry" Heuristic="BEST_UNIT_EXPECTED">
+      <BlockIfThingNearFactory Rule="ANY" Relationship="ENEMIES">
+        <IncludeThing>AlliedScoutInfantry</IncludeThing>
+        <IncludeThing>SovietScoutInfantry</IncludeThing>
+      </BlockIfThingNearFactory>
+    </BuildEntry>
+  
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedAmphibiousUnitBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    
+    <BuildEntry Build="AlliedCommandoTech1" Heuristic="BEST_UNIT_EXPECTED">
+      <BlockIfThingNearFactory Rule="ANY" Relationship="ENEMIES">
+        <IncludeThing>AlliedScoutInfantry</IncludeThing>
+        <IncludeThing>SovietScoutInfantry</IncludeThing>
+      </BlockIfThingNearFactory>
+    </BuildEntry>
+
+    <BuildEntry Build="AlliedAntiInfantryVehicle_Ground" Heuristic="BEST_UNIT_EXPECTED">
+      <BlockIfThingNearFactory Rule="ANY" Relationship="ENEMIES">
+        <IncludeThing>SovietHeavyAntiVehicleInfantry</IncludeThing>
+      </BlockIfThingNearFactory>
+    </BuildEntry>
+
+    <BuildEntry Build="AlliedAntiInfantryVehicle" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiNavyShipTech1" Heuristic="BEST_UNIT_EXPECTED"/>
+    <!-- No, the AlliedAntiStructureShip is not amphibious but its ok to build even if our enemy has no water units or structures-->
+    <BuildEntry Build="AlliedAntiStructureShip" Heuristic="BEST_UNIT_WEIGHTED"/>
+
+    <BuildEntry Build="AlliedMiner" Heuristic="HARVESTER"/>
+    
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedLandUnitBuildState">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true"
+        Location="Land">
+        <ObjectFilter
+          Relationship="ENEMIES"
+          Rule="ALL" >
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+      <PathToTargetHeuristic Surface="Land" PathExists="true" ObjectTypeToUseForTest="AlliedAntiInfantryInfantry" LocomotorConditionToUseForTest="NORMAL" />
+    </Heuristic>
+
+    <BuildEntry Build="AlliedWarFactory" Heuristic="FACTORY"/>
+
+    <BuildEntry Build="AlliedAntiInfantryInfantry" Heuristic="BEST_UNIT_EXPECTED">
+      <BlockIfThingNearFactory Rule="ANY" Relationship="ENEMIES">
+        <IncludeThing>AlliedScoutInfantry</IncludeThing>
+        <IncludeThing>SovietScoutInfantry</IncludeThing>
+      </BlockIfThingNearFactory>
+    </BuildEntry>
+    
+    <BuildEntry Build="AlliedAntiVehicleInfantry" Heuristic="BEST_UNIT_EXPECTED">
+      <BlockIfThingNearFactory Rule="ANY" Relationship="ENEMIES">
+        <IncludeThing>AlliedScoutInfantry</IncludeThing>
+        <IncludeThing>SovietScoutInfantry</IncludeThing>
+      </BlockIfThingNearFactory>
+    </BuildEntry>
+
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech1" Heuristic="BEST_UNIT_EXPECTED">
+      <BlockIfThingNearFactory Rule="ANY" Relationship="ENEMIES">
+        <IncludeThing>SovietHeavyAntiVehicleInfantry</IncludeThing>
+      </BlockIfThingNearFactory>
+    </BuildEntry>
+    
+    <BuildEntry Build="AlliedAntiAirVehicleTech1" Heuristic="BEST_UNIT_EXPECTED">
+      <BlockIfThingNearFactory Rule="ANY" Relationship="ENEMIES">
+        <IncludeThing>SovietHeavyAntiVehicleInfantry</IncludeThing>
+      </BlockIfThingNearFactory>
+    </BuildEntry>
+    
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech3" Heuristic="BEST_UNIT_EXPECTED">
+      <BlockIfThingNearFactory Rule="ANY" Relationship="ENEMIES">
+        <IncludeThing>SovietHeavyAntiVehicleInfantry</IncludeThing>
+      </BlockIfThingNearFactory>
+    </BuildEntry>
+    
+    <BuildEntry Build="AlliedAntiStructureVehicle" Heuristic="BEST_UNIT_WEIGHTED">
+      <BlockIfThingNearFactory Rule="ANY" Relationship="ENEMIES">
+        <IncludeThing>SovietHeavyAntiVehicleInfantry</IncludeThing>
+      </BlockIfThingNearFactory>
+    </BuildEntry>
+    
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedWaterUnitBuildState">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true"
+        Location="Water">
+        <ObjectFilter
+          Relationship="ENEMIES"
+          Rule="ALL" >
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+      <PathToTargetHeuristic Surface="Water" PathExists="true" ObjectTypeToUseForTest="AlliedAntiNavalScout" LocomotorConditionToUseForTest="NORMAL" />
+    </Heuristic>
+    <BuildEntry Build="AlliedNavalYard" Heuristic="FACTORY"/>
+    <BuildEntry Build="AlliedAntiNavalScout" Heuristic="BEST_UNIT_EXPECTED"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedAntiAirOnlyBuildState">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+          Relationship="ENEMIES"
+          Rule="ANY"
+          Include="AIRCRAFT TRANSFORMER">
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <BuildEntry Build="AlliedAntiAirShip" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedFighterAircraft" Heuristic="BEST_UNIT_EXPECTED"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedAntiGroundAircraftBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedSupportAircraft" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiGroundAircraft" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedBomberAircraft" Heuristic="BEST_UNIT_WEIGHTED"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedTechBuildState">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <EnemyNearbyHeuristic Distance="700.0" EnemyNearby="false" MinEnemyValue="1000">
+        <EnemyFilter
+          Relationship="ENEMIES"
+          Rule="ANY"
+          Include="CAN_ATTACK ENGINEER INFILTRATOR">
+        </EnemyFilter>
+      </EnemyNearbyHeuristic>
+    </Heuristic>
+    <BuildEntry Build="AlliedAirfield" Heuristic="TECH" MinTime="180s"/>
+    <BuildEntry Build="AlliedTechStructure" Heuristic="TECH" MinTime="360s"/>
+    <BuildEntry Upgrade="Upgrade_AlliedTech2" Heuristic="UPGRADE_TECH" MinTime="180s"/>
+    <BuildEntry Upgrade="Upgrade_AlliedTech3" Heuristic="UPGRADE_TECH" MinTime="360s"/>
+    <!-- Chronosphere power not implemented so don't build it =(
+    <BuildEntry Build="AlliedSuperWeapon" Heuristic="TECH" MinTime="360s"/>
+    -->
+    <BuildEntry Build="AlliedSuperWeaponAdvanced" Heuristic="TECH" MinTime="360s"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedTechBuildState_EASY">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <EnemyNearbyHeuristic Distance="700.0" EnemyNearby="false" MinEnemyValue="1000"/>
+    </Heuristic>
+    <BuildEntry Build="AlliedAirfield" Heuristic="TECH" MinTime="600s"/>
+    <BuildEntry Build="AlliedTechStructure" Heuristic="TECH" MinTime="900s"/>
+    <BuildEntry Upgrade="Upgrade_AlliedTech2" Heuristic="UPGRADE_TECH" MinTime="600s"/>
+    <BuildEntry Upgrade="Upgrade_AlliedTech3" Heuristic="UPGRADE_TECH" MinTime="900s"/>
+      <!-- Chronosphere power not implemented so don't build it =(
+    <BuildEntry Build="AlliedSuperWeapon" Heuristic="TECH" MinTime="1200s"/>
+    -->
+    <BuildEntry Build="AlliedSuperWeaponAdvanced" Heuristic="TECH" MinTime="1800s"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedBarracksBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedScoutInfantry" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiInfantryInfantry" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiVehicleInfantry" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedCommandoTech1" Heuristic="BEST_UNIT_EXPECTED"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedBarracksBuildState_RANDOM">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedScoutInfantry" Heuristic="RANDOM_UNIT" PercentLow="0" PercentHigh="25"/>
+    <BuildEntry Build="AlliedAntiInfantryInfantry" Heuristic="RANDOM_UNIT" PercentLow="25" PercentHigh="50"/>
+    <BuildEntry Build="AlliedAntiVehicleInfantry" Heuristic="RANDOM_UNIT" PercentLow="50" PercentHigh="75"/>
+    <BuildEntry Build="AlliedCommandoTech1" Heuristic="RANDOM_UNIT" PercentLow="75" PercentHigh="100"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedBarracksBuildState_FEWEST">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedScoutInfantry" Heuristic="FEWEST_UNIT" CountModifier="0.5"/>
+    <BuildEntry Build="AlliedAntiInfantryInfantry" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiVehicleInfantry" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedCommandoTech1" Heuristic="FEWEST_UNIT"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedWarFactoryBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedAntiInfantryVehicle_Ground" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech1" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiAirVehicleTech1" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech3" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiStructureVehicle" Heuristic="BEST_UNIT_WEIGHTED"/>
+    <BuildEntry Build="AlliedMiner" Heuristic="HARVESTER"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedWarFactoryBuildState_RANDOM">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedAntiInfantryVehicle_Ground" Heuristic="RANDOM_UNIT" PercentLow="0" PercentHigh="20"/>
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech1" Heuristic="RANDOM_UNIT" PercentLow="20" PercentHigh="40"/>
+    <BuildEntry Build="AlliedAntiAirVehicleTech1" Heuristic="RANDOM_UNIT" PercentLow="40" PercentHigh="60"/>
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech3" Heuristic="RANDOM_UNIT" PercentLow="60" PercentHigh="80"/>
+    <BuildEntry Build="AlliedAntiStructureVehicle" Heuristic="RANDOM_UNIT" PercentLow="80" PercentHigh="100"/>
+    <BuildEntry Build="AlliedMiner" Heuristic="HARVESTER"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedWarFactoryBuildState_FEWEST">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedAntiInfantryVehicle_Ground" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech1" Heuristic="FEWEST_UNIT" CountModifier="1.5"/>
+    <BuildEntry Build="AlliedAntiAirVehicleTech1" Heuristic="FEWEST_UNIT" CountModifier="0.5"/>
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech3" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiStructureVehicle" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedMiner" Heuristic="HARVESTER"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedNavalYardBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedAntiInfantryVehicle" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiNavalScout" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiNavyShipTech1" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiAirShip" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiStructureShip" Heuristic="BEST_UNIT_EXPECTED"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedNavalYardBuildState_RANDOM">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedAntiInfantryVehicle" Heuristic="RANDOM_UNIT" PercentLow="0" PercentHigh="20"/>
+    <BuildEntry Build="AlliedAntiNavalScout" Heuristic="RANDOM_UNIT" PercentLow="20" PercentHigh="40"/>
+    <BuildEntry Build="AlliedAntiNavyShipTech1" Heuristic="RANDOM_UNIT" PercentLow="40" PercentHigh="60"/>
+    <BuildEntry Build="AlliedAntiAirShip" Heuristic="RANDOM_UNIT" PercentLow="60" PercentHigh="80"/>
+    <BuildEntry Build="AlliedAntiStructureShip" Heuristic="RANDOM_UNIT" PercentLow="80" PercentHigh="100"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedNavalYardBuildState_FEWEST">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedAntiInfantryVehicle" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiNavalScout" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiNavyShipTech1" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiAirShip" Heuristic="FEWEST_UNIT" CountModifier="0.5"/>
+    <BuildEntry Build="AlliedAntiStructureShip" Heuristic="FEWEST_UNIT" CountModifier="0.5"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedAirfieldBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedFighterAircraft" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedSupportAircraft" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedAntiGroundAircraft" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedBomberAircraft" Heuristic="BEST_UNIT_WEIGHTED"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedAirfieldBuildState_RANDOM">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedFighterAircraft" Heuristic="RANDOM_UNIT" PercentLow="0" PercentHigh="25"/>
+    <BuildEntry Build="AlliedSupportAircraft" Heuristic="RANDOM_UNIT" PercentLow="25" PercentHigh="50"/>
+    <BuildEntry Build="AlliedAntiGroundAircraft" Heuristic="RANDOM_UNIT" PercentLow="50" PercentHigh="75"/>
+    <BuildEntry Build="AlliedBomberAircraft" Heuristic="RANDOM_UNIT" PercentLow="75" PercentHigh="100"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AlliedAirfieldBuildState_FEWEST">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedFighterAircraft" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedSupportAircraft" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiGroundAircraft" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedBomberAircraft" Heuristic="FEWEST_UNIT"/>
+  </AIBuildStateDefinition>
+
+
+  <AIBuildStateDefinition
+    id="AlliedDefenseBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedBaseDefense" Heuristic="BEST_UNIT_EXPECTED"/>
+    <BuildEntry Build="AlliedBaseDefenseAdvanced" Heuristic="BEST_UNIT_EXPECTED"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+   id="AlliedNeededUnits">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+
+    <BuildEntry Build="AlliedEngineer" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedScoutInfantry" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiInfantryInfantry" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiVehicleInfantry" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedInfiltrationInfantry" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedCommandoTech1" Heuristic="NEEDED_UNIT"/>
+
+    <BuildEntry Build="AlliedMiner" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiAirVehicleTech1" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiInfantryVehicle_Ground" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech1" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech3" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiStructureVehicle" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedMCV" Heuristic="NEEDED_UNIT"/>
+
+    <BuildEntry Build="AlliedMiner_Naval" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiInfantryVehicle" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiNavalScout" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiNavyShipTech1" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiAirShip" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiStructureShip" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedMCV_Naval" Heuristic="NEEDED_UNIT"/>
+
+    <BuildEntry Build="AlliedFighterAircraft" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedSupportAircraft" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedAntiGroundAircraft" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedBomberAircraft" Heuristic="NEEDED_UNIT"/>
+		
+    <BuildEntry Build="AlliedPowerPlant" Heuristic="NEEDED_UNIT"/>
+    <BuildEntry Build="AlliedRefinery" Heuristic="NEEDED_UNIT"/>
+
+  </AIBuildStateDefinition>
+
+</AssetDeclaration>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="BaseConquerVehicle"
+		inheritFrom="BaseVehicle"
+		TransportSlotCount="1"
+		ParticipationValue="10" 
+		BuildTime="10"
+		PathPriority="95"
+		CommandSet="ConquerVehicleCommandSet"
+		CommandPoints="2"
+		KindOf="+CAN_CAPTURE +OBJECTIVE_UNIT +DO_NOT_STEALTH +NEEDS_ESCORT +IGNORES_SELECT_ALL +HOTKEY_CYCLE_UNIT -CAN_ATTACK -CAN_BE_FAVORITE_UNIT"
+		EditorSorting="UNIT"
+		HealthBoxHeightOffset="35"
+		UnitTypeIcon="EngineerIcon">		
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="LightArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			Locomotor="ConquerVehicleLocomotor"
+			Condition="NORMAL"
+			Speed="100.0" />
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplodeNoScorch" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="ConquerVehicleFunctions"/>
+
+			<!-- This vehicle doesn't support stances, so remove the base class module -->
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				xai:joinAction="Remove"
+				xmlns:xai="uri:ea.com:eala:asset:instance"/>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				StateMachine="AIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="200.0" />
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="VehicleLarge_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="VehicleLarge_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="500" />
+		<CrusherInfo			
+			CrusherLevel="2"
+			CrushableLevel="3" />
+	</GameObject>
+	
+	<LogicCommandSet
+		id="ConquerVehicleCommandSet">
+		<Cmd>Command_CaptureSpecialBuilding</Cmd>
+	</LogicCommandSet>
+
+	<LocomotorTemplate
+		id="ConquerVehicleLocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		MinTurnSpeed="50%"
+		TurnPivotOffset="-0.33"
+		TurnTimeSeconds="1.0s"
+		TurnTimeDamagedSeconds="1.0s"
+		AccelerationSeconds="0.5s"
+		MaxSpeedDamaged="100%"
+		BrakingSeconds="0.1s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="40.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="FOUR_WHEELS"
+		UseTerrainSmoothing="false"
+		UniformAxialDamping="0.1"
+		PitchStiffness="0.45"
+		RollStiffness="0.6"
+		PitchDamping="0.1"
+		RollDamping="0.1"
+		ForwardAccelerationPitchFactor="-0.05"
+		LateralAccelerationRollFactor="-0.25"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="false"
+	/>
+	
+</AssetDeclaration>

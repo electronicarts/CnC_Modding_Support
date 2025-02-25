@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:balance="uri:ea.com:eala:balance" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+  <xs:complexType name="DamageCreationList">
+    <xs:sequence></xs:sequence>
+    <xs:attribute name="ObjectCreationList" type="ObjectCreationListRef" />
+    <xs:attribute name="TriggerFX" type="FXTriggerType" />
+    <xs:attribute name="DestroyedSide" type="BodySideDestroyedType" />
+  </xs:complexType>
+
+  <xs:complexType name="DamageTriggerType">
+    <xs:sequence></xs:sequence>
+	<xs:attribute name="HealthLevelBelowPercent" type="SageReal" default="0" />
+	<xs:attribute name="RemoveUpgrade" type="UpgradeTemplateWeakRef" />
+	<xs:attribute name="RemoveStatus" type="ObjectStatusBitFlags" />
+  </xs:complexType>
+
+  <xs:complexType name="ActiveBodyModuleData">
+		<xs:complexContent>
+			<xs:extension base="BodyModuleData">
+				<xs:sequence>
+					<xs:element name="GrabOffset" type="Coord2D" minOccurs="0" />
+					<xs:element name="DamageCreation" type="DamageCreationList" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="DamageTrigger" type="DamageTriggerType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="MaxHealth" balance:field="MaxHealth" type="SageReal" default="0" />
+				<xs:attribute name="MaxHealthDamaged" type="SageReal" default="0" />
+				<xs:attribute name="MaxHealthReallyDamaged" type="SageReal" default="0" />
+				<xs:attribute name="InitialHealth" type="SageReal" default="-1.0" />
+				<xs:attribute name="RecoveryTime" type="SageReal" default="0" />
+				<xs:attribute name="DodgePercent" type="SageReal" default="0" />
+				<xs:attribute name="EnteringDamagedTransitionTime" type="Time" default="0s" />
+				<xs:attribute name="EnteringReallyDamagedTransitionTime" type="Time" default="0s" />
+				<xs:attribute name="GrabObject" type="AssetId" />
+				<xs:attribute name="GrabFX" type="FXListRef" />
+				<xs:attribute name="GrabDamage" type="SageReal" default="200.0" />
+				<xs:attribute name="UseDefaultDamageSettings" type="SageBool" default="true" />
+				<xs:attribute name="HealingBuffFX" type="FXListRef" />
+				<xs:attribute name="DamagedAttributeModifier" type="AttributeModifierRef" />
+				<xs:attribute name="ReallyDamagedAttributeModifier" type="AttributeModifierRef" />
+				<xs:attribute name="CheerRadius" type="SageReal" default="200.0" />
+				<xs:attribute name="RemoveUpgradesOnDeath" type="SageBool" default="false" />
+				<xs:attribute name="BurningDeathBehavior" type="SageBool" default="false" />
+				<xs:attribute name="BurningDeathFX" type="FXListRef" />
+
+				<!-- If the object dying does not have this upgrade, it will be granted the
+					 upgrade and not destroyed.  This effectively gives it a second chance
+					 at life.-->
+				<xs:attribute name="SecondChanceUpgrade" type="UpgradeTemplateWeakRef" />
+				<!-- This is the amount of health that will be given back to the unit if
+					 it has a second chance upgrade and dies.  0 means to grant it full health -->
+				<xs:attribute name="SecondChanceHeal" type="SageUnsignedInt" default="0"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

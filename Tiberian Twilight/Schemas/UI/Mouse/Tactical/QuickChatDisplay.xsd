@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="../../../Base/AssetBase.xsd"/>
+	<xs:include schemaLocation="../../../Includes/Ref.xsd"/>
+
+	<xs:simpleType name="UIMouseTacticalQuickChatDisplayChatDestination">
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="Allies" xas:forceValue="0" />
+				<xs:enumeration value="Everyone" />
+			</xs:restriction>
+	 </xs:simpleType>
+	
+	<xs:complexType name="UIMouseTacticalQuickChatDisplayCloseItem">
+		<xs:sequence />
+		<xs:attribute name="Title" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="UIMouseTacticalQuickChatDisplayMenuItemChatMessage">
+		<xs:sequence />
+		<xs:attribute name="MessageRef" type="QuickChatMessageWeakRef" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="UIMouseTacticalQuickChatDisplayMenuItemChatMessageGroup">
+		<xs:sequence> 
+			<xs:element name="ChatMessage" type="UIMouseTacticalQuickChatDisplayMenuItemChatMessage" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="Faction" type="FactionType" default="Neutral" />
+	</xs:complexType>
+
+	<!-- Only 9 sub-menu items can be created, they are mapped to numeric keys with one designated to return to previous menu -->
+	<xs:complexType name="UIMouseTacticalQuickChatDisplayMenuItem">
+		<xs:sequence>
+			<xs:element name="ChatMessageGroup" type="UIMouseTacticalQuickChatDisplayMenuItemChatMessageGroup" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="MenuItem" type="UIMouseTacticalQuickChatDisplayMenuItem" minOccurs="0" maxOccurs="9" />
+			<xs:element name="CloseMenuItem" type="UIMouseTacticalQuickChatDisplayCloseItem" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="Title" type="xs:string" use="required"/>
+		<xs:attribute name="ChatDestination" type="UIMouseTacticalQuickChatDisplayChatDestination" use="optional" />
+	</xs:complexType>
+
+	<!-- Only 9 menu items allowed, mapped to numeric keys with one designated to return to previous menu -->
+	<xs:complexType name="UIMouseTacticalQuickChatDisplay" xas:typeGroup="Xml">
+    <xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="MenuItem" type="UIMouseTacticalQuickChatDisplayMenuItem" minOccurs="1" maxOccurs="9" />
+					<xs:element name="CloseMenuItem" type="UIMouseTacticalQuickChatDisplayCloseItem" />
+				</xs:sequence>
+				<xs:attribute name="CloseKey" type="HotKeySlotRef" use="required"/>
+        <xs:attribute name="DelayDuration" type="Time" default="0s"/>
+      </xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

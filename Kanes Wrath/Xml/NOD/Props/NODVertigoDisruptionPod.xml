@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:FXDisruptionPod.w3x" />
+	</Includes>
+	<GameObject
+		id="NODVertigoDisruptionPod"
+		SelectPortrait="Portrait_NeutralSensorPod"
+		ButtonImage="Portrait_NeutralSensorPod"
+		Side="NOD"
+		EditorSorting="UNIT"
+		TransportSlotCount="0"
+		CommandSet="EmptyCommandSet"
+		IsTrainable="false"
+		KindOf="PRELOAD SELECTABLE IMMOBILE NO_COLLIDE IGNORE_FOR_VICTORY"
+		RadarPriority="UNIT"
+		EditorName="NODVertigoDisruptionPod">
+		<DisplayName>Name:AbilityDisruptionPod</DisplayName>
+		<ArmorSet
+			Armor="GDIOrcaSensorPodArmor"
+			DamageFX="NormalDamageFX" />
+		<LocomotorSet
+			Locomotor="HumanLocomotor"
+			Condition="NORMAL"
+			Speed="0.0" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXDisruptionPod" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Model Name="FXDisruptionPod" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$NOD_VERTIGO_DISRUPTION_POD_INVISO_RANGE * 2"
+						SizeY="=$NOD_VERTIGO_DISRUPTION_POD_INVISO_RANGE * 2"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Sensor_CO" 
+					/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics" />
+			<InvisibilityUpdate
+				id="ModuleTag_Invisibility"
+				Options="BROADCAST STARTS_ACTIVE"
+				BroadcastRange="=$NOD_VERTIGO_DISRUPTION_POD_INVISO_RANGE"
+				UpdatePeriod="1.0s">
+        <InvisibilityNugget
+              ForbiddenStatus="TIBERIUM_VIBRATING"/>
+				<BroadcastObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE INFANTRY VEHICLE AIRCRAFT">
+					<IncludeThing>NODVertigoDisruptionPod</IncludeThing>
+				</BroadcastObjectFilter>
+			</InvisibilityUpdate>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="=$NOD_VERTIGO_DISRUPTION_POD_LIFETIME"
+				MaxLifetime="=$NOD_VERTIGO_DISRUPTION_POD_LIFETIME" />
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" 
+				/>
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Nod_DisruptionPodExplosion" />
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="5" 
+				FirstHeightMax="5" 
+				SecondHeightMin="5" 
+				SecondHeightMax="5" 
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				OrientToFlightPath="true"
+				
+				GroundHitFX="FX_DirtHit"/>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$NOD_VERTIGO_DISRUPTION_POD_HEALTH" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="7.0"
+				Height="13.0"></Shape>
+		</Geometry>
+<!--		<AudioArrayVoice>
+			<AudioEntry	Sound="GDI_Orca_SensorPodGroundImpact" AudioType="voiceCreated" />
+			This didn't work!
+		</AudioArrayVoice> -->
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_Vertigo_DisruptionPodSelect" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Vertigo_DisruptionPodImpact" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="0" />
+		<CrusherInfo
+			CrushableLevel="0" />
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="ART:ShadowI.xml" />
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="BaseTimeBombEffect"
+		inheritFrom="BaseObject"
+		RadarPriority="UNIT"		
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="NOT_AUTOACQUIRABLE OBSTACLE TIME_BOMB SELECTABLE SKIRMISH_AI_ATTEMPT_TO_DODGE IMMOBILE IGNORES_SELECT_ALL"
+		>
+		<ArmorSet
+			Armor="CryoBeamFrozenArmor"
+			DamageFX="VehicleDamageFX"
+			Conditions="SECONDARY_DAMAGE"
+		/>
+		<ArmorSet
+			Armor="ShrinkRayEffectArmor"
+			DamageFX="VehicleDamageFX"
+			Conditions="SHRINK_EFFECT"
+		/>
+		<LocomotorSet
+			Locomotor="TimeBombDummyLocomotor"
+			Condition="NORMAL"
+			Speed="0" />
+    <SkirmishAIInformation
+      DodgeSafetyDistance="300.0">
+      <DodgeWithUnits Rule="ALL"
+        StatusBitFlagsExclude="AIRBORNE_TARGET">
+      </DodgeWithUnits>
+    </SkirmishAIInformation>
+    <Behaviors>
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>		
+			<SecondaryDamageTracker
+				id="ModuleTag_SecondaryDamageTracker"
+				UpdateDuration="1s"
+				DissipateAmount="25"
+				MaxDamageClampScaler="=$MAX_SECONDARY_DAMAGE_SCALER">
+				<Color R="1.0" G="1.0" B="1.75"/>
+				<EffectInfo
+					Fraction="0.2"
+					AttributeModifier="AttributeModifer_CryoBeam_02"
+				/>
+				<EffectInfo
+					Fraction="0.4"
+					AttributeModifier="AttributeModifer_CryoBeam_04"
+				/>
+				<EffectInfo
+					Fraction="0.6"
+					AttributeModifier="AttributeModifer_CryoBeam_06"
+				/>
+				<EffectInfo
+					Fraction="0.8"
+					AttributeModifier="AttributeModifer_CryoBeam_08"
+				/>
+				<EffectInfo
+					Fraction="1.0"
+					SetUpgradedArmor="true"
+					OnEnterDisable="true"
+					OnEnterCancelSpecialAbilities="true"
+					AttributeModifier="AttributeModifer_CryoBeam_10"
+				/>
+			</SecondaryDamageTracker>
+		</Behaviors>
+
+		<Body>
+			<ActiveBody
+				id="DefaultBody"/>
+		</Body>
+
+		<!-- this allows the bomb to update itself with AIRBORNE_TARGET status when lifted by Yuriko -->
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="StructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"/>
+			</AIUpdate>
+		</AI>
+		<EvaEventArray>
+			<EvaEntry EvaEvent="UnitUnderAttack" EvaType="damagedOwner" />
+		</EvaEventArray>
+		
+	</GameObject>
+
+</AssetDeclaration>

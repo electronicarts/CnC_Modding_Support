@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+		 type="all"
+		 source="ART:SUToxicCorrosionSatellite.w3x" />
+	</Includes>
+	<Defines>
+		<Define name="NODE_LIFETIME" value="10.0s" />
+	</Defines>
+	<GameObject
+		id="IrradiatedTargetDamageDealer"
+		Side="Soviet"
+		EditorSorting="SYSTEM"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE NO_COLLIDE INERT SKIRMISH_AI_ATTEMPT_TO_DODGE"
+		EditorName="IrradiatedTargetDamageDealer">
+		<DisplayName>IrradiatedTargetDamageDealer</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+    <SkirmishAIInformation
+      DodgeSafetyDistance="200.0">
+      <DodgeWithUnits Rule="ALL"
+        StatusBitFlagsExclude="AIRBORNE_TARGET">
+      </DodgeWithUnits>
+    </SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="SUToxicCorrosionSatellite" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="SovietToxic_Cloud"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="SovietToxicHit"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="SovietToxicHit_Embers"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="SUToxicCorrosionSatellite"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<LineSegmentDamageUpdate
+				id="ModuleTag_LineSegmentDamageUpdate"
+				NodeLifetime="=$NODE_LIFETIME"
+				DamageInterval="0.1s"
+				Distance="25"
+				Damage="10"
+				MaxValidHeightOffGround="5.0"
+				FXParticleSystemTemplate="SovietToxic_Node"
+       	NodeFXList="FX_ToxicCorrosionTrail" 
+				DamageType="RADIATION"
+				DeathType="IRRADIATED"
+				DamageFXType="RADIATION"
+				ObjectStatusForbiddenForDamage="IRRADIATED">
+				<ObjectFilter
+					Rule="ANY"
+					Include="VEHICLE HUGE_VEHICLE INFANTRY STRUCTURE SHIP"
+					Exclude="AIRCRAFT SUBMARINE">
+					<IncludeThing>AlliedAntiNavalScout</IncludeThing>
+					<ExcludeThing>SovietScoutVehicle</ExcludeThing>
+				</ObjectFilter>
+				<ObjectStatusValidation
+					RequiredStatus="ATTACHED" />
+			</LineSegmentDamageUpdate>
+
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Flags="TELEPORT STICK_TO_PARENT DIE_WHEN_DETACH_ALWAYS DIE_WHEN_PARENT_HAS_FORBIDDEN_STATUS"
+				ParentStatus="IRRADIATED"
+				CloseEnoughRange="1.0"
+				ParentStatusToCopy="AIRBORNE_TARGET"
+				ForbiddenParentStatus="UNDERGOING_REPAIR"
+				ForbiddenParentStatusDieDeathType="EXTRA_1"
+			/>
+				<!-- no worky AttachFXList="FX_SOV_ToxicCorrosion_Impact" -->
+
+			<!-- Spawn a desolator field and do some one-shot damage -->
+			<SlowDeath
+				id="ModuleTag_GroundDeath"
+				SinkDelay="=$NODE_LIFETIME"
+				DestructionDelay="=$NODE_LIFETIME">
+				<OCL
+					Type="INITIAL">
+					<OCL>OCL_IrradiatedTargetDie</OCL>
+				</OCL>
+				<Weapon
+					Type="INITIAL">
+					<Weapon>Weapon_IrradiatedTargetDieOneShot</Weapon>
+				</Weapon>
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="EXTRA_1" 
+					ExemptStatus="AIRBORNE_TARGET OVER_WATER" />
+			</SlowDeath>
+			
+			<!-- killed in the air, don't spawn a radiation field. -->
+			<SlowDeath
+				id="ModuleTag_AirDeath"
+				SinkDelay="=$NODE_LIFETIME"
+				DestructionDelay="=$NODE_LIFETIME">
+				<Weapon
+					Type="INITIAL">
+					<Weapon>Weapon_IrradiatedTargetDieOneShot</Weapon>
+				</Weapon>
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="EXTRA_1" 
+					RequiredStatus="AIRBORNE_TARGET" />
+			</SlowDeath>
+
+			<!-- killed in the water, don't spawn a radiation field. -->
+			<SlowDeath
+				id="ModuleTag_WaterDeath"
+				SinkDelay="=$NODE_LIFETIME"
+				DestructionDelay="=$NODE_LIFETIME">
+				<Weapon
+					Type="INITIAL">
+					<Weapon>Weapon_IrradiatedTargetDieOneShot</Weapon>
+				</Weapon>
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="EXTRA_1"
+					RequiredStatus="OVER_WATER" />
+			</SlowDeath>
+
+			<!-- parent healed, don't spawn a cloud or do damage -->
+			<SlowDeath
+				id="ModuleTag_GroundDeath_ParentRepaired"
+				SinkDelay="=$NODE_LIFETIME"
+				DestructionDelay="=$NODE_LIFETIME">
+				<DieMuxData
+					DeathTypes="EXTRA_1" />
+			</SlowDeath>
+			
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body"/>
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="1.0"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="SOV_ToxicCorrosion_Launch" AudioType="soundAmbient"/>
+		</AudioArraySound>
+	<!--
+		plays again a few seconds later
+	-->
+		<ShadowInfo
+			Type="NONE" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrushableLevel="0" />
+	</GameObject>
+</AssetDeclaration>

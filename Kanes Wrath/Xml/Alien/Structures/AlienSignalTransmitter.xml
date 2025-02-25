@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:ABSigTran.w3x" />
+		<Include
+			type="all"
+			source="ART:ABSigTranBld_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABSigTranBld_AAN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABSigTran_D2SN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABSigTran_D2AN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABSigTran_D3SN.w3x" />
+		<Include
+			type="all"
+			source="ART:ABSigTran_D3AN.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<!-- TransmissionTower -->
+	<GameObject
+		id="AlienSignalTransmitter"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_ALIENSignalTransmitter"
+		ButtonImage="Portrait_ALIENSignalTransmitter"
+		Side="ALIEN"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="3000"
+		BuildTime="30"
+		PlacementViewAngle="225d"
+		CommandSet="AlienSignalTransmitterCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY AUTO_ACQUIRABLE_BY_AI NOT_AUTOACQUIRABLE COVER POWERED"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="AlienSignalTransmitter"
+		Description="Desc:ALIENSignalTransmitter"
+		TypeDescription="Type:AlienSignalTransmitter"
+		EnergyProduction="-10">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:ALIENSignalTransmitter</DisplayName>
+		<GameDependency>
+			<RequiredObject>AlienReactor</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="AlienSignalTransmitterArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="SPREAD" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABSigTran" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="ABSigTranBld_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="ABSigTran_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ABSigTran_D2SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ABSigTran" />
+					<Texture
+						Original="ABSigTran"
+						New="ABSigTran_D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="ABSigTranBld_AAN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABSigTran_D3AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABSigTran_D2AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABSigTranD1"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Damaged" and Prev ~= "TRANS_IntoDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoDamaged")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoDamaged">
+					<Animation
+						AnimationName="ABSigTranD1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+-->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="ABSigTran_D2AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="ABSigTran_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_AlienBuildingDamagedM" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_AlienBuildingDamagedM" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_AlienBuildingRubbleM" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				UnpackTime="2.0s" />
+
+			<!-- wormhole -->
+			<OCLSpecialPower
+				id="ModuleTag_WormHolePower"
+				SpecialPowerTemplate="SpecialPower_WormHole"
+				OCL="OCL_AlienWormHole"
+				CreateLocation="CREATE_AT_LOCATION" />
+
+
+			<!-- mothership -->
+			<OCLSpecialPower
+				id="ModuleTag_SummonMothership"
+				SpecialPowerTemplate="SpecialPower_SummonMothership"
+				OCL="OCL_SummonMothership"
+				CreateLocation="USE_SECONDARY_OBJECT_LOCATION">
+				<NearestSecondaryObjectFilter
+					Rule="ANY">
+					<IncludeThing>AlienSignalTransmitter</IncludeThing>
+				</NearestSecondaryObjectFilter>
+			</OCLSpecialPower>
+			<AISpecialPowerUpdate
+				id="ModuleTag_AlienSummonMothership"
+				CommandButtonName="Command_SummonMothership"
+				ReinforceDistance="0.0"
+				SpecialPowerRadius="300.0"
+				SpecialPowerAIType="SPECIAL_POWER_REINFORCEMENT" 
+			/>
+<!-- O-WRATH -->
+			<OCLSpecialPower
+				id="ModuleTag_OverlordsWrathCreate"
+				SpecialPowerTemplate="SpecialPower_OverlordsWrath"
+				OCL="OCL_AlienGiantTiberiumRockFiringMechanism"
+				CreateLocation="CREATE_AT_EDGE_FARTHEST_FROM_TARGET"
+				DestinationOCL="OCL_SuperweaponDestroyCiviliansHumanelyObject"
+			/>			
+	<!--
+			<SpecialPower
+				id="ModuleTag_OverlordsWrath"
+				SpecialPowerTemplate="SpecialPower_OverlordsWrath"
+				UpdateModuleStartsAttack="true" />	
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_OverlordsWrathUpdate"
+				SpecialPowerTemplate="SpecialPower_OverlordsWrath"
+				SpecialWeapon="OverlordsWrathSpawnRock"
+				UnpackTime="2.0s"
+				PackTime="0.0s"
+				WhichSpecialWeapon="1" 
+			/>
+	-->			
+			<AISpecialPowerUpdate
+				id="ModuleTag_OverlordsWrathSpecialPower"
+				CommandButtonName="Command_SpecialPowerOverlordsWrath"
+				SpecialPowerRadius="999999.0"
+				SpecialPowerAIType="SPECIAL_POWER_ENEMY_TYPE_KILLER_STRUCTURES"
+				UnitKindOf="STRUCTURE" 
+			/>
+			
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="ALI_Building_Die" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="../../Includes/AdvancedAlienBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/AdvancedAlienBuildingSuicide.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"
+				AILuaEventsList="BuildingPowerFunctions">				
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="40.0"
+				MinorRadius="17.0"
+				Height="50.0"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="-10" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="ALI_SignalTransmitter_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="ALI_Building_LightDamage" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="ALI_Building_HeavyDamage" AudioType="soundOnReallyDamaged" />
+			<AudioEntry Sound="ALI_Building_Placed" AudioType="soundUnderConstruction" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="200"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="175"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

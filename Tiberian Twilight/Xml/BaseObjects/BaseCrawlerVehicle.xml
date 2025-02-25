@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="BaseCrawlerObject.xml" />
+	</Includes>
+	<GameObject
+		id="BaseCrawlerVehicle"
+		inheritFrom="BaseCrawlerObject"		
+		RadarPriority="UNIT"
+		PathPriority="100"
+		EditorName="CrawlerBaseVehicle(DONOTPLACE)"
+		TransportSlotCount="10" 
+		KindOf="+VEHICLE +MCV +UNPACKS_INTO_BUILDING +MOVE_ENEMIES_AND_ALLIES +IGNORES_SELECT_ALL"
+		Description="Desc:CrawlerBaseVehicle"
+		TypeDescription="Desc:CrawlerBaseVehicle"
+		ShockwaveResistance="300.0">
+		<ArmorSet
+			id="BaseCrawlerVehicle_Armor"
+			Armor="AssaultArmor"
+			DamageFX="VehicleDamageFX" />
+		<Behaviors>
+			<!-- unpack special powers. Children of this object usually won't need to override these -->
+			<SpecialPower
+				id="ModuleTag_CrawlerUnpack"
+				SpecialPowerTemplate="SpecialPower_CrawlerUnpack"
+				UpdateModuleStartsAttack="true" />
+			<SpecialPower
+				id="ModuleTag_CrawlerImmediateUnpack"
+				SpecialPowerTemplate="SpecialPower_CrawlerImmediateUnpack"
+				UpdateModuleStartsAttack="true" />
+			<!-- unpack updates. Children of this object need to override these and add a ReplacementTemplate element -->
+			<ReplaceSelfSpecialAbility
+				id="ModuleTag_CrawlerUnpackUpdate"
+				SpecialPowerTemplate="SpecialPower_CrawlerUnpack"
+				Options="IGNORE_FACING_CHECK USE_OBJECT_GEOMETRY_FOR_WITHIN_RANGE_CHECK FAIL_WITH_INVALID_APPROACH ALLOW_TURRETS_TO_ALWAYS_AUTO_ACQUIRE_DURING_ABILITY_APPROACH"
+				PackTime="2.0s"
+				StartAbilityRange="3.0"
+				NewObjectUnpackTime="=$CRAWLER_UNPACK_TIME"
+				ReplaceOptions="COPY_UPGRADES CHECK_BUILD_ASSISTANT CLEAR_LOCATION DISABLE_NEW_OBJECT_DURING_UNPACK TRANSFER_BUILDING_DESTRUCTION_STATE PRESERVE_HOTKEY_SQUAD_NUMBER COPY_STANCES">
+			</ReplaceSelfSpecialAbility>
+			<ReplaceSelfSpecialAbility
+				id="ModuleTag_CrawlerImmediateUnpackUpdate"
+				SpecialPowerTemplate="SpecialPower_CrawlerImmediateUnpack"
+				Options="IGNORE_FACING_CHECK USE_OBJECT_GEOMETRY_FOR_WITHIN_RANGE_CHECK FAIL_WITH_INVALID_APPROACH"
+				PackTime="2.0s"
+				StartAbilityRange="2.0"
+				NewObjectUnpackTime="=$CRAWLER_UNPACK_TIME"
+				ReplaceOptions="COPY_UPGRADES CHECK_BUILD_ASSISTANT CLEAR_LOCATION DISABLE_NEW_OBJECT_DURING_UNPACK TRANSFER_BUILDING_DESTRUCTION_STATE PRESERVE_HOTKEY_SQUAD_NUMBER SNAP_STRUCTURE_REPLACEMENT_TO_GROUND COPY_STANCES">
+			</ReplaceSelfSpecialAbility>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0.0s"
+				SinkRate="0.0"
+				DestructionDelay="0.0s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+
+			<xi:include	href="DATA:Includes/GenericDropOffUpgradeCrystalBehavior.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ModuleList/child::*)"/>
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="UnitAIStateMachine"/>
+		</AI>
+		<AudioArraySound>
+			<AudioEntry Sound="VehicleLarge_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="VehicleLarge_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<CrusherInfo
+			CrusherLevel="=$CRUSHER_CRAWLER"
+			CrushableLevel="=$CRUSHABLE_CRAWLER"
+			SelfInflictingDamagePercentage="10%"
+			CrushDecelerationPercent="75%">
+			<SelfInflictingDamageFilter
+				Rule="ALL"
+				Exclude="SIMPLE_OBJECT_PROP CRUSHABLE_OBSTACLE" />
+		</CrusherInfo>
+	</GameObject>
+
+</AssetDeclaration>

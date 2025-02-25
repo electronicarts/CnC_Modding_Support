@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" xmlns:balance="uri:ea.com:eala:balance" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="includes/Eva.xsd" />
+	<xs:include schemaLocation="includes/ObjectFilter.xsd" />
+	<xs:include schemaLocation="includes/Ref.xsd" />
+
+	<xs:simpleType name="GameplayModeType"
+			xas:targetNamespace=""
+			xas:enumItemPrefix="GAMEPLAY_TYPE_"
+			xas:useEnumPrefix="false">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="VERSUS"/>
+			<xs:enumeration value="DOMINATION"/>
+			<xs:enumeration value="CAPTURE_AND_HOLD"/>
+			<xs:enumeration value="MONUMENT"/>
+			<xs:enumeration value="ART_OF_DEFENSE"/>
+			<xs:enumeration value="COOP"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="GameplayModeTypeBitFlag">
+		<xs:list itemType="GameplayModeType"></xs:list>
+	</xs:simpleType>
+
+	<xs:simpleType name="GameplayTeamIndex"
+			xas:targetNamespace=""
+			xas:enumItemPrefix="GAMEPLAY_TEAM_"
+			xas:useEnumPrefix="false">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NEUTRAL"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="PointsToWin"
+			xas:targetNamespace=""
+			xas:enumItemPrefix="POINTSTOWIN_"
+			xas:useEnumPrefix="false">
+		<xs:restriction base="xs:string">
+	      <xs:enumeration value="CLOSE"/>
+		  <xs:enumeration value="VERYCLOSE"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ScoreDataType"
+			xas:targetNamespace=""
+			xas:enumItemPrefix="SCOREDATA_"
+			xas:useEnumPrefix="false">
+		<xs:restriction base="xs:string">
+      <xs:enumeration value="GoalStructure1Owner"/>
+      <xs:enumeration value="GoalStructure1Contester"/>
+      <xs:enumeration value="GoalStructure2Owner"/>
+      <xs:enumeration value="GoalStructure2Contester"/>
+      <xs:enumeration value="GoalStructure3Owner"/>
+      <xs:enumeration value="GoalStructure3Contester"/>
+      <xs:enumeration value="GoalStructure4Owner"/>
+      <xs:enumeration value="GoalStructure4Contester"/>
+      <xs:enumeration value="GoalStructure5Owner"/>
+      <xs:enumeration value="GoalStructure5Contester"/>
+      <xs:enumeration value="Team1Score"/>
+      <xs:enumeration value="Team2Score"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="WinConditionTemplate">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="Points" type="SageInt" default="0"/>	
+	</xs:complexType>
+
+	<xs:complexType name="CrystalLifterSpecialModelConditionInfo">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="ModelCondition" type="ModelConditionBitFlags" use="required" />
+		<xs:attribute name="Duration" type="Time" use="required" />
+	</xs:complexType>
+
+	<!-- For Monument mode and Art of Defense Mode-->
+	<xs:complexType name="PointInfoDestroyTemplate">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="InstantPoint" type="SageInt" default="1"/>
+		<xs:attribute name="Target" type="GameObjectWeakRef" use="required"/>
+		<xs:attribute name="TargetHealth" type="SageReal" default="0.0"/>
+		<xs:attribute name="Shield" type="GameObjectWeakRef" use="optional"/>
+		<xs:attribute name="ShieldAmount" type="SageReal" default="0.0"/>
+		<xs:attribute name="ShieldRechargePerSecond" type="SageReal" default="0.0"/>
+		<xs:attribute name="ShieldRechargeDelay" type="Time" default="0s"/>
+	</xs:complexType>
+
+	<xs:complexType name="PointInfoCaptureTemplate">
+		<xs:sequence>
+			<xs:element name="ContestationObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="InstantPoint" type="SageInt" default="0"/>
+		<xs:attribute name="PointsPerTick" type="SageInt" default="0"/>
+		<xs:attribute name="TickDuration" type="Time" default="1s"/>
+		<xs:attribute name="CaptureObjectLockoutDuration" type="Time" default="0s"/>
+		<xs:attribute name="CaptureObject" type="GameObjectWeakRef" use="required"/>
+		<xs:attribute name="CaptureScoringRadius" type="SageReal" default="300.0"/>
+	</xs:complexType>
+
+	<xs:simpleType name="GameplayModeRelationship"
+			xas:targetNamespace=""
+			xas:enumItemPrefix="GAMEPLAY_RELATIONSHIP_"
+			xas:useEnumPrefix="false">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SELF" />
+			<xs:enumeration value="ALLIES" />
+			<xs:enumeration value="ENEMIES" />
+			<xs:enumeration value="NEUTRALS" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="SoundInfoCapture">
+		<xs:sequence>
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="ObjectRelationship"  type="GameplayModeRelationship" use="required"/>
+		<xs:attribute name="CapturerRelationship"  type="GameplayModeRelationship" use="required"/>
+		<xs:attribute name="EVA" type="EvaEventRef" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="GameplayModeTimeRemainingEvents">
+		<xs:sequence>
+			<xs:element name="Event" minOccurs="1" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="TimeRemaining" type="Time" use="required" />
+					<xs:attribute name="EVA" type="EvaEventRef" />
+					<xs:attribute name="Schmeva" type="SchmevaEventRef" />
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="GameplayModePointsRemainingEvents">
+		<xs:sequence>
+			<xs:element name="Event" minOccurs="1" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="PointsRemaining" type="SageInt" use="required" />
+					<xs:attribute name="Team" type="GameplayTeamIndex" use="required" />
+					<xs:attribute name="Type" type="PointsToWin" default="VERYCLOSE" />
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="SoundInfoPointGained">
+		<xs:attribute name="EVAGainedBySelf" type="EvaEventRef" />
+		<xs:attribute name="EVAGainedByTeam" type="EvaEventRef" />
+		<xs:attribute name="EVAGainedByEnemy" type="EvaEventRef" />
+	</xs:complexType>
+
+	<xs:complexType name="SoundInfoLastGoal">
+		<xs:sequence>
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="Range" type="SageReal" default="300" />
+		<xs:attribute name="ReportDelay" type="Time" default="30s" />
+		<xs:attribute name="EVAAllies" type="EvaEventRef" />
+		<xs:attribute name="EVAEnemies" type="EvaEventRef" />
+	</xs:complexType>
+
+	<xs:complexType name="MonumentInformationTemplate">
+		<xs:sequence>
+			<xs:element name="ShieldDieEVA" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="NumRemaining" type="SageUnsignedInt" use="required" />
+					<xs:attribute name="EVAAllies" type="EvaEventRef" />
+					<xs:attribute name="EVAEnemies" type="EvaEventRef" />
+				</xs:complexType>
+			</xs:element>
+			<!-- These elements must be sorted in descending order of HealthPercent -->
+			<xs:element name="MonumentHealthEVA" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="HealthPercent" type="Percentage" use="required" />
+					<xs:attribute name="EVAAllies" type="EvaEventRef" use="required" />
+					<xs:attribute name="EVAEnemies" type="EvaEventRef" use="required" />
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ArtOfDefenseTemplate">
+		<xs:sequence>
+			<!-- Waves will be executed in order of how they appear in XML -->
+			<xs:element name="Wave" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="StartTime" type="Time" use="required"/>
+					<xs:attribute name="EndTime" type="Time" use="required"/>
+					<xs:attribute name="CommandPointLimit" type="SageUnsignedInt" use="required"/>
+					<xs:attribute name="SkirmishAITeamAssemblingDelay" type="Time" default="7s"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="ProductionObject" type="GameObjectWeakRef" use="required"/>
+		<xs:attribute name="AllowInstantBuildToReplenishUnits" type="SageBool" default="true"/>
+	</xs:complexType>
+
+	<xs:simpleType name="UnitDeathFlagsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CRAWLER" />
+			<xs:enumeration value="NON_CRAWLER" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="UnitDeathFlagsBitFlags">
+		<xs:list itemType="UnitDeathFlagsType"></xs:list>
+	</xs:simpleType>
+	
+	<!-- about to be deprecated -->
+	<xs:complexType name="CommandPointsSetting">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="MaxPlayers" type="SageUnsignedInt" use="required" />
+		<xs:attribute name="Points" type="SageUnsignedInt" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="TeamSizeSettings">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="StartingPlayers" type="SageUnsignedInt" use="required" />
+		<xs:attribute name="TeamCommandPoints" type="SageUnsignedInt" use="required" />
+	</xs:complexType>
+	
+	<xs:simpleType name="CommandPointDistributionFlags">
+		<xs:restriction base="xs:string">
+			<!-- use largest team for global #players consideration. Otherwise, use individual team maximums -->
+			<xs:enumeration value="GLOBAL_MAX"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="CommandPointDistributionBitFlag">
+		<xs:list itemType="CommandPointDistributionFlags"></xs:list>
+	</xs:simpleType>
+			
+	<xs:complexType name="DesperationUpgrade">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="UpgradeToSet" type="UpgradeTemplateWeakRef" use="required" />
+		<xs:attribute name="Points" type="SageUnsignedInt" use="required" />
+	</xs:complexType>
+			
+	<xs:complexType name="GameplayMode" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="WinCondition" type="WinConditionTemplate" minOccurs="0" maxOccurs="1" />
+					<xs:element name="PointInfoCapture" type="PointInfoCaptureTemplate" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="PointInfoDestroy" type="PointInfoDestroyTemplate" minOccurs="0" maxOccurs="1" />
+					<xs:element name="SoundInfoCapture" type="SoundInfoCapture" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="TimeRemainingEvents" type="GameplayModeTimeRemainingEvents" minOccurs="0" maxOccurs="1" />
+					<xs:element name="PointsRemainingEvents" type="GameplayModePointsRemainingEvents" minOccurs="0" maxOccurs="1" />
+					<xs:element name="SoundInfoPointGained" type="SoundInfoPointGained" minOccurs="0" maxOccurs="1" />
+					<xs:element name="SoundInfoLastGoal" type="SoundInfoLastGoal" minOccurs="0" maxOccurs="1" />
+					<xs:element name="MonumentInformation" type="MonumentInformationTemplate" minOccurs="0" maxOccurs="1" />
+					<xs:element name="ArtOfDefenseInformation" type="ArtOfDefenseTemplate" minOccurs="0" maxOccurs="1" />
+					<xs:element name="UnitDeathPenaltyObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+					<xs:element name="CommandPointsSetting" type="CommandPointsSetting" minOccurs="5" maxOccurs="5" />
+					<xs:element name="TeamSizeSetting" type="TeamSizeSettings" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="DesperationUpgrade" type="DesperationUpgrade" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="CrystalLifterSpecialModelConditionInfo" type="CrystalLifterSpecialModelConditionInfo" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="Mode" type="GameplayModeType"/>
+				<xs:attribute name="AllowRespawn" type="SageBool" default="true"/>
+				<xs:attribute name="TimeLimit" type="Time" default="1200s"/>
+				<xs:attribute name="UseDockingSystemToCapture" type="SageBool" default="true"/>
+				<!-- -1 for unlimited respawns -->
+				<xs:attribute name="MaxRespawnCount" type="SageInt" default="20"/>
+				<xs:attribute name="UnitDeathPenalty" type="UnitDeathFlagsBitFlags" default="CRAWLER NON_CRAWLER"/>
+				<xs:attribute name="UpgradeCrystalWaypointPrefix" type="xs:string"/>
+				<xs:attribute name="SuperUpgradeCrystalWaypointPrefix" type="xs:string"/>
+				<xs:attribute name="InitialUpgradeCrystalSpawnTime" type="Time" default="30s"/>
+				<xs:attribute name="InitialSuperUpgradeCrystalSpawnTime" type="Time" default="60s"/>
+				<xs:attribute name="UpgradeCrystalSpawnTime" type="Time" default="30s"/>
+				<xs:attribute name="SuperUpgradeCrystalSpawnTime" type="Time" default="60s"/>
+				<xs:attribute name="UpgradeCrystalSearchRadius" type="SageReal" default="100.0"/>
+				<xs:attribute name="UpgradeCrystalTemplate" type="GameObjectWeakRef"/>
+				<xs:attribute name="SuperUpgradeCrystalTemplate" type="GameObjectWeakRef"/>
+				<xs:attribute name="TotalCommandPointsToDistibute" type="SageInt" default="250"/>
+				<xs:attribute name="StartingCommandPointsPercentage" type="Percentage" default="60.0%"/>
+				<xs:attribute name="CommandPointFlags" type="CommandPointDistributionBitFlag" default="" />
+				<xs:attribute name="PlayerDropBuildSpeedModifier" type="Percentage" default="0%" />
+				<xs:attribute name="PlayerDropPulseUpgrade" type="UpgradeTemplateWeakRef" default="" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

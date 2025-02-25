@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:AutoPartsStoreTechStructure.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="all" source="ART:ABBarracks_particles.w3x" />
+		<Include type="instance" source="DATA:Neutral/Props/GarageTechStructure_Collapse.xml" />
+	</Includes>
+	<GameObject
+		id="GarageTechStructure"
+		inheritFrom="BaseTechStructure"
+		KindOf="+DONT_UNATTACH_WHEN_HEALING"
+		SelectPortrait="Portrait_Neutral_Garage"
+		ButtonImage="Button_Neutral_Garage"
+		EditorName="GarageTechStructure"
+		Description="DESC:GarageTechStructure"
+		TypeDescription="TYPE:TechStructure"
+		HealthBoxHeightOffset="60">
+   
+    <DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:GarageTechStructure</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="=$TECH_STRUCTURE_EFFECTIVE_COST"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="StructureArmor" 
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BoneFlag01 BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AutoPartsStoreTechStructure" />
+				</ModelConditionState>
+
+			</ScriptedModelDraw>
+
+			<xi:include
+				href="DATA:Includes/TechBuildingFlagDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonFlagDraws/child::*)" />			
+		</Draws>
+		<Behaviors>
+			<!-- This Passive Area Effect Behaviour is what gives the Tech Structure its Unit healing ability -->
+			<PassiveAreaEffectBehavior
+				id="ModuleTag_PassiveAreaEffect"
+				EffectRadius="-1"
+				NonStackable="true"
+				AffectUnderAttack="true"
+				HealingPercentPerSecond="2%" >
+				<AllowFilter
+					Rule="ANY"
+					Include="VEHICLE HUGE_VEHICLE"
+					Relationship="ALLIES"
+					StatusBitFlagsExclude="AIRBORNE_TARGET WATER_LOCOMOTOR_ACTIVE"/>
+			</PassiveAreaEffectBehavior>
+
+			<Physics
+				id="ModuleTag_Physics"/>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_MediumBuildingDieExplosion" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GarageTechStructure_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions"
+			/>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3000.0"
+				InitialHealth="3000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type= "BOX"
+				MajorRadius = "72.0119"
+				MinorRadius = "78.328"
+				Height = "11.3312" >
+				<Offset
+					x = "0.0557117"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "22.9771"
+				MinorRadius = "32.328"
+				Height = "17.2551" >
+				<Offset
+					x = "0.0557117"
+					y = "12.0303"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "6.8014"
+				MinorRadius = "23.2289"
+				Height = "34.386" >
+				<Offset
+					x = "-2.25994"
+					y = "12.0303"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "7.20948"
+				MinorRadius = "9.29157"
+				Height = "13.9511" >
+				<Offset
+					x = "-2.25994"
+					y = "-24.9826"
+					z = "17.2743" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "14.419"
+				MinorRadius = "14.8665"
+				Height = "1.2401" >
+				<Offset
+					x = "-2.25994"
+					y = "-24.9826"
+					z = "17.2743" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "12.5445"
+				MinorRadius = "4.04369"
+				Height = "17.6714" >
+				<Offset
+					x = "-2.25994"
+					y = "-20.6552"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "31.0323"
+				MinorRadius = "42.5007"
+				Height = "2.69846" >
+				<Offset
+					x = "5.37453"
+					y = "5.68195"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "4.83035"
+				MinorRadius = "5.06483"
+				Height = "22.8798" >
+				<Offset
+					x = "21.7146"
+					y = "54.0889"
+					z = "-0.00733656" />
+			</Shape>
+			<ContactPoint>
+				<Pos 
+					x= "-13.8169" 
+					y = "-13.7301" 
+					z = "0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos 
+					x= "13.7173" 
+					y = "-13.7301" 
+					z = "19.0023" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos 
+					x= "13.7173" 
+					y = "35.3835" 
+					z = "0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos 
+					x= "-13.8169" 
+					y = "35.3835" 
+					z = "19.0023" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos 
+					x= "-13.8169" 
+					y = "-13.7301" 
+					z = "19.0023" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos 
+					x= "13.7173" 
+					y = "-13.7301" 
+					z = "0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos 
+					x= "13.7173" 
+					y = "35.3835" 
+					z = "19.0023" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos 
+					x= "-13.8169" 
+					y = "35.3835" 
+					z = "0.0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry EvaEvent="GarageCaptured" AudioType="voiceDefectingTowards" />
+			<AudioEntry Sound="TEC_Garage_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+		<ProjectedBuildabilityInfo
+			Radius="0.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+	<ObjectCreationList
+		id="GarageTechStructure_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>GarageTechStructure_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+</AssetDeclaration>

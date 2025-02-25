@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GRBChc01.w3x" />
+		<Include
+			type="all"
+			source="ART:GRBChc01_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:GRBChc01_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:GRBChc01_D3.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructure.xml" />
+	</Includes>
+	<GameObject
+		id="Germany_Church_01"
+		inheritFrom="BaseCivilianStructure"
+		EditorName="Germany_Church_01"
+    EditorSorting="STRUCTURE"
+		Browser="REGION Germany_GR STRUCTURE">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false"
+				AffectedByStealth="false"
+				ExtraPublicBone="BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GRBChc01" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GRBChc01_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GRBChc01_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GRBChc01_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GRBChc01_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+            end
+          </Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GRBChc01_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_LAST">
+          <Animation
+						AnimationName="GRBChc01_D1"
+						AnimationMode="MANUAL" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_Damaged" and Prev ~= "TRANS_IntoDamaged" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoDamaged")
+            end
+          </Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoDamaged">
+					<Animation
+						AnimationName="GRBChc01_D1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GRBChc01_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GRBChc01_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="false" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="false" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<xi:include
+				href="DATA:Includes/GarrisonFlagArmorDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonArmorDraws/child::*)" />
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					FX="FX_ScorchLarge" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_LARGE" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="92.3164"
+				MinorRadius="42.8157"
+				Height="68.4415">
+				<Offset
+					x="29.8302"
+					y="-1.14229"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.9166"
+				MinorRadius="15.9166"
+				Height="119.929">
+				<Offset
+					x="107.503"
+					y="-25.5399"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.9166"
+				MinorRadius="15.9166"
+				Height="119.929">
+				<Offset
+					x="107.503"
+					y="24.8018"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-60.5469"
+					y="-43.1361"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="119.831"
+					y="-43.1361"
+					z="66.5004" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="119.831"
+					y="41.4326"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-60.5469"
+					y="41.4326"
+					z="66.5004" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-60.5469"
+					y="-43.1361"
+					z="66.5004" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="119.831"
+					y="-43.1361"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="119.831"
+					y="41.4326"
+					z="66.5004" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-60.5469"
+					y="41.4326"
+					z="0.0" />
+			</ContactPoint>
+		</Geometry>
+	</GameObject>
+</AssetDeclaration>

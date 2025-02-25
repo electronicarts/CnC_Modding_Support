@@ -1,0 +1,154 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2008 Electronic Arts Inc
+//
+// Scrape script for depth map pass
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_DEPTH_MAP_SCRAPEH
+#define SCRAPE_SCRIPT_DEPTH_MAP_SCRAPEH
+
+//
+// Depth map
+//
+
+// This buffer holds the depth information in linear format
+var texture DepthTexture fromscope static DepthTexture
+var texture NormalSpecTexture fromscope static NormalSpecTexture
+
+#if defined(EA_PLATFORM_WINDOWS)
+
+	#define DepthRenderTarget DepthTexture
+	#define NormalSpecRenderTarget NormalSpecTexture
+	
+    var texture DepthTextureLinear fromscope static DepthLinearTexture
+	#define DepthTextureLinearTarget DepthTextureLinear
+	
+#elif defined(EA_PLATFORM_XENON)
+	
+	var texture ZBufferTexture $PostEffect.FrameBufferSize.x $PostEffect.FrameBufferSize.y D24FS8
+
+	var surface DepthRenderTarget edram $PostEffect.FrameBufferSize.x $PostEffect.FrameBufferSize.y R32F
+	var surfacegroup DepthGroup DepthRenderTarget DepthBuffer
+	
+	var surface NormalSpecRenderTarget edram $WW3D.DeferredLighting.BufferSize.x $WW3D.DeferredLighting.BufferSize.x A8R8G8B8
+
+#endif
+
+var shader PostEffectLinearDepthShader 	PostFX_LinearDepth.fx
+
+// Moved from common because the shadow pass and depth pass render different things.
+proc renderDepthCasters
+	renderTerrain 
+
+	renderRoads
+
+	renderbin TerrainLikeGroundObject
+	renderbin Bridge
+	renderProps
+
+	beginevent RenderCasters_Units
+		callproc renderBinsUnit
+		callproc renderBinsUnitOutline
+	endevent RenderCasters_Units
+
+	renderbin Solid
+
+	beginevent RenderCasters_Structures
+		renderbin Structure
+		callproc renderBinsStructureOutline
+	endevent RenderCasters_Structures
+
+	renderbin StaticSort5 					// Underwater Sorting
+	callproc renderBinsStaticSort
+	//renderbin Transparent                              // No Lighting for transparent objects
+	//renderTransparentOutlineObjects                    // No Lighting for transparent outined objects
+endproc
+
+proc updateDepthMap
+
+    if WW3D IsDepthPassEnabled
+
+    	beginevent UpdateDepthMap
+
+        	if WW3D DeferredLighting.IsEnabled
+#if defined(EA_PLATFORM_XENON)
+                settarget 0 NormalSpecRenderTarget
+#else
+    		    settarget 0 NormalSpecRenderTarget
+    		    settarget 1 DepthRenderTarget
+#endif
+        	else
+#if defined(EA_PLATFORM_XENON)
+    		    settarget 0 NULL
+#else
+    		    settarget 0 DepthRenderTarget
+#endif
+    	    endif
+
+	        setdepth DepthBuffer
+	
+	        if WW3D DeferredLighting.IsEnabled
+		        beginDepthNormalOverrideTechnique
+	        else
+		        beginDepthOverrideTechnique
+	        endif
+		
+	        setclearcolor		1 1 1 1
+	        setcleardepth       1.0
+	
+#if defined(EA_PLATFORM_XENON)
+    	    clearz
+#else
+    	    clear
+#endif
+	
+    	    setcamera Viewer
+	
+	        // set visible objects
+	        if WW3D DeferredLighting.IsEnabled
+		        visibleobjects DepthNormalMap
+	        else
+		        visibleobjects DepthMap
+	        endif
+	
+	        callproc renderDepthCasters
+
+	        endDepthOverrideTechnique
+	
+	        setshader PostEffectLinearDepthShader LinearDepth
+	
+#if defined(EA_PLATFORM_XENON)
+	        resolve ZBufferTexture depthstencil
+	
+	        if WW3D DeferredLighting.IsEnabled
+		        resolve NormalSpecTexture
+	        endif
+	
+	        settarget 0 DepthRenderTarget
+	
+	        settexture PostEffect DepthBufferTexture ZBufferTexture
+
+	        renderquad
+	
+	        resolve DepthTexture
+	
+	        settexture WW3D DepthTexture DepthTexture
+#else
+	        settarget 0 DepthTextureLinearTarget
+	
+	        if WW3D DeferredLighting.IsEnabled
+		        settarget 1 NULL
+	        endif
+	
+	        settexture PostEffect DepthBufferTexture DepthTexture
+
+	        renderquad
+
+	        settexture WW3D DepthTexture DepthTextureLinear	
+#endif
+
+	    endevent UpdateDepthMap
+
+	endif // if WW3D IsDepthPassEnabled
+endproc
+
+#endif // SCRAPE_SCRIPT_DEPTH_MAP_SCRAPEH

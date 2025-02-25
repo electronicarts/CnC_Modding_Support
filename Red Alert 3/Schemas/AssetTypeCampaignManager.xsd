@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+<xs:include schemaLocation="Includes/FactionType.xsd"/>
+<xs:include schemaLocation="Includes/Ref.xsd"/>
+
+<xs:simpleType name="CampaignFlagType">
+	<xs:restriction base="xs:string">
+		<xs:enumeration value="Use_Alternate_Campaign_Finale" />	<!-- Set this flag to play an alternate ending for your mission -->
+	</xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="CampaignFlagBitFlags">
+	<xs:list itemType="CampaignFlagType" />
+</xs:simpleType>
+
+<xs:complexType name="CampaignAICommander" >
+	<xs:attribute name="Portrait" type="OnDemandImageRef" />
+	<xs:attribute name="Personality" type="xs:string"/>
+	<xs:attribute name="Description" type="xs:string" />
+	<xs:attribute name="Faction" type="FactionType" use="required"/>
+</xs:complexType> 
+    
+<xs:complexType name="CampaignMovie" >
+    <xs:attribute name="ImageRef" type="ImageRef" />
+    <xs:attribute name="FileName" type="xs:string" use="required"/>
+    <xs:attribute name="ScreenName" type="xs:string" />
+    <xs:attribute name="Description" type="xs:string" />
+</xs:complexType>
+
+<xs:complexType name="MissionTemplate" xas:typeGroup="Xml">
+    <xs:complexContent>
+        <xs:extension base="BaseAssetType">
+            <xs:sequence>
+                <xs:element name="Prerequisite" type="xs:int" default="-1" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="PrerequisiteTemplate" type="AssetReference" xas:refType="MissionTemplate" minOccurs="0" maxOccurs="unbounded" xas:pipelineOnly="true" />
+                <xs:element name="Objective" type="xs:string" default="-1" minOccurs="0" maxOccurs="5" />
+                <xs:element name="BonusObjective" type="xs:string" default="-1" minOccurs="0" maxOccurs="5" />
+                <xs:element name="AICommander" type="CampaignAICommander"  minOccurs="1" maxOccurs="3" />
+                <xs:element name="IntroMovie" type="CampaignMovie"   minOccurs="1" maxOccurs="1" />
+            </xs:sequence>
+            <xs:attribute name="DisplayName" type="xs:string" />
+			<xs:attribute name="ShortDisplayName" type="xs:string" />
+            <xs:attribute name="OverviewTalkingHead" type="xs:string" />
+            <xs:attribute name="OverviewBackground" type="xs:string" />
+            <xs:attribute name="Title" type="xs:string" />
+            <xs:attribute name="MapName" type="xs:string" />
+            <xs:attribute name="BriefingFLA" type="xs:string" />
+            <xs:attribute name="BriefingSummary" type="xs:string" />
+            <xs:attribute name="VictoryAchEvent" type="SageUnsignedInt" />
+            <xs:attribute name="VictoryAchEventMedium" type="SageUnsignedInt" />
+            <xs:attribute name="VictoryAchEventHard" type="SageUnsignedInt" />
+            <xs:attribute name="VictoryAchEventCoop" type="SageUnsignedInt" />
+            <xs:attribute name="VictoryAchEventBonusObj" type="SageUnsignedInt" />
+	    </xs:extension>
+    </xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="CampaignTemplate" xas:typeGroup="Xml">
+	<xs:complexContent>
+		<xs:extension base="BaseAssetType">
+			<xs:sequence>
+				<xs:element name="Mission" type="AssetReference" xas:refType="MissionTemplate" minOccurs="1" maxOccurs="unbounded" />
+                <xs:element name="FinalMovie" type="CampaignMovie"   minOccurs="1" maxOccurs="1" />
+                <xs:element name="AlternateFinalMovie" type="CampaignMovie"   minOccurs="1" maxOccurs="1" />
+			</xs:sequence>
+			<xs:attribute name="DisplayName" type="xs:string" />
+			<xs:attribute name="ConsoleAutosaveFilename" type="xs:string" />
+		</xs:extension>
+	</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="CampaignEnumerator" xas:typeGroup="Xml">
+	<xs:complexContent>
+		<xs:extension base="BaseAssetType">
+			<xs:sequence>
+				<xs:element name="Campaign" type="AssetReference" xas:refType="CampaignTemplate" minOccurs="1" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:extension>
+	</xs:complexContent>
+</xs:complexType>
+
+</xs:schema>

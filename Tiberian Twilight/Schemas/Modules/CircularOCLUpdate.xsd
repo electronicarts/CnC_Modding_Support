@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:balance="uri:ea.com:eala:balance" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="OCLInfo">
+		<xs:sequence/>
+		<xs:attribute name="OCL" type="ObjectCreationListRef" use="required" />
+		<xs:attribute name="ProducingModelConditions" type="ModelConditionBitFlags" default="" />
+	</xs:complexType>
+
+	<xs:complexType name="SlotInfo">
+		<xs:sequence/>
+		<!-- spawn bone is used to derive the procedural bone angle -->
+		<xs:attribute name="SpawnBone" type="xs:string" use="required" />
+		<xs:attribute name="ProducingDuration" type="Time" default="2s" />
+		<!-- offset from start of deploy at which to spawn ocl -->
+		<xs:attribute name="ProducingOCLOffsetTime" type="Time" default="1s" />
+	</xs:complexType>
+
+	<xs:simpleType name="CircularOCLUpdateOptions">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BLOCKED_BY_SPAWNS_CREATED_BY_OUR_THING_TYPE" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CircularOCLUpdateOptionBitFlags">
+		<xs:list itemType="CircularOCLUpdateOptions"></xs:list>
+	</xs:simpleType>
+	
+	
+
+	<xs:complexType name="CircularOCLUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="OCLInfo" type="OCLInfo" minOccurs="1" maxOccurs="unbounded" />
+					<xs:element name="SlotInfo" type="SlotInfo" minOccurs="1" maxOccurs="unbounded" />
+					<xs:element name="BlockingObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+					<xs:element name="ObjectStatusValidation" type="ObjectStatusValidationDataType" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="IdleTime" type="Time" default="20s"/>
+				<xs:attribute name="TurnTime" type="Time" default="2s" />
+				<xs:attribute name="PartitionFilterDistanceType" type="PartitionManagerDistanceType" default="CIRCLE" />
+				<xs:attribute name="PivotBone" type="xs:string" use="required" />
+				<xs:attribute name="BlockingObjectDistance" type="SageReal" default="1.0" />
+				<xs:attribute name="Options" type="CircularOCLUpdateOptionBitFlags" default="" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

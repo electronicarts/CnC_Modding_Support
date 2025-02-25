@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBWallHub.w3x" />
+		<Include
+			type="all"
+			source="ART:NBWallHub_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:NBWallHub_D3.w3x" />
+		<Include
+			type="all"
+			source="ART:NBWallHub_A.w3x" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="NODWallHub"
+		inheritFrom="BaseStructure"
+		Side="NOD"
+		EditorSorting="STRUCTURE"
+		BuildCost="100"
+		BuildTime="1"
+		SelectPortrait="Portrait_NODWallHub"
+		ButtonImage="Portrait_NODWallHub"
+		EnergyProduction="0"
+		CommandSet="NODWallHubCommandSet"
+		KindOf="PRELOAD STRUCTURE SELECTABLE IMMOBILE SCORE WALL_HUB NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER IGNORE_FOR_VICTORY CAN_CAST_REFLECTIONS RESIST_EMP"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		BuildCompletion="PLACED_BY_PLAYER"
+		CampnessValue="=$CAMPNESS_WALL"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="NODWallHub"
+		Description="Desc:NODWallHub"
+		TypeDescription="Type:NODWallHub">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODWallHub</DisplayName>
+		<ArmorSet
+			Armor="NODWallArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="FRONT" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				UseStandardModelNames="true"
+				StaticModelLODMode="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBWallHub" />
+				</ModelConditionState>
+				<!-- BUILD UP -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBWallHub_A" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NBWallHub_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBWallHub_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBWallHub" />
+					<Texture
+						Original="NBwall"
+						New="NBwall_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBWallHub_A"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBWallHub_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBWallHub_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NBWallHub_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NBWallHub_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>					
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<GettingBuilt
+				id="ModuleTag_04"
+				UseSpawnTimerWithoutWorker="true">
+				<PercentOfBuildCostToRebuildInfo></PercentOfBuildCostToRebuildInfo>
+				<SelfAudio></SelfAudio>
+			</GettingBuilt>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<WallHubBehavior
+				id="ModuleTag_SoWeCanBuildWalls"
+				StaggeredBuildFactor="0"
+				BuilderRadius="8"
+				HubCapTemplateId="NODWallHub"
+				DefaultSegmentTemplateId="NODWallSegment"
+				CliffCapTemplateId="NODWallHub"
+				Options="16">
+				<SegmentPattern>NODWallSegment</SegmentPattern>
+				<SegmentPattern>NODWallSegment</SegmentPattern>
+				<SegmentPattern>NODWallSegment</SegmentPattern>
+				<SegmentPattern>NODWallSegment</SegmentPattern>
+				<SegmentPattern>NODWallSegment</SegmentPattern>
+				<SegmentPattern>NODWallHub</SegmentPattern>
+			</WallHubBehavior>
+			<StructureUnpackUpdate
+				UnpackTime="1.5s" />
+			<xi:include
+				href="../../Includes/GenericNODBuildingDestructionNoSpawn.xml" />
+			<xi:include
+				href="../../Includes/GenericNODBuildingSuicideNoSpawn.xml" />
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_05"
+				MaxHealth="1500" />
+		</Body>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				Name="Geom_Orig"
+				MajorRadius="11.0"
+				MinorRadius="11.0"
+				Height="25.0">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="100" />
+	</GameObject>
+</AssetDeclaration>

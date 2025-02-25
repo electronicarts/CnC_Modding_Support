@@ -1,0 +1,921 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<!-- NODCommandoA / NOD Utility Commando T2-->
+	<!-- This unit doesn't use "real" hijacking since the engineer contain stuff was designed to destroy the capturing unit. Instead we use a weapon that fires
+	a special ability that captures the target and an attachupdate that keeps the commando locked to the captured vehicle until it's destroyed. -->
+
+	<!-- USER_1 ObjectStatus and ModelConditions are for the post-death zombie state
+	USER_2 is for the crate pickup weapon (can't use WEAPON_UPGRADED because the normal weapon should still have heroic VFX) -->
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:NUS_CommandoA_SKN.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_AIDA.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_AIFA.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_AIFB.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_ATKA.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_ATKB.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_ATKR.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_BATA.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_BIDA.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_BIFA.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_BIFB.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_BIFC.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_DSEL.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_EMPA.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_RUNA.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_DIEA.w3x" />
+
+		<!-- Animations for when he's in USER_1 (zombie) state -->
+		<Include type="all" source="ART:NUS_CommandoA_AIDG.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_ATKG.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_DIE1.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_EMPG.w3x" />
+		<Include type="all" source="ART:NUS_CommandoA_RUNG.w3x" />
+
+		<Include type="all" source="ART:NUGar_Comm.w3x" />
+		<!-- Laser Draw Includes -->
+		<Include type="instance" source="ART:FXNodLaser.xml" />
+		<Include type="instance" source="ART:FXNodLaser_Veteran.xml" />
+		<Include type="instance" source="ART:FXEnergyBeam.xml" />
+		<Include type="instance" source="ART:FXNodLaser_Secondary.xml" />
+		<Include type="instance" source="ART:FXNodLaser_Veteran_Secondary.xml" />
+		<Include type="instance" source="ART:FXRailDistort02.xml" />
+		<Include
+			type="all"
+			source="ART:FXAlienOverlay.xml" />				
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<!-- Base Object -->		
+		<Include type="instance" source="DATA:BaseObjects/BaseLightInfantry.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NOD_COMMANDO_A_HIJACK_DISTANCE" value="50.0" />
+	</Defines>
+	<GameObject
+		id="NODCommandoA"
+		inheritFrom="BaseLightInfantry"
+		SubGroupPriority="227"
+		HealthBoxHeightOffset="35"
+		SelectPortrait="Portrait_NOD_Commando_A"
+		ButtonImage="Btn_NOD_Commando_A"
+		Side="NOD"
+		ParticipationValue="=$NODCOMMANDOA_PARTICIPATION_VALUE" 
+		TransportSlotCount="1"
+		BuildTime="12"
+		CommandSet="NODCommandoACommandSet"
+		IsTrainable="true"
+		CommandPoints="=$NOD_COMMANDO_A_COMMANDPOINT_COST" 
+		KindOf="+UNIQUE_UNIT +IGNORE_FORCE_MOVE +SNIPER +CAN_BE_FAVORITE_UNIT +COMMANDO +CAN_ATTACK_WHILE_STEALTHED +MULTIPLE_WEAPON_CATEGORIES"
+		RadarPriority="UNIT"
+		UnitCategory="INFANTRY"
+		WeaponCategory="LASER"
+		VoicePriority="124"
+		EditorName="NOD_O2_Light_Commando(Commando)"
+		EditorSorting="UNIT"
+		Description="Desc:NODCommandoA"
+		TypeDescription="Type:NODCommandoA"
+		UnitTypeIcon="CommandoIcon"
+		MaxSimultaneousOfType="1">
+
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODCommandoA</DisplayName>
+
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+
+		<LocomotorSet
+			Locomotor="StandardInfantryLocomotor"
+			Condition="NORMAL"
+			Speed="95.0" />
+
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT"
+					RetainSubObjects="true">
+					<Model
+						Name="NUS_CommandoA_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="B_ClampR" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="B_ClampR" />
+					<WeaponFireFXBone
+						WeaponSlotType="TERTIARY_WEAPON"
+						BoneName="B_ClampR" />
+					<WeaponLaunchBone
+						WeaponSlotType="TERTIARY_WEAPON"
+						BoneName="B_ClampR" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="INSIDE_GARRISON">
+					<Model
+						Name="NUGar_Comm" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="B_WEAPONA_FX" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="B_WEAPONA_FX" />
+					<WeaponFireFXBone
+						WeaponSlotType="TERTIARY_WEAPON"
+						BoneName="B_WEAPONA_FX" />
+					<WeaponLaunchBone
+						WeaponSlotType="TERTIARY_WEAPON"
+						BoneName="B_WEAPONA_FX" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="HIDDEN">
+					<!-- no model -->
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="NUS_CommandoA_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+						<Script>
+									CurDrawableHideSubObjectPermanently( "UPGRADE" )
+						</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="true"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="NUS_CommandoA_BIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="80"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Animation
+						AnimationName="NUS_CommandoA_BIFA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="5"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Animation
+						AnimationName="NUS_CommandoA_BIFB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="5"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Animation
+						AnimationName="NUS_CommandoA_BIFC"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="5"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_Selected" then
+						CurDrawableSetTransitionAnimState("TRANS_SelectedToIdle")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="INSIDE_GARRISON">
+				</AnimationState>
+				<!-- Normal Death -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING DEATH_1">
+					<Animation
+						AnimationName="NUS_CommandoA_DIEA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+				<!-- Suicided Death -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING DEATH_2">
+					<Animation
+						AnimationName="NUS_CommandoA_DIEA"
+						AnimationMode="ONCE" />
+					
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 AFFECTED_BY_EMP"
+					StateName="STATE_Zombie">
+					<Animation
+						AnimationName="NUS_CommandoA_EMPG"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObject("NodCommando")
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 FIRING_A"
+					StateName="STATE_Zombie">
+					<Animation
+						AnimationName="NUS_CommandoA_ATKG"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObject("NodCommando")
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 MOVING"
+					StateName="STATE_Zombie">
+					<Animation
+						AnimationName="NUS_CommandoA_RUNG"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObject("NodCommando")
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="STATE_Zombie">
+					<Animation
+						AnimationName="NUS_CommandoA_AIDG"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						CurDrawableHideSubObject("NodCommando")
+						if Prev ~= "STATE_Zombie" and Prev ~= "TRANS_becoming_zombie" then
+						CurDrawableSetTransitionAnimState("TRANS_becoming_zombie")
+						end
+					</Script>
+					
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="AFFECTED_BY_EMP">
+					<Animation
+						AnimationName="NUS_CommandoA_EMPA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A MOVING"
+					Flags="RESTART_ANIM_WHEN_COMPLETE" >
+					<Animation
+						AnimationName="NUS_CommandoA_ATKR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="NUS_CommandoA_RUNA"
+						AnimationMode="LOOP"
+						Distance="66"/>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="AIM_HIGH FIRING_A"
+					Flags="RESTART_ANIM_WHEN_COMPLETE" >
+					<Animation
+						AnimationName="NUS_CommandoA_ATKB"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A"
+					Flags="RESTART_ANIM_WHEN_COMPLETE" >
+					<Animation
+						AnimationName="NUS_CommandoA_ATKA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="false"
+					StateName="STATE_Selected">
+					<Animation
+						AnimationName="NUS_CommandoA_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="50"/>
+					<Animation
+						AnimationName="NUS_CommandoA_AIFA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="5"/>
+					<Animation
+						AnimationName="NUS_CommandoA_AIFB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="5"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_Idle" then
+						CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					ConditionsYes="USER_1 DYING"
+					StateName="TRANS_becoming_zombie">
+					<Animation
+						AnimationName="NUS_CommandoA_DIE1"
+						AnimationMode="ONCE" />
+					<Script>
+						CurDrawableHideSubObject("NodCommando")
+						CurDrawablePlaySound("NOD_Commando_VoiceDieLaser")
+						CurDrawablePlaySound("NOD_Commando_ExplosionLoseLegs")
+					</Script>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NodCom_Legs01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NodCom_Legs02"
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IdleToSelected">
+					<Animation
+						AnimationName="NUS_CommandoA_BATA"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_SelectedToIdle">
+					<Animation
+						AnimationName="NUS_CommandoA_DSEL"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+				</AnimationState>
+
+
+			</ScriptedModelDraw>
+
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw1"
+				Texture1_UTile="1"
+				Texture1_VTile=".8"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".3"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate=".2"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="20"
+				LightMin="20"
+				LightMax="20"
+				CombatChainCounter="EQUAL WEAK"
+				LaserStateID="1">
+				<LightColor R="1.0" G="0.0" B="0.0" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+			<!-- strong counter laser -->
+			<LaserDraw
+				id="ModuleTag_LaserDraw2"
+				Texture1_UTile="1"
+				Texture1_VTile=".8"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".3"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate=".2"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="20"
+				LightMin="20"
+				LightMax="40"
+				WeaponSlotID="1"
+				LaserStateID="1"
+				CombatChainCounter="STRONG">
+				<LightColor R="1.0" G="1.0" B="0.25" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser_Veteran</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+			
+		</Draws>
+
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODCommandoALaserCarbine" 
+						ForbiddenObjectStatus="USER_1 USER_2" />
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODCommandoAHijack"
+						ObjectStatus="USER_1" 
+						ForbiddenObjectStatus="ENCLOSED UPGRADE_CRYSTAL_ATTACHED NOT_HIJACKABLE"/>
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODCommandoAGatlingLaser"
+						ForbiddenObjectStatus="USER_1" 
+						ObjectStatus="USER_2" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+
+			<LaserState
+				  id="ModuleTag_LaserState"
+				  LaserId="1" />
+
+			<EmotionTrackerUpdate id="Module_ETU">
+				<TauntAndPointExcluded Rule="NONE" />
+				<AddEmotion>CheerBusy_Base</AddEmotion>
+				<AddEmotion>CheerIdle_Base</AddEmotion>
+			</EmotionTrackerUpdate>
+
+			<AimWeapon
+				id="ModuleTag_AimWeapon"
+				AimHighThreshold="0.00001"/>
+
+			<SlowDeath
+				id="ModuleTag_NormalDeath"
+				SinkDelay="2.5s"
+				SinkRate="2.5"
+				DeathFlags="DEATH_1"
+				DestructionDelay="4.5s">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED LASERED NONE" />
+				<Sound Type="INITIAL" List="NOD_Commando_VoiceDie" />
+			</SlowDeath>
+
+			<!-- so the hijacker dies correctly when the flying vehicle it's in dies.
+			Yep... DeathType NONE.-->
+			<DestroyDie
+				id="ModuleTag_NoDeath">
+				<DieMuxData
+					DeathTypes="NONE" />
+			</DestroyDie>
+
+			<!-- Same as normal death, but different die sound -->
+			<SlowDeath
+				id="ModuleTag_LaserDeath"
+				SinkDelay="2.5s"
+				SinkRate="2.5"
+				DeathFlags="DEATH_1"
+				DestructionDelay="4.5s">
+				<DieMuxData
+					DeathTypes="LASERED" />
+				<Sound Type="INITIAL" List="NOD_Commando_VoiceDieLaser" />
+			</SlowDeath>
+
+			<SlowDeath
+				id="ModuleTag_SuicidedDeath"
+				SinkDelay="2.5s"
+				SinkRate="2.5"
+				DeathFlags="DEATH_2"
+				DestructionDelay="4.5s">
+				<DieMuxData
+					DeathTypes="SUICIDED" />
+				<Sound Type="INITIAL" List="NOD_Commando_VoiceDie" />
+			</SlowDeath>
+
+			<BezierProjectile
+				id="ModuleTag_Projectile"
+				FirstHeightMin="104"
+				FirstHeightMax="104"
+				SecondHeightMin="52"
+				SecondHeightMax="52"
+				FirstPercentIndent="20"
+				SecondPercentIndent="70"
+				Flags="TUMBLE_RANDOMLY CRUSH_STYLE" 
+				BounceCount="0"
+				FinalStuckTime="1.766s"
+				PreLandingStateTime="0.3s" />
+
+			<AttributeModifierUpgrade
+				id="Upgrade_NODCommandoACrateUpgrade"
+				AttributeModifier="Modifier_NODCommandoACrateUpgrade">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODCommandoAFunctions"/>
+
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<Nugget
+					ShowSubObjects="Upgrade"
+					Upgrade="Upgrade_Crate_Level1"
+          			FadeTime="0.0s"
+          			SkipFlashOnCreate="false"
+          			UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+          			FlashTime="1.5s"/>
+					<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+			</SubObjectsUpgrade>
+      
+			<StancesBehavior
+				  id="ModuleTag_Stance"
+				  StanceTemplate="Generic" />
+
+			<xi:include
+				href="DATA:Includes/CaptureBehavior.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:Behaviors/child::*)" />
+
+			<AutoHealBehavior
+				id="Cyborg_PassiveHeal"
+				InitiallyActive="true"
+				HealOnlyIfNotInCombat="false"
+				HealOnlyIfNotUnderAttack="false"
+				StartHealingDelay="1s"
+				HealingAmount="5"
+				HealingDelay="1s"
+				HealAlwaysActive="true" >
+				<ObjectStatusValidation
+					ForbiddenStatus="DISABLED_FOR_RECYCLE" />
+			</AutoHealBehavior>
+
+			<SpecialPower
+				id="ModuleTag_Hijack"
+				SpecialPowerTemplate="SpecialPower_Hijack"
+				UpdateModuleStartsAttack="true" />
+			<xi:include
+				href="DATA:Includes/GenericHijackSpecialAbilityUpdate.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ModuleList/child::*)"/>
+			<!-- override generic hijack attachupdate to add vet upgrade -->
+			<AttachUpdate
+				id="ModuleTag_HijackAttachUpdate"
+				Range="=$NOD_COMMANDO_A_HIJACK_DISTANCE">
+				<UpgradeToAddToParent>Upgrade_ProductionVeterancy_HEROIC</UpgradeToAddToParent>
+			</AttachUpdate>
+
+			<HijackSpecialAbilityUpdate
+				id="ModuleTag_HijackUpdate"
+				StartAbilityRange="=$NOD_COMMANDO_A_HIJACK_DISTANCE">
+				<TargetStatusValidation
+					ForbiddenStatus="DISABLED_FOR_RECYCLE"/>
+			</HijackSpecialAbilityUpdate>
+			
+			<InvisibilityUpgrade
+				id="ModuleTag_NODCommandoAInvisibility"
+				InvisibilityTemplate="DefaultInvisibilityTemplate">
+				<TriggeredBy>Upgrade_NODCommandoAStealth</TriggeredBy>
+			</InvisibilityUpgrade>
+
+			<AttributeModifierUpgrade
+				id="Upgrade_NODCommandoAStealthDodgeUpgrade"
+				AttributeModifier="Modifier_StealthDodge">
+				<TriggeredBy>Upgrade_NODCommandoAStealth</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<FXListBehavior
+				  xmlns="uri:ea.com:eala:asset"
+				  id="ModuleTag_FXListUpgrade">
+				<TriggeredBy>Upgrade_NODCommandoAStealth</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					  Index="onUpgraded"
+					  FX="FX_UpgradeNODStealth" />
+			</FXListBehavior>
+
+			<xi:include
+				href="DATA:Includes/GenericReflectedWeaponTracker.xml" />
+			<xi:include
+				href="DATA:Includes/FXListBehaviorCrateUpgrade.xml" />
+		</Behaviors>
+
+		<AI>
+			<AIUpdate
+			id="ModuleTag_AI"
+			AutoAcquireEnemiesWhenIdle="YES"
+			StateMachine="UnitAIStateMachine">
+			<UnitAITargetChooserData
+				SympathyRange="100.0"
+				IdleScanDelay="0.01s" />
+			</AIUpdate>
+		</AI>
+
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="600.0">
+				<ZombieInfo
+					AttributeModifier="Modifier_NODCommandoAZombie"
+					HealthPercentage="50"
+					DisableOnTransitionTime="3.0s"
+					DeathTypesForbidden="CRYSTAL_DETONATED">
+					<ObjectStatusValidation
+						ForbiddenStatus="CLONED DISABLED_FOR_RECYCLE" />
+				</ZombieInfo>
+			</ActiveBody>
+		</Body>
+
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LGAU">
+				<Key>LargeGroupAudioKey_Infantry</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+
+		<ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_SpecialAudioSsshhhhttuuuffffffWhenCrawling">
+				<Override RequiredFlags="USER_1">
+					<AudioArrayVoice>
+						<AudioEntry Sound="NOD_Commando_VoiceMoveCaptureVehicle" AudioType="voiceAttack"/>
+						<AudioEntry Sound="NOD_Commando_VoiceMoveCaptureVehicle" AudioType="voiceAttackAfterMoving"/>
+					</AudioArrayVoice>
+					<AudioArraySound>
+						<AudioEntry Sound="NOD_Enlightened_InfS_CrawlLoop" AudioType="soundMoveLoop"/>
+					</AudioArraySound>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+			<AnimationSoundClientBehavior id="ModuleTag_AnimationSound">
+				<Sound Sound="" Animation="NUS_CommandoA_DIE1" Frame="0"/> <!-- voice die goes here -->
+				<!-- this only works when he's killed while standing, when he's moving beginning frames are skipped for some reason -->
+				<Sound Sound="NOD_Enlightened_InfS_CrawlStepMS" RequiredMC="MOVING" ExcludedMC="RECYCLED GARRISONED" Animation="NUS_CommandoA_RUNG" Frame="11 25"/>
+				<Sound Sound="Bodyfall_Dirt_InfantryArmored" ExcludedMC="GARRISONED" Animation="NUS_CommandoA_DIE1" Frame="22"/>
+				<Sound Sound="Bodyfall_Dirt_InfantryArmored" ExcludedMC="GARRISONED" Animation="NUS_CommandoA_DIEA" Frame="10"/> <!-- crawling die -->
+				<Sound Sound="Footstep_Dirt_InfantryArmored" RequiredMC="MOVING" ExcludedMC="GARRISONED RECYCLED" Animation="NUS_CommandoA_RUNA" Frame="12 27"/>
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.0"
+				Height="13.0"
+				ContactPointGeneration="INFANTRY"/>
+		</Geometry>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_Commando_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="NOD_Commando_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="NOD_Commando_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="NOD_Commando_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="NOD_Commando_VoiceMoveGarrison" AudioType="voiceGarrison"/>
+			<AudioEntry Sound="NOD_Commando_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="NOD_Commando_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="NOD_Commando_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="NOD_Commando_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+			<NamedEntry Sound="NOD_Commando_VoiceMoveCaptureVehicle" Name="VoiceHijackVehicle" />
+			<!-- <NamedEntry Sound="NOD_Commando_VoiceAttackC4" Name="InitiatePlaceSatchelCharge" />
+			<NamedEntry Sound="NOD_Commando_VoiceAttackC4" Name="InitiatePlaceSatchelChargeSticky" /> -->
+		</AudioArrayVoice>
+
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="500" />
+
+		<EvaEventArray>
+			<EvaEntry EvaEvent="EnemyCommandoDetected" EvaType="enemyObjectSighted"/>
+		</EvaEventArray>
+		<DisplayUpgrade>Upgrade_NODCommandoAStealth</DisplayUpgrade>
+
+	</GameObject>
+
+	<AttributeModifier
+		id="Modifier_NODCommandoAZombie"
+		Category="NONE"
+		ModelConditionsSet="USER_1"
+		ObjectStatusToSet="USER_1 ATTACK_MAY_ENTER_TARGET">
+		<Modifier Type="ARMOR" Value="50%" />
+		<Modifier Type="SPEED" Value="75%" />
+	</AttributeModifier>
+
+	<!-- triggers the gatling laser weapon -->
+	<AttributeModifier
+        id="Modifier_NODCommandoACrateUpgrade"
+        Category="WEAPON"
+        ModelConditionsSet="USER_2"
+        ObjectStatusToSet="USER_2">
+	</AttributeModifier>
+
+	<WeaponTemplate
+		id="NODCommandoALaserCarbine"
+		inheritFrom="BaseLaserWeapon" 
+		AttackRange="350.0"
+		FireSound="NOD_Commando_LaserWeaponFireMS"
+		FireFX="FX_NODCommandoLaser_Fire"
+		FireStrongCounterFX="FX_NODCommandoLaser_Fire_Veteran"
+		CanFireWhileMoving="true"
+		AcceptableAimDelta="22.5d"
+		ForbiddenFiringObjectStatus="USER_1"
+		FinishAttackOnceStarted="false">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.5s"
+				LaserId="1" />
+			<LineDamageNugget
+				Damage="18.0"
+				LineWidth="5.0"
+				DamageType="LASER"
+				DamageFXType="ALIEN_FX_10"
+				DeathType="LASERED"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter"
+				OverShootDistance="0.0" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- todo: ditch AntiMasks and make weapon templates use object filters. -->
+	<WeaponTemplate
+		id="NODCommandoAHijack"
+		AttackRange="=$NOD_COMMANDO_A_HIJACK_DISTANCE"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		FiringLoopSound="NOD_Commando_HijackWeaponFireLoop"
+		FireFX="FX_NOD_Hack"
+		CanFireWhileMoving="true"
+		ContactWeapon="true"
+		AcceptableAimDelta="180d"
+		RequiredAntiMask="ANTI_VEHICLE"
+		ForbiddenAntiMask="ANTI_AIRBORNE_VEHICLE"
+		Flags="ATTACK_ENTERS_TARGET">
+		<NuggetObjectFilter
+			Rule="ALL"
+			StatusBitFlagsExclude="BEING_HIJACKED HIJACKED NOT_HIJACKABLE DISABLED_FOR_RECYCLE" />
+		<FiringDuration
+			MinSeconds="5.0s"
+			MaxSeconds="5.0s" />
+		<WeaponAiHintInfo
+			UnitStealingWeapon="true"/>
+		<Nuggets>
+			<ParalyzeNugget
+				DurationSeconds="5.0s"
+				ParalyzeType="EMP"
+				FXListVictim="FX_NOD_EMPEE">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES"
+					Include="VEHICLE"
+					Exclude="AIRCRAFT CRAWLER">
+					<ExcludeThing>NeutralInfantryB</ExcludeThing>
+				</SpecialObjectFilter>
+			</ParalyzeNugget>
+			<SpecialPowerNugget
+				SpecialPowerTemplate="SpecialPower_Hijack">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES"
+					Include="VEHICLE"
+					Exclude="AIRCRAFT CRAWLER">
+					<ExcludeThing>NeutralInfantryB</ExcludeThing>
+				</SpecialObjectFilter>
+			</SpecialPowerNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODCommandoAGatlingLaser"
+		inheritFrom="BaseLaserWeapon" 
+		AttackRange="250.0"
+		FireSound="NOD_Commando_LaserWeaponFireMS"
+		FireFX="FX_NODCommandoLaser_Fire"
+		FireStrongCounterFX="FX_NODCommandoLaser_Fire_Veteran"
+		CanFireWhileMoving="true"
+		AcceptableAimDelta="22.5d">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.5s"
+				LaserId="1" />
+			<LineDamageNugget
+				Damage="13"
+				LineWidth="5.0"
+				DamageType="LASER"
+				DamageFXType="ALIEN_FX_10"
+				DeathType="LASERED"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter" />
+		</Nuggets>
+		<SpinUpInfo
+			SpinUpDuration="3.0s"
+			SpinDownDuration="2.0s"
+			SpinStartPercentage="20%">
+			<SpinUpModelCondition
+				PercentageSetAt="33%"
+				ModelConditionToSet="WEAPON_SPINUP_STAGE1"/>
+			<SpinUpModelCondition
+				PercentageSetAt="66%"
+				ModelConditionToSet="WEAPON_SPINUP_STAGE2"/>
+			<SpinUpModelCondition
+				PercentageSetAt="100%"
+				ModelConditionToSet="WEAPON_SPINUP_STAGE3"/>
+		</SpinUpInfo>
+	</WeaponTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_Hijack"
+		TargetType="OBJECT"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceHijackVehicle"
+		WaypointModeTerminal="false" >
+	</SpecialPowerTemplate>
+
+	<ExperienceLevelTemplate
+		id="NODCommandoAExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_01"
+		ExperienceAward="6">
+		<Target>NODCommandoA</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODCommandoAExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_02"
+		Prerequisite="NODCommandoAExperienceLevel_1"
+		RequiredExperience="12"
+		ExperienceAward="7">
+		<Target>NODCommandoA</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODCommandoAExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_03"
+		Prerequisite="NODCommandoAExperienceLevel_2"
+		RequiredExperience="30"
+		ExperienceAward="8">
+		<Target>NODCommandoA</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODCommandoAExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_04"
+		Prerequisite="NODCommandoAExperienceLevel_3"
+		RequiredExperience="54"
+		ExperienceAward="9">
+		<Target>NODCommandoA</Target>
+	</ExperienceLevelTemplate>
+</AssetDeclaration>

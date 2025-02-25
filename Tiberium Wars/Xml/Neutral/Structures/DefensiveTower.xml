@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:CBDefTow.w3x" />
+		<Include
+			type="all"
+			source="ART:CBDefTow_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:CBDefTow_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:CBDefTow_D3.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+	</Includes>
+	<GameObject
+		id="DefensiveTower"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_TechBuildingDefensiveTower"
+		ButtonImage="Portrait_TechBuildingDefensiveTower"
+		Side="Neutral"
+		BuildTime="15"
+		BuildCost="1500"
+		EditorSorting="STRUCTURE"
+		CommandSet="EmptyCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH"
+		RadarPriority="STRUCTURE"
+		EditorName="DefensiveTower"
+		Description="Desc:TechBuildingDefensiveTower">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechBuildingDefensiveTower</DisplayName>
+		<ArmorSet
+			Armor="StructureArmor"
+			DamageFX="VehicleDamageFX"  />
+		<!-- eventually there will be a different weapon per faction -->
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="CBDefTow" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon" />
+					<WeaponMuzzleFlash
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon" />						
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretPitch="Turret_Pitch"
+						TurretID="1" />						
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="CBDefTow_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="CBDefTow_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="CBDefTow_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBDefTow_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBDefTow_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="CBDefTow_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="CBDefTow_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NeutralDefensiveTowerCannon" />
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-75d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				AILuaEventsList="BuildingPowerFunctions">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="5000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="6.61454"
+				MinorRadius="13.0224"
+				Height="14.8827">
+				<Offset
+					x="2.53894"
+					y="-17.7596"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.363"
+				MinorRadius="15.363"
+				Height="69.0392">
+				<Offset
+					x="2.95235"
+					y="1.0505"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="-9.13983"
+					z="-2.11332e-007" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="-9.13983"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="11.6674"
+					z="6.98181e-007" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="11.6674"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="-9.13983"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="-9.13983"
+					z="-2.11332e-007" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="11.6674"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="11.6674"
+					z="6.98181e-007" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="DefensiveTower_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="0.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

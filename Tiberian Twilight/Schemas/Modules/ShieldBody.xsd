@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:balance="uri:ea.com:eala:balance" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="ShieldBodyOptionsType">
+		<xs:restriction base="xs:string">
+			<!-- will set the shield health to the initial value when the shield becomes active -->
+			<xs:enumeration value="RESET_SHIELD_HEALTH_WHEN_ACTIVATED" />
+			<!-- will allow the shield health to recharge when the shield is inactive -->
+			<xs:enumeration value="ALLOW_RECHARGE_WHEN_INACTIVE" />
+			<!-- will allow the shield health to instantly recharge -->
+			<xs:enumeration value="INSTANT_RECHARGE" />
+			<!-- use special pass through damage logic, see code for details -->
+			<xs:enumeration value="USE_PASS_THROUGH_DAMAGE_CALC" />			
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ShieldBodyOptionsBitFlags">
+		<xs:list itemType="ShieldBodyOptionsType"/>
+	</xs:simpleType>
+
+	<xs:complexType name="ShieldBodyModuleData">
+		<xs:complexContent>
+			<xs:extension base="ActiveBodyModuleData">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="Options" type="ShieldBodyOptionsBitFlags" default=""/>
+				<xs:attribute name="ShieldEnabledFX" type="FXListRef" />
+				<xs:attribute name="ShieldDepleteFX" type="FXListRef" />
+				<xs:attribute name="ShieldRechargeEndFX" type="FXListRef" />
+				<xs:attribute name="ShieldTakeDamageFX" type="FXListRef" />
+				<xs:attribute name="ShieldAmount" type="SageReal" use="required" />
+				<xs:attribute name="ShieldAmountMax" type="SageReal" use="required" />
+				<xs:attribute name="ShieldArmor" type="AssetReference" xas:refType="ArmorTemplate" use="optional"/>
+				<xs:attribute name="ShieldRechargeIdleTime" type="Time" default="0s" />
+				<xs:attribute name="ShieldActiveModelCondition" type="ModelConditionFlagType" default="INVALID"/>
+				<xs:attribute name="ShieldInactiveModelCondition" type="ModelConditionFlagType" default="INVALID"/>
+				<xs:attribute name="ShieldActiveObjectStatus" type="ObjectStatusType" default="SHIELDED" />
+				<xs:attribute name="RechargeAmountPerSecond" type="SageReal" default="0.0"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

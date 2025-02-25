@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="AttachUpdateFlagsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="FIND_BEST_PARENT" />
+			<xs:enumeration value="UNCONTAINED_ONLY" />
+			<xs:enumeration value="SAME_PLAYER_ONLY" />
+			<xs:enumeration value="ONE_ATTACH_PER_PARENT" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="AttachUpdateFlagsBitFlags">
+		<xs:list itemType="AttachUpdateFlagsType"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="AttachUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="ParentStatus" type="ObjectStatusBitFlags" />
+				<xs:attribute name="ForbiddenParentStatus" type="ObjectStatusBitFlags" />
+				<xs:attribute name="Range" type="SageReal" />
+				<!-- if we are closer than CloseEnoughRange we will be considered attached. -->
+				<xs:attribute name="CloseEnoughRange" type="SageReal" default="1000.0" />
+				<xs:attribute name="ShouldStickToParent" type="SageBool" default="true" />
+				<xs:attribute name="Teleport" type="SageBool" default="true" />
+				<xs:attribute name="UseGeometry" type="SageBool" default="true" />
+				<xs:attribute name="DetachWhenParentHealed" type="SageBool" default="false" />
+				<xs:attribute name="DetachWhenParentOutOfSlavedRange" type="SageBool" default="false" />
+				<xs:attribute name="RequireFullyHealedToDetach" type="SageBool" default="false" />
+				<xs:attribute name="ScanForNewParentWhenDetached" type="SageBool" default="false" />
+				<xs:attribute name="ParentOwnerAttachmentEvaEvent" type="EvaEventIDType" />
+				<xs:attribute name="ParentAllyAttachmentEvaEvent" type="EvaEventIDType" />
+				<xs:attribute name="ParentEnemyAttachmentEvaEvent" type="EvaEventIDType" />
+				<xs:attribute name="AttachFXList" type="FXListRef" />
+				<xs:attribute name="ParentOwnerDiedEvaEvent" type="EvaEventIDType" />
+				<xs:attribute name="ParentAllyDiedEvaEvent" type="EvaEventIDType" />
+				<xs:attribute name="ParentEnemyDiedEvaEvent" type="EvaEventIDType" />
+				<xs:attribute name="InitialAttachDelay" type="Time" />
+				<xs:attribute name="IdleScanDelay" type="Time" default="0.35s" />
+				<xs:attribute name="CanAttachToHordeMembers" type="SageBool" default="false" />
+				<xs:attribute name="Flags" type="AttachUpdateFlagsBitFlags" default="NONE" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

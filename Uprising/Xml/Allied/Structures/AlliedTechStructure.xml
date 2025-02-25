@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include type="all"	source="ART:ABTechStructure_SKN.w3x" />	
+		<Include type="all"	source="ART:ABTechStructure_IDLA.w3x" />
+		<Include type="all"	source="ART:ABTechStructure_FX.w3x" />	
+		<Include type="all"	source="ART:ABSuperWeapon_Platform.w3x" />	
+		<Include type="all"	source="ART:ABSuperWeapon_Platform_BLD.w3x" />				
+		<Include type="all"	source="ART:ABTechStructure_BLD_BLD.w3x" />
+		<Include type="all"	source="ART:ABTechStructure_BLD_SKN.w3x" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="AlliedTechStructure"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_AlliedTechStructure"
+		ButtonImage="Button_AlliedTechStructure_on"
+		Side="Allies"
+		EditorSorting="STRUCTURE"
+		BuildTime="30"
+		CommandSet="AlliedTechStructureCommandSet"
+		KindOf="+FS_TECHNOLOGY"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="315d"
+		EnergyProduction="-75"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		IsTrainable="false"
+		EditorName="AlliedTechStructure"
+		Description="Desc:AlliedTechStructure"
+		TypeDescription="Type:AlliedTechStructure">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:AlliedTechStructure</DisplayName>
+		<GameDependency>
+			<RequiredObject>AlliedAirfield</RequiredObject>
+			<RequiredObject>AlliedRefinery</RequiredObject>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="2000"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="BaseFactionStructureArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="BACK">
+      <ConstructionBaseSelectionCriteria
+        ExcludedBaseTypes="NO_BUILD_RADIUS CAPTURED"
+        PreferredBaseTypes="MAIN_BASE"
+        SortOrder="PREFER_OLDEST" />
+    </SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_ABTechLab_A1 BONE_CONTACT_POINT_ABTechLab_A2 BONE_CONTACT_POINT_ABTechLab_A3">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABTechStructure_SKN" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="ABTechStructure_SKN" />
+				</ModelConditionState>
+        <!-- BUILD UP -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="ABTechStructure_BLD_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="ABTechStructure_BLD_SKN" />
+				</ModelConditionState>				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="ABTechStructure_IDLA"
+						AnimationMode="LOOP" />
+				</AnimationState>			
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="ABTechStructure_BLD_BLD"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABTechStructure_BLD_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+<!-- DRAW PLATFORM -->
+			
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABSuperWeapon_Platform" />
+				</ModelConditionState>
+
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FROZEN">
+          <Model
+						Name="ABSuperWeapon_Platform" />
+          <Material
+					  ShaderName="ObjectsFrozen.fx"
+					  TechniqueName="Default">
+            <Constants>
+              <Texture Name="DiffuseTexture">
+                <Value>ABPlatform</Value>
+              </Texture>
+              <Texture Name="NormalMap">
+                <Value>ABPlatform_NRM</Value>
+              </Texture>
+              <Texture Name="SpecMap">
+                <Value>ABPlatform_SPM</Value>
+              </Texture>
+              <Float Name="EnvMult">
+                <Value>1.000000</Value>
+              </Float>
+              <Bool Name="AlphaTestEnable">
+                <Value>false</Value>
+              </Bool>
+            </Constants>
+          </Material>
+        </ModelConditionState>
+
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING">
+					<Model
+						Name="ABSuperWeapon_Platform_BLD"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABPowerPlantWakeSplash"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER SOLD">
+					<Model
+						Name="ABSuperWeapon_Platform_BLD"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABPowerPlantWakeSplash"
+						FollowBone="true" />  						
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="ABSuperWeapon_Platform_BLD"/> 						
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="ABSuperWeapon_Platform_BLD" />
+				</ModelConditionState>				
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING ">
+					<Animation
+						AnimationName="ABSuperWeapon_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>	
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupFlashes"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupSparksSeed"
+						FollowBone="true" />          
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="ABSuperWeapon_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>	
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupFlashes"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupSparksSeed"
+						FollowBone="true" />          
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABSuperWeapon_Platform_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABSuperWeapon_Platform_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>										
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>							
+			</ScriptedModelDraw>
+						
+<!-- DRAW PARTICLES -->
+
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABTechStructure_FX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ABTechStructure_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="BuildingDamageFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageFire02"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageSmoke"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ABTechStructure_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="BuildingDamageFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageFire02"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02" 
+						FXParticleSystemTemplate="BuildingDamageFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02"
+ 						FXParticleSystemTemplate="BuildingDamageFire02"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02"
+ 						FXParticleSystemTemplate="BuildingDamageSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE03" 
+						FXParticleSystemTemplate="BuildingDamageFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE03"
+ 						FXParticleSystemTemplate="BuildingDamageFire02"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE03"
+ 						FXParticleSystemTemplate="BuildingDamageSmoke"
+						FollowBone="true"/>						
+				</ModelConditionState>	
+			</ScriptedModelDraw>		
+								
+		</Draws>
+		<Behaviors>			
+			<Physics
+				id="ModuleTag_Physics"/>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+        <Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+				<Event 
+					Index="onDeath" 
+					FX="FX_LargeBuildingDieExplosionRumble" /> 
+			</FXListBehavior>
+      <FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+        <DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+        <Event Index="onDeath" FX="FX_LargeBuildingDieExplosion" />
+      </FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="ABTechStructure_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"
+					ExemptStatus="OVER_WATER" />
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_Platform_CreateObjectDie"
+				CreationList="ABTechStructure_Platform_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"
+					RequiredStatus="OVER_WATER" />
+			</CreateObjectDie>			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+			</DestroyDie>
+			
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="../../Includes/GenericAlliedBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/GenericAlliedBuildingSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainParalyze.xml" />								
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions"
+			/>				
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="StructureAIStateMachine">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="2000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+<Shape 
+     Type= "BOX"
+     MajorRadius = "50.386"
+     MinorRadius = "13.1753"
+     Height = "29.2436"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "1.12383"
+        y = "0.0"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "11.1883"
+     MinorRadius = "40.9129"
+     Height = "140.537"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "-14.5254"
+        y = "0.0"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "12.0717"
+     MinorRadius = "9.93734"
+     Height = "93.3486"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "48.5804"
+        y = "0.0"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "50.386"
+     MinorRadius = "13.1753"
+     Height = "40.8533"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "1.12383"
+        y = "0.0"
+        z = "0.0" />
+</Shape>
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "60.0"
+				 MinorRadius = "45.0"
+				 Height = "5.0" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "60.0"
+     MinorRadius = "28.8"
+     Height = "23.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "0.0"
+        y = "0.0"
+        z = "5.07195" />
+</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="AudioEvent:ALL_TechCenter_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+<!--
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

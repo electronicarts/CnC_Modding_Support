@@ -1,0 +1,3023 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Tags></Tags>
+  <Includes>
+		<Include type="all" source="Includes/SkirmishAIDefines.xml"/>
+	</Includes>
+
+  <!-- Coop Beacon Heuristics -->
+
+  <AITargetingHeuristic
+    id="TCIAttackGroundHeuristic"
+    HeuristicType="UnattachedPlayerBeacon"
+    BeaconTypeAttached="Attack"
+   />
+
+	<AITargetingHeuristic
+		id="TCIAttackUnitHeuristic"
+		HeuristicType="EnemyUnit"
+		SortType="Distance"
+		BeaconTypeAttached="Attack"
+   />
+
+	<AITargetingHeuristic
+		id="TCIAttackStructureHeuristic"
+		HeuristicType="EnemyStructure"
+		SortType="Distance"
+		VitalKindOf="STRUCTURE"
+		ForbiddenKindOf="GOAL_STRUCTURE"
+		BeaconTypeAttached="Attack"
+		HighestPriorityEnemyPlayersOnly="false"
+   />
+
+	<AITargetingHeuristic
+		id="TCIEnemyTechHeuristic"
+		HeuristicType="TechBuilding"
+		VitalKindOf="NEUTRAL_TECH"
+		ForbiddenKindOf="GOAL_STRUCTURE"
+		BeaconTypeAttached="Attack"
+		HighestPriorityEnemyPlayersOnly="false"
+   />
+	
+	<AITargetingHeuristic
+    id="TCICaptureGoalHeuristic"
+    HeuristicType="GoalStructure"
+    BeaconTypeAttached="Capture"
+   />
+
+	<AITargetingHeuristic
+		id="TCIAttackGoalHeuristic"
+		HeuristicType="GoalStructure"
+		BeaconTypeAttached="Attack"
+   />
+	
+	<AITargetingHeuristic
+		id="TCICaptureTechHeuristic"
+		HeuristicType="TechBuilding"
+		VitalKindOf="NEUTRAL_TECH"
+		ForbiddenKindOf="GOAL_STRUCTURE"
+		BeaconTypeAttached="Capture"
+		SearchRange="9999.0"
+		MinDistanceFromEnemy="10.0"
+   />
+
+	<AITargetingHeuristic
+    id="TCIDefendUnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    BeaconTypeAttached="Protect"
+   />
+
+	<AITargetingHeuristic
+		id="TCIDefendStructureHeuristic"
+		HeuristicType="FriendlyStructure"
+		BeaconTypeAttached="Protect"
+   />
+
+	<AITargetingHeuristic
+		id="CaptureIndicatorHeuristic"
+		HeuristicType="Beacon"
+		VitalKindOf="BEACON">
+	</AITargetingHeuristic>
+
+	<!-- Enemy Targets -->
+
+	<AITargetingHeuristic
+		id="EnemyMonumentHeuristic"
+		HeuristicType="EnemyMonument"
+		/>
+
+	<AITargetingHeuristic
+    id="TurretNearGoalHeuristic"
+    HeuristicType="EnemyStructure"
+    SortType="Distance"
+    VitalKindOf="FS_BASE_DEFENSE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION">
+		<MaxDistanceFilter
+				Radius="750">
+			<ObjectFilter
+				Rule="NONE"
+				Include="GOAL_STRUCTURE"
+				Relationship="NEUTRAL ENEMIES">
+			</ObjectFilter>
+		</MaxDistanceFilter>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+    id="ClosestTurretHeuristic"
+    HeuristicType="EnemyStructure"
+    SortType="Distance"
+    VitalKindOf="FS_BASE_DEFENSE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION">
+		<BaseSelection
+			PreferredBaseTypes="SPAWN_ZONE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_OLDEST"/>
+	</AITargetingHeuristic>
+	
+  <AITargetingHeuristic
+    id="ClosestStructureHeuristic"
+    HeuristicType="EnemyStructure"
+    SortType="Distance"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestStructureHeuristic_NonUnique"
+    HeuristicType="EnemyStructure"
+    SortType="Distance"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION"
+    RequireUniqueTarget="false"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestStructureHeuristicAllEnemies_NonUnique"
+    HeuristicType="EnemyStructure"
+    SortType="Distance"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION"
+    HighestPriorityEnemyPlayersOnly="false"
+    RequireUniqueTarget="false"
+    />
+
+  <AITargetingHeuristic
+    id="SafestStructureHeuristic"
+    HeuristicType="EnemyStructure"
+    SortType="ThreatToGround"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="WALL_PIECE WALL_HUB WALL_SEGMENT"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestGroundStructureHeuristic"
+    HeuristicType="EnemyStructure"
+    SortType="Distance"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION"
+    ForbiddenObjectStatus="UNATTACKABLE UNDER_IRON_CURTAIN"
+    Location="Land"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestGroundStructureHeuristic_NonUnique"
+    HeuristicType="EnemyStructure"
+    SortType="Distance"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION"
+    ForbiddenObjectStatus="UNATTACKABLE UNDER_IRON_CURTAIN"
+    Location="Land"
+    RequireUniqueTarget="false"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestGroundStructureHeuristicAllEnemies"
+    HeuristicType="EnemyStructure"
+    SortType="Distance"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION"
+    Location="Land"
+    HighestPriorityEnemyPlayersOnly="false"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestGroundNonDefenseStructureHeuristicAllEnemies"
+    HeuristicType="EnemyStructure"
+    SortType="Distance"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION FS_BASE_DEFENSE"
+    Location="Land"
+    HighestPriorityEnemyPlayersOnly="false"
+    />
+
+  <AITargetingHeuristic
+    id="SafestToGroundStructureHeuristic"
+    HeuristicType="EnemyStructure"
+    SortType="ThreatToGround"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION"
+    Location="Land"
+    />
+
+  <AITargetingHeuristic
+    id="SafestToGroundStructureHeuristicAllEnemies"
+    HeuristicType="EnemyStructure"
+    SortType="ThreatToGround"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION"
+    Location="Land"
+    HighestPriorityEnemyPlayersOnly="false"
+    />
+
+  <AITargetingHeuristic
+    id="SafestToAirStructureHeuristic"
+    HeuristicType="EnemyStructure"
+    SortType="ThreatToAir"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION"
+		/>
+
+  <AITargetingHeuristic
+    id="ClosestOffensiveStructureHeuristic"
+    HeuristicType="EnemyStructure"
+    VitalKindOf="STRUCTURE CAN_ATTACK"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf=""
+    />
+
+	<AITargetingHeuristic
+		id="ClosestVisibleUnitHeuristic"
+		inheritFrom="ClosestUnitHeuristic" 
+		ShroudRespect="true"
+		ShroudRememberTime="60s"
+    />
+
+	<AITargetingHeuristic
+		id="ClosestVisibleLandUnitHeuristic"
+		inheritFrom="ClosestVisibleUnitHeuristic"
+		Location="Land"
+    />
+
+	<AITargetingHeuristic
+		id="ClosestVisibleDamagedUnitHeuristic"
+		inheritFrom="ClosestVisibleUnitHeuristic" 
+		VitalObjectStatus="DAMAGED"
+    />
+
+	<AITargetingHeuristic
+		id="ClosestVisibleReallyDamagedUnitHeuristic"
+		inheritFrom="ClosestVisibleUnitHeuristic"
+		VitalObjectStatus="REALLYDAMAGED"
+    />
+	
+	<AITargetingHeuristic
+    id="ClosestUnitHeuristic_NonUnique"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf=""
+    RequireUniqueTarget="false"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestNonAircraftHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf=""
+    ForbiddenKindOf="AIRCRAFT"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestGroundUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf=""
+    Location="Land"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestLandSurfaceUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf=""
+    ForbiddenObjectStatus="AIRBORNE_TARGET SUBMERGED UNATTACKABLE UNDER_IRON_CURTAIN"
+    Location="Land"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestWaterSurfaceUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf=""
+    ForbiddenObjectStatus="AIRBORNE_TARGET SUBMERGED UNATTACKABLE UNDER_IRON_CURTAIN"
+    Location="Water"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestSiegeUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf="SIEGE_WEAPON"
+    ForbiddenKindOf=""
+    />
+
+  <AITargetingHeuristic
+    id="ClosestGroundUnitHeuristicAllEnemies"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf=""
+    Location="Land"
+    HighestPriorityEnemyPlayersOnly="false"
+    />
+
+  <AITargetingHeuristic
+    id="SafestToGroundUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="ThreatToGround"
+    VitalKindOf=""
+    />
+
+  <AITargetingHeuristic
+    id="SafestToGroundUnitHeuristicAllEnemies"
+    HeuristicType="EnemyUnit"
+    SortType="ThreatToGround"
+    VitalKindOf=""
+    HighestPriorityEnemyPlayersOnly="false"
+    />
+
+  <AITargetingHeuristic
+    id="SafestToSurfaceVehicleHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="ThreatToGround"
+    VitalKindOf="VEHICLE"
+    />
+
+  <AITargetingHeuristic
+    id="SafestToAirSurfaceUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="ThreatToAir"
+    VitalKindOf=""
+    ForbiddenObjectStatus="AIRBORNE_TARGET SUBMERGED"
+    />
+
+  <AITargetingHeuristic
+    id="SafestToAirSurfaceVehicleHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="ThreatToAir"
+    VitalKindOf="VEHICLE"
+    ForbiddenObjectStatus="AIRBORNE_TARGET SUBMERGED"
+    />
+
+  <AITargetingHeuristic
+    id="SafestToAirUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="ThreatToAir"
+    VitalKindOf=""
+    />
+
+  <AITargetingHeuristic
+    id="ClosestVehicleHeuristic"
+    HeuristicType="EnemyUnit"
+    VitalKindOf="VEHICLE"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestInfantryHeuristic"
+    HeuristicType="EnemyUnit"
+    VitalKindOf="INFANTRY"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestAircraftHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf="AIRCRAFT"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestBomberAircraftHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf="BOMBER_AIRCRAFT"
+    />
+
+  <AITargetingHeuristic
+    id="SafestToAirAircraftHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="ThreatToAir"
+    VitalKindOf="AIRCRAFT"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestAirborneTargetHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalObjectStatus="AIRBORNE_TARGET" 
+    />
+
+  <AITargetingHeuristic
+    id="ClosestAirborneTargetHeuristic_All"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalObjectStatus="AIRBORNE_TARGET"
+    HighestPriorityEnemyPlayersOnly="false"
+    />
+
+  <AITargetingHeuristic
+    id="SafestToAirAirborneTargetHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="ThreatToAir"
+    VitalObjectStatus="AIRBORNE_TARGET"
+    />
+    
+  <AITargetingHeuristic
+    id="ClosestSurfaceUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf=""
+    ForbiddenKindOf=""
+    ForbiddenObjectStatus="AIRBORNE_TARGET SUBMERGED"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestSurfaceUnitHeuristic_NonUnique"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf=""
+    ForbiddenKindOf=""
+    ForbiddenObjectStatus="AIRBORNE_TARGET SUBMERGED"
+    RequireUniqueTarget="false"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestOffensiveUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    VitalKindOf="CAN_ATTACK"
+    />
+
+  <AITargetingHeuristic
+    id="AttachedVehicleTargetHeuristic_NonUnique"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf="VEHICLE" 
+    VitalObjectStatus="ATTACHED"
+    RequireUniqueTarget="false"
+    />
+
+  <AITargetingHeuristic
+    id="EngineerUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf="INFANTRY ENGINEER"
+    />
+
+	<AITargetingHeuristic
+		id="HealerUnitHeuristic"
+		HeuristicType="EnemyUnit"
+		SortType="Distance"
+		VitalKindOf="CAN_HEAL_ALLIES"
+    />
+	
+  <AITargetingHeuristic
+    id="CommandoUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf="INFANTRY UNIQUE_UNIT"
+    />
+
+  <AITargetingHeuristic
+    id="ExpansionUnitHeuristic"
+    HeuristicType="EnemyUnit"
+    SortType="Distance"
+    VitalKindOf="VEHICLE EXPANSION_UNIT"
+    />
+
+  <AITargetingHeuristic
+    id="OutpostStructureHeuristic"
+    HeuristicType="EnemyStructure"
+    SortType="Distance"
+    VitalKindOf="STRUCTURE OUTPOST"
+    /> 
+    
+  <!--Friendly Targets by Distance-->
+
+<!--	<AITargetingHeuristic
+		id="FriendlyAILosingGoalCaptureTeam"
+		HeuristicType="FriendlyAITeam"
+		FriendlyAITeamToFind="LosingGoalStructureCapture"
+		SmallestGroupOfUnitsToTarget="3"
+		SortType="ClosestToEnemy"
+	/>-->
+	
+  <AITargetingHeuristic
+		id="DefensiveFriendlyAIStrikeTeamTarget"
+		HeuristicType="FriendlyAITeam">
+		<FriendlyAITeamData
+			PlayerRelationsToCheck="SAME_PLAYER">
+			<FriendlyAITeamToFind>GDIDefensiveOpenGoalStructureCapture_StrikeTeam_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveOpenGoalStructureCapture_StrikeTeam_EarlyGame_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveLosingGoalStructureCapture_StrikeTeam_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveLosingGoalStructureCapture_StrikeTeam_EarlyGame_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveOpenGoalStructureCapture_StrikeTeam_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveOpenGoalStructureCapture_StrikeTeam_EarlyGame_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveLosingGoalStructureCapture_StrikeTeam_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveLosingGoalStructureCapture_StrikeTeam_EarlyGame_Medium</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+	
+  <AITargetingHeuristic
+		id="DefensiveFriendlyAIGoalCaptureTeam"
+		HeuristicType="FriendlyAITeam">
+		<FriendlyAITeamData
+			PlayerRelationsToCheck="SAME_PLAYER">
+			<FriendlyAITeamToFind>GDIDefensiveOpenGoalStructureCapture_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveOpenGoalStructureCapture_EarlyGame_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveLosingGoalStructureCapture_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveLosingGoalStructureCapture_EarlyGame_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveOpenGoalStructureCapture_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveOpenGoalStructureCapture_EarlyGame_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveLosingGoalStructureCapture_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveLosingGoalStructureCapture_EarlyGame_Medium</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+	
+  <AITargetingHeuristic
+    id="ClosestFriendlyStructureHeuristic"
+    HeuristicType="FriendlyStructure"
+    VitalKindOf="STRUCTURE"
+    ForbiddenKindOf="CIVILIAN_BUILDING WALK_ON_TOP_OF_WALL DEFENSIVE_WALL WALL_UPGRADE WALL_HUB WALL_SEGMENT WALL_PIECE WALL_GATE BASE_FOUNDATION"
+    />
+
+  <AITargetingHeuristic
+    id="FriendlyLandStructureHeuristic"
+    HeuristicType="FriendlyStructure"
+    VitalKindOf=""
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB"
+    Relationship="SAME_PLAYER"
+    Location="Land"
+    SortType="ClosestToEnemy"
+    />
+	
+	<AITargetingHeuristic
+		id="DamagedFriendlyLandStructureHeuristic"
+		HeuristicType="FriendlyStructure"
+		VitalObjectStatus="DAMAGED"
+		ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB"
+		Relationship="SAME_PLAYER"
+		Location="Land"
+		SortType="ClosestToEnemy"
+    />
+	
+	<AITargetingHeuristic
+		id="ReallyDamagedFriendlyLandStructureHeuristic"
+		HeuristicType="FriendlyStructure"
+		VitalObjectStatus="REALLYDAMAGED"
+		ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB"
+		Relationship="SAME_PLAYER"
+		Location="Land"
+		SortType="ClosestToEnemy"
+    />
+	
+	<AITargetingHeuristic
+		id="DamagedFriendlyUnitHeuristic"
+		HeuristicType="FriendlyUnit"
+		ForbiddenKindOf="CAN_HEAL_ALLIES"
+		VitalObjectStatus="DAMAGED"
+		ForbiddenObjectStatus="DISABLED_FOR_RECYCLE"
+		Relationship="SAME_PLAYER"
+		SortType="ClosestToEnemy"
+    />
+
+	<AITargetingHeuristic
+		id="ReallyDamagedFriendlyUnitHeuristic"
+		HeuristicType="FriendlyUnit"
+		ForbiddenKindOf="CAN_HEAL_ALLIES" 
+		VitalObjectStatus="REALLYDAMAGED"
+		ForbiddenObjectStatus="DISABLED_FOR_RECYCLE" 
+		Relationship="SAME_PLAYER"
+		SortType="ClosestToEnemy"
+    />
+
+	<AITargetingHeuristic
+    id="ClosestFriendlyUnitHealerHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf=""
+    ForbiddenKindOf="CAN_HEAL_ALLIES"
+		ForbiddenObjectStatus="DISABLED_FOR_RECYCLE"
+    Relationship="SAME_PLAYER"
+    />
+
+	<AITargetingHeuristic
+		id="DamagedFriendlyGroundUnitHeuristic"
+		HeuristicType="FriendlyUnit"
+		VitalObjectStatus="DAMAGED"
+		ForbiddenKindOf="AIRCRAFT"
+		Relationship="SAME_PLAYER"
+		Location="Land"
+		SortType="ClosestToEnemy"
+    />
+
+	<AITargetingHeuristic
+		id="ReallyDamagedFriendlyGroundUnitHeuristic"
+		HeuristicType="FriendlyUnit"
+		VitalObjectStatus="REALLYDAMAGED"
+		ForbiddenKindOf="AIRCRAFT"
+		Relationship="SAME_PLAYER"
+		Location="Land"
+		SortType="ClosestToEnemy"
+    />
+	
+	<AITargetingHeuristic
+		id="FriendlyGoalHeuristic"
+		HeuristicType="FriendlyStructure"
+		VitalKindOf="GOAL_STRUCTURE"
+		ForbiddenKindOf="CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB CRAWLER OBJECTIVE_STRUCTURE"
+		Location="Land"
+		SortType="ClosestToEnemy"
+		MaxPercentOfOtherAIAllowed="34%">
+		<BaseSelection
+			PreferredBaseTypes="CRAWLER_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_NEWEST"/>
+	</AITargetingHeuristic>
+	
+	<AITargetingHeuristic
+		id="SingleAIFriendlyGoalHeuristic"
+		inheritFrom="FriendlyGoalHeuristic" 
+		SortType="Distance"
+		MaxPercentOfOtherAIAllowed="1%">
+		<BaseSelection
+			PreferredBaseTypes="CRAWLER_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			PreferredOwner="OWNER_THIS_PLAYER" 
+			SortOrder="PREFER_NEWEST"/>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="ThreatenedFriendlyGoalHeuristic"
+		HeuristicType="FriendlyStructure"
+		VitalKindOf="GOAL_STRUCTURE"
+		ForbiddenKindOf="CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB CRAWLER OBJECTIVE_STRUCTURE"
+		Location="Land"
+		SortType="ClosestToEnemy"
+		MaxPercentOfOtherAIAllowed="34%">
+		<MaxDistanceFilter
+				Radius="600">
+			<ObjectFilter
+				Rule="NONE"
+				Include="CAN_ATTACK"
+				Relationship="ENEMIES">
+			</ObjectFilter>
+		</MaxDistanceFilter>
+	</AITargetingHeuristic>
+	
+	<AITargetingHeuristic
+		id="UnlimitedDefendersThreatenedFriendlyGoalHeuristic"
+		HeuristicType="FriendlyStructure"
+		VitalKindOf="GOAL_STRUCTURE"
+		ForbiddenKindOf="CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB CRAWLER OBJECTIVE_STRUCTURE"
+		Location="Land"
+		SortType="ClosestToEnemy"
+		MaxPercentOfOtherAIAllowed="34%">
+		<BaseSelection
+			PreferredBaseTypes="SPAWN_ZONE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_OLDEST"/>
+		<MaxDistanceFilter
+				Radius="500">
+			<ObjectFilter
+				Rule="NONE"
+				Include="CAN_ATTACK"
+				Relationship="ENEMIES">
+			</ObjectFilter>
+		</MaxDistanceFilter>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="FriendlyGoalStructureHeuristic"
+		HeuristicType="FriendlyStructure"
+		VitalKindOf="GOAL_STRUCTURE"
+		ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB CRAWLER OBJECTIVE_STRUCTURE"
+		Location="Land"
+		Relationship="NEUTRAL"
+		SortType="ClosestToEnemy"
+		MaxPercentOfOtherAIAllowed="34%">
+	</AITargetingHeuristic>
+	
+	<AITargetingHeuristic
+		id="NeutralGoalHeuristic"
+		HeuristicType="GoalStructure"
+		Location="Land"
+		Relationship="NEUTRAL"
+		SortType="ClosestToEnemy"
+		MaxPercentOfOtherAIAllowed="34%">
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="ThreatenedNeutralGoalHeuristic"
+		HeuristicType="GoalStructure"
+		Location="Land"
+		Relationship="NEUTRAL"
+		MaxPercentOfOtherAIAllowed="34%">
+		<BaseSelection
+			PreferredBaseTypes="SPAWN_ZONE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_OLDEST"/>
+		<MaxDistanceFilter
+			Radius="500">
+			<ObjectFilter
+				Rule="NONE"
+				Include="CAN_ATTACK"
+				Relationship="ENEMIES">
+			</ObjectFilter>
+		</MaxDistanceFilter>
+	</AITargetingHeuristic>
+	
+	<AITargetingHeuristic
+		id="SingleAINeutralGoalHeuristic"
+		inheritFrom="NeutralGoalHeuristic" 
+		SortType="Distance" 
+		MaxPercentOfOtherAIAllowed="1%">
+		<BaseSelection
+			PreferredBaseTypes="CRAWLER_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			RequireOwner="OWNER_THIS_PLAYER" 
+			SortOrder="PREFER_OLDEST" />
+	</AITargetingHeuristic>
+
+  <AITargetingHeuristic
+    id="FriendlyNonRefineryLandStructureHeuristic"
+    HeuristicType="FriendlyStructure"
+    VitalKindOf=""
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB REFINERY"
+    Relationship="SAME_PLAYER"
+    Location="Land"
+    SortType="ClosestToEnemy"
+    />
+
+  <AITargetingHeuristic
+    id="FriendlyWaterStructureHeuristic"
+    HeuristicType="FriendlyStructure"
+    VitalKindOf=""
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB"
+    Relationship="SAME_PLAYER"
+    Location="Water"
+    SortType="ClosestToEnemy"
+    />
+
+  <AITargetingHeuristic
+    id="FriendlyLandNonDefenseStructureHeuristic"
+    HeuristicType="FriendlyStructure"
+    VitalKindOf=""
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB FS_BASE_DEFENSE"
+    Relationship="SAME_PLAYER"
+    Location="Land"
+    SortType="ClosestToEnemy"
+    />
+
+  <AITargetingHeuristic
+    id="FriendlyLandHarvesterUnderAttackHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="HARVESTER"
+    ForbiddenKindOf=""
+    Relationship="SAME_PLAYER"
+    Location="Land"
+    UnderAttackInLastNSeconds="5"
+    />
+
+	<AITargetingHeuristic
+    id="OwnMCVHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="MCV"
+    ForbiddenKindOf=""
+    Relationship="SAME_PLAYER"
+    />	
+	
+  <AITargetingHeuristic
+    id="OwnMobileCrawlerHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="CRAWLER"
+    ForbiddenKindOf=""
+    Relationship="SAME_PLAYER"
+    />
+
+	<AITargetingHeuristic
+		id="OwnDeployedCrawlerHeuristic"
+		HeuristicType="FriendlyStructure"
+		VitalKindOf="CRAWLER"
+		ForbiddenKindOf=""
+		Relationship="SAME_PLAYER"
+    />
+
+	<AITargetingHeuristic
+    id="ClosestFriendlyMobileCrawlerHeuristic"
+    HeuristicType="FriendlyUnit"
+		SortType="Distance"
+    VitalKindOf="CRAWLER"
+    ForbiddenKindOf=""
+    Relationship="ALLIES"
+    />
+
+	<AITargetingHeuristic
+		id="ClosestFriendlyDeployedCrawlerHeuristic"
+		HeuristicType="FriendlyStructure"
+		SortType="Distance"
+		VitalKindOf="CRAWLER"
+		ForbiddenKindOf=""
+		Relationship="ALLIES"
+    />
+
+	<AITargetingHeuristic
+		id="OwnSpawnZone"
+		HeuristicType="TargetFriendlyBase"
+		Relationship="ALLIES">
+		<BaseSelection
+			PreferredBaseTypes="SPAWN_ZONE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_NEWEST"/>
+	</AITargetingHeuristic>
+
+
+	<AITargetingHeuristic
+    id="FriendlyWaterHarvesterUnderAttackHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="HARVESTER"
+    ForbiddenKindOf=""
+    Relationship="SAME_PLAYER"
+    Location="Water"
+    UnderAttackInLastNSeconds="5"
+    />
+
+  <AITargetingHeuristic
+    id="UnderAttackByLandEnemyHeuristic"
+    HeuristicType="UnderAttackBy"
+    VitalKindOf=""
+    ForbiddenKindOf=""
+    Location="Land"
+    />
+
+  <AITargetingHeuristic
+    id="UnderAttackByWaterEnemyHeuristic"
+    HeuristicType="UnderAttackBy"
+    VitalKindOf=""
+    ForbiddenKindOf=""
+    Location="Water"
+    />
+
+  <AITargetingHeuristic
+    id="FriendlyLandStructureUnderAttackHeuristic"
+    HeuristicType="FriendlyStructure"
+    VitalKindOf=""
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB"
+    Relationship="ALLIES"
+    Location="Land"
+    UnderAttackInLastNSeconds="5"
+    />
+
+  <AITargetingHeuristic
+    id="FriendlyWaterStructureUnderAttackHeuristic"
+    HeuristicType="FriendlyStructure"
+    VitalKindOf=""
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB"
+    Relationship="ALLIES"
+    Location="Water"
+    UnderAttackInLastNSeconds="5"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestFriendlyAirfieldHeuristic"
+    HeuristicType="FriendlyStructure"
+    VitalKindOf="STRUCTURE AIRFIELD"
+    ForbiddenKindOf="NEUTRAL_TECH CIVILIAN_BUILDING WALL_SEGMENT WALL_PIECE WALL_HUB"
+    Relationship="ALLIES"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestFriendlyUnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf=""
+    ForbiddenKindOf=""
+    Relationship="SAME_PLAYER"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestAllyUnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf=""
+    ForbiddenKindOf=""
+    Relationship="ALLIES"
+    />
+
+	<AITargetingHeuristic
+    id="ClosestOwnT3UnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf=""
+    ForbiddenObjectStatus=""
+    Relationship="SAME_PLAYER">
+	</AITargetingHeuristic>
+  
+	<AITargetingHeuristic
+    id="ClosestAllyWaterUnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf=""
+    ForbiddenKindOf=""
+    Relationship="ALLIES"
+    Location="Water"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestAllyLandUnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf=""
+    ForbiddenKindOf=""
+    Relationship="ALLIES"
+    Location="Land"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestAllyCombatUnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="CAN_ATTACK"
+    ForbiddenKindOf="HARVESTER"
+    Relationship="ALLIES"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestAllyWaterCombatUnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="CAN_ATTACK"
+    ForbiddenKindOf="HARVESTER"
+    Relationship="ALLIES"
+    Location="Water"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestAllyTransportUnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="TRANSPORT"
+    ForbiddenKindOf=""
+    Relationship="ALLIES"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestAllyLandCombatUnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="CAN_ATTACK"
+    ForbiddenKindOf="HARVESTER"
+    Relationship="ALLIES"
+    Location="Land"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestAllyUnitUnderAttackHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf=""
+    ForbiddenKindOf="HARVESTER"
+    Relationship="ALLIES"
+    UnderAttackInLastNSeconds="5"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestFriendlyVehicleHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="VEHICLE"
+    ForbiddenKindOf=""
+    />
+
+  <AITargetingHeuristic
+    id="ClosestOwnTankHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="VEHICLE"
+    ForbiddenKindOf="TRANSPORT HARVESTER AIRCRAFT"
+    Relationship="SAME_PLAYER"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestFriendlyBomberAircraftHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="BOMBER_AIRCRAFT"
+    ForbiddenKindOf=""
+    Relationship="ALLIES"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestFriendlyWaterSiegeUnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="SIEGE_WEAPON"
+    ForbiddenKindOf=""
+    Relationship="ALLIES"
+    Location="Water"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestOwnWaterSiegeUnitHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="SIEGE_WEAPON"
+    ForbiddenKindOf=""
+    Relationship="SAME_PLAYER"
+    Location="Water"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestFriendlyHarvesterHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="HARVESTER"
+    ForbiddenKindOf=""
+    />
+
+  <AITargetingHeuristic
+    id="ClosestFriendlyExpanderHeuristic"
+    HeuristicType="FriendlyUnit"
+    VitalKindOf="EXPANSION_UNIT"
+    ForbiddenKindOf=""
+    />
+
+	<AITargetingHeuristic
+    id="ClosestFriendlyConyardHeuristic"
+    HeuristicType="FriendlyStructure"
+    VitalKindOf="CONSTRUCTION_YARD"
+    ForbiddenKindOf=""
+    Relationship="SAME_PLAYER"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestFriendlySuperweaponHeuristic"
+    HeuristicType="FriendlyStructure"
+    VitalKindOf="UNIQUE_UNIT"
+    ForbiddenKindOf=""
+    />
+
+	<AITargetingHeuristic
+		id="OwnMonumentHeuristic"
+		HeuristicType="OwnMonument"
+		/>
+
+
+	<!-- Support class target heuristics -->
+	<AITargetingHeuristic
+		id="SupportAIHumanCaptureTeam"
+		HeuristicType="FriendlyHumanUnits"
+		SmallestGroupOfUnitsToTarget="3"
+		SortType="Distance">
+		<FriendlyHumanUnitsData
+				SamplingRate="5"
+				SamplingRadius="275"
+				ObjectSearchPoolROS="UNITS_AND_CRAWLERS">
+			<ObjectFilter
+					 Rule="ANY"
+					 Include="INFANTRY VEHICLE CRAWLER"
+					 Exclude="AIRCRAFT" />
+		</FriendlyHumanUnitsData>
+	</AITargetingHeuristic>
+	
+	<!-- GDI support target heuristics -->
+	<AITargetingHeuristic
+		id="GDISupportAIDesperateGoalCaptureTeam"
+		HeuristicType="FriendlyAITeam"
+		SmallestGroupOfUnitsToTarget="3"
+		SortType="Distance"
+		RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>GDIDesperateGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDesperateGoalStructureCapture_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDesperateGoalStructureCapture_Easy</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="GDISupportAILosingGoalCaptureTeam"
+		HeuristicType="FriendlyAITeam"
+		SmallestGroupOfUnitsToTarget="3"
+		SortType="Distance"
+		RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>GDILosingGoalStructureCaptureEarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDILosingGoalStructureCaptureEarlyGame_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDILosingGoalStructureCaptureEarlyGame_Easy</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDILosingGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDILosingGoalStructureCapture_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDILosingGoalStructureCapture_Easy</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="GDISupportAIWinningGoalCaptureTeam"
+		HeuristicType="FriendlyAITeam"
+		SmallestGroupOfUnitsToTarget="3"
+		SortType="Distance"
+		RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>GDIWinningGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIWinningGoalStructureCapture_Medium</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="GDISupportAIOpenGoalCaptureTeam"
+		HeuristicType="FriendlyAITeam"
+		SmallestGroupOfUnitsToTarget="3"
+		SortType="Distance"
+		RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>GDIOpenGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIOpenGoalStructureCapture_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIOpenGoalStructureCapture_Easy</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIOpenGoalStructureCapture_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIOpenGoalStructureCapture_EarlyGame_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIOpenGoalStructureCapture_EarlyGame_Easy</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="GDISupportAICliffJumpCaptureTeam"
+		HeuristicType="FriendlyAITeam"
+		SmallestGroupOfUnitsToTarget="3"
+		SortType="Distance"
+		RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>GDICliffJumpingHarassmentTier1</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDICliffJumpingHarassmentTier2</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		 id="GDISupportAIDefenseGoalWinningOrOpenCaptureTeam"
+		 HeuristicType="FriendlyAITeam"
+		 SmallestGroupOfUnitsToTarget="3"
+		 SortType="Distance"
+		 RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>GDIDefensiveOpenGoalStructureCapture_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveOpenGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveOpenGoalStructureCapture_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveOpenGoalStructureCapture_Easy</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIWinningDefenseGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIWinningDefenseGoalStructureCapture_Medium</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		 id="GDISupportAIDefenseGoalLosingCaptureTeam"
+		 HeuristicType="FriendlyAITeam"
+		 SmallestGroupOfUnitsToTarget="3"
+		 SortType="Distance"
+		 RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>GDIDefensiveLosingGoalStructureCapture_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveLosingGoalStructureCapture_Units</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveDesperateGoalStructureCapture_Units</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		 id="GDISupportAISupportCaptureTeam"
+		 HeuristicType="FriendlyAITeam"
+		 SmallestGroupOfUnitsToTarget="3"
+		 SortType="Distance">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>GDISupportCaptureState</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDISupportCaptureStateSecondary</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<!-- Nod support target heuristics -->
+	<AITargetingHeuristic
+		id="NodSupportAIDesperateGoalCaptureTeam"
+		HeuristicType="FriendlyAITeam"
+		SmallestGroupOfUnitsToTarget="3"
+		SortType="Distance"
+		RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>NodDesperateGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDesperateGoalStructureCapture_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDesperateGoalStructureCapture_Easy</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="NodSupportAILosingGoalCaptureTeam"
+		HeuristicType="FriendlyAITeam"
+		SmallestGroupOfUnitsToTarget="3"
+		SortType="Distance"
+		RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>NodLosingGoalStructureCaptureEarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodLosingGoalStructureCaptureEarlyGame_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodLosingGoalStructureCaptureEarlyGame_Easy</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodLosingGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodLosingGoalStructureCapture_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodLosingGoalStructureCapture_Easy</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="NodSupportAIWinningGoalCaptureTeam"
+		HeuristicType="FriendlyAITeam"
+		SmallestGroupOfUnitsToTarget="3"
+		SortType="Distance"
+		RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>NodWinningGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodWinningGoalStructureCapture_Medium</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="NodSupportAIOpenGoalCaptureTeam"
+		HeuristicType="FriendlyAITeam"
+		SmallestGroupOfUnitsToTarget="3"
+		SortType="Distance"
+		RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>NodOpenGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodOpenGoalStructureCapture_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodOpenGoalStructureCapture_Easy</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodOpenGoalStructureCapture_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodOpenGoalStructureCapture_EarlyGame_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodOpenGoalStructureCapture_EarlyGame_Easy</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		 id="NodSupportAIDefenseGoalWinningOrOpenCaptureTeam"
+		 HeuristicType="FriendlyAITeam"
+		 SmallestGroupOfUnitsToTarget="3"
+		 SortType="Distance"
+		 RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>NodDefensiveOpenGoalStructureCapture_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveOpenGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodWinningDefenseGoalStructureCapture</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodWinningDefenseGoalStructureCapture_Medium</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		 id="NodSupportAIDefenseGoalLosingCaptureTeam"
+		 HeuristicType="FriendlyAITeam"
+		 SmallestGroupOfUnitsToTarget="3"
+		 SortType="Distance"
+		 RequireUniqueTarget="true">
+		<FriendlyAITeamData>
+			<FriendlyAITeamToFind>NodDefensiveLosingGoalStructureCapture_EarlyGame</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveLosingGoalStructureCapture_Units</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveDesperateGoalStructureCapture_Units</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="OwnSpawnZone_PostTarget"
+		HeuristicType="TargetFriendlyBase"
+		Relationship="ALLIES"
+		FindBestTargetWhenReadyToRun="true">
+		<BaseSelection
+			PreferredBaseTypes="SPAWN_ZONE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_OLDEST"/>
+	</AITargetingHeuristic>
+
+  <!--Neutral Targets by Distance-->
+
+  <AITargetingHeuristic
+    id="ClosestTechBuildingHeuristic"
+    HeuristicType="TechBuilding"
+    SearchRange="9999.0"
+    MinDistanceFromEnemy="400.0"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestMoneyTechHeuristic"
+    HeuristicType="TechBuilding"
+	RequireUniqueTarget="true"
+    VitalKindOf="SUPPLY_SOURCE"
+    SearchRange="9999.0"
+    MinDistanceFromEnemy="350.0"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestVeterancyTechHeuristic"
+    HeuristicType="TechBuilding"
+	RequireUniqueTarget="true"
+    VitalKindOf="GRANTS_VETERANCY"
+    SearchRange="9999.0"
+    MinDistanceFromEnemy="350.0"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestVehicleHealTechHeuristic"
+    HeuristicType="TechBuilding"
+	RequireUniqueTarget="true"
+    VitalKindOf="DONT_UNATTACH_WHEN_HEALING"
+    ForbiddenKindOf=""
+    SearchRange="9999.0"
+    MinDistanceFromEnemy="400.0"
+    />
+
+  <AITargetingHeuristic
+    id="ClosestNonPriorityTechHeuristic"
+    HeuristicType="TechBuilding"
+    VitalKindOf="SUPPLY_SOURCE"
+    ForbiddenKindOf="SUPPLY_SOURCE GRANTS_VETERANCY DONT_UNATTACH_WHEN_HEALING"
+    SearchRange="9999.0"
+    MinDistanceFromEnemy="500.0"
+    />
+	
+	<AITargetingHeuristic
+		id="ClosestArtilleryBuildingHeuristic"
+		HeuristicType="TechBuilding"
+		VitalKindOf="CAN_ATTACK"
+		RequireUniqueTarget="true"
+		SearchRange="2000.0"
+		MinDistanceFromEnemy="600.0"
+		ForbiddenKindOf="RESOURCE_STRUCTURE GOAL_STRUCTURE"
+		/>
+
+	<AITargetingHeuristic
+		id="ClosestCapturableTechBuildingHeuristic"
+		HeuristicType="TechBuilding"
+		RequireUniqueTarget="true"
+		SearchRange="9999.0"
+		MinDistanceFromEnemy="600.0"
+		ForbiddenKindOf="RESOURCE_STRUCTURE GOAL_STRUCTURE"
+		/>
+
+  <AITargetingHeuristic
+    id="GarrisonHeuristic"
+    HeuristicType="NeutralGarrison"
+    VitalKindOf=""
+    ForbiddenKindOf="">
+		<!-- Try to take garrisons near goal / resource structures -->
+    <BaseSelection
+			PreferredBaseTypes="GAMEPLAY_STRUCTURE_BASE" 
+			PreferredNotBaseTypes="CAPTURED_BASE SPAWN_ZONE"
+			SortOrder="PREFER_NEWEST"/>
+  </AITargetingHeuristic>
+
+	<AITargetingHeuristic
+    id="GarrisonFortifyHeuristic"
+    HeuristicType="NeutralGarrison"
+    VitalKindOf=""
+    ForbiddenKindOf=""
+		SortType="Distance">
+		<BaseSelection
+			PreferredBaseTypes="GAMEPLAY_STRUCTURE_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE SPAWN_ZONE"
+			SortOrder="PREFER_LARGEST"/>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="GarrisonFortifyCrawlerHeuristic"
+		HeuristicType="NeutralGarrison"
+		VitalKindOf=""
+		ForbiddenKindOf=""
+		SortType="Distance">
+		<BaseSelection
+			PreferredBaseTypes="CRAWLER_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_NEWEST"/>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+    id="EnemyGarrisonHeuristic"
+    HeuristicType="EnemyGarrison"
+    VitalKindOf=""
+    ForbiddenKindOf="">
+		<!-- Try to take out garrisons near goal / resource structures -->
+		<BaseSelection
+			PreferredBaseTypes="GAMEPLAY_STRUCTURE_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE SPAWN_ZONE"
+			SortOrder="PREFER_NEWEST"/>
+  </AITargetingHeuristic>
+
+  <AITargetingHeuristic
+    id="BridgeHeuristic"
+    HeuristicType="Bridge"
+    VitalKindOf="BRIDGE"
+    ForbiddenKindOf=""
+   />
+
+  <!--Special Targets-->
+
+  <AITargetingHeuristic
+    id="BuildingPlacementHeuristic"
+    HeuristicType="UnpackBuildingPlacement"
+		MinDistanceFromConyardEntrance="300"
+		IgnoreMinDistanceFromConyardEntranceForTime="15s" >
+    <!-- Try placing the building near the egg, to minimize transit times.
+			    If that doesn't work, look further & further out to find a place -->
+    <BuildingPlacementDistance Distance="200" />
+    <BuildingPlacementDistance Distance="500" />
+    <BuildingPlacementDistance Distance="1000" />
+    <BuildingPlacementDistance Distance="3000" />
+    <BuildingPlacementDistance Distance="7000" />
+  </AITargetingHeuristic>
+
+  <AITargetingHeuristic
+    id="BuildingPlacementHeuristic_AllowNearConyard"
+    HeuristicType="UnpackBuildingPlacement"
+    MinDistanceFromConyardEntrance="0"
+    IgnoreMinDistanceFromConyardEntranceForTime="15s" >
+    <!-- Try placing the building near the egg, to minimize transit times.
+			    If that doesn't work, look further & further out to find a place -->
+    <BuildingPlacementDistance Distance="200" />
+    <BuildingPlacementDistance Distance="500" />
+    <BuildingPlacementDistance Distance="1000" />
+    <BuildingPlacementDistance Distance="3000" />
+    <BuildingPlacementDistance Distance="7000" />
+  </AITargetingHeuristic>
+
+  <AITargetingHeuristic
+    id="ExpansionHeuristic"
+    HeuristicType="Expansion"
+    MinDistanceFromEnemy="400.0">
+    <BaseSelection
+		PreferredBaseTypes="CRAWLER_BASE"
+		PreferredNotBaseTypes="CAPTURED_BASE"
+		SortOrder="PREFER_OLDEST" />
+  </AITargetingHeuristic>
+
+  <AITargetingHeuristic
+    id="LandExpansionHeuristic"
+    HeuristicType="Expansion"
+    Location="Land" 
+    MinDistanceFromEnemy="400.0">
+    <BaseSelection
+		PreferredBaseTypes="CRAWLER_BASE"
+		PreferredNotBaseTypes="CAPTURED_BASE"
+		SortOrder="PREFER_OLDEST" />
+  </AITargetingHeuristic>
+
+  <AITargetingHeuristic
+    id="VerySafeExpansionHeuristic"
+    HeuristicType="Expansion"
+    MinDistanceFromEnemy="900.0">
+    <BaseSelection
+		PreferredBaseTypes="CRAWLER_BASE"
+		PreferredNotBaseTypes="CAPTURED_BASE"
+		SortOrder="PREFER_OLDEST" />
+  </AITargetingHeuristic>
+
+  <AITargetingHeuristic
+    id="VerySafeLandExpansionHeuristic"
+    HeuristicType="Expansion"
+    Location="Land"
+    MinDistanceFromEnemy="900.0">
+    <BaseSelection
+		PreferredBaseTypes="CRAWLER_BASE"
+		PreferredNotBaseTypes="CAPTURED_BASE"
+		SortOrder="PREFER_OLDEST" />
+  </AITargetingHeuristic>
+
+  <AITargetingHeuristic
+    id="SuperSafeExpansionHeuristic"
+    HeuristicType="Expansion"
+    MinDistanceFromEnemy="1600.0">
+    <BaseSelection
+		PreferredBaseTypes="CRAWLER_BASE"
+		PreferredNotBaseTypes="CAPTURED_BASE"
+		SortOrder="PREFER_OLDEST" />
+  </AITargetingHeuristic>
+
+  <AITargetingHeuristic
+    id="SuperSafeLandExpansionHeuristic"
+    HeuristicType="Expansion"
+    Location="Land" 
+    MinDistanceFromEnemy="1600.0">
+    <BaseSelection
+		PreferredBaseTypes="CRAWLER_BASE"
+		PreferredNotBaseTypes="CAPTURED_BASE"
+		SortOrder="PREFER_OLDEST" />
+  </AITargetingHeuristic>
+
+  <AITargetingHeuristic
+    id="AnyExpansionHeuristic"
+    HeuristicType="Expansion">
+    <BaseSelection
+		PreferredBaseTypes="CRAWLER_BASE"
+		PreferredNotBaseTypes="CAPTURED_BASE"
+		SortOrder="PREFER_OLDEST" />
+  </AITargetingHeuristic>
+
+  <AITargetingHeuristic
+    id="BeaconHeuristic"
+    HeuristicType="Beacon"
+    VitalKindOf="BEACON"
+    ForbiddenKindOf=""
+   />
+
+  <AITargetingHeuristic
+    id="CrateHeuristic"
+    HeuristicType="Crate"
+    VitalKindOf="CRATE"
+    ForbiddenKindOf=""
+   />
+
+	<AITargetingHeuristic
+		id="LandHuskHeuristic"
+		HeuristicType="Husk"
+		VitalKindOf="HUSK"
+		MinDistanceFromEnemy="400.0"
+		RequireUniqueTarget="false">
+		<HuskInfo
+			Flags="AUTOHEALING_ALLIES_FORBIDDEN"/>
+	</AITargetingHeuristic>
+
+  <AITargetingHeuristic
+		id="MaintainOffenseAndSupportCrawlerBehindFrontLines_Base"
+		HeuristicType="MaintainBehindFrontLines"
+		DistanceBehindFrontLines="200"
+		DistanceAwayFromEnemy="400"
+		RadiusOfPathToHome="150"
+		BackupTargetROS="MAP_GOAL_STRUCTURES" >
+		<!-- ExcludedBaseTypes: CRAWLER_BASE - avoid selecting the crawler we are controlling as the thing we want to get away from! -->
+		<CentralBaseCriteria
+			ExcludedBaseTypes="CRAWLER_BASE"
+			PreferredBaseTypes="SPAWN_ZONE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_OLDEST"/>
+		<AvoidTarget
+			AvoidDistance="=$AI_CRAWLER_AVOID_GAMEPLAY_STRUCTURE_DISTANCE"
+			AvoidROS="MAP_RESOURCE_STRUCTURES"
+			RandomBounceDistance="=$AI_CRAWLER_AVOID_GAMEPLAY_STRUCTURE_DISTANCE * 0.7"/>
+	</AITargetingHeuristic>
+
+	<!-- This is what continuously chooses where the Offense & Support crawlers should be -->
+	<AITargetingHeuristic
+		id="MaintainOffenseAndSupportCrawlerBehindFrontLines_Domination"
+		inheritFrom="MaintainOffenseAndSupportCrawlerBehindFrontLines_Base"
+		BackupTargetROS="MAP_GOAL_STRUCTURES" >
+		<AvoidTarget
+			AvoidDistance="=$AI_CRAWLER_AVOID_GAMEPLAY_STRUCTURE_DISTANCE"
+			AvoidROS="MAP_GOAL_STRUCTURES"
+			RandomBounceDistance="=$AI_CRAWLER_AVOID_GAMEPLAY_STRUCTURE_DISTANCE * 0.7"/>
+	</AITargetingHeuristic>
+
+	<!-- Ditto for Monument mode, only the BackupTargetROS changes -->
+	<AITargetingHeuristic
+		id="MaintainOffenseAndSupportCrawlerBehindFrontLines_Monument"
+		inheritFrom="MaintainOffenseAndSupportCrawlerBehindFrontLines_Base"
+		BackupTargetROS="MAP_SHIELD_GENERATORS" >
+		<AvoidTarget
+			AvoidDistance="=$AI_CRAWLER_AVOID_GAMEPLAY_STRUCTURE_DISTANCE"
+			AvoidROS="MAP_SHIELD_GENERATORS"
+			RandomBounceDistance="=$AI_CRAWLER_AVOID_GAMEPLAY_STRUCTURE_DISTANCE * 0.7"/>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="DefenseClassTargetCaptureTeams"
+		HeuristicType="FriendlyAITeam">
+		<FriendlyAITeamData
+			PlayerRelationsToCheck="SAME_PLAYER">
+			<FriendlyAITeamToFind>GDIDefensiveLosingGoalStructureCapture_Units</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveLosingGoalStructureCapture_Units_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveDesperateGoalStructureCapture_Units</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>GDIDefensiveDesperateGoalStructureCapture_Units_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveLosingGoalStructureCapture_Units</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveLosingGoalStructureCapture_Units_Medium</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveDesperateGoalStructureCapture_Units</FriendlyAITeamToFind>
+			<FriendlyAITeamToFind>NodDefensiveDesperateGoalStructureCapture_Units_Medium</FriendlyAITeamToFind>
+		</FriendlyAITeamData>
+	</AITargetingHeuristic>
+	
+	<!-- Just generate a random point -->
+	<AITargetingHeuristic
+		id="DummyTargetHeuristic"
+		HeuristicType="Point"
+		SearchRange="1000"
+		SortType="Random"
+	 />
+	
+	<!-- Returns the center of the map -->
+	<AITargetingHeuristic
+		id="CenterOfMapTargetHeuristic"
+		HeuristicType="CenterOfMap"
+	 />
+
+	<!-- Returns the point the defense coordinator wants us to defend -->
+	<AITargetingHeuristic
+		id="DefenseClassTarget"
+		HeuristicType="DefenseClassTarget">
+		<AvoidTarget
+			AvoidDistance="=$AI_CRAWLER_AVOID_GAMEPLAY_STRUCTURE_DISTANCE"
+			AvoidROS="MAP_GOAL_STRUCTURES"
+			RandomBounceDistance="=$AI_CRAWLER_AVOID_GAMEPLAY_STRUCTURE_DISTANCE * 0.7"/>
+	</AITargetingHeuristic>
+
+	<!-- CnC4 Campaign Target Heuristics -->
+
+	<!-- CAMP_GDI_2_1_Stewart -->
+
+	<AITargetingHeuristic
+		id="AITarget_EnemyCrawler_Mobile"
+		HeuristicType="EnemyUnit"
+		SortType="Distance"
+		VitalKindOf="CRAWLER"
+		ForbiddenKindOf=""
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_EnemyCrawler_Deployed"
+		HeuristicType="EnemyStructure"
+		SortType="Distance"
+		VitalKindOf="CRAWLER"
+		ForbiddenKindOf=""
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Alpha_A"
+		HeuristicType="NamedObject"
+		Name="REF_nod_alpha_a"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Alpha_B"
+		HeuristicType="NamedObject"
+		Name="REF_nod_alpha_b"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Alpha_C"
+		HeuristicType="NamedObject"
+		Name="REF_nod_alpha_c"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Alpha_D"
+		HeuristicType="NamedObject"
+		Name="REF_nod_alpha_d"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Beta_A"
+		HeuristicType="NamedObject"
+		Name="REF_nod_beta_a"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Beta_B"
+		HeuristicType="NamedObject"
+		Name="REF_nod_beta_b"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Beta_C"
+		HeuristicType="NamedObject"
+		Name="REF_nod_beta_c"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Beta_D"
+		HeuristicType="NamedObject"
+		Name="REF_nod_beta_d"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Gamma_A"
+		HeuristicType="NamedObject"
+		Name="REF_nod_gamma_a"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Gamma_B"
+		HeuristicType="NamedObject"
+		Name="REF_nod_gamma_b"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Gamma_C"
+		HeuristicType="NamedObject"
+		Name="REF_nod_gamma_c"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Nod_Gamma_D"
+		HeuristicType="NamedObject"
+		Name="REF_nod_gamma_d"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Roadblock_A1"
+		HeuristicType="NamedObject"
+		Name="REF_nod_roadblock_a1"
+		SortType="Distance" 
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Roadblock_A2"
+		HeuristicType="NamedObject"
+		Name="REF_nod_roadblock_a2"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Roadblock_A3"
+		HeuristicType="NamedObject"
+		Name="REF_nod_roadblock_a3"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Roadblock_B1"
+		HeuristicType="NamedObject"
+		Name="REF_nod_roadblock_b1"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Roadblock_B2"
+		HeuristicType="NamedObject"
+		Name="REF_nod_roadblock_b2"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Roadblock_B3"
+		HeuristicType="NamedObject"
+		Name="REF_nod_roadblock_b3"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Roadblock_C1"
+		HeuristicType="NamedObject"
+		Name="REF_nod_roadblock_c1"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Roadblock_C2"
+		HeuristicType="NamedObject"
+		Name="REF_nod_roadblock_c2"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_1_Roadblock_C3"
+		HeuristicType="NamedObject"
+		Name="REF_nod_roadblock_c3"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+
+	<!-- CAMP_GDI_2_2_White -->
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_2_Node"
+		HeuristicType="NamedObject"
+		Name="Struct-TCN_Node"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_2_CrawlerWP_Off01"
+		HeuristicType="Waypoint"
+		Name="BaseWP-Nod_Off01"
+		RequireUniqueTarget="true"
+    />
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_2_CrawlerWP_Off02"
+		HeuristicType="Waypoint"
+		Name="BaseWP-Nod_Off02"
+		RequireUniqueTarget="true"
+    />
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_2_CrawlerWP_Support"
+		HeuristicType="Waypoint"
+		Name="BaseWP-NodSupport"
+		RequireUniqueTarget="true"
+    />
+
+	<!-- CAMP_GDI_2_3 -->
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Nod_Alpha_A"
+		HeuristicType="NamedObject"
+		Name="REF_nod_alpha_a"
+		RequireUniqueTarget="true"
+	/>
+
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Nod_Alpha_B"
+		HeuristicType="NamedObject"
+		Name="REF_nod_alpha_b"
+		RequireUniqueTarget="true"
+	/>
+
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Nod_Alpha_C"
+		HeuristicType="NamedObject"
+		Name="REF_nod_alpha_c"
+		RequireUniqueTarget="true"
+	/>
+
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Nod_Beta_A"
+		HeuristicType="NamedObject"
+		Name="REF_nod_beta_a"
+		RequireUniqueTarget="true"
+	/>
+
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Nod_Beta_B"
+		HeuristicType="NamedObject"
+		Name="REF_nod_beta_b"
+		RequireUniqueTarget="true"
+	/>
+
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Nod_Beta_C"
+		HeuristicType="NamedObject"
+		Name="REF_nod_beta_c"
+		RequireUniqueTarget="true"
+	/>
+
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Nod_Gamma_A"
+		HeuristicType="NamedObject"
+		Name="REF_nod_gamma_a"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Nod_Gamma_B"
+		HeuristicType="NamedObject"
+		Name="REF_nod_gamma_b"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Nod_Gamma_C"
+		HeuristicType="NamedObject"
+		Name="REF_nod_gamma_c"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_GST"
+		HeuristicType="NamedObject"
+		Name="UNIT_transport_crash_site"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Goal_A"
+		HeuristicType="NamedObject"
+		Name="UNIT_control_node_a"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Goal_B"
+		HeuristicType="NamedObject"
+		Name="UNIT_control_node_b"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_2_3_Goal_C"
+		HeuristicType="NamedObject"
+		Name="UNIT_control_node_c"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+
+	<!-- CAMP_GDI_2_4_Smith -->
+
+    <AITargetingHeuristic
+		id="AITarget_GDI_2_4_PowerStation01_Defense01"
+		HeuristicType="Waypoint"
+		Name="WP - Power Station 01 - Defense 01"
+    />
+
+    <AITargetingHeuristic
+		id="AITarget_GDI_2_4_PowerStation01_Defense02"
+		HeuristicType="Waypoint"
+		Name="WP - Power Station 01 - Defense 02"
+    />
+
+    <AITargetingHeuristic
+		id="AITarget_GDI_2_4_PowerStation02_Defense01"
+		HeuristicType="Waypoint"
+		Name="WP - Power Station 02 - Defense 01"
+	/>
+
+    <AITargetingHeuristic
+		id="AITarget_GDI_2_4_PowerStation02_Defense02"
+		HeuristicType="Waypoint"
+		Name="WP - Power Station 02 - Defense 02"
+	/>
+
+    <AITargetingHeuristic
+		id="AITarget_GDI_2_4_PowerStation03_Defense01"
+		HeuristicType="Waypoint"
+		Name="WP - Power Station 03 - Defense 01"
+	/>
+
+    <AITargetingHeuristic
+		id="AITarget_GDI_2_4_PowerStation03_Defense02"
+		HeuristicType="Waypoint"
+		Name="WP - Power Station 03 - Defense 02"
+	/>
+
+    <AITargetingHeuristic
+		id="AITarget_GDI_2_4_PowerStation04_Defense01"
+		HeuristicType="Waypoint"
+		Name="WP - Power Station 04 - Defense 01"
+ 	/>
+
+    <AITargetingHeuristic
+		id="AITarget_GDI_2_4_PowerStation04_Defense02"
+		HeuristicType="Waypoint"
+		Name="WP - Power Station 04 - Defense 02"
+	/>
+
+    <AITargetingHeuristic
+		id="AITarget_GDI_2_4_SupriseAttack_CrawlerPoint"
+		HeuristicType="Waypoint"
+		Name="WP - Suprise Attack Crawler Point"
+	/>
+
+    <AITargetingHeuristic
+		id="AITarget_GDI_2_4_Commander_Shuttle"
+		HeuristicType="NamedObject"
+		Name="UNIT - GDI Transport"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_2_4_Crawler_UnitDefense"
+        HeuristicType="FriendlyUnit"
+        VitalKindOf="CRAWLER"
+        ForbiddenKindOf=""
+        Relationship="SAME_PLAYER"
+        RequireUniqueTarget="false"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_2_4_Crawler_StructureDefense"
+        HeuristicType="FriendlyStructure"
+		SortType="Distance"
+		VitalKindOf="CRAWLER"
+		ForbiddenKindOf=""
+		Location="Land"
+		RequireUniqueTarget="false"
+    />
+  
+  <!-- CAMP_GDI_3_1_White -->
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_1_Powerplant01"
+		HeuristicType="NamedObject"
+		Name="Struct-Powerplant01"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_1_Powerplant02"
+		HeuristicType="NamedObject"
+		Name="Struct-Powerplant02"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_1_Powerplant03"
+		HeuristicType="NamedObject"
+		Name="Struct-Powerplant03"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_1_Powerplant04"
+		HeuristicType="NamedObject"
+		Name="Struct-Powerplant04"
+	/>
+
+  
+  
+  <!-- CAMP_GDI_3_2_Smith -->
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_3_2_Nod01_AP01"
+        HeuristicType="Waypoint"
+        Name="WP - Nod 01 - Attack Point 01"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_3_2_Nod01_AP02"
+        HeuristicType="Waypoint"
+        Name="WP - Nod 01 - Attack Point 02"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_3_2_Nod02_AP01"
+        HeuristicType="Waypoint"
+        Name="WP - Nod 02 - Attack Point 01"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_3_2_Nod02_AP02"
+        HeuristicType="Waypoint"
+        Name="WP - Nod 02 - Attack Point 02"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_3_2_Nod03_AP01"
+        HeuristicType="Waypoint"
+        Name="WP - Nod 03 - Attack Point 01"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_3_2_Nod03_AP02"
+        HeuristicType="Waypoint"
+        Name="WP - Nod 03 - Attack Point 02"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_3_2_Nod04_AP01"
+        HeuristicType="Waypoint"
+        Name="WP - Nod 04 - Attack Point 01"
+	/>
+
+    <AITargetingHeuristic
+	    id="AITarget_GDI_3_2_Nod05_DP01"
+	    HeuristicType="Waypoint"
+	    Name="WP - Nod 05 - Defend Point 01"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_3_2_Nod05_DP02"
+        HeuristicType="Waypoint"
+        Name="WP - Nod 05 - Defend Point 02"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_3_2_GDI01_DP01"
+        HeuristicType="Waypoint"
+        Name="WP - GDI 01 Drop Point"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_3_2_GDI02_DP01"
+        HeuristicType="Waypoint"
+        Name="WP - GDI 02 Drop Point"
+	/>
+
+    <AITargetingHeuristic
+        id="AITarget_GDI_3_2_GDI03_DP01"
+        HeuristicType="Waypoint"
+        Name="WP - GDI 03 Drop Point"
+	/>
+
+    <AITargetingHeuristic
+		id="AITarget_GDI_3_2_TCN"
+		HeuristicType="NamedObject"
+		Name="UNIT - TCN"
+	/>
+
+	<!-- CAMP_GDI_3_3 -->
+	
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_Alpha_A"
+		HeuristicType="NamedObject"
+		Name="REF_nod_alpha_a"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_Alpha_B"
+		HeuristicType="NamedObject"
+		Name="REF_nod_alpha_b"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_Alpha_C"
+		HeuristicType="NamedObject"
+		Name="REF_nod_alpha_c"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_Beta_A"
+		HeuristicType="NamedObject"
+		Name="REF_nod_beta_a"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_Beta_B"
+		HeuristicType="NamedObject"
+		Name="REF_nod_beta_b"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_Beta_C"
+		HeuristicType="NamedObject"
+		Name="REF_nod_beta_c"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_Gamma_A"
+		HeuristicType="NamedObject"
+		Name="REF_nod_gamma_a"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_Gamma_B"
+		HeuristicType="NamedObject"
+		Name="REF_nod_gamma_b"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_Gamma_C"
+		HeuristicType="NamedObject"
+		Name="REF_nod_gamma_c"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_SupportGuard_A"
+		HeuristicType="NamedObject"
+		Name="REF_nod_supportguard_a"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_SupportGuard_B"
+		HeuristicType="NamedObject"
+		Name="REF_nod_supportguard_b"
+		RequireUniqueTarget="true"
+	/>
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_SupportGuard_C"
+		HeuristicType="NamedObject"
+		Name="REF_nod_supportguard_c"
+		RequireUniqueTarget="true"
+	/>
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_SupportGuard_D"
+		HeuristicType="NamedObject"
+		Name="REF_nod_supportguard_d"
+		RequireUniqueTarget="true"
+	/>
+	<AITargetingHeuristic
+		id="AITarget_GDI_3_3_Nod_SupportGuard_E"
+		HeuristicType="NamedObject"
+		Name="REF_nod_supportguard_e"
+		RequireUniqueTarget="true"
+	/>
+
+  <AITargetingHeuristic
+   id="ClosestTechBuildingHeuristic_GDI33"
+   HeuristicType="TechBuilding"
+   ForbiddenKindOf="CAN_HAVE_BUILDABILITY"
+   SearchRange="9999.0"
+   MinDistanceFromEnemy="400.0"
+    />
+  
+	<!-- CAMP_NOD_2_1_Moe -->
+
+	<AITargetingHeuristic
+		id="AITarget_NOD_2_1_EnemyCrawler"
+		HeuristicType="EnemyStructure"
+		SortType="Distance"
+		VitalKindOf="CRAWLER"
+		ForbiddenKindOf=""
+		Location="Land"
+		RequireUniqueTarget="false"
+    />
+
+  <!-- CAMP_NOD_2_2_Smith -->
+
+  <AITargetingHeuristic
+		id="AITarget_Nod_2_2_Island2_Defense_Point1"
+		HeuristicType="Waypoint"
+		Name="WP - Island 02 - Defense Point 01"
+	/>
+
+  <AITargetingHeuristic
+		id="AITarget_Nod_2_2_Island2_Defense_Point2"
+		HeuristicType="Waypoint"
+		Name="WP - Island 02 - Defense Point 02"
+	/>
+
+  <AITargetingHeuristic
+		id="AITarget_Nod_2_2_Island3_Defense_Point1"
+		HeuristicType="Waypoint"
+		Name="WP - Island 03 - Defense Point 01"
+	/>
+
+  <AITargetingHeuristic
+		id="AITarget_Nod_2_2_Island3_Defense_Point2"
+		HeuristicType="Waypoint"
+		Name="WP - Island 03 - Defense Point 02"
+	/>
+
+    <AITargetingHeuristic
+          id="AITarget_Nod_2_2_Island1_Retreat_Point"
+          HeuristicType="Waypoint"
+          Name="WP - Island 01 Retreat Point"
+	/>
+
+    <AITargetingHeuristic
+          id="AITarget_Nod_2_2_Island2_Retreat_Point"
+          HeuristicType="Waypoint"
+          Name="WP - Island 02 Retreat Point"
+	/>
+
+    <AITargetingHeuristic
+          id="AITarget_Nod_2_2_Island3_Retreat_Point"
+          HeuristicType="Waypoint"
+          Name="WP - Island 03 Retreat Point"
+	/>
+
+    <AITargetingHeuristic
+          id="AITarget_Nod_2_2_Island4_Crawler_Point"
+          HeuristicType="Waypoint"
+          Name="WP - Island 04 Crawler Point"
+	/>
+
+    <AITargetingHeuristic
+		id="AITarget_Nod_2_2_Cannon01"
+		HeuristicType="NamedObject"
+		Name="UNIT - Tech Cannon 01"
+	/>
+
+  <AITargetingHeuristic
+		id="AITarget_Nod_2_2_Cannon02"
+		HeuristicType="NamedObject"
+		Name="UNIT - Tech Cannon 02"
+	/>
+
+  <AITargetingHeuristic
+		id="AITarget_Nod_2_2_Cannon03"
+		HeuristicType="NamedObject"
+		Name="UNIT - Tech Cannon 03"
+	/>
+
+  <AITargetingHeuristic
+		id="AITarget_Nod_2_2_TCN"
+		HeuristicType="NamedObject"
+		Name="UNIT - TCN"
+	/>
+
+    <AITargetingHeuristic
+          id="AITarget_Nod_2_2_TCN_Dampener"
+          HeuristicType="NamedObject"
+          Name="UNIT - TCN Dampener 01"/>
+
+    <AITargetingHeuristic
+          id="AITarget_Nod_2_2_Nod_Island01_Move01"
+          HeuristicType="Waypoint"
+          Name="WP - Island 01 - Nod Crawler Move to 01"
+	/>
+
+    <AITargetingHeuristic
+          id="AITarget_Nod_2_2_Nod_Island01_Move02"
+          HeuristicType="Waypoint"
+          Name="WP - Island 01 - Nod Crawler Move to 02"
+	/>
+
+    <AITargetingHeuristic
+          id="AITarget_Nod_2_2_Nod_Island02_Move01"
+          HeuristicType="Waypoint"
+          Name="WP - Island 02 - Nod Crawler Move to 01"
+	/>
+
+    <AITargetingHeuristic
+          id="AITarget_Nod_2_2_Nod_Island02_Move02"
+          HeuristicType="Waypoint"
+          Name="WP - Island 02 - Nod Crawler Move to 02"
+	/>
+
+    <AITargetingHeuristic
+          id="AITarget_Nod_2_2_Nod_Island03_Move01"
+          HeuristicType="Waypoint"
+          Name="WP - Island 03 - Nod Crawler Move to 01"
+	/>
+
+    <AITargetingHeuristic
+          id="AITarget_Nod_2_2_Nod_Island03_Move02"
+          HeuristicType="Waypoint"
+          Name="WP - Island 03 - Nod Crawler Move to 02"
+	/>
+
+    <!-- CAMP_NOD_2_3_White -->
+
+	<AITargetingHeuristic
+		id="AITarget_NOD_2_3_AA01"
+		HeuristicType="NamedObject"
+		Name="Struct-AA01"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_NOD_2_3_AA02"
+		HeuristicType="NamedObject"
+		Name="Struct-AA02"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_NOD_2_3_AA03"
+		HeuristicType="NamedObject"
+		Name="Struct-AA03"
+	/>
+
+    <!-- CAMP_NOD_2_4_Bass -->
+
+  <AITargetingHeuristic
+  id="AITarget_NOD_2_4_TRANSPORT"
+  HeuristicType="NamedObject"
+  Name="UNIT - PT - N - Transport"
+	/>
+
+  <AITargetingHeuristic
+  id="AITarget_NOD_2_4_COMMANDCRAWLER"
+  HeuristicType="NamedObject"
+  Name="UNIT - PC - Target Crawler"
+	/>
+
+  <AITargetingHeuristic
+   id="AITarget_Nod_2_4_CrawlerDefend_E"
+   HeuristicType="Waypoint"
+   Name="WP - P9 - Defend Point"
+   />
+
+
+  <AITargetingHeuristic
+   id="AITarget_Nod_2_4_CrawlerDefend_W"
+   HeuristicType="Waypoint"
+   Name="WP - P9 - Defend Point"
+   />
+  
+    <!-- CAMP_NOD_2_5_Smith -->
+
+    <AITargetingHeuristic
+        id="AITarget_Nod_2_5_Defense01_Point01"
+        HeuristicType="Waypoint"
+        Name="WP - Nod Defense - Point 01"
+    />
+
+    <AITargetingHeuristic
+        id="AITarget_Nod_2_5_Defense01_Point02"
+        HeuristicType="Waypoint"
+        Name="WP - Nod Defense - Point 02"
+    />
+
+    <AITargetingHeuristic
+        id="AITarget_Nod_2_5_Defense01_Point03"
+        HeuristicType="Waypoint"
+        Name="WP - Nod Defense - Point 03"
+    />
+
+    <!-- CAMP_NOD_3_2 -->
+
+	<AITargetingHeuristic
+		id="AITarget_NOD_3_2_Nod_A"
+		HeuristicType="NamedObject"
+		Name="REF_player_start_1"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_NOD_3_2_Nod_B"
+		HeuristicType="NamedObject"
+		Name="REF_player_start_2"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_NOD_3_2_Nod_C"
+		HeuristicType="NamedObject"
+		Name="REF_player_start_3"
+		SortType="Distance"
+		RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+	id="AITarget_NOD_3_2_GDI_A_A"
+	HeuristicType="NamedObject"
+	Name="REF_player_start_6_a"
+		SortType="Distance"
+	RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+	id="AITarget_NOD_3_2_GDI_A_B"
+	HeuristicType="NamedObject"
+	Name="REF_player_start_6_b"
+		SortType="Distance"
+	RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+	id="AITarget_NOD_3_2_GDI_A_C"
+	HeuristicType="NamedObject"
+	Name="REF_player_start_6_c"
+		SortType="Distance"
+	RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+	id="AITarget_NOD_3_2_GDI_B_A"
+	HeuristicType="NamedObject"
+		SortType="Distance"
+	Name="REF_player_start_7_a"
+	RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+	id="AITarget_NOD_3_2_GDI_B_B"
+	HeuristicType="NamedObject"
+		SortType="Distance"
+	Name="REF_player_start_7_b"
+	RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+	id="AITarget_NOD_3_2_GDI_B_C"
+	HeuristicType="NamedObject"
+		SortType="Distance"
+	Name="REF_player_start_7_c"
+	RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+	id="AITarget_NOD_3_2_GDI_C_A"
+	HeuristicType="NamedObject"
+	Name="REF_player_start_8_a"
+		SortType="Distance"
+	RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+	id="AITarget_NOD_3_2_GDI_C_B"
+	HeuristicType="NamedObject"
+	Name="REF_player_start_8_b"
+		SortType="Distance"
+	RequireUniqueTarget="true"
+	/>
+
+	<AITargetingHeuristic
+	id="AITarget_NOD_3_2_GDI_C_C"
+	HeuristicType="NamedObject"
+	Name="REF_player_start_8_c"
+		SortType="Distance"
+	RequireUniqueTarget="true"
+	/>
+
+	<!-- End CnC4 Campaign Target Heuristics -->
+	
+	
+	<AITargetingHeuristic
+		id="OpenResourceStructureHeuristic"
+		HeuristicType="ResourceStructure"
+		MinDistanceFromEnemy="600.0"
+		RequireUniqueTarget="false">
+		<BaseSelection
+			PreferredBaseTypes="SPAWN_ZONE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_OLDEST" />
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="ResourceStructureHeuristic"
+		HeuristicType="ResourceStructure">
+		<BaseSelection
+			PreferredBaseTypes="CRAWLER_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_OLDEST" />
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="GameStartGoalStructureHeuristic"
+		HeuristicType="GoalStructure"
+		Relationship="NEUTRAL ENEMIES"
+		MaxPercentOfOtherAIAllowed="1%">
+		<BaseSelection
+			PreferredBaseTypes="SPAWN_ZONE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			PreferredOwner="OWNER_THIS_PLAYER"
+			SortOrder="PREFER_NEWEST"/>
+		<AvoidTarget
+			AvoidDistance="600"
+			AvoidROS="ENEMY_UNITS_AND_CRAWLERS">
+			<ObjectFilter
+				Rule="ANY"
+				Include="CAN_ATTACK CRAWLER"
+				Relationship="ENEMIES"
+				/>
+		</AvoidTarget>
+	</AITargetingHeuristic>
+	
+	<AITargetingHeuristic
+		id="GameStartGoalStructureHeuristic_NonUnique"
+		inheritFrom="GameStartGoalStructureHeuristic"
+		MaxPercentOfOtherAIAllowed="50%"/>
+
+	<AITargetingHeuristic
+		id="UndefendedGoalStructureHeuristic"
+		HeuristicType="GoalStructure"
+		Relationship="NEUTRAL ENEMIES"
+		MaxPercentOfOtherAIAllowed="34%">
+		<BaseSelection
+			PreferredBaseTypes="SPAWN_ZONE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			PreferredOwner="OWNER_THIS_PLAYER"
+			SortOrder="PREFER_OLDEST"/>
+		<AvoidTarget
+			AvoidDistance="600" 
+			AvoidROS="ENEMY_UNITS_AND_STRUCTURES">
+			<ObjectFilter
+				Rule="ANY"
+				Include="CAN_ATTACK CRAWLER" />
+		</AvoidTarget>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="UndefendedGoalStructureHeuristic_Desperate"
+		inheritFrom="UndefendedGoalStructureHeuristic"
+		MaxPercentOfOtherAIAllowed="50%"/>
+	
+	<AITargetingHeuristic
+		id="OpenGoalStructureHeuristic"
+		HeuristicType="GoalStructure"
+		Relationship="NEUTRAL ENEMIES"
+		SortType="ThreatToGround"
+		MaxPercentOfOtherAIAllowed="50%">
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="OpenGoalStructureHeuristic_EarlyGame"
+		inheritFrom="OpenGoalStructureHeuristic"
+		MaxPercentOfOtherAIAllowed="1%"/>
+	
+	<AITargetingHeuristic
+		id="OpenGoalStructureHeuristic_NonUnique"
+		inheritFrom="OpenGoalStructureHeuristic"/>
+
+	<AITargetingHeuristic
+		id="LosingGoalStructureForCaptureHeuristic"
+		HeuristicType="GoalStructure"
+		Relationship="NEUTRAL ENEMIES"
+		SortType="ThreatToGround"
+		MaxPercentOfOtherAIAllowed="50%">
+		<MaxDistanceFilter
+			Radius="4000">
+			<ObjectFilter
+				Rule="NONE"
+				Include="CRAWLER"
+				Relationship="SAME_PLAYER">
+			</ObjectFilter>
+		</MaxDistanceFilter>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="LosingGoalStructureForCaptureHeuristic_EarlyGame"
+		inheritFrom="LosingGoalStructureForCaptureHeuristic"
+		MaxPercentOfOtherAIAllowed="34%"/>
+	
+	<AITargetingHeuristic
+		id="LosingGoalStructureForCaptureHeuristic_NonUnique"
+		inheritFrom="LosingGoalStructureForCaptureHeuristic"
+		MaxPercentOfOtherAIAllowed="75%"/>
+	
+	<AITargetingHeuristic
+		id="OpenEnemyGoalHeuristic"
+		HeuristicType="EnemyStructure"
+		SortType="Distance"
+		VitalKindOf="GOAL_STRUCTURE"
+		ForbiddenKindOf=""
+		Location="Land"
+		HighestPriorityEnemyPlayersOnly="false">
+		<AvoidTarget
+			AvoidDistance="400"
+			AvoidROS="ENEMY_UNITS_AND_CRAWLERS">
+			<ObjectFilter
+				Rule="ANY"
+				Include="CAN_ATTACK CRAWLER"
+				Relationship="ENEMIES"
+				/>
+		</AvoidTarget>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="SafestToEnemyGoalHeuristic"
+		HeuristicType="EnemyStructure"
+		SortType="ThreatToGround"
+		VitalKindOf="GOAL_STRUCTURE"
+		ForbiddenKindOf=""
+		Location="Land"
+		HighestPriorityEnemyPlayersOnly="false">
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+    id="SafestToEnemyGoalHeuristic_NonUnique"
+    HeuristicType="EnemyStructure"
+    SortType="ThreatToGround"
+    VitalKindOf="GOAL_STRUCTURE"
+    ForbiddenKindOf=""
+    Location="Land"
+    RequireUniqueTarget="false"
+		HighestPriorityEnemyPlayersOnly="false">
+		<BaseSelection
+			PreferredBaseTypes="CRAWLER_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_OLDEST" />
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="SafestAirToEnemyGoalHeuristic"
+		HeuristicType="EnemyStructure"
+		SortType="ThreatToAir"
+		VitalKindOf="GOAL_STRUCTURE"
+		ForbiddenKindOf=""
+		Location="Land"
+		HighestPriorityEnemyPlayersOnly="false">
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="GoalStructureForCaptureHeuristic"
+		HeuristicType="GoalStructure"
+		Relationship="NEUTRAL ENEMIES"
+		MaxPercentOfOtherAIAllowed="34%">
+		<BaseSelection
+			PreferredBaseTypes="CRAWLER_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			PreferredOwner="OWNER_THIS_PLAYER"
+			SortOrder="PREFER_NEWEST"/>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="GoalStructureForCaptureHeuristic_NonUnique"
+		inheritFrom="GoalStructureForCaptureHeuristic"/>
+
+	<AITargetingHeuristic
+		id="AlliedGoalStructureHeuristic"
+		HeuristicType="GoalStructure"
+		MinDistanceFromEnemy="400.0"
+		Relationship="ALLIES">
+		<BaseSelection
+			PreferredBaseTypes="CRAWLER_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			PreferredOwner="OWNER_THIS_PLAYER"
+			SortOrder="PREFER_NEWEST"/>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="OpenMonumentShieldGeneratorHeuristic"
+		HeuristicType="MonumentShieldGenerator"
+		MinDistanceFromEnemy="400.0">
+		<BaseSelection
+			PreferredBaseTypes="CRAWLER_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_OLDEST" />
+	</AITargetingHeuristic>
+	
+	<AITargetingHeuristic
+    id="MonumentShieldGeneratorForCaptureHeuristic"
+    HeuristicType="MonumentShieldGenerator"
+		Relationship="ENEMIES NEUTRAL">
+		<BaseSelection
+			PreferredBaseTypes="CRAWLER_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_OLDEST" />
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="ClosestCrawlerHeuristic"
+		HeuristicType="EnemyStructure"
+		SortType="Distance"
+		VitalKindOf="CRAWLER"
+		ForbiddenKindOf=""
+		Location="Land"
+    />
+
+    <AITargetingHeuristic
+		id="ClosestMobileCrawlerHeuristic"
+		HeuristicType="EnemyUnit"
+		SortType="Distance"
+		VitalKindOf="CRAWLER"
+		ForbiddenKindOf=""
+		Location="Land"
+    />
+
+    <AITargetingHeuristic
+		id="SafestToCrawlerHeuristic"
+		HeuristicType="EnemyStructure"
+		SortType="ThreatToGround"
+		VitalKindOf="CRAWLER"
+		ForbiddenKindOf=""
+		Location="Land"
+		RequireUniqueTarget="false"
+    />
+	
+	<AITargetingHeuristic
+		id="SafestToMobileCrawlerHeuristic"
+		HeuristicType="EnemyUnit"
+		SortType="ThreatToGround"
+		VitalKindOf="CRAWLER"
+		ForbiddenKindOf=""
+		Location="Land"
+		RequireUniqueTarget="false"
+    />
+
+	<AITargetingHeuristic
+		id="RandomObjectiveHeuristic"
+		HeuristicType="TechBuilding"
+		SortType="Random"
+		VitalKindOf="REGISTER_GAMEMODE_SPAWN UNATTACKABLE"
+		Location="Land"
+		RequireUniqueTarget="true"
+    />
+
+	<!-- Standard Waypoints -->
+
+	<AITargetingHeuristic
+		id="AITarget_Player_1"
+		HeuristicType="Waypoint"
+		Name="Player_1_Start"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_Player_2"
+		HeuristicType="Waypoint"
+		Name="Player_2_Start"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_Player_3"
+		HeuristicType="Waypoint"
+		Name="Player_3_Start"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_Player_4"
+		HeuristicType="Waypoint"
+		Name="Player_4_Start"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_Player_5"
+		HeuristicType="Waypoint"
+		Name="Player_5_Start"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_Player_6"
+		HeuristicType="Waypoint"
+		Name="Player_6_Start"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_Player_7"
+		HeuristicType="Waypoint"
+		Name="Player_7_Start"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_Player_8"
+		HeuristicType="Waypoint"
+		Name="Player_8_Start"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_Player_9"
+		HeuristicType="Waypoint"
+		Name="Player_9_Start"
+	/>
+
+	<AITargetingHeuristic
+		id="AITarget_Player_10"
+		HeuristicType="Waypoint"
+		Name="Player_10_Start"
+	/>
+
+	<!-- CNC4 Custom Targets -->
+
+	<AITargetingHeuristic
+		id="UndefendedUpgradeCrystal"
+		HeuristicType="Tiberium"
+		SortType="ThreatToGround"
+		TiberiumCrystalType="TIBERIUM_CRYSTAL"
+		MaxPercentOfOtherAIAllowed="25%">
+		<BaseSelection
+			RequiredBaseTypes="SPAWN_ZONE"
+			SortOrder="PREFER_CLOSEST"/>
+		<AvoidTarget
+			AvoidDistance="500"
+			AvoidROS="ENEMY_UNITS_AND_STRUCTURES">
+			<ObjectFilter
+				Rule="ANY"
+				Include="CAN_ATTACK CRAWLER"
+				Relationship="ENEMIES"
+				/>
+		</AvoidTarget>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="UndefendedUpgradeCrystal_Hesitant"
+		inheritFrom="UndefendedUpgradeCrystal"
+		TargetMinimumAge="=$MEDIUM_AI_COLLECTION_DELAY" />
+	
+	<AITargetingHeuristic
+		id="UndefendedUpgradeCrystal_Slow"
+		inheritFrom="UndefendedUpgradeCrystal"
+		TargetMinimumAge="=$EASY_AI_COLLECTION_DELAY" />
+	
+	<AITargetingHeuristic
+		id="UndefendedUpgradeCrystal_UniqueTarget"
+		inheritFrom="UndefendedUpgradeCrystal"
+		RequireUniqueTarget="true" />
+
+	<AITargetingHeuristic
+		id="UndefendedUpgradeCrystal_UniqueTarget_Hesitant"
+		inheritFrom="UndefendedUpgradeCrystal_Hesitant"
+		RequireUniqueTarget="true" />
+	
+	<AITargetingHeuristic
+		id="UndefendedUpgradeCrystal_UniqueTarget_Slow"
+		inheritFrom="UndefendedUpgradeCrystal_Slow"
+		RequireUniqueTarget="true" />
+	
+	<AITargetingHeuristic
+		id="LooseUpgradeCrystal"
+		HeuristicType="Tiberium"
+		SortType="ThreatToGround"
+		TiberiumCrystalType="TIBERIUM_CRYSTAL"
+		MaxPercentOfOtherAIAllowed="100%">
+		<BaseSelection
+			RequiredBaseTypes="SPAWN_ZONE"
+			SortOrder="PREFER_CLOSEST"/>
+		<AvoidTarget
+			AvoidDistance="50"
+			AvoidROS="ENEMY_UNITS_AND_STRUCTURES">
+			<ObjectFilter
+				Rule="ALL"
+				StatusBitFlags="UPGRADE_CRYSTAL_ATTACHED"
+				/>
+		</AvoidTarget>
+		<AvoidTarget
+			AvoidDistance="50"
+			AvoidROS="ALLIED_UNITS_AND_STRUCTURES">
+			<ObjectFilter
+				Rule="ALL"
+				StatusBitFlags="UPGRADE_CRYSTAL_ATTACHED"
+				/>
+		</AvoidTarget>
+	</AITargetingHeuristic>
+	
+	<AITargetingHeuristic
+		id="UpgradeCrystal"
+		HeuristicType="Tiberium"
+		SortType="ThreatToGround"
+		TiberiumCrystalType="TIBERIUM_CRYSTAL"
+		MaxPercentOfOtherAIAllowed="25%">
+		<BaseSelection
+			RequiredBaseTypes="SPAWN_ZONE"
+			SortOrder="PREFER_CLOSEST"/>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="UpgradeCrystal_Hesitant"
+		inheritFrom="UpgradeCrystal"
+		TargetMinimumAge="=$MEDIUM_AI_COLLECTION_DELAY" />
+	
+	<AITargetingHeuristic
+		id="UpgradeCrystal_UniqueTarget"
+		inheritFrom="UpgradeCrystal"
+		RequireUniqueTarget="true" />
+
+	<AITargetingHeuristic
+		id="UpgradeCrystal_UniqueTarget_Hesitant"
+		inheritFrom="UpgradeCrystal"
+		RequireUniqueTarget="true" />
+	
+	<AITargetingHeuristic
+		 id="UpgradeCrystalSpawnPoint"
+		 HeuristicType="Tiberium"
+		 SortType="ThreatToGround"
+		 TiberiumCrystalType="TIBERIUM_SPAWN_POINT"
+	>
+		<BaseSelection
+			RequiredBaseTypes="SPAWN_ZONE"
+			SortOrder="PREFER_CLOSEST"/>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="UndefendedSuperUpgradeCrystal"
+		HeuristicType="Tiberium"
+		SortType="ThreatToGround"
+		TiberiumCrystalType="TIBERIUM_CRYSTAL"
+		VitalKindOf="OBJECTIVE_UNIT" 
+		MaxPercentOfOtherAIAllowed="25%">
+		<BaseSelection
+			RequiredBaseTypes="SPAWN_ZONE"
+			SortOrder="PREFER_CLOSEST"/>
+		<AvoidTarget
+			AvoidDistance="500"
+			AvoidROS="ENEMY_UNITS_AND_STRUCTURES">
+			<ObjectFilter
+				Rule="ANY"
+				Include="CAN_ATTACK"
+				Relationship="ENEMIES"
+				/>
+		</AvoidTarget>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="UndefendedSuperUpgradeCrystal_Hesitant"
+		inheritFrom="UndefendedSuperUpgradeCrystal"
+		TargetMinimumAge="=$MEDIUM_AI_COLLECTION_DELAY" />
+	
+	<AITargetingHeuristic
+		id="UndefendedSuperUpgradeCrystal_Slow"
+		inheritFrom="UndefendedSuperUpgradeCrystal"
+		TargetMinimumAge="=$EASY_AI_COLLECTION_DELAY" />
+
+	<AITargetingHeuristic
+		id="UndefendedSuperUpgradeCrystal_UniqueTarget"
+		inheritFrom="UndefendedSuperUpgradeCrystal"
+		RequireUniqueTarget="true" />
+	
+	<AITargetingHeuristic
+		id="UndefendedSuperUpgradeCrystal_UniqueTarget_Hesitant"
+		inheritFrom="UndefendedSuperUpgradeCrystal_Hesitant"
+		RequireUniqueTarget="true" />
+
+	<AITargetingHeuristic
+		id="UndefendedSuperUpgradeCrystal_UniqueTarget_Slow"
+		inheritFrom="UndefendedSuperUpgradeCrystal_Slow"
+		RequireUniqueTarget="true" />
+
+	<AITargetingHeuristic
+		id="SuperUpgradeCrystal"
+		HeuristicType="Tiberium"
+		SortType="ThreatToGround"
+		TiberiumCrystalType="TIBERIUM_CRYSTAL"
+		VitalKindOf="OBJECTIVE_UNIT"
+		MaxPercentOfOtherAIAllowed="25%"
+	>
+		<BaseSelection
+			RequiredBaseTypes="SPAWN_ZONE"
+			SortOrder="PREFER_CLOSEST"/>
+	</AITargetingHeuristic>
+
+	<AITargetingHeuristic
+		id="SuperUpgradeCrystal_Hesitant"
+		inheritFrom="SuperUpgradeCrystal"
+		TargetMinimumAge="=$MEDIUM_AI_COLLECTION_DELAY" />
+
+	<AITargetingHeuristic
+		id="SuperUpgradeCrystal_UniqueTarget"
+		inheritFrom="SuperUpgradeCrystal"
+		RequireUniqueTarget="true" />
+
+	<AITargetingHeuristic
+		id="SuperUpgradeCrystal_UniqueTarget_Hesitant"
+		inheritFrom="SuperUpgradeCrystal_Hesitant"
+		RequireUniqueTarget="true" />
+	
+	<AITargetingHeuristic
+		id="ClosestCrystalBearer"
+		HeuristicType="EnemyUnit" 
+		SortType="Distance" 
+		VitalObjectStatus="UPGRADE_CRYSTAL_ATTACHED"
+	/>
+
+	<!-- GDI 2-1 Stewart -->
+
+	<!-- GDI 3-3 Stewart -->
+
+  <AITargetingHeuristic
+		id="AITarget_D2C_Nod_1_1_Defense_Point"
+		HeuristicType="Waypoint"
+		Name="AITarget_D2C_Nod_1_1_Defense_Point"
+	/>
+	
+	<AITargetingHeuristic
+		id="AITarget_D2C_Nod_1_1_Offense_Target"
+		HeuristicType="Waypoint"
+		Name="AITarget_D2C_Nod_1_1_Offense_Target"
+	/>
+
+</AssetDeclaration>
+

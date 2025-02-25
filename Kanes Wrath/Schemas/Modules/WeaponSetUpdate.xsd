@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:balance="uri:ea.com:eala:balance" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="WeaponSlot_WeaponData">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Ordering" type="WeaponSlotType" />
+		<xs:attribute name="Template" balance:field="Template" balance:category="Template" type="WeaponRef" />
+		<xs:attribute name="Upgrade" type="UpgradeTemplateRef" />
+		<xs:attribute name="ObjectStatus" type="ObjectStatusBitFlags" default=""/>
+
+		<xs:attribute name="IsPlayerUpgradePermanent" type="SageBool" default="false" />
+	</xs:complexType>
+
+	<xs:simpleType name="WeaponSlotInterleavedStyleType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INTERLEAVE_FIRST_AVAILABLE" />
+			<xs:enumeration value="INTERLEAVE_RANDOM" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="WeaponSlot_Hardpoint" xas:isPolymorphic="true">
+		<xs:sequence>
+			<xs:element name="Weapon" balance:category="Weapon" type="WeaponSlot_WeaponData" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="ID" type="SageUnsignedInt" />
+		<xs:attribute name="AllowInterleavedFiring" type="SageBool" default="false" />
+		<xs:attribute name="InterleavedStyle" type="WeaponSlotInterleavedStyleType" default="INTERLEAVE_RANDOM" />
+		<xs:attribute name="WeaponChoiceCriteria" type="WeaponChoiceCriteria" default="PREFER_MOST_DAMAGE" />
+	</xs:complexType>
+	
+	<xs:complexType name="WeaponSlot_Turret">
+		<xs:complexContent>
+			<xs:extension base="WeaponSlot_Hardpoint">
+				<xs:sequence>
+					<xs:element name="TurretSettings" balance:category="TurretSettings" type="TurretAIData" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="WeaponSlot_HierarchicalTurret">
+		<xs:complexContent>
+			<xs:extension base="WeaponSlot_Turret">
+				<xs:sequence>
+				</xs:sequence>
+				<xs:attribute name="ParentID" type="SageUnsignedInt" default="0" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="WeaponSetUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element balance:category="WeaponSlot" name="WeaponSlotHardpoint" type="WeaponSlot_Hardpoint" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element balance:category="WeaponSlot" name="WeaponSlotTurret" type="WeaponSlot_Turret" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element balance:category="WeaponSlot" name="WeaponSlotHierarchicalTurret" type="WeaponSlot_HierarchicalTurret" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

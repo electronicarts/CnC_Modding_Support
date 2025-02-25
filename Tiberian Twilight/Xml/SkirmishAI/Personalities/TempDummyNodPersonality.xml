@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Tags></Tags>
+
+  <Includes>
+    <Include type="instance" source="CoopBasePersonality.xml" />
+  </Includes>
+  
+	<!-- This is just a temp to get the AI up & running - it will crash if it has no personalities for a side -->
+	<AIPersonalityDefinition
+		id="TempDummyNodPersonality"
+		inheritFrom="CoopBasePersonality"
+		SkirmishPersonality="true"
+		>
+		<Side>Nod</Side>
+		<BuildState id="TempDummyNodBuildState" State="TempDummyNodBuildState" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<BuildState id="TempDummy_BuildUpgradesWhenNearCPLimit" State="TempDummy_BuildUpgradesWhenNearCPLimit" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+		<!-- Since Nod is still using a bunch of GDI units, have build states for all GDI too. -->
+		<BuildState id="TempDummyGDIBuildState" State="TempDummyGDIBuildState" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+   
+	</AIPersonalityDefinition>
+
+	<AIPersonalityDefinition
+		id="TempDummyNodPersonalityForMonumentMode"
+		inheritFrom="TempDummyNodPersonality"
+		PersonalityType="TempDummyNodPersonality [Mon]"
+		PersonalityUIName="TempDummyHack [Mon Nod]"
+		GameplayMode="MONUMENT"
+		>		
+		<StrategicState id="GuardMyMonument" State="GuardMyMonument" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<StrategicState id="KillDaOtheGuysMonument" State="KillDaOtheGuysMonument" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<StrategicState id="NodShieldStructureCapture" State="GDIShieldStructureCapture" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<StrategicState id="CrawlerController_OffenseAndSupport_Monument" State="CrawlerController_OffenseAndSupport_Monument" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+	</AIPersonalityDefinition>
+		
+	<AIPersonalityDefinition
+		id="TempDummyNodPersonalityForDominationMode"
+		inheritFrom="TempDummyNodPersonality"
+		PersonalityType="TempDummyNodPersonality [Dom]"
+		PersonalityUIName="TempDummyHack [Dom Nod]"
+		GameplayMode="DOMINATION"
+		>
+		<StrategicState id="CrawlerController_OffenseAndSupport_Domination" State="CrawlerController_OffenseAndSupport_Domination" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<StrategicState id="NodGoalStructureCapture" State="NodGoalStructureCapture" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<StrategicState id="GuardOwnGoalsIfNearWinningDom" State="GuardOwnGoalsIfNearWinningDom" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+	</AIPersonalityDefinition>
+		
+	<!-- Just a big dump of everything Nod can build, as a temp hack to get the build system going -->
+	<AIBuildStateDefinition
+    id="TempDummyNodBuildState">
+    <Heuristic>
+			<OwnCommandPointLevelHeuristic
+				PassIfBelowPercent="90%"/>
+		</Heuristic>
+		<!--Tier 1-->
+
+		<!--Tier 2-->
+		<BuildEntry Build="NODAircraftC"> <BuildHeuristic Type="BEST_UNIT_EXPECTED"/> </BuildEntry>
+
+		<!--Tier 1 Nod-->
+
+		<!--Tier 2 Nod-->
+		<BuildEntry Build="NODInfantryB"> <BuildHeuristic Type="BEST_UNIT_EXPECTED"/> </BuildEntry>
+		<BuildEntry Build="NODInfantryC"> <BuildHeuristic Type="BEST_UNIT_EXPECTED"/> </BuildEntry>
+		<BuildEntry Build="NODCommandoA"> <BuildHeuristic Type="BEST_UNIT_EXPECTED"/> </BuildEntry>
+		<!--Tier 1 Engineers-->
+		<BuildEntry Build="NODInfantryP"> <BuildHeuristic Type="BEST_UNIT_EXPECTED"/> </BuildEntry>
+		<!--Tier 0 Universal-->
+		<BuildEntry Build="NODConquerVehicle"> <BuildHeuristic Type="BEST_UNIT_EXPECTED"/> </BuildEntry>
+		<!--Tier 1 Nod-->
+		<BuildEntry Build="NODVehicleA"> <BuildHeuristic Type="BEST_UNIT_EXPECTED"/> </BuildEntry>
+		<!--Tier 2 Nod-->
+		<BuildEntry Build="NODVehicleF"> <BuildHeuristic Type="BEST_UNIT_EXPECTED"/> </BuildEntry>
+		<BuildEntry Build="NODVehicleE"> <BuildHeuristic Type="BEST_UNIT_EXPECTED"/> </BuildEntry>
+		<!--Tier 3 Nod-->
+		<BuildEntry Build="NODVehicleI"> <BuildHeuristic Type="BEST_UNIT_EXPECTED"/> </BuildEntry>
+		<BuildEntry Build="NODVehicleL"> <BuildHeuristic Type="BEST_UNIT_EXPECTED"/> </BuildEntry>
+	</AIBuildStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="NodGoalStructureCapture">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="GoalStructureForCaptureHeuristic"/>
+		<Tactic
+			id="ResourceStructureCapture" 
+			Tactic="Capture"
+			Distance="400"
+			AvoidTargetDistance="150">
+			<TeamTemplate
+				MinUnits="1"
+				MaxUnits="10"
+				IncludeKindOf="CAN_ATTACK"
+				ReleaseType="NEVER_RELEASE"
+				AlwaysRecruit="true"
+				Priority="STANDARD">
+				<CreateUnits UnitName="NodConquerVehicle"/>
+				<ObjectFilter
+					Rule="ALL">
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeReloadingAircraft.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeThingsList/child::*)"/>
+				</ObjectFilter>
+				<MicroManager
+					MicroManager="StandardMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="NodShieldStructureCapture">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="MonumentShieldGeneratorForCaptureHeuristic"/>
+		<Tactic
+			id="ResourceStructureCapture" 
+			Tactic="Capture"
+			Distance="400"
+			AvoidTargetDistance="150">
+			<TeamTemplate
+				MinUnits="1"
+				MaxUnits="10"
+				IncludeKindOf="CAN_ATTACK"
+				ReleaseType="NEVER_RELEASE"
+				AlwaysRecruit="true"
+				Priority="STANDARD">
+				<CreateUnits UnitName="NodConquerVehicle"/>
+				<ObjectFilter
+					Rule="ALL">
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeReloadingAircraft.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeThingsList/child::*)"/>
+				</ObjectFilter>
+				<MicroManager
+					MicroManager="StandardMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+</AssetDeclaration>

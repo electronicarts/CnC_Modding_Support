@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="FireWeaponUpdateOptions">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SNAP_TARGET_POS_TO_GROUND" />
+			<xs:enumeration value="INITIALLY_INACTIVE" />
+			<xs:enumeration value="AFFECTED_BY_RATE_OF_FIRE_ATTRIBUTE_MODIFIER" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FireWeaponUpdateBitFlags">
+		<xs:list itemType="FireWeaponUpdateOptions"></xs:list>
+	</xs:simpleType>
+	
+	<xs:simpleType name="FireWeaponUpdateTerrainRestrictionOptions">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NO_CLIFF" />
+			<xs:enumeration value="NO_IMPASSABLE" />
+			<xs:enumeration value="NO_WATER" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FireWeaponUpdateTerrainRestrictionBitFlags">
+		<xs:list itemType="FireWeaponUpdateTerrainRestrictionOptions"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="TerrainRestrictionInfo">
+		<xs:sequence>
+			<xs:element name="ForbiddenObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="TerrainCellRestrictionFlags" type="FireWeaponUpdateTerrainRestrictionBitFlags" default="" />
+		<xs:attribute name="Radius" type="SageReal" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="FireWeaponUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+
+					<xs:element name="TerrainRestrictions" type="TerrainRestrictionInfo" minOccurs="0" maxOccurs="1" />
+
+					<xs:element name="RequiredObject" minOccurs="0" maxOccurs="1" >
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+							</xs:sequence>
+							<xs:attribute name="Range" type="SageReal" use="required" />
+							<xs:attribute name="Number" type="SageUnsignedInt" default="1" />
+						</xs:complexType>
+					</xs:element>
+
+					<xs:element name="FireWeaponNugget" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="Offset" type="Vector3" minOccurs="0" maxOccurs="1" />
+							</xs:sequence>
+							<xs:attribute name="id" type="Poid" xas:pipelineOnly="true"/>
+							<xs:attribute name="WeaponName" type="WeaponRef" />
+							<xs:attribute name="SlotType" type="WeaponSlotType" default="PRIMARY_WEAPON" />
+							<xs:attribute name="SlotID" type="SageUnsignedInt" default="0" />
+							<!-- initial delay-->
+							<xs:attribute name="FireDelay" type="Time" />
+							<xs:attribute name="OneShot" type="SageBool" default="false" />
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="ObjectStatusValidation" type="ObjectStatusValidationDataType" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<!-- initial delay-->
+				<xs:attribute name="FireDelay" type="Time" default="0s" />
+				<!-- delay between successive firings -->
+				<xs:attribute name="FireInterval" type="Time" />
+				<xs:attribute name="AliveOnly" type="SageBool" default="false" />
+				<xs:attribute name="UpdateRequiresTarget" type="SageBool" default="false" />
+				<xs:attribute name="ActiveWhenDisabled" type="DisabledBitFlags" />
+				<xs:attribute name="RequiredModelConditions" type="ModelConditionBitFlags" default="" />
+				<xs:attribute name="ForbiddenModelConditions" type="ModelConditionBitFlags" default="" />
+				<xs:attribute name="Flags" type="FireWeaponUpdateBitFlags" default="" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

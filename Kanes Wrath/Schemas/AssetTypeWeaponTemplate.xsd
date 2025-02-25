@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:balance="uri:ea.com:eala:balance" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	<xs:complexType name="RangeReal">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Min" type="SageReal" default="0"/>
+		<xs:attribute name="Max" type="SageReal" default="0"/>
+	</xs:complexType>
+	<xs:complexType name="RangeDuration">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="MinSeconds" balance:field="MinSeconds" type="Time" default="0s"/>
+		<xs:attribute name="MaxSeconds" balance:field="MaxSeconds" type="Time" default="0s"/>
+	</xs:complexType>
+	<xs:complexType name="LinearTargetType">
+		<xs:sequence>
+			<xs:element name="Position" type="Coord2D" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="Time" type="SageReal" />
+	</xs:complexType>
+
+	<xs:simpleType name="PartitionManagerDistTestType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SPHERE" />
+			<xs:enumeration value="EXTENTS_3D" />
+			<xs:enumeration value="CIRCLE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="WeaponFlagsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="EMPTY_CLIP_ON_ACTIVATE" />
+			<xs:enumeration value="ORTHOGONAL_SCATTER" />
+			<xs:enumeration value="LENGTH_SCATTER" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponFlagsBitFlags">
+		<xs:list itemType="WeaponFlagsType"></xs:list>
+	</xs:simpleType>
+	
+
+	<xs:simpleType name="WeaponReloadType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AUTO" />
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="RETURN_TO_BASE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponPrefireType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PER_SHOT" />
+			<xs:enumeration value="PER_CLIP" />
+			<xs:enumeration value="PER_BURST" />
+			<xs:enumeration value="PER_TARGET" />
+			<xs:enumeration value="PER_POSITION" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Specifies the frequency of reacquiring a detail position on a target -->
+	<xs:simpleType name="WeaponReAcquireDetailType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PRE_SHOT" />
+			<xs:enumeration value="PER_SHOT" />
+			<xs:enumeration value="PER_CLIP" />
+			<xs:enumeration value="PER_ATTACK" />
+			<xs:enumeration value="PRE_FIRE" />
+			<xs:enumeration value="POST_FIRE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponCollideType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ALLIES" />
+			<xs:enumeration value="ENEMIES" />
+			<xs:enumeration value="NEUTRAL" />
+			<xs:enumeration value="STRUCTURES" />
+			<xs:enumeration value="SHRUBBERY" />
+			<xs:enumeration value="PROJECTILES" />
+			<xs:enumeration value="WALLS" />
+			<xs:enumeration value="SMALL_MISSILES" />
+			<xs:enumeration value="BALLISTIC_MISSILES" />
+			<xs:enumeration value="CONTROLLED_STRUCTURES" />
+			<xs:enumeration value="MONSTERS" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponCollideBitFlags">
+		<xs:list itemType="WeaponCollideType"></xs:list>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="WeaponAffectsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SELF" />
+			<xs:enumeration value="ALLIES" />
+			<xs:enumeration value="ENEMIES" />
+			<xs:enumeration value="NEUTRALS" />
+			<xs:enumeration value="SUICIDE" />
+			<xs:enumeration value="NOT_SIMILAR" />
+			<xs:enumeration value="NOT_AIRBORNE" />
+			<xs:enumeration value="PROJECTILES" />
+			<xs:enumeration value="SAME_HEIGHT_ONLY" />
+			<xs:enumeration value="MINES" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponAffectsBitFlags">
+		<xs:list itemType="WeaponAffectsType"></xs:list>
+	</xs:simpleType>
+
+	<xs:simpleType name="WpnAntiT">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ANTI_AIRBORNE_VEHICLE" />
+			<xs:enumeration value="ANTI_GROUND" />
+			<xs:enumeration value="ANTI_PROJECTILE" />
+			<xs:enumeration value="ANTI_SMALL_MISSILE" />
+			<xs:enumeration value="ANTI_MINE" />
+			<xs:enumeration value="ANTI_AIRBORNE_INFANTRY" />
+			<xs:enumeration value="ANTI_BALLISTIC_MISSILE" />
+			<xs:enumeration value="ANTI_PARACHUTE" />
+			<xs:enumeration value="ANTI_STRUCTURE" />
+			<xs:enumeration value="ANTI_AIRBORNE_MONSTER" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponAntiBitFlags">
+		<xs:list itemType="WpnAntiT"></xs:list>
+	</xs:simpleType>
+
+	<xs:simpleType name="FireEffectType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INCREASE_BURN_RATE" />
+			<xs:enumeration value="DECREASE_BURN_RATE" />
+			<xs:enumeration value="INCREASE_FUEL" />
+			<xs:enumeration value="INCREASE_BURN_RATE_ON_EXISTING_FIRE" />
+			<xs:enumeration value="INCREASE_FUEL_ON_EXISTING_FIRE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ParalyzeEffectType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EMP"/>
+			<xs:enumeration value="USER_PARALYZE"/>
+			<xs:enumeration value="NONE"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="InfoWarEffect">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE"/>
+			<!-- In case somebody forgets to set it, make it do NOTHING! -->
+			<xs:enumeration value="RADAR_JAM"/>
+			<xs:enumeration value="RESET_RADAR_JAM"/>
+			<xs:enumeration value="RESET_RADAR_SPIES"/>
+			<xs:enumeration value="RESET_RADAR_HACKS"/>
+			<xs:enumeration value="RESET_RADAR_FREEZE"/>
+			<xs:enumeration value="RESET_RADAR_ALL"/>
+			<!-- If this is set, other RESET values are ignored -->
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="InfoWarEffectBitFlags">
+		<xs:list itemType="InfoWarEffect"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="WeaponEffectNugget" xas:isPolymorphic="true">
+		<xs:sequence>
+			<xs:element name="SpecialObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+			<xs:element name="RequiredUpgrade" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="ForbiddenUpgrade" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="PartitionFilterTestType" type="PartitionManagerDistTestType" default="EXTENTS_3D" />
+		<xs:attribute name="ForbiddenTargetObjectStatus" type="ObjectStatusBitFlags" />
+		<xs:attribute name="ForbiddenTargetModelCondition" type="ModelConditionBitFlags" />
+		<xs:attribute name="RequiredObjectStatus" type="ObjectStatusBitFlags" />
+	</xs:complexType>
+
+	<!--	Filter - Defines what objects are able to receive the scalar.
+				Scalar - The amount the damage is scaled if applied to victim.
+	-->
+	<xs:complexType name="ScalarInfo">
+		<xs:sequence>
+			<xs:element name="Filter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+			<xs:element name="RequiredUpgrade" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="Scalar" type="Percentage" default="100%" />
+	</xs:complexType>
+
+	<xs:complexType name="ParalyzeNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="Radius" type="SageReal"/>
+				<xs:attribute name="EffectArc" type="Angle" default="360d"/>
+				<xs:attribute name="DurationSeconds" type="Time" default="0s"/>
+				<xs:attribute name="ParalyzeType" type="ParalyzeEffectType" default="NONE"/>
+				<!-- Paralyze and Remove are mutually exclusive -->
+				<xs:attribute name="RemoveParalyzeType" type="ParalyzeEffectType" default="NONE"/>
+				<xs:attribute name="ParalyzeFX" type="FXListRef"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="InformationWarfareNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="InfoWarType" type="InfoWarEffectBitFlags" default="NONE"/>
+				<xs:attribute name="RadarJamRadius" type="SageReal" default="0" />
+				<xs:attribute name="RadarJamDuration" type="Time" default="0s" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SpendStolenTiberiumNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="AmountToSpend" type="SageInt" default="1"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ReportWeaponFiredStatNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DamageNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence>
+					<xs:element name="DamageScalarDetails" type="ScalarInfo" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Damage" balance:field="Damage" type="SageReal" default="0"/>
+				<xs:attribute name="DamageTaperOff" type="SageReal" default="-1.0"/>
+				<xs:attribute name="Radius" balance:field="Radius" type="SageReal" default="0.0"/>
+				<xs:attribute name="MinRadius" type="SageReal" default="0.0"/>
+				<xs:attribute name="DamageArc" type="Angle" default="360d" />
+				<xs:attribute name="DamageArcInverted" type="SageBool" default="false"/>
+				<xs:attribute name="DamageMaxHeight" type="SageReal" default="-1"/>
+				<xs:attribute name="DamageMaxHeightAboveTerrain" type="SageReal" default="-1"/>
+				<xs:attribute name="AcceptDamageAdd" type="SageBool" default="true"/>
+				<xs:attribute name="FlankingBonus" type="SageReal" default="0"/>
+				<xs:attribute name="FlankedScalar" type="SageReal" default="1"/>
+				<xs:attribute name="DelayTimeSeconds" balance:field="DelayTimeSeconds" type="Time" default="0s"/>
+				<xs:attribute name="DamageType" balance:field="DamageType" type="DamageType" default="UNDEFINED"/>
+				<xs:attribute name="DeathType" balance:field="DeathType" type="DeathType" default="NORMAL"/>
+				<xs:attribute name="DamageFXType" type="DamageFXType" default="UNDEFINED"/>
+				<xs:attribute name="DamageSubType" type="DamageSubType" default="NORMAL"/>
+				<xs:attribute name="OnlyKillOwnerWhenTriggered" type="SageBool" default="false" />
+				<xs:attribute name="DrainLifeMultiplier" type="SageReal" default="1"/>
+				<xs:attribute name="DrainLife" type="SageBool" default="false"/>
+				<xs:attribute name="CylinderAOE" type="SageBool" default="false"/>
+				<xs:attribute name="DamageSpeed" type="SageReal" default="0"/>
+				<xs:attribute name="UnderAttackOverrideEvaEvent" type="EvaEventIDType" use="optional" />
+				<xs:attribute name="VictimShroudRevealer" type="GameObjectRef"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="MetaGameOperationNuggetType">
+		<xs:complexContent>
+			<xs:extension base="DamageNuggetType">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="OperationToFire" type="MetagameOperationsEnums" default="INVALID"/>
+				<xs:attribute name="SpecialPowerTemplate" type="SpecialPowerTemplateRef" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DOTNuggetType">
+		<xs:complexContent>
+			<xs:extension base="DamageNuggetType">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="DamageInterval" type="SageUnsignedInt" />
+				<xs:attribute name="DamageDuration" type="SageUnsignedInt" />
+				<!-- does DamageDecay less each pulse -->
+				<xs:attribute name="DamageDecay" type="SageReal" default="0" />
+				<!-- treats the first two values as metagame turns instead of seconds -->
+				<xs:attribute name="UseMetaGameTurns" type="SageBool" default="false" />
+				<xs:attribute name="AppliedStatus" type="ObjectStatusBitFlags" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DamageAndSpawnNuggetType">
+		<xs:complexContent>
+			<xs:extension base="DamageNuggetType">
+				<xs:sequence>
+					<xs:element name="SpawnTemplate" type="GameObjectWeakRef"  minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="SpawnProbability" type="SageReal" default="1.0"/>
+				<xs:attribute name="SpawnedModelConditionFlags" type="ModelConditionBitFlags"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="FireLogicNuggetType">
+		<xs:complexContent>
+			<xs:extension base="DamageNuggetType">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="FireEffect" type="FireEffectType" />
+				<xs:attribute name="MinMaxBurnRate" type="SageUnsignedInt" />
+				<xs:attribute name="MinDecay" type="SageUnsignedInt" />
+				<xs:attribute name="MaxResistance" type="SageUnsignedInt" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- fires this weapon on all objects that match the filter within our radius. -->
+	<xs:complexType name="FireOnObjectsNuggetType">
+		<xs:complexContent>
+			<xs:extension base="DamageNuggetType">
+				<xs:sequence>
+					<xs:element name="Filter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="Weapon" type="WeaponRef" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TintObjectsNuggetType">
+		<xs:complexContent>
+			<xs:extension base="DamageNuggetType">
+				<xs:sequence>
+					<xs:element name="Color" type="RGBColor" minOccurs="0" xas:byValue="true" />
+				</xs:sequence>
+				<xs:attribute name="PreColorTime" type="Time" default="2s" />
+				<xs:attribute name="PostColorTime" type="Time" default="2s" />
+				<xs:attribute name="SustainedColorTime" type="Time" default="1s" />
+				<xs:attribute name="Frequency" type="SageReal" default="1.0" />
+				<xs:attribute name="Amplitude" type="SageReal" default="1.0" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DamageFieldNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="WeaponTemplate" type="WeaponRef" />
+				<xs:attribute name="DurationSeconds" type="Time" default="0s" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="VeteranProjectile">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="VeterancyLevel" type="VeterancyLevel" />
+		<xs:attribute name="ProjectileTemplate" type="GameObjectRef" />
+	</xs:complexType>
+
+	<xs:complexType name="ProjectileNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence>
+					<xs:element name="AttackOffset" type="Coord3D"  minOccurs="0" maxOccurs="1" />
+					<xs:element name="VeterancyProjectiles" type="VeteranProjectile"  minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="WarheadTemplate" balance:field="WarheadTemplate" type="WeaponRef" />
+				<xs:attribute name="ProjectileTemplate" type="GameObjectRef" />
+				<xs:attribute name="WeaponLaunchBoneSlotOverride" type="WeaponSlotType" default="NO_WEAPON"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SuppressionNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="Radius" balance:field="Radius" type="SageReal" default="0"/>
+				<xs:attribute name="Suppression" balance:field="Suppression" type="SageReal" default="0"/>
+				<xs:attribute name="DurationSeconds" balance:field="DurationSeconds" type="Time" default="0s" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="WeaponOCLNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="WeaponOCL" type="ObjectCreationListRef"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ActivateLaserNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="Lifetime" type="Time" default="1s"/>
+				<xs:attribute name="LaserId" type="SageInt" default="0"/>
+				<xs:attribute name="HitGroundFX" type="FXListRef" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+    <xs:complexType name="ActivateStreamNuggetType">
+        <xs:complexContent>
+            <xs:extension base="WeaponEffectNugget">
+                <xs:sequence></xs:sequence>
+                <xs:attribute name="Lifetime" type="Time" default="1s"/>
+                <xs:attribute name="StreamId" type="SageInt" default="0"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ActivateLinearDamageNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="Lifetime" type="Time" default="1s"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SlavesAttackNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="MetaImpactNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence>
+					<xs:element name="KillObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<!-- Note - ShockWaveAmount should be Velocity, but Velocity is broken now so 
+					MetaImpactNugget.cpp is converting it using ConvertVelocityInSecsToFrames. This should
+					be converted to velocity when it is fixed. jba. 14July2006. -->
+				<xs:attribute name="ShockWaveAmount" type="SageReal" default="0"/>
+				<xs:attribute name="ShockWaveRadius" type="SageReal" default="0"/>
+				<xs:attribute name="ShockWaveArc" type="Angle" default="360d"/>
+				<xs:attribute name="ShockWaveArcInverted" type="SageBool" default="false"/>
+				<xs:attribute name="ShockWaveTaperOff" type="SageReal" default="0"/>
+				<!-- Note - ShockWaveSpeed should be Velocity, but Velocity is broken now so 
+					MetaImpactNugget.cpp is converting it using ConvertVelocityInSecsToFrames. This should
+					be converted to velocity when it is fixed. jba. 14July2006. -->
+				<xs:attribute name="ShockWaveSpeed" type="SageReal" default="0"/>
+				<xs:attribute name="ShockWaveZMult" type="SageReal" default="1"/>
+				<xs:attribute name="CyclonicFactor" type="SageReal" default="0"/>
+				<xs:attribute name="ShockwaveDelaySeconds" type="Time" default="0s"/>
+				<xs:attribute name="Suppression" type="SageReal" default="0"/>
+				<xs:attribute name="InvertShockWave" type="SageBool" default="false"/>
+				<xs:attribute name="FlipDirection" type="SageBool" default="false"/>
+				<xs:attribute name="OnlyWhenJustDied" type="SageBool" default="false"/>
+				<xs:attribute name="ShockWaveClearRadius" type="SageBool" default="false"/>
+				<xs:attribute name="HeroResist" type="SageReal" default="0"/>
+				<xs:attribute name="ShockWaveClearWaveMult" type="SageReal" default="2"/>
+				<xs:attribute name="ShockWaveClearFlingHeight" type="SageReal" default="100"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SpecialPowerNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="SpecialPowerTemplate" type="SpecialPowerTemplateRef" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AttributeModifierNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="AttributeModifierName" type="AttributeModifierRef" />
+				<xs:attribute name="AttributeModifierOwnerName" type="AttributeModifierRef" />
+				<xs:attribute name="DamageFXType" type="DamageFXType" />
+				<xs:attribute name="Radius" type="SageReal" default="0.0"/>
+				<xs:attribute name="DamageArc" type="Angle" default="360d" />
+				<xs:attribute name="AntiCategories" type="AttributeModifierCategoryBitFlags" />
+				<xs:attribute name="AntiFX" type="FXListRef" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DamageContainedNuggetType">
+		<xs:complexContent>
+			<xs:extension base="DamageNuggetType">
+				<xs:sequence>
+					<xs:element name="DamageObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="MaxUnitsToDamage" type="SageInt" default="100" />
+				<xs:attribute name="WindowBlastFX" type="FXListRef" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="LuaEventNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence> </xs:sequence>
+				<xs:attribute name="EventName" type="xs:string" />
+				<xs:attribute name="Radius" type="SageReal" default="0"/>
+				<xs:attribute name="SendToEnemies" type="SageBool" default="false"/>
+				<xs:attribute name="SendToAllies" type="SageBool" default="false"/>
+				<xs:attribute name="SendToNeutral" type="SageBool" default="false"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="LineDamageNuggetType">
+		<xs:complexContent>
+			<xs:extension base="DamageNuggetType">
+				<xs:sequence> </xs:sequence>
+				<xs:attribute name="OffsetAngle" type="Angle" default="0d"/>
+				<xs:attribute name="LineWidth" type="SageReal" default="0"/>
+				<xs:attribute name="LineLengthLeadIn" type="SageReal" default="0"/>
+				<xs:attribute name="LineLengthLeadOut" type="SageReal" default="0"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SeedTiberiumNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponOCLNuggetType">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="FieldAmount" type="SageReal" default="0"/>
+				<xs:attribute name="SpawnedInFieldBonus" type="SageReal" default="0"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ScatterProjectileNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="ScatterMin" type="SageReal" default="0"/>
+				<xs:attribute name="ScatterMax" type="SageReal" default="0"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ScatterRadiusType">
+		<xs:sequence>
+			<xs:element
+				name="Filter" 
+				type="ObjectFilter" 
+				minOccurs="1" 
+				maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="Radius" type="SageReal" default="0.0"/>
+	</xs:complexType>
+	
+	<xs:complexType name="ContainedObjectAttackNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+  <xs:complexType name="CrushTiberiumNuggetType">
+    <xs:complexContent>
+      <xs:extension base="WeaponEffectNugget">
+        <xs:sequence/>
+        <xs:attribute name="DamageFXType" type="DamageFXType" />
+        <xs:attribute name="Radius" type="SageReal" default="0.0"/>
+        <xs:attribute name="DamageArc" type="Angle" default="360d" />
+        <xs:attribute name="ProductionModifer" type="Percentage" default="100"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+	<xs:complexType name="WeaponTemplateNuggets">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element 
+				name="DamageNugget"
+				type="DamageNuggetType"
+				balance:category="DamageNugget" 
+			/>
+			<xs:element 
+				name="DamageAndSpawnNugget"
+				type="DamageAndSpawnNuggetType"
+				balance:category="DamageAndSpawnNugget" 
+			/>
+			<xs:element 
+				name="DamageFieldNugget"
+				type="DamageFieldNuggetType"
+			/>
+			<xs:element 
+				name="ProjectileNugget"
+				type="ProjectileNuggetType"
+				balance:category="ProjectileNugget" 
+			/>
+			<xs:element 
+				name="SuppressionNugget"
+				type="SuppressionNuggetType"
+				balance:category="SuppressionNugget" 
+			/>
+			<xs:element 
+				name="WeaponOCLNugget"
+				type="WeaponOCLNuggetType"
+			/>
+			<xs:element 
+				name="ActivateLaserNugget"
+				type="ActivateLaserNuggetType"
+			/>
+            <xs:element 
+				name="ActivateStreamNugget"
+				type="ActivateStreamNuggetType"
+			/>
+            <xs:element
+				name="ActivateLinearDamageNugget"
+				type="ActivateLinearDamageNuggetType"
+			/>
+			<xs:element 
+				name="SlavesAttackNugget"
+				type="SlavesAttackNuggetType"
+			/>
+			<xs:element 
+				name="MetaImpactNugget"
+				type="MetaImpactNuggetType"
+			/>
+			<xs:element 
+				name="SpecialPowerNugget"
+				type="SpecialPowerNuggetType"
+			/>
+			<xs:element 
+				name="AttributeModifierNugget"
+				type="AttributeModifierNuggetType"
+			/>
+			<xs:element 
+				name="DamageContainedNugget"
+				type="DamageContainedNuggetType"
+			/>
+			<xs:element 
+				name="LuaEventNugget"
+				type="LuaEventNuggetType"
+			/>
+			<xs:element 
+				name="LineDamageNugget"
+				type="LineDamageNuggetType"
+			/>
+			<xs:element 
+				name="SeedTiberiumNugget"
+				type="SeedTiberiumNuggetType"
+			/>
+			<xs:element 
+				name="FireLogicNugget"
+				type="FireLogicNuggetType"
+			/>
+			<xs:element 
+				name="ParalyzeNugget"
+				type="ParalyzeNuggetType"
+			/>
+			<xs:element 
+				name="InformationWarfareNugget"
+				type="InformationWarfareNuggetType"
+			/>
+			<xs:element 
+				name="SpendStolenTiberiumNugget"
+				type="SpendStolenTiberiumNuggetType"
+			/>
+			<xs:element 
+				name="ReportWeaponFiredStatNugget"
+				type="ReportWeaponFiredStatNuggetType"
+			/>
+			
+			<xs:element 
+				name="ScatterProjectileNugget"
+				type="ScatterProjectileNuggetType"
+			/>
+			<xs:element 
+				name="FireOnObjectsNugget"
+				type="FireOnObjectsNuggetType"
+			/>
+			<xs:element 
+				name="TintObjectsNugget"
+				type="TintObjectsNuggetType"
+			/>
+			<xs:element
+				name="ContainedObjectAttackNugget"
+				type="ContainedObjectAttackNuggetType"
+			/>
+			<xs:element
+				name="MetaGameOperationNugget"
+				type="MetaGameOperationNuggetType"
+			/>
+			<xs:element
+				name="DOTNugget"
+				type="DOTNuggetType"
+			/>
+      <xs:element
+        name="CrushTiberiumNugget"
+        type="CrushTiberiumNuggetType"
+    />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="WeaponTemplate"
+									xas:runtimeWrapper="::WeaponTemplate">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="OverrideVoiceAttackSound" 
+										  type="SoundOrEvaEvent" 
+										  minOccurs="0"
+										  maxOccurs="1" />
+					<xs:element name="OverrideVoiceEnterStateAttackSound" 
+										  type="SoundOrEvaEvent" 
+										  minOccurs="0"
+										  maxOccurs="1" />
+					<xs:element name="PreAttackDelay"
+													  type="RangeDuration"
+													  minOccurs="0"
+													  maxOccurs="1" 
+													  balance:category="PreAttackDelay" />
+					<xs:element name="FiringDuration"
+													  type="RangeDuration"
+													  minOccurs="0"
+													  maxOccurs="1" 
+													  balance:category="FiringDuration" />
+					<xs:element name="CoolDownDelayBetweenShots"
+													  type="RangeDuration"
+													  minOccurs="0"
+													  maxOccurs="1" 
+													  balance:category="CoolDownDelayBetweenShots" />
+					<xs:element name="ClipReloadTime"
+											type="RangeDuration"
+											minOccurs="0"
+											maxOccurs="1" 
+											balance:category="ClipReloadTime" />
+
+					<xs:element name="ScatterTarget"
+											type="Coord2D"
+											minOccurs="0"
+											maxOccurs="1" />
+					<xs:element name="LinearTarget"
+											type="LinearTargetType"
+											minOccurs="0"
+											maxOccurs="1" />
+
+					<xs:element name="Nuggets"
+											type="WeaponTemplateNuggets"
+											minOccurs="0"
+											maxOccurs="1"
+											xas:byValue="true" 
+											balance:category="Nuggets" />
+
+					<xs:element name="SurpriseAttackObjectFilter" 
+											type="ObjectFilter" 
+											minOccurs="0" 
+											maxOccurs="1" />
+
+					<xs:element name="CombinedAttackObjectFilter" 
+											type="ObjectFilter" 
+											minOccurs="0" 
+											maxOccurs="1" />
+					
+					<xs:element name="HitStoredObjectFilter"
+											type="ObjectFilter"
+											minOccurs="0" 
+											maxOccurs="1" />
+					<xs:element
+						name="ScatterRadiusVsType" 
+						type="ScatterRadiusType" 
+						minOccurs="0" 
+						maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Name" type="xs:string" />
+				<xs:attribute name="AttackRange" balance:field="AttackRange" type="SageReal" default="0"/>
+				<xs:attribute name="MinimumAttackRange" type="SageReal" default="0"/>
+				<xs:attribute name="RangeBonusMinHeight" type="SageReal" default="0"/>
+				<xs:attribute name="RangeBonus" type="SageReal" default="0"/>
+				<xs:attribute name="RangeBonusPerFoot" type="SageReal" default="0"/>
+				<xs:attribute name="RequestAssistRange" type="SageReal" default="0"/>
+				<xs:attribute name="AcceptableAimDelta" type="Angle" default="0d"/>
+				<xs:attribute name="AimDirection" type="Angle" default="0d"/>
+				<xs:attribute name="ScatterRadius" balance:field="ScatterRadius" type="SageReal" default="0"/>
+				<xs:attribute name="ScatterLength" type="SageReal" default="0"/>
+				<xs:attribute name="ScatterTargetScalar" type="SageReal" default="0"/>
+				<xs:attribute name="ScatterIndependently" type="SageBool" default="false" />
+				<xs:attribute name="DisableScatterForTargetsOnWall" type="SageBool" default="false" />
+				<xs:attribute name="WeaponSpeed" balance:field="WeaponSpeed" type="SageReal" default="99999.0"/>
+				<xs:attribute name="MinWeaponSpeed" type="SageReal" default="99999.0"/>
+				<xs:attribute name="MaxWeaponSpeed" type="SageReal" default="99999.0"/>
+				<xs:attribute name="ScaleWeaponSpeed" type="SageBool" default="false" />
+				<xs:attribute name="CanBeDodged" type="SageBool" default="false" />
+				<xs:attribute name="IdleAfterFiringDelaySeconds" type="Time" default="-1s" />
+				<xs:attribute name="HoldAfterFiringDelaySeconds" type="Time"  default="0s" />
+				<xs:attribute name="HoldDuringReload" type="SageBool" default="false" />
+				<xs:attribute name="CanFireWhileMoving" balance:field="CanFireWhileMoving" type="SageBool" default="false" />
+				<xs:attribute name="CanFireWhileCharging" type="SageBool" default="false" />
+				<xs:attribute name="WeaponRecoil" balance:field="WeaponRecoil" type="Angle" default="0d"/>
+				<xs:attribute name="MinTargetPitch" balance:field="MinTargetPitch" type="Angle" default="-180d" />
+				<xs:attribute name="MaxTargetPitch" balance:field="MaxTargetPitch" type="Angle" default="180d" />
+				<xs:attribute name="PreferredTargetBone" type="xs:string" />
+				<xs:attribute name="FireSound" type="AudioEventInfoRef" use="optional" /><!-- Triggered once per shot -->
+				<xs:attribute name="FireSoundPerClip" type="AudioEventInfoRef" use="optional" /><!-- Triggered once per clip -->
+				<xs:attribute name="FiringLoopSound" type="AudioEventInfoRef" use="optional" /><!-- Played in loop entire time weapon is firing -->
+				<xs:attribute name="FiringLoopSoundContinuesDuringReload" type="SageBool" default="true" />
+				<xs:attribute name="FiringLoopSoundPlaysOnlyForAttackPosition" type="SageBool" default="false" /> <!-- Hack to deal with force-attack ground for FiringAndAimingLoopSound weapons  -->
+				<xs:attribute name="FiringAndAimingLoopSound" type="AudioEventInfoRef" use="optional" /> <!-- Keeps playing even when unit must stop and turn to reacquire target. DOESN'T WORK FOR FORCE-ATTACK GROUND. -->
+				<xs:attribute name="FireFX" type="FXListRef" />
+				<xs:attribute name="FireVeteranFX" type="FXListRef" />
+				<xs:attribute name="FireFlankFX" type="FXListRef" />
+				<xs:attribute name="PreAttackFX" type="FXListRef" />
+
+				<!-- todo ini2xml
+						{ "FireFX",							parseAllVetLevelsFXList,		NULL,	offsetof(WeaponTemplate, m_fireFXs) },
+						{ "FireFlankFX",					iniParseFXList,					NULL,	offsetof(WeaponTemplate, m_fireFlankFX) },
+						{ "PreAttackFX",					parseAllVetLevelsFXList,		NULL,	offsetof(WeaponTemplate, m_preAttackFXs) },
+						{ "ProjectileExhaust",				parseAllVetLevelsPSys,			NULL,	offsetof(WeaponTemplate, m_projectileExhausts) },
+						{ "VeterancyFireFX",				parsePerVetLevelFXList,			NULL,	offsetof(WeaponTemplate, m_fireFXs) },
+						{ "VeterancyProjectileExhaust",		parsePerVetLevelPSys,			NULL,	offsetof(WeaponTemplate, m_projectileExhausts) },
+						{ "ProjectileFilterInContainer",	ObjectFilter::iniParseObjectFilter,	NULL,	offsetof(WeaponTemplate, m_projectileFilterInContainer) },
+				-->
+				<xs:attribute name="ClipSize" balance:field="ClipSize" type="SageInt" default="0" />
+				<xs:attribute name="ContinuousFireOne" type="SageInt" default="99999"/>
+				<xs:attribute name="ContinuousFireTwo" type="SageInt" default="99999"/>
+				<xs:attribute name="ContinuousFireCoastSeconds" type="Time" default="0s" />
+				<xs:attribute name="AutoReloadWhenIdleSeconds" type="Time"  default="0s" />
+				<xs:attribute name="ShotsPerBarrel" balance:field="ShotsPerBarrel" type="SageInt" default="0"/>
+				<xs:attribute name="DamageDealtAtSelfPosition" type="SageBool" default="false" />
+
+				<xs:attribute name="RequiredFiringObjectStatus" type="ObjectStatusBitFlags" />
+				<xs:attribute name="ForbiddenFiringObjectStatus" type="ObjectStatusBitFlags" />
+				<xs:attribute name="CheckStatusFlagsInRangeChecks" type="SageBool" default="true" />
+				
+				<xs:attribute name="ProjectileSelf" type="SageBool" default="false" />
+				<xs:attribute name="MeleeWeapon" type="SageBool" default="false" />
+				<xs:attribute name="ChaseWeapon" type="SageBool" default="false" />
+				<xs:attribute name="LeechRangeWeapon" type="SageBool" default="false" />
+				<xs:attribute name="HitStoredTarget" type="SageBool" default="false" />
+				<xs:attribute name="CapableOfFollowingWaypoints" type="SageBool" default="false" />
+				<xs:attribute name="ShowsAmmoPips" type="SageBool" default="false" />
+				<xs:attribute name="AllowAttackGarrisonedBldgs" type="SageBool" default="false" />
+				<xs:attribute name="PlayFXWhenStealthed" type="SageBool" default="false" />
+				<xs:attribute name="ContinueAttackRange" type="SageReal"  default="0" />
+				<xs:attribute name="SuspendFXDelaySeconds" type="Time" default="0s" />
+				<xs:attribute name="IgnoreLinearFirstTarget" type="SageBool" default="false" />
+				<xs:attribute name="ForceDisplayPercentReady" type="SageBool" default="false" />
+				<xs:attribute name="IsAimingWeapon" type="SageBool" default="false" />
+				<xs:attribute name="NoVictimNeeded" type="SageBool" default="false" />
+				<xs:attribute name="RotatingTurret" balance:field="RotatingTurret" type="SageBool" default="false" />
+				<xs:attribute name="HitPercentage" type="Percentage" default="100%"/>
+				<xs:attribute name="HitPassengerPercentage" type="Percentage" default="100%" />
+				<xs:attribute name="PassengerProportionalAttack" type="SageBool" default="false" />
+				<!-- The HealthProportionalResolution attribute will match damge to the percentage of health (if non zero) i.e. the value
+				is set to 4 - (the max health will be divided by this number to get the resolution), and the source has 80% health, the 
+				damage will be 80%. Some more examples:
+				value:	health:	actual damage:
+				4		70%		60%
+				4		10%		20%
+				2		40%		50%
+				-->
+				<xs:attribute name="HealthProportionalResolution" type="SageReal" default="0" />
+				<xs:attribute name="MaxAttackPassengers" type="SageInt" />
+				<xs:attribute name="FinishAttackOnceStarted" type="SageBool" default="true" />
+				<xs:attribute name="RestrictedHeightRange" type="SageReal" default="0.0"/>
+				<xs:attribute name="CannotTargetCastleVictims" type="SageBool" default="false" />
+				<xs:attribute name="RequireFollowThru" type="SageBool" default="false" />
+				<xs:attribute name="ShareTimers" type="SageBool" default="false" />
+				<xs:attribute name="ShouldPlayUnderAttackEvaEvent" type="SageBool" default="true" />
+				<xs:attribute name="InstantLoadClipOnActivate" type="SageBool" default="false" />
+				<xs:attribute name="Flags" type="WeaponFlagsBitFlags" default="NONE" />
+				<xs:attribute name="LockWhenUsing" type="SageBool" default="false" />
+				<xs:attribute name="BombardType" type="SageBool" default="false" />
+				<xs:attribute name="UseInnateAttributes" type="SageBool" default="false" />
+				<xs:attribute name="PreAttackType" balance:field="PreAttackType" type="WeaponPrefireType" default="PER_SHOT"/>
+				<xs:attribute name="ReAcquireDetailType" type="WeaponReAcquireDetailType" default="PER_SHOT"/>
+				<xs:attribute name="AutoReloadsClip" type="WeaponReloadType" default="AUTO"/>
+				<xs:attribute name="SingleAmmoReloadedNotFullSound" type="AudioEventInfoRef" default="" /> <!-- Played when a single bullet/missile/etc is loaded. Does NOT play if the clip is now full. Only really works for WeaponReloadType = RETURN_TO_BASE (e.g. airplanes); everything else loads an entire clip at once -->
+				<xs:attribute name="ClipReloadedSound" type="AudioEventInfoRef" default="" /> <!-- Played when the clip goes to completely full. -->
+				<xs:attribute name="RadiusDamageAffects" type="WeaponAffectsBitFlags" default="ALLIES ENEMIES NEUTRALS"/>
+				<xs:attribute name="FXTrigger" type="xs:string" />
+				<xs:attribute name="ProjectileCollidesWith" type="WeaponCollideBitFlags" default="STRUCTURES"/>
+				<xs:attribute name="AntiMask" type="WeaponAntiBitFlags" default="ANTI_GROUND" />
+				<xs:attribute name="StopFiringOnCanBeInvisible" type="SageBool" default="false" />
+				<xs:attribute name="ProjectileStreamName" type="GameObjectWeakRef" />
+				<xs:attribute name="ContactWeapon" type="SageBool" default="false"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!--
+	<xs:simpleType	
+		name="AudioViewType"
+		xas:useEnumPrefix="true"
+		xas:enumPrefix="AUDIO_VIEW_TYPE">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TACTICAL" />
+			<xs:enumeration value="WORLD" />
+			<xs:enumeration value="SHELL" />			
+			<xs:enumeration value="ZERO" xas:forceValue="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+	-->
+
+	<xs:complexType name="MicrophoneSettings" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="MicrophonePreferredFractionCameraToGround" type="Percentage" default="86" />
+				<!-- Yes, we actually have TWO microphone positions. One is used in volume calculations and one is used
+				     in surround-sound panning calculations. This allows us to get decent volume on stuff at the top of
+						 the screen while not throwing everything in the middle of the screen into the rear speakers -->
+				<xs:attribute name="VolumeMicrophonePullTowardsTerrainLookAtPoint" type="Percentage" default="60" />
+				<xs:attribute name="PanningMicrophonePullTowardsTerrainLookAtPoint" type="Percentage" default="60" />
+				<xs:attribute name="MicrophoneMinDistanceToCamera" type="SageReal" default="100" />
+				<xs:attribute name="MicrophoneMaxDistanceToCamera" type="SageReal" default="300" />
+				<xs:attribute name="ZoomMinDistance" type="SageReal" default="130" />
+				<xs:attribute name="ZoomMaxDistance" type="SageReal" default="425" />
+				<xs:attribute name="ZoomSoundVolumePercentageAmount" type="Percentage" default="20" />
+				<xs:attribute name="ZoomFadeDistanceForMaxEffect" type="SageReal" default="200" />
+				<xs:attribute name="ZoomFadeZeroEffectEdgeLength" type="SageReal" default="260" />
+				<xs:attribute name="ZoomFadeFullEffectEdgeLength" type="SageReal" default="135" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="VolumeCompressionSettings">
+		<xs:sequence />
+		<xs:attribute name="Threshold" type="SageReal" default="20" />
+		<xs:attribute name="Ratio" type="SageReal" default="10" />
+		<xs:attribute name="AttackTime" type="Time" default="100ms" />
+		<xs:attribute name="ReleaseTime" type="Time" default="500ms" />
+		<xs:attribute name="AppliesEquallyToAllChannels" type="SageBool" default="true" />
+	</xs:complexType>
+
+	<xs:complexType name="AudioSettings" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="AutomaticSubtitleWindowColor" type="RGBAColor"/>
+					<xs:element name="AutomaticSubtitleTextColor" type="RGBAColor"/>
+					<xs:element name="VolumeSliderMultiplierForMovie" type="AudioVolumeSliderMultiplier" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="TacticalMicSettings" type="MicrophoneSettings" minOccurs="1" maxOccurs="1" />
+					<xs:element name="LivingWorldMicSettings" type="MicrophoneSettings" minOccurs="1" maxOccurs="1" />
+					<xs:element name="ShellMicSettings" type="MicrophoneSettings" minOccurs="1" maxOccurs="1" />
+					<xs:element name="VolumeCompressorSettings" type="VolumeCompressionSettings" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+				
+							  
+				<!-- Ooh, deep technical stuff. Scary scary. Only engineers training in the ancient art of audio programming should release the 
+				     fivefold seals on these attributes, yada yada yada -->
+				<xs:attribute name="StreamBufferSizePerChannel" type="SageInt" default="65536" />
+				<xs:attribute name="MaxRequestsPerStream" type="SageInt" default="4" />
+				<xs:attribute name="ForceResetTime" type="Time" default="0s" />
+				<xs:attribute name="EmergencyResetTime" type="Time" default="0s" />
+				<xs:attribute name="SuppressOcclusion" type="SageBool" default="false" />
+				<xs:attribute name="MinOcclusion" type="Percentage" default="0" />
+				<xs:attribute name="DelayPriorToPlayingToReadSoundFile" type="Time" default="1s" />
+				<xs:attribute name="ReadAheadTime" type="Time" default="3s" />
+				<xs:attribute name="QueueAheadTime" type="Time" default=".5s" />
+				<xs:attribute name="LongTime" type="Time" default="60s" />	<!-- How long we guesstimate "long" things will take, particularly map load screens. Should be really big; won't hurt much if its 'too big' -->
+				<xs:attribute name="AudioFootprintInBytes" type="SageUnsignedInt" default="4194304" />
+				<xs:attribute name="DontLoadThirdVariationWhenFileReadQueueIsLongerThan" type="SageUnsignedInt" default="50" />  <!-- Sounds which already have 2 variations in memory will not load a third variation when the number of pending reads is greater than this number -->
+				<xs:attribute name="DontLoadSecondVariationWhenFileReadQueueIsLongerThan" type="SageUnsignedInt" default="100" />				<!-- Sounds which already have any variation in memory will not load a second variation when the number of pending reads is greater than this number -->
+				<xs:attribute name="DontLoadForLowPrioritySoundsWhenFileReadQueueIsLongerThan" type="SageUnsignedInt" default="100" />				<!-- LOW or LOWEST priority one-shot sounds which don't have assets in memory will just be dropped -->
+				<xs:attribute name="WhatIsLowPriorityForDontLoadForLowPrioritySoundsWhenFileReadQueueIsLongerThan" type="AudioPriority" default="LOW" /> <!-- The priority of sounds at or below which DontLoadForLowPrioritySoundsWhenFileReadQueueIsLongerThan will kill the sound -->
+				<xs:attribute name="VolumeToGainConversionFactor" type="SageReal" default="1.66667" />
+
+				<!-- Controls the behavior of the main audio engine. This is the stuff that can (and should) be set by sound designers; these
+				     really control the sound of the game. --> 
+				<xs:attribute name="DefaultSoundVolume" type="Percentage" default="100"/>
+				<xs:attribute name="DefaultVoiceVolume" type="Percentage" default="100"/>
+				<xs:attribute name="DefaultMusicVolume" type="Percentage" default="100"/>
+				<xs:attribute name="DefaultMovieVolume" type="Percentage" default="100"/>
+				<xs:attribute name="DefaultAmbientVolume" type="Percentage" default="100"/>
+				<xs:attribute name="AutomaticSubtitleDuration" type="Time" default="8s" />
+				<xs:attribute name="AutomaticSubtitleLines" type="SageInt" default="8" />
+				<xs:attribute name="PanRadiusScaleValue" type="SageReal" default="1.0" />
+				<xs:attribute name="PanSize" type="SageReal" default="1.0" />
+				<xs:attribute name="MinSampleVolume" type="Percentage" default="0.01" />
+				<xs:attribute name="PositionDeltaForReverbCheck" type="SageReal" default="10.0" />
+				<xs:attribute name="TimeToFadeAudio" type="Time" default="1s" />
+				<xs:attribute name="AmbientStreamHysteresisVolume" type="SageInt" default="5" />
+				<xs:attribute name="VolumeMultiplierFor2DSounds" type="Percentage" default="100%" />
+				<xs:attribute name="VolumeMultiplierFor3DSounds" type="Percentage" default="100%" />
+				
+
+				<!-- Stuff that controls the sound playing of other parts of the engine, outside the central audio engine. Also good for
+				     sound designers to muck with -->
+				<xs:attribute name="VoiceMoveToCampMaxCampnessAtStartPoint" type="SageUnsignedInt" default="0"/>
+				<xs:attribute name="VoiceMoveToCampMinCampnessAtEndPoint" type="SageUnsignedInt" default="5"/>
+				<xs:attribute name="MinDelayBetweenEnterStateVoice" type="Time" default="5s"/>
+				<xs:attribute name="TimeSinceLastAttackForVoiceRetreatToCastle" type="Time" default="3s" />
+				<xs:attribute name="DistanceToLookForEnemiesForVoiceRetreatToCastle" type="SageReal" default="500" />
+				<xs:attribute name="PostPostGameMusicWait" type="Time" default="10s" />							
+				<!-- For the "Enemy Unit Sighted"/"Enemy Structure Sighted" Eva events: 
+				     do we require a unit near the sighted enemy to play the event? True produces the B4MEI/II behavior, 
+						 where the Eva events were played more 'in the world' and it seemed weird to have the voice come from
+						 an enemy field; so we required some of our units to be nearby, even if that meant we occassionally 
+						 missed an event (e.g. if our ally saw the enemy first, or we were using a power like the Palantir.)
+						 False produces the Generals/CnC3 behavior, where the EVA voice is more disembodied, 'in the ear',
+						 so it doesn't matter if there are any of our own units around -->
+				 <xs:attribute name="PlayEnemySightedEventsOnlyFromNearbyUnits" type="SageBool" default="false" />
+				<!-- Captured Units get their voice priority adjusted because we do not want them to sound louder then 'owned' units-->
+				<xs:attribute name="CapturedUnitsVoicePriorityOffset" type="SageInt" default="0" />
+				<!-- Amount that we boost the voice priority of the type of unit that is currently selected in the UI 
+						 (The 'subselection', in RA3 parlance - the unit whose portrait we see and whose powers we can select -->
+				<xs:attribute name="UISelectionVoicePriorityOffset" type="SageInt" default="0" />
+				
+				<!-- When the user rapidly adds units to his current selection, the selection voice will not play more rapidly 
+						 more often that this. Only applies to ADDING units to the selection -->
+				<xs:attribute name="AddToSelectionVoiceTimeout" type="Time" default="0s" />
+			
+				<!-- Used by Audio Gate Expansion whereas sounds fade out/up when they exceed a threshold -->
+				<xs:attribute name="MinVolumeBeforeFade" type="Percentage" default="10" />
+				<xs:attribute name="MaxVolumeBeforeFade" type="Percentage" default="20" />
+				
+				<!-- Used by our Pathfinder Music Implementation -->
+				<xs:attribute name="PathMusicBufferTime" type="Time" default="1.5s" />
+				<xs:attribute name="PathMusicLatencyMilisec" type="SageInt" default="500" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

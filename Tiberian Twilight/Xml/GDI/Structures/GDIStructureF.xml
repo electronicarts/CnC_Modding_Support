@@ -1,0 +1,813 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	
+	<!-- GDI Structure F / GDI Directional Rocket T2 / Falcon MLRS FalconMLRS -->
+	<!-- USER_1: Activated for barrage ability (1.0s)-->
+	<Includes>
+		 <!-- Art Includes -->
+		<Include type="all"	source="ART:GSL_StructureF_SKN.w3x" />
+		<Include type="all"	source="ART:GSL_StructureF_AIDA.w3x" />
+		<Include type="all"	source="ART:GSL_StructureF_ATKB.w3x" />
+		<Include type="all"	source="ART:GSL_StructureF_BLDA.w3x" />
+		<Include type="all"	source="ART:GSL_StructureF_DMG.xml" />
+
+		<Include type="all" source="ART:FXObeliskLaser.xml" />
+		<Include type="all" source="ART:FXGradientCookie.xml" />
+
+		<!-- Data Includes -->
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalDAta/Weapon.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:GDI/Props/GDIStructureFProps.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+		
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+	</Includes>
+	<Defines>
+		<Define name="GDISTRUCTUREF_ROCKET_BARRAGE_RADIUS" value="100.0" />
+		<Define name="GDISTRUCTUREF_ATTACK_RANGE" value="425.0" />
+		<Define name="GDISTRUCTUREF_ASSIST_TARGET_RANGE" value="=($GDISTRUCTUREF_ATTACK_RANGE * 2)"/>
+	</Defines>
+
+	<GameObject
+		id="GDIStructureF"
+		inheritFrom="BaseDefensiveStructure"
+		HealthBoxHeightOffset="36"
+		HealthBar="Structure"
+		SubGroupPriority="421"
+		SelectPortrait="Portrait_GDI_Structure_F_tech1"
+		ButtonImage="Btn_GDI_Structure_F_tech1"
+		Side="GDI"
+		ParticipationValue="=$GDISTRUCTUREF_PARTICIPATION_VALUE"
+		TransportSlotCount="0"
+		BuildTime="20.0"
+		EnergyProduction="=$GDI_STRUCTURE_F_COMMANDPOINT_COST"
+		CommandSet="GDIStructureFCommandSet"
+		KindOf="+CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING +ENERGY_CHANGES_ON_UPGRADE"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		EditorName="GDI_D2_Struct_Rocket(Falcon MLRS)"
+		EditorSorting="STRUCTURE"
+		Description="Desc:GDIStructureF"
+		TypeDescription="Type:GDIStructureF"
+		WeaponCategory="MISSILE">
+
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIStructureF</DisplayName>
+
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX"/>
+
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="Turret Pitch FX_Weapon01 FX_Weapon02 FX_Weapon03 FX_Weapon04 FX_Weapon05 FX_Weapon06 FX_Weapon07 FX_Weapon08 FX_Weapon09 FX_Weapon10
+				FX_Weapon10 FX_Weapon11 FX_Weapon12 FX_Weapon13 FX_Weapon14 FX_Weapon15 FX_Weapon16 FX_Weapon17 FX_Weapon18 FX_Weapon19 FX_Weapon20 FX_Weapon21 FX_Weapon22
+				FX_Weapon23 FX_Weapon24 FX_Weapon25 FX_Weapon26 FX_Weapon27 FX_Weapon28 FX_Weapon29 FX_Weapon30 FX_Weapon31 FX_Weapon32"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GSL_StructureF_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon" />
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretPitch="Pitch"
+						TurretID="1" />
+				</ModelConditionState>
+				<!-- BUILD UP -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="GSL_StructureF_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GSL_StructureF_SKN" />
+					<Texture
+						Original="GSL_StructureF"
+						New="GSL_StructureF_DMG"/>
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GSL_StructureF_SKN" />
+					<Texture
+						Original="GSL_StructureF"
+						New="GSL_StructureF_DMG"/>
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Animation
+						AnimationName="GSL_StructureF_AIDA"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObjectPermanently( "GSL_STRUCTUREF_UPG" )
+					</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GSL_StructureF_AIDA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="GSL_StructureF_BLDA"
+						AnimationMode="ONCE" 
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="GSL_StructureF_ATKB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="4" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="-2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="40"
+				WeaponSlotID="1"
+				LaserStateID="101">
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXObeliskLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXGradientCookie</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+		</Draws>
+
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIStructureFRocketPacks"
+						ForbiddenObjectStatus="WEAPON_UPGRADED_01" />
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIStructureFSonicRocketPacks"
+						ObjectStatus="WEAPON_UPGRADED_01" />
+					<TurretSettings
+						TurretTurnRate="150"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-10d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<AssistedTurretAITargetChooserData
+							CanPickDynamicTargets="true"
+							WeaponTemplate="GDIStructureFAssistRocketPacks"/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large_Scorched" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIArtilleryHitBIG" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.0s" />
+
+			<xi:include
+				href="DATA:Includes/GenericDefenseStructureProductionUpdate.xml" />
+			<EnergyPointsUpgrade
+				id="ModuleTag_EnergyPointsUpgrade"
+				EnergyPointsToChange="=$ENERGY_DEDUCTED_UPGRADED_STRUCTURE">
+				<TriggeredBy>UpgradeGDIStructureF</TriggeredBy>
+			</EnergyPointsUpgrade>
+
+			<AttributeModifierUpgrade
+				id="Upgrade_AttributeGDIStructureF"
+				AttributeModifier="AttributeModifier_UpgradeGDIStructureF"
+				Permanent="true">
+				<TriggeredBy>UpgradeGDIStructureF</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+      <!-- This will hide the upgraded model -->
+      <LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIStructureFFunctions"/>
+
+      <!-- This will unhide the upgraded model -->
+      <SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+        <TriggeredBy>UpgradeGDIStructureF</TriggeredBy>
+        <Nugget
+					ShowSubObjects="GSL_StructureF_UPG"
+					Upgrade="UpgradeGDIStructureF"
+          FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>          
+      </SubObjectsUpgrade>
+
+			<MaxHealthUpgrade
+				id="ModuleTag_HealthUpgrade"
+				AddMaxHealth="300"
+				ChangeType="ADD_CURRENT_HEALTH_TOO">
+				<TriggeredBy>UpgradeGDIStructureF</TriggeredBy>
+			</MaxHealthUpgrade>
+
+			<AssistedTargetingUpdate
+				id="ModuleTag_AssistedTargetingUpdate">
+				<ConnectionLineFeedback
+					Distance="=$GDISTRUCTUREF_ASSIST_TARGET_RANGE"
+					BoneSource="Pitch"
+					BoneDestination="Pitch"/>
+			</AssistedTargetingUpdate>
+
+			<LaserState
+				id="ModuleTag_LaserState"
+				LaserId="101" />
+
+			<!-- //////////////////////////////////// -->
+			<!--		The Rocket Barrage Special Power	-->
+			<SpecialPower
+				id="ModuleTag_RocketBarrage"
+				SpecialPowerTemplate="SpecialPower_GDIStructureFRocketBarrage"
+				UpdateModuleStartsAttack="true" 
+				SetModelCondition="USER_1"
+				SetModelConditionTime="1.0s"
+				CanAffectObjectFilter="GDIStructureFRocketBarrageSpecialPowerObjectFilter"/>
+			<AttackOffsetSpecialAbilityUpdate
+				id="ModuleTag_AttackOffsetSpecialAbilityUpdate"
+				SpecialPowerTemplate="SpecialPower_GDIStructureFRocketBarrage"
+				UnpackTime="0.3s"
+				UnpackSound="GuiInGame_FalconMLRS_StrF_BarrageWeaponTargetCursor"
+				PackTime="1.0s"
+				FaceTarget="true"
+				Options="BUSY_DURING_UNPACK BUSY_DURING_PACK FAIL_WITH_INVALID_APPROACH">
+
+				<OffsetDefinition
+					WeaponTemplate="GDIStructureFRocketBarrage"
+					WeaponSlotType="PRIMARY_WEAPON"
+					WeaponSlotID="1"
+					Delay="0.0s">
+					<Offset />
+				</OffsetDefinition>
+				
+				<OffsetDefinition
+					WeaponTemplate="GDIStructureFRocketBarrage"
+					WeaponSlotType="PRIMARY_WEAPON"
+					WeaponSlotID="1"
+					Delay="0.1s">
+					<Offset	x="40.0" y="40.0" />
+				</OffsetDefinition>
+
+				<OffsetDefinition
+					WeaponTemplate="GDIStructureFRocketBarrage"
+					WeaponSlotType="PRIMARY_WEAPON"
+					WeaponSlotID="1"
+					Delay="0.2s">
+					<Offset	x="-40.0" y="-40.0" />
+				</OffsetDefinition>
+				
+				<OffsetDefinition
+					WeaponTemplate="GDIStructureFRocketBarrage"
+					WeaponSlotType="PRIMARY_WEAPON"
+					WeaponSlotID="1"
+					Delay="0.3s">
+					<Offset	x="-40.0" y="40.0" />
+				</OffsetDefinition>
+
+				<OffsetDefinition
+					WeaponTemplate="GDIStructureFRocketBarrage"
+					WeaponSlotType="PRIMARY_WEAPON"
+					WeaponSlotID="1"
+					Delay="0.4s">
+					<Offset	x="40.0" y="-40.0" />
+				</OffsetDefinition>
+				
+				<OffsetDefinition
+					WeaponTemplate="GDIStructureFRocketBarrage"
+					WeaponSlotType="PRIMARY_WEAPON"
+					WeaponSlotID="1"
+					Delay="0.5s">
+					<Offset	x="80.0" y="0.0" />
+				</OffsetDefinition>
+
+				<OffsetDefinition
+					WeaponTemplate="GDIStructureFRocketBarrage"
+					WeaponSlotType="PRIMARY_WEAPON"
+					WeaponSlotID="1"
+					Delay="0.6s">
+					<Offset	x="25.0" y="76.0" />
+				</OffsetDefinition>
+				
+				<OffsetDefinition
+					WeaponTemplate="GDIStructureFRocketBarrage"
+					WeaponSlotType="PRIMARY_WEAPON"
+					WeaponSlotID="1"
+					Delay="0.7s">
+					<Offset x="-65.0" y="47.0" />
+				</OffsetDefinition>
+
+				<OffsetDefinition
+					WeaponTemplate="GDIStructureFRocketBarrage"
+					WeaponSlotType="PRIMARY_WEAPON"
+					WeaponSlotID="1"
+					Delay="0.8s">
+					<Offset	x="-65.0" y="-47.0" />
+				</OffsetDefinition>
+				
+				<OffsetDefinition
+					WeaponTemplate="GDIStructureFRocketBarrage"
+					WeaponSlotType="PRIMARY_WEAPON"
+					WeaponSlotID="1"
+					Delay="0.9s">
+					<Offset	x="25.0" y="-76.0" />
+				</OffsetDefinition>
+
+			</AttackOffsetSpecialAbilityUpdate>			
+
+			<!-- //////////////////////////////////// -->
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDIStructureF_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false" />
+			</AIUpdate>
+		</AI>
+
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="750.0" />
+		</Body>
+
+		<Geometry>
+			<PlacementShape
+				Type="BOX"
+				MajorRadius="46.0"
+				MinorRadius="40.0"
+				Height="20.0"/>
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "24.1964"
+					 MinorRadius = "35.9695"
+					 Height = "21.8734"
+					 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+						x = "4.10965"
+						y = "0.708605"
+						z = "29.2592" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="16.85"
+					y="0.0"
+					z="14.4" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-20"
+					y="0.0"
+					z="11.0" />
+			</ContactPoint>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "40.0"
+					 MinorRadius = "26.0"
+					 Height = "40">
+			</Shape>
+		</Geometry>
+
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="GuiInGame_FalconMLRS_StrF_EndImpactMS" Animation="GSL_StructureF_BLDA" Frame="20" />
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_FalconMLRS_StrF_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_StructureMedium_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			UIWeaponRangePreview="=$GDISTRUCTUREF_ATTACK_RANGE - 5.0" 
+			VisionRange="475"
+			ShroudClearingRange="500" />
+
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET					-->
+	<!-- ////////////////////////////////////////	-->
+	<LogicCommand
+		Type="OBJECT_UPGRADE"
+		id="Command_UpgradeGDIStructureF">
+		<Upgrade>UpgradeGDIStructureF</Upgrade>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo	Heuristic="STRUCTURE_UPGRADE" Distance="400.0"/>
+		</AISpecialPower>
+	</LogicCommand>
+	
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_GDIStructureFRocketBarrage">
+		<SpecialPower>SpecialPower_GDIStructureFRocketBarrage</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<SpecialPowerWeapon
+				Weapon="GDIStructureFRocketBarrage"
+				AoeAttackPowerLocationPreference="PREFER_CENTER_OF_ENEMIES"
+				TotalValueGreaterThan="2" />
+			<AISpecialPowerInfo 
+				Heuristic="AOE_ATTACK"  
+				PowerEffectRadiusOverride="60.0"/>
+			<!-- 60 handles the effective radius (~29) + the weapon damage radius (30)-->
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="GDIStructureFCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_GDIStructureFRocketBarrage</Cmd>
+		<Cmd>Command_UpgradeGDIStructureF</Cmd>
+		<Cmd>Command_SellSelf</Cmd>
+	</LogicCommandSet>
+	
+	<!-- //////////////////////////////////////	-->
+	<!--		SPECIAL POWER TEMPLATES			-->
+	<!-- //////////////////////////////////////	-->	
+	<SpecialPowerTemplate
+		id="SpecialPower_GDIStructureFRocketBarrage"
+		ReloadTime="60s"
+		Flags="LIMIT_DISTANCE"
+		TargetType="LOCATION"
+		RadiusCursorRadius="=$GDISTRUCTUREF_ROCKET_BARRAGE_RADIUS"
+		MaxCastRange="600.0" >
+	</SpecialPowerTemplate>
+
+	<!-- Object filter for the special power -->
+	<ObjectFilterAsset
+		 id="GDIStructureFRocketBarrageSpecialPowerObjectFilter">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES"
+			Include="VEHICLE INFANTRY STRUCTURE"
+			Exclude="AIRCRAFT"/>
+	</ObjectFilterAsset>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   UPGRADE TEMPLATES											-->
+	<!-- ////////////////////////////////////////	-->
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="UpgradeGDIStructureF"
+		DisplayName="UPGRADE:UpgradeGDIStructureF"
+		Description="UPGRADE:UpgradeGDIStructureF"
+		ResearchSound="Upgrade_SonicRockets"
+		BuildCost="0"
+		BuildTime="15s">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+	</UpgradeTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   ATTRIBUTE MODIFIERS										-->
+	<!-- ////////////////////////////////////////	-->
+	<AttributeModifier
+		id="AttributeModifier_UpgradeGDIStructureF"
+		Category="NONE"
+		ObjectStatusToSet="WEAPON_UPGRADED_01"
+		StartFX="FX_UpgradeGDIStructureF">
+		<Modifier Type="ARMOR" Value="100%" />
+	</AttributeModifier>
+	
+	<AttributeModifier
+		id="AttributeModifier_GDIStructureFSonicEffect"
+		Category="NONE"
+		Duration="5.0s">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:GDIStructureF" />
+		<Modifier Type="SPEED" Value="75%" />
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-25%" />
+	</AttributeModifier>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   EXPERIENCE LEVELS											-->
+	<!-- ////////////////////////////////////////	-->
+	<ExperienceLevelTemplate
+		id="GDIStructureFExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="10">
+		<Target>GDIStructureF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIStructureFExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIStructureFExperienceLevel_1"
+		RequiredExperience="20"
+		ExperienceAward="12">
+		<Target>GDIStructureF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIStructureFExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIStructureFExperienceLevel_2"
+		RequiredExperience="50"
+		ExperienceAward="14">
+		<Target>GDIStructureF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIStructureFExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIStructureFExperienceLevel_3"
+		RequiredExperience="90"
+		ExperienceAward="16">
+		<Target>GDIStructureF</Target>
+	</ExperienceLevelTemplate>
+	
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS																-->
+	<!-- ////////////////////////////////////////	-->
+	<WeaponTemplate
+		id="GDIStructureFRocketPacks"
+		inheritFrom="BaseRocketWeapon" 
+		AttackRange="=$GDISTRUCTUREF_ATTACK_RANGE"
+		RequestAssistRange="=$GDISTRUCTUREF_ASSIST_TARGET_RANGE"
+		FireFX="FX_GDIRocketMLRSFire"
+		FireStrongCounterFX="FX_GDIRocketMLRSFireVet"
+		FireSound="GDI_FalconMLRS_RocketWeaponFire"
+		ClipSize="4">
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<ClipReloadTime
+			MinSeconds="9.0s"
+			MaxSeconds="9.0s" />
+		<Nuggets>
+			<ProjectileNugget
+				id="NuggetTag_ProjectileNugget"
+				WarheadTemplate="GDIStructureFRocketWeaponWarhead"
+				ProjectileTemplate="GDIStructureFRocketWeaponProjectile">
+				<CombatChainProjectiles
+					CombatChain="STRONG"
+					ProjectileTemplate="GDIStructureFRocketWeaponProjectile_Veteran"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIStructureFRocketWeaponWarhead"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY">
+		<Nuggets>
+			<DamageNugget
+				id="NuggetTag_DamageNugget"
+				Damage="36.0"
+				Radius="10.0"
+				DamageType="ROCKET"
+				DamageFXType="GDI_MISSILE"
+				DeathType="NORMAL">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<!-- Assist Weapons -->
+	<WeaponTemplate
+		id="GDIStructureFAssistRocketPacks"
+		inheritFrom="GDIStructureFRocketPacks"
+		RequestAssistRange="0.0"
+		AttackRange="=$GDISTRUCTUREF_ASSIST_TARGET_RANGE"
+		Flags="+RELOAD_WHEN_ATTACK_STOPS"
+		PreAttackType="PER_CLIP"
+		PreAttackWeapon="GDIStructureFAssistRocketPacks_LaserPainter">
+		<PreAttackDelay
+			id="NuggetTag_PreAttackDelay"
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIStructureFAssistRocketPacks_LaserPainter"
+		AttackRange="999999.0"
+		WeaponSpeed="999999.0"
+		FireFX="FX_GDITargetingLaser_Fire"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY">
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.7s"
+				LaserId="101"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+
+	<!-- ////////////////////////////////////////	-->
+	<!--				Upgraded Sonic Weapons		-->
+	<WeaponTemplate
+		id="GDIStructureFSonicRocketPacks"
+		inheritFrom="GDIStructureFRocketPacks">
+		<Nuggets>
+			<ProjectileNugget
+				id="NuggetTag_ProjectileNugget"
+				WarheadTemplate="GDIStructureFSonicRocketWeaponWarhead"
+				ProjectileTemplate="GDIStructureFSonicRocketWeaponProjectile"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIStructureFSonicRocketWeaponWarhead"
+		inheritFrom="GDIStructureFRocketWeaponWarhead">
+		<Nuggets>
+			<AttributeModifierNugget
+				 Radius="15.0"
+				 PartitionFilterTestType="CIRCLE"
+				 AttributeModifierName="AttributeModifier_GDIStructureFSonicEffect" />
+		</Nuggets>
+	</WeaponTemplate>
+
+
+	<!-- ////////////////////////////////////////	-->
+	<!--				RocketBarrage Weapons		-->
+
+	<WeaponTemplate
+		id="GDIStructureFRocketBarrage"
+		inheritFrom="BaseRocketWeapon"
+		AttackRange="600.0"
+		MinimumAttackRange="100"
+		ClipSize="1"
+		RequiredAntiMask="ANTI_GROUND"
+		FireFX="FX_GDIRocketMLRSFire_WithAudio"
+		RevealShroudOnFire="true">
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="GDIStructureFRocketBarrageRocketWarhead"
+				ProjectileTemplate="GDIStructureFRocketBarrageRocketProjectile">
+			</ProjectileNugget>
+
+			<InformTargetNugget />
+		</Nuggets>
+		<!-- Accuracy is not an issue since the weapon is a dumb fire type -->
+		<AccuracyParameters
+			id="RocketAccuracyParameters"
+			xai:joinAction="Remove" />
+	</WeaponTemplate>
+
+	<!-- this is the main single weapon for the arrow mirv. -->
+	<WeaponTemplate
+		id="GDIStructureFRocketBarrageRocketWarhead"
+		RequiredAntiMask="ANTI_GROUND">
+		<Nuggets>
+			<DamageNugget
+				id="DefaultDamageNugget"
+				Damage="15.0"
+				DamageType="ROCKET"
+				DamageFXType="GDI_MISSILE"
+				DeathType="NORMAL"
+				Radius="30.0"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- OCL -->
+	<ObjectCreationList
+		id="GDIStructureF_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+</AssetDeclaration>

@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset">
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+
+	<!-- GDI Redeployment -->
+	<SpecialPowerTemplate
+		id="SpecialPower_Redeployment"
+		ReloadTime="30s"
+		ForbiddenObjectRange="=$GDI_REDEPLOYMENT_FORBIDDEN_OBJECT_RADIUS"
+		RadiusCursorRadius="=$GDI_REDEPLOYMENT_PLACEMENT_RADIUS"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="GDI_CrawlerDropPod_DeployCursorMS"
+		Flags="NOT_CLIFF_CELL NOT_ON_OBSTACLES NO_FORBIDDEN_OBJECTS IN_TEAM_SPAWNZONE IS_PLAYER_POWER NO_SCORING NO_TELEMETRY NO_RELOAD_TIME_DURING_MATCH_INTRO"
+		RequiredPlayerTech="PlayerTech_Redeployment">
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE NEUTRAL_TECH"
+			Relationship="ALLIES NEUTRAL SAME_PLAYER"
+		/>
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_SupportPowerBase"
+		ReloadTime="2.0s"
+		TargetType="NONE"
+		Flags="IS_PLAYER_POWER NEEDS_ENTITLEMENT"/>
+
+	<!-- the maximum threat should be no more than the max threat allowed in the threat tracker -->
+	<SpecialPowerTemplate
+		id="SpecialPower_SupportPower_Rank1"
+		inheritFrom="SpecialPower_SupportPowerBase" 
+		ThreatRequired="=$SUPPORT_POWER_THREAT_COST_1"/>
+	<SpecialPowerTemplate
+		id="SpecialPower_SupportPower_Rank2"
+		inheritFrom="SpecialPower_SupportPowerBase"
+		ThreatRequired="=$SUPPORT_POWER_THREAT_COST_2"/>
+	<SpecialPowerTemplate
+		id="SpecialPower_SupportPower_Rank3"
+		inheritFrom="SpecialPower_SupportPowerBase"
+		ThreatRequired="=$SUPPORT_POWER_THREAT_COST_3"/>
+	<SpecialPowerTemplate
+		id="SpecialPower_SupportPower_Rank4"
+		inheritFrom="SpecialPower_SupportPowerBase"
+		ThreatRequired="=$SUPPORT_POWER_THREAT_COST_4"/>
+	<SpecialPowerTemplate
+		id="SpecialPower_SupportPower_Rank5"
+		inheritFrom="SpecialPower_SupportPowerBase"
+		ThreatRequired="=$SUPPORT_POWER_THREAT_COST_5"/>
+
+	<!-- GDI Player Powers -->
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_ScoutDrone"
+		inheritFrom="SpecialPower_SupportPower_Rank1"
+		RadiusCursorRadius="300"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="GDI_Power_ReconDrone"
+		Flags="+FOGGED_SHROUDED_CELLS_OK"
+	/>
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_Restoration"
+		inheritFrom="SpecialPower_SupportPower_Rank1"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="GDI_Power_StatusRebootMS"
+		Flags="+NEEDS_OBJECT_FILTER"
+		RadiusCursorRadius="=$GDI_RESTORATION_AOE_RADIUS">
+		<ObjectFilter
+			Rule="ANY"
+			Relationship="ALLIES ENEMIES"
+			Include="INFANTRY VEHICLE AIRCRAFT">
+		</ObjectFilter>
+	</SpecialPowerTemplate>
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_RapidFire"
+		inheritFrom="SpecialPower_SupportPower_Rank1"
+		InitiateAtLocationSound="GDI_Power_Overkill"
+		TargetType="LOCATION"
+		Flags="+NEEDS_OBJECT_FILTER"
+		RadiusCursorRadius="=$GDI_RAPIDFIRE_AOE_RADIUS">
+		<ObjectFilter
+			Rule="ANY"
+			Relationship="ALLIES"
+			Include="INFANTRY VEHICLE AIRCRAFT">
+			<ExcludeThing>GDIScoutDrone</ExcludeThing>
+			<ExcludeThing>NeutralInfantryA</ExcludeThing>
+		</ObjectFilter>
+	</SpecialPowerTemplate>
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_EngineerElite"
+		inheritFrom="SpecialPower_SupportPower_Rank2"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="Gui_GDI_WarningFlareCursor"
+		ForbiddenObjectRange="50"
+		RadiusCursorRadius="50"
+		Flags="+NOT_CLIFF_CELL +NO_FORBIDDEN_OBJECTS +PATHABLE_ONLY">
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE HEAVY_UNIT CRAWLER HUSK" />
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Relationship="ENEMIES"
+			Include="INFANTRY VEHICLE AIRCRAFT" />
+	</SpecialPowerTemplate>
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_RepairZone"
+		inheritFrom="SpecialPower_SupportPower_Rank2"
+		InitiateAtLocationSound="GDI_Power_Repair"
+		TargetType="LOCATION"
+		Flags="+NEEDS_OBJECT_FILTER"
+		RadiusCursorRadius="=$GDI_REPAIRZONE_RADIUS">
+		<ObjectFilter
+			Rule="ANY"
+			Relationship="ALLIES"
+			Include="INFANTRY VEHICLE AIRCRAFT STRUCTURE HUSK">
+		</ObjectFilter>
+	</SpecialPowerTemplate>
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_EnhanceConstruction"
+		inheritFrom="SpecialPower_SupportPower_Rank2"
+		TargetType="OBJECT"
+		Flags="+NEEDS_OBJECT_FILTER" 
+		InitiateAtLocationSound="GDI_Power_EnhanceConstruction">
+		<ObjectFilter
+			Rule="NONE"
+			Relationship="ALLIES" 
+			Include="CRAWLER"/>
+	</SpecialPowerTemplate>
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_SupplyDrop"
+		inheritFrom="SpecialPower_SupportPower_Rank3"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="Gui_GDI_WarningFlareCursor"
+		RadiusCursorRadius="50"
+		ForbiddenObjectRange="50"
+		Flags="+NOT_CLIFF_CELL +NO_FORBIDDEN_OBJECTS +PATHABLE_ONLY">
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE VEHICLE INFANTRY CRAWLER UPGRADE_CRYSTAL HUSK" />
+	</SpecialPowerTemplate>
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_PersonalShields"
+		inheritFrom="SpecialPower_SupportPower_Rank3"
+		TargetType="LOCATION"
+		Flags="+NEEDS_OBJECT_FILTER"
+		RadiusCursorRadius="300">
+		<ObjectFilter
+			Rule="ANY"
+			Relationship="ALLIES"
+			Include="INFANTRY VEHICLE AIRCRAFT CRAWLER STRUCTURE"
+			StatusBitFlagsExclude="IN_STASIS"/>
+	</SpecialPowerTemplate>
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_EMPMineDrop"
+		inheritFrom="SpecialPower_SupportPower_Rank3"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="Gui_GDI_WarningFlareCursor"
+		RadiusCursorRadius="100"
+		Flags="+NOT_CLIFF_CELL +NO_FORBIDDEN_OBJECTS +PATHABLE_ONLY"
+		ForbiddenObjectRange="50">
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE VEHICLE INFANTRY CRAWLER UPGRADE_CRYSTAL HUSK"/>
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_MirrorCoat"
+		inheritFrom="SpecialPower_SupportPower_Rank4"
+		TargetType="LOCATION"
+		Flags="+NEEDS_OBJECT_FILTER"
+		InitiateAtLocationSound="GDI_Power_MirrorCoatMS"
+		RadiusCursorRadius="=$GDI_MIRRORARMOR_RADIUS"
+		ObjectFilterRef="ObjectFilterAsset_GDI_MirrorCoat">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_SonicArtillery"
+		inheritFrom="SpecialPower_SupportPower_Rank4"
+		TargetType="LOCATION"
+		InitiateSound="GDI_Power_SonicArtilleryFireMS"
+		RadiusCursorRadius="=$GDI_SONIC_ARTILLERY_RADIUS">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_MassPromotion"
+		inheritFrom="SpecialPower_SupportPower_Rank4"
+		RadiusCursorRadius="=$GDI_MASSPROMOTION_RADIUS"
+		TargetType="LOCATION"
+		Flags="+NEEDS_OBJECT_FILTER"
+		ObjectFilterRef="ObjectFilterAsset_GDI_MassPromotion">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_SeismicDisturbance"
+		inheritFrom="SpecialPower_SupportPower_Rank5"
+		RadiusCursorRadius="500"
+		TargetType="LOCATION">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_Resonance"
+		inheritFrom="SpecialPower_SupportPower_Rank5"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="GDI_Power_Resonance"
+		RadiusCursorRadius="=$GDI_RESONANCE_AOE_RADIUS"
+		Flags="+NEEDS_OBJECT_FILTER">
+		<ObjectFilter
+			Rule="ANY"
+			Relationship="ALLIES"
+			Include="INFANTRY VEHICLE AIRCRAFT CRAWLER" />
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+	
+	<SpecialPowerTemplate
+		id="SpecialPower_GDI_FirehawkStrike"
+		inheritFrom="SpecialPower_SupportPower_Rank5"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="GDI_Power_FirehawkAirstrike_FlyByMS"
+		RadiusCursorRadius="150">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<!-- Nod Player Powers -->
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_EyesOfPeople"
+		inheritFrom="SpecialPower_SupportPower_Rank1"
+		InitiateSound="NOD_Power_EyesOfThePeople_Stereo"
+		TargetType="NONE"
+	/>
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_Demoralize"
+		inheritFrom="SpecialPower_SupportPower_Rank1"
+		RadiusCursorRadius="=$NOD_DEMORALIZE_RADIUS"
+		InitiateAtLocationSound="NOD_Power_Demoralize"
+		TargetType="LOCATION"
+	/>
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_ObeliskOfLife"
+		inheritFrom="SpecialPower_SupportPower_Rank1"
+		RadiusCursorRadius="50"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="NOD_Power_ObeliskOfLife"
+		Flags="+NOT_CLIFF_CELL +NO_FORBIDDEN_OBJECTS +PATHABLE_ONLY"
+		ForbiddenObjectRange="50">
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE INFANTRY VEHICLE UPGRADE_CRYSTAL HUSK"
+			Exclude="AIRCRAFT">
+		</ForbiddenObjectFilter>		
+	</SpecialPowerTemplate>
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_CloakingField"
+		inheritFrom="SpecialPower_SupportPower_Rank2"
+		RadiusCursorRadius="300"
+		TargetType="LOCATION"
+/>
+	
+	<!-- NOTE: This radius is only for visual feedback, the actual offsets are defined in OCL_BuildNODBurrowMines -->
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_BurrowMines"
+		inheritFrom="SpecialPower_SupportPower_Rank2"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="Gui_NOD_WarningFlareCursor"
+		RadiusCursorRadius="75" 
+		Flags="+NOT_CLIFF_CELL +NO_FORBIDDEN_OBJECTS +PATHABLE_ONLY"
+		ForbiddenObjectRange="75">
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE VEHICLE INFANTRY UPGRADE_CRYSTAL HUSK"/>
+	</SpecialPowerTemplate>
+	
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_EMPCounterMeasures"
+		inheritFrom="SpecialPower_SupportPower_Rank2"
+		TargetType="NONE"
+		InitiateSound="NOD_Power_EMPCountermeasures_Quad"
+	/>
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_RadarJam"
+		inheritFrom="SpecialPower_SupportPower_Rank3"
+		InitiateSound="NOD_Power_RadarJam_Quad"
+		TargetType="NONE"
+	/>
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_DecoyArmy"
+		inheritFrom="SpecialPower_SupportPower_Rank3"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="NOD_Power_DecoyArmySelect"
+		RadiusCursorRadius="200"
+		Flags="+NEEDS_OBJECT_FILTER"
+		EvaEventToPlayWhenSelectingTarget="SelectUnit"
+		EvaEventToPlayOnInitiateOwner="SelectUnit">
+		<!-- Make sure this is the same as the filter from "ObjectFilterAsset_NOD_DecoyPower" -->
+		<ObjectFilter
+			Rule="ANY"
+			Relationship="ALLIES"
+			Include="INFANTRY VEHICLE AIRCRAFT"
+			Exclude="CRAWLER DRONE STRUCTURE"
+			StatusBitFlagsExclude="CLONED">
+		</ObjectFilter>
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_DecoyArmy_Target"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="NOD_Power_DecoyArmySpawn"
+		RadiusCursorRadius="200"
+		Flags="PATHABLE_ONLY NOT_CLIFF_CELL NO_FORBIDDEN_OBJECTS">
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE VEHICLE INFANTRY CRAWLER"/>
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_FirestormIgnition"
+		inheritFrom="SpecialPower_SupportPower_Rank3"
+		TargetType="NONE"
+		InitiateSound="NOD_Power_FirestormIgnition_Stereo"
+	/>
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_SubterraneanStrike"
+		inheritFrom="SpecialPower_SupportPower_Rank4"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="Gui_NOD_WarningFlareCursor"
+		RadiusCursorRadius="=$NOD_SUBTERRANEAN_STRIKE_RADIUS">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+	
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_Megalisk"
+		inheritFrom="SpecialPower_SupportPower_Rank4"
+		InitiateAtLocationSound="NOD_Power_MegaliskMS"
+		TargetType="LOCATION"
+		Flags="+NOT_CLIFF_CELL +NO_FORBIDDEN_OBJECTS +PATHABLE_ONLY"
+		ForbiddenObjectRange="50"
+		RadiusCursorRadius="50">
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE VEHICLE INFANTRY UPGRADE_CRYSTAL HUSK"
+			Exclude="AIRCRAFT"/>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+	
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_HackerElite"
+		inheritFrom="SpecialPower_SupportPower_Rank4"
+		TargetType="LOCATION"
+		Flags="+NOT_CLIFF_CELL +NO_FORBIDDEN_OBJECTS +PATHABLE_ONLY"
+		ForbiddenObjectRange="50"
+		RadiusCursorRadius="50">
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE VEHICLE INFANTRY UPGRADE_CRYSTAL HUSK"/>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_MarkOfKane"
+		inheritFrom="SpecialPower_SupportPower_Rank5"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="NOD_Power_MarkOfKaneMS"
+		RadiusCursorRadius="=$NOD_MARK_OF_KANE_RADIUS">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+	
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_VeinDetonation"
+		inheritFrom="SpecialPower_SupportPower_Rank5"
+		RadiusCursorRadius="200"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="Gui_NOD_WarningFlareCursor">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<!-- aka Tiberium Infusion -->
+	<SpecialPowerTemplate
+		id="SpecialPower_NOD_VoiceOfKane"
+		inheritFrom="SpecialPower_SupportPower_Rank5"
+		TargetType="NONE"
+		InitiateSound="NOD_Power_TiberiumInfusionMS">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+</AssetDeclaration>

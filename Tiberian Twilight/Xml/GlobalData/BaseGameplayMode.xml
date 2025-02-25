@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+
+	<GameplayMode id="Mode_Base">
+		<TimeRemainingEvents>
+			<Event TimeRemaining="900s" EVA="Countdown15MinsInGame" Schmeva="FifteenMinuteWarning"/>
+			<Event TimeRemaining="600s" EVA="Countdown10MinsInGame" Schmeva="TenMinuteWarning"/>
+			<Event TimeRemaining="300s" EVA="Countdown5MinsInGame" Schmeva="FiveMinuteWarning"/>
+			<Event TimeRemaining="180s" EVA="Countdown3MinsInGame" Schmeva="ThreeMinuteWarning"/>
+			<Event TimeRemaining="60s" EVA="Countdown1MinsInGame" Schmeva="OneMinuteWarning"/>
+			<Event TimeRemaining="30s" EVA="Countdown30SecsInGame" Schmeva="ThirtySecondWarning"/>
+		</TimeRemainingEvents>
+		<PointsRemainingEvents>
+			<Event PointsRemaining="500" Team="1" Type="CLOSE"/>
+			<Event PointsRemaining="500" Team="2" Type="CLOSE"/>
+			<Event PointsRemaining="200" Team="1" Type="VERYCLOSE"/>
+			<Event PointsRemaining="200" Team="2" Type="VERYCLOSE"/>
+		</PointsRemainingEvents>
+		<UnitDeathPenaltyObjectFilter
+			Rule="ANY"
+			Include="INFANTRY VEHICLE AIRCRAFT STRUCTURE"
+			StatusBitFlagsExclude="CLONED"/>
+		<CommandPointsSetting MaxPlayers="1" Points="90"/>
+		<CommandPointsSetting MaxPlayers="2" Points="80"/>
+		<CommandPointsSetting MaxPlayers="3" Points="70"/>
+		<CommandPointsSetting MaxPlayers="4" Points="60"/>
+		<CommandPointsSetting MaxPlayers="5" Points="50"/>
+		<CrystalLifterSpecialModelConditionInfo ModelCondition="USER_1" Duration="3.53s"/>
+	</GameplayMode>
+
+	<GameplayMode 
+		id="Mode_Base_Non_Coop"
+		inheritFrom="Mode_Base"
+		PlayerDropBuildSpeedModifier="-20%"
+		PlayerDropPulseUpgrade="Upgrade_DefenseClass">
+		<TeamSizeSetting StartingPlayers="1" TeamCommandPoints="90" />
+		<TeamSizeSetting StartingPlayers="2" TeamCommandPoints="160" />
+		<TeamSizeSetting StartingPlayers="3" TeamCommandPoints="210" />
+		<TeamSizeSetting StartingPlayers="4" TeamCommandPoints="240" />
+		<TeamSizeSetting StartingPlayers="5" TeamCommandPoints="250" />
+	</GameplayMode>
+
+
+	<GameplayMode id="Versus_Base" inheritFrom="Mode_Base_Non_Coop" Mode="VERSUS" AllowRespawn="false">
+	</GameplayMode>
+
+	<GameplayMode
+		id="Domination_Base"
+		inheritFrom="Mode_Base_Non_Coop" 
+		Mode="DOMINATION" 
+		AllowRespawn="true"
+		MaxRespawnCount="-1"
+		TimeLimit="3600s"
+		InitialUpgradeCrystalSpawnTime="30s"
+		InitialSuperUpgradeCrystalSpawnTime="60s"
+		UpgradeCrystalTemplate="CrystalLifter"
+		SuperUpgradeCrystalTemplate="SuperCrystalLifter"
+		UpgradeCrystalWaypointPrefix="UpgradeCrystal_"
+		SuperUpgradeCrystalWaypointPrefix="SuperUpgradeCrystal_"	
+		UpgradeCrystalSpawnTime="60s"
+		SuperUpgradeCrystalSpawnTime="120s"		
+		TotalCommandPointsToDistibute="250"
+		StartingCommandPointsPercentage="100.0%">
+		<PointInfoCapture CaptureObject="GoalStructure"/>
+		<WinCondition Points="2500" />
+		<DesperationUpgrade UpgradeToSet="Upgrade_Desperation_Boost1" Points="1500"/>
+		<DesperationUpgrade UpgradeToSet="Upgrade_Desperation_Boost2" Points="1700"/>
+		<DesperationUpgrade UpgradeToSet="Upgrade_Desperation_Boost3" Points="1900"/>
+	</GameplayMode>
+
+	<GameplayMode id="CaptureAndHold_Base" inheritFrom="Mode_Base_Non_Coop" Mode="CAPTURE_AND_HOLD" AllowRespawn="true">
+		<WinCondition Points="1500" />
+		<PointInfoCapture
+				  CaptureObject="GoalStructureWithDecal"
+				  PointsPerTick="10"
+					TickDuration="10s"
+				  CaptureScoringRadius="=$CAPTURE_AND_HOLD_SCORING_RADIUS">
+			<ContestationObjectFilter
+				Rule="ANY"
+				Include="VEHICLE INFANTRY HUGE_VEHICLE"
+				Exclude="AIRCRAFT CRAWLER MINE" />
+		</PointInfoCapture>
+	</GameplayMode>
+
+	<GameplayMode id="Monument_Base" inheritFrom="Mode_Base_Non_Coop" Mode="MONUMENT" AllowRespawn="true">
+		<PointInfoDestroy
+			Target="Monument"
+			Shield="MonumentShieldGenerator"
+			TargetHealth="10000"
+			ShieldAmount="1000"
+			ShieldRechargePerSecond="50"
+			ShieldRechargeDelay="0s"/>
+		<MonumentInformation>
+			<!-- Added better feedback via EVA event on monument -->
+			<!--<MonumentHealthEVA HealthPercent="99%" EVAAllies="MonumentUnderAttack" EVAEnemies="EnemyMonumentHealthFirstHit" />-->
+			<MonumentHealthEVA HealthPercent="90%" EVAAllies="MonumentHealthNicked" EVAEnemies="EnemyMonumentHealthNicked" />
+			<MonumentHealthEVA HealthPercent="65%" EVAAllies="MonumentHealthDamaged" EVAEnemies="EnemyMonumentHealthDamaged" />
+			<MonumentHealthEVA HealthPercent="40%" EVAAllies="MonumentHealthDangerous" EVAEnemies="EnemyMonumentHealthDangerous" />
+			<MonumentHealthEVA HealthPercent="20%" EVAAllies="MonumentHealthCritical" EVAEnemies="EnemyMonumentHealthCritical" />
+		</MonumentInformation>
+	</GameplayMode>
+
+	<GameplayMode 
+		id="COOP_Base" 
+		inheritFrom="Mode_Base" 
+		Mode="COOP" 
+		TimeLimit="0s"
+		InitialUpgradeCrystalSpawnTime="30s"
+		InitialSuperUpgradeCrystalSpawnTime="60s"
+		UpgradeCrystalTemplate="CrystalLifter"
+		SuperUpgradeCrystalTemplate="SuperCrystalLifter"
+		UpgradeCrystalWaypointPrefix="UpgradeCrystal_"
+		SuperUpgradeCrystalWaypointPrefix="SuperUpgradeCrystal_"	
+		UpgradeCrystalSpawnTime="60s"
+		SuperUpgradeCrystalSpawnTime="120s"		
+		AllowRespawn="true">
+		<PointInfoDestroy
+			Target="Monument"
+			Shield="MonumentShieldGenerator"
+			TargetHealth="10000"
+			ShieldAmount="1000"
+			ShieldRechargePerSecond="50"
+			ShieldRechargeDelay="0s"/>
+		<PointInfoCapture CaptureObject="GoalStructure"/>
+		<PointInfoCapture CaptureObject="DynamicGoalStructure"/>
+	</GameplayMode>
+
+</AssetDeclaration>

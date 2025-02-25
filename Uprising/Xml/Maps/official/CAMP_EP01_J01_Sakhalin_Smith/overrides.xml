@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags/>
+  <Includes>
+    
+    <Include type="instance" source="DATA:GlobalData/SpecialPowerTemplates.xml"/>
+    <Include type="instance" source="DATA:Soviet/Units/SovietAntiGroundAircraft.xml"/>
+    <Include type="instance" source="DATA:Japan/Units/JapanLightTransportVehicle.xml"/>
+    <Include type="instance" source="DATA:Civilian/Geneva_GE/Buildings/GE_SovietVIPBunkerSubStructure.xml"/>
+    <Include type="all" source="DATA:EP1/Includes/CampaignOverrides_EP1.xml"/>
+    <Include type="instance" source="DATA:PathMusic/StandardPathMusicGameDynamicState.xml" />
+  </Includes>
+
+  <GameObject
+		id="JapanLightTransportVehicle"
+		inheritFrom="JapanLightTransportVehicle">
+
+    <VisionInfo
+      VisionRange="490"/>
+  </GameObject>
+  
+<!-- 
+
+Removed because the audio override already contains the EngineerContain module.  See below. - Evan
+
+  <GameObject
+	  id="GE_SovietVIPBunkerSubStructure"
+      inheritFrom="GE_SovietVIPBunkerSubStructure">
+    <Behaviors>
+      <xi:include href="DATA:Includes/GenericEngineerContain.xml" />
+    </Behaviors>
+  </GameObject>
+-->  
+  <GameObject
+    id="SovietAntiGroundAircraft"
+    inheritFrom="SovietAntiGroundAircraft">
+    <Behaviors>
+      <TransportContain
+				id="ModuleTag_Contain"
+				AllowNeutralInside="true"/>
+    </Behaviors>
+    
+  </GameObject>
+  
+  <SpecialPowerTemplate
+		id="SpecialPowerJapanNavalPower"
+		Flags="IS_PLAYER_POWER"
+		TargetType="NONE"
+		ReloadTime="0s"
+		RequiredPlayerTech="PlayerTech_Japan_NavalPower">
+    <GameDependency
+			id="Japan_NavalPower_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+  </SpecialPowerTemplate>
+  <!-- no worky  		InitiateSound= "JAP_Fortify_Fleet" -->
+
+  <SpecialPowerTemplate
+		id="SpecialPowerJapanAmbush"
+		ReloadTime="210s"
+		TargetType="LOCATION"
+	  InitiateAtLocationSound="JAP_Powers_SleeperAmbush_Initiate"
+		EvaEventToPlayWhenSelectingTarget="SelectLocation"
+		RadiusCursorRadius="50"
+		Flags="PATHABLE_ONLY NOT_CLIFF_CELL IS_PLAYER_POWER NOT_IN_NANOSWARM"
+		RequiredPlayerTech="PlayerTech_Japan_Ambush">
+    <GameDependency
+			id="Japan_Ambush_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+    <!-- EvaEventToPlayOnInitiateOwner="ReinforcementsReady"  -->
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerJapanEmperorsResolve_L1"
+		ReloadTime="120s"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="JAP_EmperorsRage"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		RadiusCursorRadius="=$JAPAN_EMPERORS_RAGE_RADIUS_LEVEL_1"
+		Flags="IS_PLAYER_POWER WATER_OK IGNORE_MAP_EXTENTS NOT_IN_NANOSWARM"
+		RequiredPlayerTech="PlayerTech_Japan_EmperorsRage_Rank1">
+    <GameDependency
+			id="Japan_EmperorsResolveL1_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+    <ForbiddenPlayerTech>PlayerTech_Japan_EmperorsRage_Rank2</ForbiddenPlayerTech>
+    <ForbiddenPlayerTech>PlayerTech_Japan_EmperorsRage_Rank3</ForbiddenPlayerTech>
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerJapanEmperorsResolve_L2"
+		ReloadTime="120s"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="JAP_EmperorsResolve"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		RadiusCursorRadius="=$JAPAN_EMPERORS_RAGE_RADIUS_LEVEL_2"
+		Flags="IS_PLAYER_POWER WATER_OK IGNORE_MAP_EXTENTS NOT_IN_NANOSWARM"
+		RequiredPlayerTech="PlayerTech_Japan_EmperorsRage_Rank2">
+    <GameDependency
+			id="Japan_EmperorsResolveL2_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+    <ForbiddenPlayerTech>PlayerTech_Japan_EmperorsRage_Rank3</ForbiddenPlayerTech>
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerJapanEmperorsResolve_L3"
+		ReloadTime="120s"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="JAP_EmperorsRetribution"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		RadiusCursorRadius="=$JAPAN_EMPERORS_RAGE_RADIUS_LEVEL_3"
+		Flags="IS_PLAYER_POWER WATER_OK IGNORE_MAP_EXTENTS NOT_IN_NANOSWARM"
+		RequiredPlayerTech="PlayerTech_Japan_EmperorsRage_Rank3">
+    <GameDependency
+			id="Japan_EmperorsResolveL3_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerJapanBalloonAttack_L1"
+		ReloadTime="150s"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="JAP_BalloonBomb_CastMono"
+		RadiusCursorRadius="100"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		Flags="IS_PLAYER_POWER WATER_OK NOT_IN_NANOSWARM"
+		RequiredPlayerTech="PlayerTech_Japan_BalloonAttack_Rank1">
+    <GameDependency
+			id="Japan_BalloonAttackL1_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+    <ForbiddenPlayerTech>PlayerTech_Japan_BalloonAttack_Rank2</ForbiddenPlayerTech>
+    <ForbiddenPlayerTech>PlayerTech_Japan_BalloonAttack_Rank3</ForbiddenPlayerTech>
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerJapanBalloonAttack_L2"
+		ReloadTime="150s"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="JAP_BalloonBomb_CastMono"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		RadiusCursorRadius="150"
+		Flags="IS_PLAYER_POWER WATER_OK NOT_IN_NANOSWARM"
+		RequiredPlayerTech="PlayerTech_Japan_BalloonAttack_Rank2">
+    <GameDependency
+			id="Japan_BalloonAttackL2_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+    <ForbiddenPlayerTech>PlayerTech_Japan_BalloonAttack_Rank3</ForbiddenPlayerTech>
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerJapanBalloonAttack_L3"
+		ReloadTime="150s"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="JAP_BalloonBomb_CastStereo"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		RadiusCursorRadius="200"
+		Flags="IS_PLAYER_POWER WATER_OK NOT_IN_NANOSWARM"
+		RequiredPlayerTech="PlayerTech_Japan_BalloonAttack_Rank3">
+    <GameDependency
+			id="Japan_BalloonAttackL3_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerJapanAdvancedMissilePacks"
+		Flags="IS_PLAYER_POWER"
+		TargetType="NONE"
+		ReloadTime="0s"
+		RequiredPlayerTech="PlayerTech_Japan_AdvancedMissilePacks">
+    <GameDependency
+			id="Japan_AdvancedMissilePacks_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerJapanRoboticAssembly"
+		Flags="IS_PLAYER_POWER"
+		TargetType="NONE"
+		ReloadTime="0s"
+		RequiredPlayerTech="PlayerTech_ProductionBonus_Japan">
+    <GameDependency
+			id="Japan_RoboticAssembly_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerJapanEnhancedKamikaze"
+		Flags="IS_PLAYER_POWER"
+		TargetType="NONE"
+		ReloadTime="0s"
+		MaxCastRange="400"
+		RequiredPlayerTech="PlayerTech_Japan_EnhancedKamikaze">
+    <GameDependency
+			id="Japan_EnhancedKamikaze_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+		id="SpecialPower_PointDefenseDrones"
+		TargetType="LOCATION"
+		ReloadTime="120s"
+		Flags="IS_PLAYER_POWER WATER_OK NEEDS_OBJECT_FILTER NOT_IN_NANOSWARM"
+		RadiusCursorRadius="100"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		RequiredPlayerTech="PlayerTech_Japan_PointDefenseDrones">
+    <!-- this objfilter must be the same as the one in the PlayerPowerPointDefenseDronesWeapon Weapon -->
+    <ObjectFilter
+			Rule="ANY"
+			Relationship="ALLIES"
+			Include="=$POINT_DEFENSE_DRONE_INCLUDE_KINDOF"
+			Exclude="=$POINT_DEFENSE_DRONE_EXCLUDE_KINDOF"
+			StatusBitFlagsExclude="=$POINT_DEFENSE_DRONE_EXCLUDE_OBJECTSTATUS">
+      <ExcludeThing>JapanPointDefenseDrone</ExcludeThing>
+    </ObjectFilter>
+    <GameDependency
+			id="Japan_PointDefenseDrones_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+  </SpecialPowerTemplate>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerFinalSquadron_L1"
+		ReloadTime="120s"
+		TargetType="LOCATION"
+		InitiateSound="JAP_FinalSquadron1_SirenMS"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		RadiusCursorRadius="100"
+		Flags="IS_PLAYER_POWER WATER_OK IGNORE_MAP_EXTENTS NOT_IN_NANOSWARM"
+		RequiredPlayerTech="PlayerTech_Japan_FinalSquadron_Rank1">
+    <GameDependency
+			id="Japan_FinalSquadronRank1_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+    <ForbiddenPlayerTech>PlayerTech_Japan_FinalSquadron_Rank2</ForbiddenPlayerTech>
+    <ForbiddenPlayerTech>PlayerTech_Japan_FinalSquadron_Rank3</ForbiddenPlayerTech>
+  </SpecialPowerTemplate>
+  
+  <SpecialPowerTemplate
+		id="SpecialPowerFinalSquadron_L2"
+		ReloadTime="120s"
+		TargetType="LOCATION"
+		InitiateSound="JAP_FinalSquadron2_SirenMS"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		RadiusCursorRadius="150"
+		Flags="IS_PLAYER_POWER WATER_OK IGNORE_MAP_EXTENTS NOT_IN_NANOSWARM"
+		RequiredPlayerTech="PlayerTech_Japan_FinalSquadron_Rank2">
+    <GameDependency
+			id="Japan_FinalSquadronRank2_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+    <ForbiddenPlayerTech>PlayerTech_Japan_FinalSquadron_Rank3</ForbiddenPlayerTech>
+  </SpecialPowerTemplate>
+  
+  <SpecialPowerTemplate
+		id="SpecialPowerFinalSquadron_L3"
+		ReloadTime="120s"
+		TargetType="LOCATION"
+		InitiateSound="JAP_FinalSquadron3_SirenStereoMS"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		RadiusCursorRadius="200"
+		Flags="IS_PLAYER_POWER WATER_OK IGNORE_MAP_EXTENTS NOT_IN_NANOSWARM"
+		RequiredPlayerTech="PlayerTech_Japan_FinalSquadron_Rank3">
+    <GameDependency
+			id="Japan_FinalSquadronRank3_GameDependency">
+      <ObjectFilter
+        Rule="ANY"
+        Include="CONSTRUCTION_YARD"/>
+    </GameDependency>
+  </SpecialPowerTemplate>
+
+	<!-- START audio overrides -->
+
+	<GameObject id="GE_SovietVIPbunkerSubStructure" inheritFrom="GE_SovietVIPbunkerSubStructure">
+		<Behaviors>
+			<EngineerContain
+				id="ModuleTag_EngineerContain"
+				NameOfVoiceToUseForFriendlyEnter="VoiceEngineerRepair"
+				NameOfVoiceToUseForHostileEnter="VoiceCaptureBuilding"
+				EvaEventForRepair="BuildingRepaired"
+				EvaEventForCapture="EnemyBuildingCaptured"
+				FXForRepair="FX_Building_Repaired"
+				FXForCapture="FX_SOV_VIPBunker_Capture"
+				FXForCaptureAndReplace="FX_Building_Captured"
+				ImmediatelyEnabled="true">
+				<CanEnterFilter Rule="NONE">
+					<IncludeThing>SovietEngineer</IncludeThing>
+					<IncludeThing>JapanEngineer</IncludeThing>
+					<IncludeThing>AlliedEngineer</IncludeThing>
+				</CanEnterFilter>
+			</EngineerContain>
+		</Behaviors>
+	</GameObject>
+
+	<!-- END audio overrides -->
+
+  <!-- PathMusic Overrides -->
+  <PathMusicGameDynamicState id="ThreatLevel1" inheritFrom="ThreatLevel1"
+            EnterEvent="S_J01Threat1">
+  </PathMusicGameDynamicState>
+
+  <PathMusicGameDynamicState id="ThreatLevel1_1" inheritFrom="ThreatLevel1_1"
+            EnterEvent="S_J01Threat1_1">
+  </PathMusicGameDynamicState>
+
+  <PathMusicGameDynamicState id="GeneralCombat" inheritFrom="GeneralCombat"
+            EnterEvent="S_J01Combat">
+  </PathMusicGameDynamicState>
+
+  <PathMusicGameDynamicState id="AdvantageCombat" inheritFrom="AdvantageCombat"
+            EnterEvent="S_J01SetAdvantagePlayer">
+  </PathMusicGameDynamicState>
+
+  <PathMusicGameDynamicState id="DisadvantageCombat" inheritFrom="DisadvantageCombat"
+            EnterEvent="S_J01SetAdvantageEnemy">
+  </PathMusicGameDynamicState>
+
+  <PathMusicGameDynamicState id="EvenCombat" inheritFrom="EvenCombat"
+            EnterEvent="S_J01ResetAdvantage">
+  </PathMusicGameDynamicState>
+
+</AssetDeclaration>

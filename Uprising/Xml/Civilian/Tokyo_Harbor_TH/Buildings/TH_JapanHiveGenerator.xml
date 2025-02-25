@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/Armor.xml" />
+		<Include type="all"	source="ART:TH_JapanHiveGenerator.w3x" />
+<!--		<Include type="all"	source="ART:TH_JapanHiveGenerator_GAR.w3x" /> -->
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureLarge.xml" />
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="instance" source="DATA:Civilian/Tokyo_Harbor_TH/Props/TH_JapanHiveGenerator_Collapse.xml" />
+	 <Include type="instance" source="ART:TH_JapanHiveGenerator_IDLA.w3x" />
+
+	</Includes>
+	<GameObject
+		id="TH_JapanHiveGenerator"
+		inheritFrom="BaseCivilianStructureLarge"
+    EditorName="TH_JapanHiveGenerator"
+	  EditorSorting="STRUCTURE"
+		Side="Japan"
+		KindOf="+POWERED +UNIQUE_UNIT +SUPER_WEAPON"
+		SelectPortrait="Portrait_Japan_TH_HiveGenerator"
+		ButtonImage="Button_Japan_TH_HiveGenerator"
+		Description="DESC:TH_JapanHiveGenerator"
+		TypeDescription="TYPE:TH_JapanHiveGenerator"
+		RadarPriority="STRUCTURE"
+		CommandSet="EmptyCommandSet"
+		Browser="REGION Tokyo_Harbor_TH STRUCTURE">
+		<DisplayName xai:joinAction="Replace">Name:TH_JapanHiveGenerator</DisplayName>
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="JapanHiveGeneratorArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				AffectedByStealth="false"
+				ExtraPublicBone="BoneGarrisonWall01 BoneGarrisonWall02 BoneGarrisonWall03 BoneGarrisonWall04 BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11  BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TH_JapanHiveGenerator" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="TH_JapanHiveGenerator_IDLA"
+						AnimationMode="LOOP"	
+						AnimationBlendTime="0" />					
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<ParticleSysBone
+						BoneName="FX_Weapon_01"
+						FXParticleSystemTemplate="FXJapanNanoShieldIdle"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="FX_Weapon_01"
+						FXParticleSystemTemplate="JapanSuperWeaponIdleLight"
+						FollowBone="true"/>  					
+					<Animation
+						AnimationName="TH_JapanHiveGenerator_IDLA"
+						AnimationMode="LOOP"	
+						AnimationBlendTime="0" />					
+				</AnimationState>				
+			
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Behaviors>
+
+			
+			<ContestableGarrisonContain
+				id="ModuleTag_Garrison"
+				xai:joinAction="Remove" />
+			
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="JapanStructureHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Large" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Tiny" />
+				<!--
+				<Event
+					Index="onDeath"
+					FX="FX_SpecialDebrisExplosionShake" />
+				-->	
+			</FXListBehavior>
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="TH_JapanHiveGenerator_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			
+		<!--	
+			<InfiltratorContain xmlns="uri:ea.com:eala:asset"
+				id="ModuleTag_InfiltratorContain"
+				Effect="DISABLE"
+				Duration="5s">
+			</InfiltratorContain>
+		-->
+			
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			
+		</Behaviors>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_PowerDown">
+				<ModelConditionSound Sound="A02_JAP_HiveGenerator_PowerDown" RequiredFlags="USER_3" ExcludedFlags="USER_1" />
+			</ModelConditionAudioLoopClientBehavior>			
+		</ClientBehaviors>
+		<Geometry>
+			<PlacementShape
+				 Type= "BOX"
+				 MajorRadius = "60.0"
+				 MinorRadius = "60.0"
+				 Height = "5.0"/>
+			<Shape 
+				 Type= "BOX"
+				 MajorRadius = "50.0"
+				 MinorRadius = "50.0"
+				 Height = "20.0"
+				 ContactPointGeneration = "STRUCTURE" />
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "20.0"
+				 MinorRadius = "20.0"
+				 Height = "50.0"
+				 ContactPointGeneration = "STRUCTURE" />
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="JAP_NanoswarmHive_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice> 
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+
+	<ArmorTemplate
+		id="JapanHiveGeneratorArmor"
+		inheritFrom="BaseFactionStructureArmor">
+	</ArmorTemplate>
+
+	<ObjectCreationList
+		id="TH_JapanHiveGenerator_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>TH_JapanHiveGenerator_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>		
+</AssetDeclaration>

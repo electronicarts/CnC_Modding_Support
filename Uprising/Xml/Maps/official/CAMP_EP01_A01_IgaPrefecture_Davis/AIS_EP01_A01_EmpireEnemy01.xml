@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes/>
+
+	<AITargetingHeuristic
+		id="AITarget_EP01_A01_BridgeHeuristic"
+		HeuristicType="Bridge"
+		VitalKindOf="BRIDGE"
+		ForbiddenKindOf=""
+		ForbiddenObjectStatus=""
+		VitalObjectStatus="UNATTACKABLE"/>
+	
+	<AIStrategicStateDefinition
+		id="AIState_EP01_A01_J01_Attack"
+		MaxTargets="2">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="10"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+			<TeamTemplate MinUnits="10" MaxUnits="10"
+										IncludeKindOf="CAN_ATTACK"
+										ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+										Priority="STANDARD"
+										AlwaysRecruit="false"
+										MicroManager="StandardMicroManager"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_EP01_A01_J01_RepairBridge"
+		MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="15s" EndTime="-1s" CountFrom="AI_START"/>
+			<EnemyNearbyHeuristic Distance="700.0" EnemyNearby="false"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="AITarget_EP01_A01_BridgeHeuristic"/>
+		<Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1">
+			<TeamTemplate MinUnits="1" MaxUnits="4"
+										RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+										IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+										Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false"
+										AllowedLocomotorTypes="LAND AMPHIBIOUS"
+										MicroManager="CaptureTechMicroManager">
+				<CreateUnits UnitName="JapanEngineer" MinUnits="1" MaxUnits="1"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+  <AITargetingHeuristic
+    id="AITarget_EP01_A01_Transport"
+    HeuristicType="NamedObject"
+    Name="UNIT - Objective 3 - Transport"/>
+  <AITargetingHeuristic
+    id="AITarget_EP01_A01_TransportFaux01"
+    HeuristicType="NamedObject"
+    Name="UNIT - Objective 3 - Transport Faux 01"/>
+  <AITargetingHeuristic
+    id="AITarget_EP01_A01_TransportFaux02"
+    HeuristicType="NamedObject"
+    Name="UNIT - Objective 3 - Transport Faux 02"/>
+  <AITargetingHeuristic
+    id="AITarget_EP01_A01_TransportFaux03"
+    HeuristicType="NamedObject"
+    Name="UNIT - Objective 3 - Transport Faux 03"/>
+  <AITargetingHeuristic
+    id="AITarget_EP01_A01_TransportFaux04"
+    HeuristicType="NamedObject"
+    Name="UNIT - Objective 3 - Transport Faux 04"/>
+  <AITargetingHeuristic
+    id="AITarget_EP01_A01_TransportFaux05"
+    HeuristicType="NamedObject"
+    Name="UNIT - Objective 3 - Transport Faux 05"/>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_A01_J01_GuardTransports"
+    MaxTargets="6">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="/Objectives - FLAG - Objective 3 Complete - Part 1"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_EP01_A01_Transport" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_EP01_A01_TransportFaux01" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_EP01_A01_TransportFaux02" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_EP01_A01_TransportFaux03" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_EP01_A01_TransportFaux04" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_EP01_A01_TransportFaux05" Priority="10"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Targetless="true">
+      <TeamTemplate MinUnits="7" MaxUnits="9"
+										IncludeKindOf="CAN_ATTACK"
+										ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+										Priority="HIGH"
+										AlwaysRecruit="true"
+										MicroManager="DefenseMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+</AssetDeclaration>

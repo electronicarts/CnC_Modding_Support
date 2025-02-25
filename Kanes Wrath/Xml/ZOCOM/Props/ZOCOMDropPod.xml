@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GUDropPod.w3x" />
+	</Includes>
+	<GameObject
+		id="ZOCOMDropPod"
+		SelectPortrait="Portrait_GDIDropPod"
+		ButtonImage="Portrait_GDIDropPod"
+		Side="ZOCOM"
+		EditorSorting="UNIT"
+		TransportSlotCount="0"
+		CommandSet="EmptyCommandSet"
+		IsTrainable="false"
+		KindOf="PRELOAD SELECTABLE CAN_CAST_REFLECTIONS"
+		RadarPriority="UNIT"
+		EditorName="ZOCOMDropPod">
+		<DisplayName>Name:GDIDropPod</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUDropPod" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GUDropPod"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="DropPodDust"
+						FollowBone="true" />	
+				</AnimationState>		
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GUDropPod"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableHideSubObject("UGJump")
+						CurDrawableHideSubObject("Door01")
+						CurDrawableHideSubObject("Door02")
+						CurDrawableHideSubObject("Door03")
+					</Script>	
+				<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="DropPodDust02"
+						FollowBone="true" />	
+				</AnimationState>
+				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<AttributeModifierPoolUpdate 
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<!-- make ourselves unattackable during our descent. The duration of the attmod
+				should be timed to match the time it would take to land -->
+			<!-- Also, don't refresh more than once -->
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_AttributeModifierAuraUpdate_InitiallyUnattackable"
+				InitiallyActive="true"
+				RefreshDelay="10000000s"
+				AllowSelf="true"
+				AttributeModifierName="AttributeModifier_GDIDropPod_InitialUnattackability"
+			/>
+				
+			<Physics
+				id="ModuleTag_Physics"
+				BounceCount="0"/>				
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="6s"
+				MaxLifetime="6s"
+				DeathType="SUICIDED" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_ZOCOMZoneRaiderSquad" >
+				<DieMuxData
+					DeathTypes="SUICIDED" />
+			</CreateObjectDie>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="3.0"
+				DestructionDelay="6.0s">
+				<FX Type="INITIAL">
+					<FX>FX_GDI_DropPod_Open</FX>
+				</FX>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3400.0" />
+		</Body>
+<!--
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior
+				id="ModuleTag_TakeoffLanding">
+				<ModelConditionSound Sound="V35DropShipLand" RequiredFlags="LANDING" />
+				<ModelConditionSound Sound="V35DropShipTakeOff" RequiredFlags="TAKING_OFF" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+-->
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.0"
+				Height="20.0"></Shape>
+		</Geometry>
+<!--
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_DropPod_Descend" AudioType="soundAmbient" />
+		</AudioArraySound>
+-->
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+		<CrusherInfo
+			CrushableLevel="0" />
+	</GameObject>
+</AssetDeclaration>

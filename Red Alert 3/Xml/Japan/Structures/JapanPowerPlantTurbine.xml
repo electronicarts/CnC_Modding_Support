@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+
+		<Include
+			type="all"
+			source="ART:ABWarFactoryRepairBay.w3x" />
+
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="JapanPowerPlantTurbine"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_GDICrane"
+		ButtonImage="Portrait_GDICrane"
+		Side="Soviet"
+		EditorSorting="STRUCTURE"		
+		BuildTime="10.0"
+		CommandSet="AlliedPowerPlantTurbineCommandSet"
+		KindOf="+FS_FACTORY"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="JapanTurbine"
+		EnergyProduction="50"
+		Description="Desc:JapanPowerPlantTurbine"
+		TypeDescription="Type:JapanPowerPlantTurbine">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:JapanPowerPlantTurbine</DisplayName>
+		<GameDependency>
+			<RequiredObject>JapanPowerPlantTurbine</RequiredObject>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="500"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SubStructureArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="CENTER" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABWarFactoryRepairBay" />
+				</ModelConditionState>
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FROZEN">
+          <Model
+						Name="ABWarFactoryRepairBay" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedCryoFrozenMistBuilding"
+						FollowBone="true"/>          
+          <Material
+					  ShaderName="ObjectsFrozen.fx"
+					  TechniqueName="Default">
+            <Constants>
+              <Texture Name="DiffuseTexture">
+                <Value>ABWarfactorytrd</Value>
+              </Texture>
+              <Texture Name="NormalMap">
+                <Value>ABWarfactorytrd_NRM</Value>
+              </Texture>
+              <Texture Name="SpecMap">
+                <Value>ABWarfactorytrd_SPM</Value>
+              </Texture>
+              <Float Name="EnvMult">
+                <Value>1.000000</Value>
+              </Float>
+              <Bool Name="AlphaTestEnable">
+                <Value>false</Value>
+              </Bool>
+            </Constants>
+          </Material>          
+        </ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="ABWarFactoryRepairBay" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="ABWarFactoryRepairBay" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ABWarFactoryRepairBay" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ABWarFactoryRepairBay" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="JapanStructureHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_None" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_None" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_None" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpack"
+				UnpackTime="1.5s" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainEnergy.xml" />
+			<SubStructureBehavior
+				 id="ModuleTag_SubStructureBehavior" />
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="15.0"
+				Height="25.0">
+				<Offset
+					x="0"
+					y="0"
+					z="0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="-13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="-13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="-13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+		</Geometry>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_StructureConstructionAudio">
+				<ModelConditionSound
+					Sound="JAP_Nanocore_DeployStructureLand"
+					RequiredFlags="STRUCTURE_UNPACKING"
+					ExcludedFlags="OVER_WATER"/>
+				<ModelConditionSound
+					Sound="JAP_Nanocore_DeployStructureWaterMS"
+					RequiredFlags="STRUCTURE_UNPACKING OVER_WATER"/>
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<AudioArraySound>
+		<AudioEntry Sound="JAP_Nanocore_DeployLoop" AudioType="soundUnderConstruction" />
+<!--
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+	</GameObject>
+</AssetDeclaration>

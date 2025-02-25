@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Tags></Tags>
+  <Includes></Includes>
+  
+  <AIPersonalityDefinition
+		id="BasePersonality"
+    PersonalityType="BasePersonality"
+    SkirmishPersonality="false"
+    SecondsTillTargetsExpire="5"
+		DesiredExcessPowerBuffer="100"
+		BaseCompactness="0.75"
+    UnitBuilderOverallDefensivePreference="25%"
+    UnitBuilderEnemyNearbyDistance="800.0"
+    UnitBuilderEnemyNearbyMultiplier="4"
+    ResourceNodeSearchRadius="700"
+    ResourceNodeValueRemainingForExpansion="22000"
+		RefineryPlacementStartDistanceDelta="-30.0"
+		RefineryPlacementIncreaseTickAmount="30.0"
+		RefineryPlacementNumberOfIncreaseTicksBeforeGivingUp="15"
+    ReactiveDefenseRadius="750"
+    RepairBuildingsAtDifficulty="MEDIUM HARD BRUTAL"
+    ConyardInDangerEmergencyUnderAttackTime="5s"
+    ConyardInDangerEmergencyHealthPercent="70%"
+    ConyardInDangerEmergencyEngineerDistance="175.0"
+    CleanupRefineries="true"
+    BuildTechEfficiencyThreshold="0.5"
+    BuildTechMinPowerAdvantage="1.25"
+	  DefaultThreatFindRadius="300.0"
+		EnemySortingBrutalDifficulty="NearestFirst_BreakTies"
+		EnemySortingHardDifficulty="NearestFirst_BreakTies" 
+		EnemySortingMediumDifficulty="Flat"
+		EnemySortingEasyDifficulty="StrongestFirst_AllowTies"
+		EnemyResortingTime="15s"
+		MaxWallDestroyTimeToCountAsGoThroughWalls="30s"
+		>
+		  
+		<!-- Handles Fighter Aircraft that havne't been picked up for an offensive team -->
+		<StrategicState id="ScoutAircraft" State="ScoutAircraft" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+    <!-- Grabs idle engineers and sends them back to base.  This only happens in a few situations such as a tech building was destroyed
+         while an engineer was on its way to capture it. -->
+    <StrategicState id="EngineerIdle" State="EngineerIdle" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+    <!-- All sides need this in case they capture a Japanese ConYard. Also, this unpacks the MCVs for every side
+			   for times when the Emergency Manager needs to build a new ConYard. -->
+		<StrategicState id="JapanEggUnpacker" State="JapanEggUnpacker" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+		<!-- Manages harvesters for all sides -->
+		<StrategicState id="HarvesterController" State="HarvesterController" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+		<!-- Manages base defenses for all sides (for now, anyways) -->
+		<StrategicState id="BaseDefenseController" State="BaseDefenseController" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+		<BudgetState id="OpeningMoveBudget" State="OpeningMoveBudget" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+		<!-- By default, which base does a EndBehavior="RETURN_HOME_AND_DISBAND" tactic go home to? -->
+		<DefaultTacticHomeBaseCriteria PreferredNotBaseTypes="CAPTURED" SortOrder="PREFER_CLOSEST" />
+    
+		<!-- As far as the Japanese are concerned, building an egg is the same as building a structure, in terms of priority -->
+		<CountAsStructureForBuildPurposesFilter
+				Rule="ANY"
+				Include="STRUCTURE UNPACKS_INTO_BUILDING" >
+			  <!-- But expansion tactics don't get priority over other needed builds, even if though it happens that
+					   these units are unpacks-into-building types -->
+				<ExcludeThing>AlliedMiner</ExcludeThing>
+				<ExcludeThing>SovietSurveyor</ExcludeThing>
+			  <!-- The refinery egg is a little tricky, since sometimes it's part of an expansion tactic, and other times
+					   we're just trying to get a refinery up. But let's leave it as a unit for now, to avoid problems with the
+						 expansion tactic. Hacky, but what can you do? -->
+				<ExcludeThing>JapanRefineryEgg</ExcludeThing>
+				<ExcludeThing>JapanFortressShipEgg</ExcludeThing>
+		</CountAsStructureForBuildPurposesFilter>
+  </AIPersonalityDefinition>
+  
+</AssetDeclaration>

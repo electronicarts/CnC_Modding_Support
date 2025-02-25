@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="GDIPointDefenseShield"
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		IsTrainable="false"
+		KindOf="NO_COLLIDE SUMMONED VEHICLE NOT_AUTOACQUIRABLE UNATTACKABLE"
+		EditorName="GDIPointDefenseShield">
+		<DisplayName>GDIPointDefenseShield</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<!-- Here's the visual representation of the point defense shield- it's currently empty (obviously).
+			If you want a model to be attached (like the RA3 point defense drones) some work needs to be done to the 
+			attach update so it mounts to the proper place. An FX system can be attached by using the FXInvisBone model. -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				ExtraPublicBone=""
+				NoRotate="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Flags="DIE_WHEN_PARENT_DIES_FROM_NOT_ME STICK_TO_PARENT TELEPORT INSTANT_TELEPORT_ON_PARENT_TELEPORT ABSORB_ALL_DAMAGE LEECH_DAMAGE_FROM_PARENT DIE_WHEN_DETACH_ALWAYS DEFECT_WHEN_PARENT_DEFECTS TRANSFER_ON_REPLACE_SELF"
+				CloseEnoughRange="1.0"
+				DamageTypesToNotLeech="CRUSH UNRESISTABLE"
+				ParentStatus="POINT_DEFENSE_DRONE_ATTACHED"
+				ParentModifierToSet="AttributeModifier_PersonalShieldParent">
+			</AttachUpdate>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="120s"
+				MaxLifetime="120s" />
+			<DestroyDie
+				id="ModuleTag_DieDestroy">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				StateMachine="UnitAIStateMachine" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="200" />
+		</Body>
+
+		<!-- <AudioArraySound>
+			<AudioEntry Sound="GDI_Power_PersonalShields" AudioType="soundAmbient"/>	this works but won't play when the Power is cast on emtpy ground with no UorS
+		</AudioArraySound> -->
+
+	</GameObject>
+
+	<AttributeModifier
+		id="AttributeModifier_PersonalShieldParent"
+		Category="NONE"
+		RenderBuffEffectFlags="PERSONAL_SHIELDS"/>
+
+</AssetDeclaration>

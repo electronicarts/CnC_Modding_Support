@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="FormationAssistantUnitDefinition" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="IncludeObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="unbounded" />
+					<xs:element name="ExcludeObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="PreviewObject" type="WeakReference" xas:refType="GameObject" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<!-- this is what occupies a slot. It's a list of thing templates valid for this slot -->
+	<xs:complexType name="FormationAssistantCellContainer">
+		<xs:sequence>
+			<xs:element name="Definition" type="AssetReference" xas:refType="FormationAssistantUnitDefinition" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- this is a single row in a formation template -->
+	<xs:complexType name="FormationAssistantRowDefinition">
+		<xs:sequence>
+			<xs:element name="Cell" type="FormationAssistantCellContainer" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- a single formation assistant template -->
+	<xs:complexType name="FormationAssistantTemplate" xas:runtimeWrapper="::FormationTemplate" xas:typeGroup="Xml" >
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="Row" type="FormationAssistantRowDefinition" minOccurs="1" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="FormationSelectionTemplate" xas:runtimeWrapper="::FormationTemplateSelectionCriteria"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="FormationAssistantTemplate" type="AssetReference" xas:refType="FormationAssistantTemplate" use="required" />
+				<xs:attribute name="MaxDragLength" type="SageReal" use="required" />
+				<xs:attribute name="MaxUnitsSelected" type="SageUnsignedInt" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- global settings -->
+	<xs:complexType name="FormationAssistant"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="DefaultPreviewObject" type="WeakReference" xas:refType="GameObject" />
+				<xs:attribute name="FacingArrowTemplateHead" type="WeakReference" xas:refType="GameObject" />
+				<xs:attribute name="FacingArrowTemplateBody" type="WeakReference" xas:refType="GameObject" />
+				<xs:attribute name="FacingArrowTemplateBase" type="WeakReference" xas:refType="GameObject" />
+				<xs:attribute name="RowPadding" type="SageReal" use="required" />
+				<xs:attribute name="ColumnPadding" type="SageReal" use="required" />
+				<xs:attribute name="ActivateDragDistance" type="SageReal" use="required" />
+				<xs:attribute name="ActivateTime" type="SageReal" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

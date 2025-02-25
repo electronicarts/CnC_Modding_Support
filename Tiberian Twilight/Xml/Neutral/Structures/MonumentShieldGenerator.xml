@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include 
+			type="all"	
+			source="ART:GS_GameStructB_SKN.w3x" />
+		<Include 
+			type="all"	
+			source="ART:GS_GameStructB_SKL.w3x" />
+		<Include 
+			type="all"	
+			source="ART:GS_GameStructB_CPTR.w3x" />
+    <Include
+			type="all"
+			source="ART:GS_GameStructB_IDLA.w3x" />
+		<Include 
+			type="all"	
+			source="ART:GS_GameStructB_D.xml" />
+    <Include
+			type="all"
+			source="ART:GS_GameStructB_FX_CPTR.w3x" />
+    <Include
+			type="all"
+			source="ART:GS_GameStructB_FX_IDLA.w3x" />
+		<!--
+		<Include
+			type="all" 
+			source="ART:GS_GameStructB_Door_SKN.w3x" />
+		<Include 
+			type="all" 
+			source="ART:GS_GameStructB_Door_SKL.w3x" />
+		<Include 
+			type="all" 
+			source="ART:GS_GameStructB_Door_CLS.w3x" />
+		<Include 
+			type="all" 
+			source="ART:GS_GameStructB_Door_CLSD.w3x" />
+		<Include 
+			type="all" 
+			source="ART:GS_GameStructB_Door_OPN.w3x" />
+		<Include 
+			type="all" 
+			source="ART:GS_GameStructB_Door_OPND.w3x" />
+		-->
+		
+		<Include
+			type="all"
+			source="ART:TB_PRStrctre_Door_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:TB_PRStrctre_Door_OPN.w3x" />
+		<Include
+			type="all"
+			source="ART:TB_PRStrctre_Door_OPND.w3x" />
+		<Include
+			type="all"
+			source="ART:TB_PRStrctre_Door_CLS.w3x" />
+		<Include
+			type="all"
+			source="ART:TB_PRStrctre_Door_CLSD.w3x" />
+			
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+	</Includes>
+	<GameObject
+		id="MonumentShieldGenerator"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_GameStructB"
+		ButtonImage="Portrait_GameStructB"
+		Side="Neutral"
+		CommandSet="EmptyCommandSet"
+		KindOf="+SHIELD_STRUCTURE +NO_HEALTH_BAR +UNATTACKABLE +REGISTER_GAMEMODE_SPAWN +RESIST_REDEPLOYMENT_KILL"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		EditorName="NEUTRAL_Struct_Generator(Monument Shield Generator)"
+		EditorSorting="STRUCTURE" 
+		Description="DESC:MonumentShieldGenerator">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:MonumentShieldGenerator</DisplayName>
+		<ArmorSet
+			Armor="MonumentShieldGeneratorArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				AffectedByStealth="false"
+				ExtraPublicBone="DOOR_ATTACH1 DOOR_ATTACH2 DOOR_ATTACH3 DOOR_ATTACH4 TruckDock_01 TruckDock_02 TruckDock_03 TruckDock_04">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GS_GameStructB_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GS_GameStructB_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GS_GameStructB_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GS_GameStructB_SKN" />
+					<Texture
+						Original="GS_GameStructB"
+						New="GS_GameStructB_D" />						
+				</ModelConditionState>
+
+				<!-- when captured -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="CAPTURED">
+					<Animation
+						AnimationName="GS_GameStructB_IDLA"
+						AnimationMode="LOOP"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "CAPTURED" and Prev ~= "Transition_MainToCaptured" then
+						CurDrawableSetTransitionAnimState("Transition_MainToCaptured")
+						end
+					</Script>
+					<ParticleSysBone
+						BoneName="GB_Tower02"
+						FXParticleSystemTemplate="ShieldGen_Dist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GB_Tower02"
+						FXParticleSystemTemplate="ShieldGen_Ring"
+						FollowBone="true" />
+				</AnimationState>
+				
+				<!-- Pre-captured state -->
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="UNCAPTURED_IDLE">
+					<Animation
+						AnimationName="GS_GameStructB_CPTR"
+						AnimationMode="MANUAL"
+					/>
+				</AnimationState>
+
+				<!-- transition to captured state -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_MainToCaptured">
+					<Animation
+						AnimationName="GS_GameStructB_CPTR"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="GB_Tower02"
+						FXParticleSystemTemplate="ShieldGen_Aura"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GB_Tower02"
+						FXParticleSystemTemplate="ShieldGen_Glow"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GB_Tower02"
+						FXParticleSystemTemplate="ShieldGen_Sparks"
+						FollowBone="true" />
+				</AnimationState>
+		</ScriptedModelDraw>
+
+		<!-- FX dissolve on when captured -->
+		<ScriptedModelDraw
+			id="ModuleTag_Draw_CaptureFX">
+			<ModelConditionState
+				ParseCondStateType="PARSE_DEFAULT">
+				<Model
+					Name="" />
+			</ModelConditionState>
+			<ModelConditionState
+				ParseCondStateType="PARSE_NORMAL"
+				ConditionsYes="USER_1">
+				<Model
+					Name="GS_GameStructB_FX_CPTR" />
+			</ModelConditionState>
+			<AnimationState
+				ParseCondStateType="PARSE_NORMAL"
+				ConditionsYes="USER_1"
+				StateName="SPIKE_CAPTURED">
+				<Animation
+					AnimationName="GS_GameStructB_FX_IDLA"
+					AnimationMode="LOOP"
+				/>
+				<Script>
+					Prev = CurDrawablePrevAnimationState()
+					if Prev ~= "SPIKE_CAPTURED" and Prev ~= "Transition_ToCaptured" then
+					CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+					end
+				</Script>
+			</AnimationState>
+			<AnimationState
+				ParseCondStateType="PARSE_DEFAULT" />
+			<AnimationState
+				ParseCondStateType="PARSE_TRANSITION"
+				StateName="Transition_ToCaptured">
+				<Animation
+					AnimationName="GS_GameStructB_FX_CPTR"
+					AnimationMode="ONCE" />
+			</AnimationState>
+      </ScriptedModelDraw>
+
+      <!-- Door #1  -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Door1"
+				AttachToBoneInAnotherModule="DOOR_ATTACH1"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TB_PRStrctre_Door_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="CLOSED">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_CLSD"
+						AnimationMode="ONCE"
+					/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "OPENED" then
+						CurDrawableSetTransitionAnimState("Transition_ToClosed")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_WAITING_OPEN"
+					StateName="OPENED">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_OPND"
+						AnimationMode="ONCE"
+					/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "CLOSED" then
+						CurDrawableSetTransitionAnimState("Transition_ToOpened")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToOpened">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_OPN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToClosed">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_CLS"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- Door #2  -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Door2"
+				AttachToBoneInAnotherModule="DOOR_ATTACH2"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TB_PRStrctre_Door_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="CLOSED">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_CLSD"
+						AnimationMode="ONCE"
+					/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "OPENED" then
+						CurDrawableSetTransitionAnimState("Transition_ToClosed")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_2_WAITING_OPEN"
+					StateName="OPENED">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_OPND"
+						AnimationMode="ONCE"
+					/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "CLOSED" then
+						CurDrawableSetTransitionAnimState("Transition_ToOpened")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToOpened">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_OPN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToClosed">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_CLS"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- Door #3  -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Door3"
+				AttachToBoneInAnotherModule="DOOR_ATTACH3"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TB_PRStrctre_Door_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="CLOSED">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_CLSD"
+						AnimationMode="ONCE"
+					/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "OPENED" then
+						CurDrawableSetTransitionAnimState("Transition_ToClosed")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_3_WAITING_OPEN"
+					StateName="OPENED">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_OPND"
+						AnimationMode="ONCE"
+					/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "CLOSED" then
+						CurDrawableSetTransitionAnimState("Transition_ToOpened")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToOpened">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_OPN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToClosed">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_CLS"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- Door #4  -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Door4"
+				AttachToBoneInAnotherModule="DOOR_ATTACH4"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TB_PRStrctre_Door_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="CLOSED">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_CLSD"
+						AnimationMode="ONCE"
+					/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "OPENED" then
+						CurDrawableSetTransitionAnimState("Transition_ToClosed")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_4_WAITING_OPEN"
+					StateName="OPENED">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_OPND"
+						AnimationMode="ONCE"
+					/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "CLOSED" then
+						CurDrawableSetTransitionAnimState("Transition_ToOpened")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToOpened">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_OPN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToClosed">
+					<Animation
+						AnimationName="TB_PRStrctre_Door_CLS"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+			
+		<Behaviors>
+			<ModelConditionUpgrade
+				id="ModuleTag_FactionUpgrade"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions"
+			/>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				MaxHealth="1.0"/>
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="85.0"
+				Height="85.0"
+				ContactPointGeneration="INFANTRY"/>
+		</Geometry>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+	</GameObject>
+</AssetDeclaration>

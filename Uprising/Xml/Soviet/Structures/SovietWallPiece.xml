@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:SBWallHub.w3x" />
+		<Include
+			type="all"
+			source="ART:SBWall_SKN.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseWallPiece.xml" />
+		<Include
+			type="all"
+			source="ART:SBWallHub_BLD.w3x" />
+		<Include
+			type="all"
+			source="ART:SBWall_BLD.w3x" />		
+	</Includes>
+	<!-- Wall Piece (these alternate between Wall hubs and Wall segments on a case by case basis) -->
+	<GameObject
+		id="SovietWallPiece"
+		inheritFrom="BaseWallPiece"
+		Side="Soviet"
+		EditorSorting="STRUCTURE"
+		BuildTime="0"
+		SelectPortrait="Portrait_SovietWall_big"
+		ButtonImage="Button_SovietWall_small"
+		EnergyProduction="0"
+		CommandSet="EmptyCommandSet"
+		PlacementViewAngle="225d"
+		CampnessValue="=$CAMPNESS_WALL"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="SovietWallHub"
+		Description="Desc:SovietWallPiece"
+		TypeDescription="Type:SovietWallPiece">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SovietWallPiece</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="10"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietWallArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="FRONT" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				StaticModelLODMode="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_01">
+<!--__WALL HUB MODEL__-->
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBWallHub" />
+				</ModelConditionState>
+				<!-- BUILD UP -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING WALL_SEGMENT">
+					<Model
+						Name="SBWall_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="SBWallHub_BLD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD WALL_SEGMENT">
+					<Model
+						Name="SBWall_SKN" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="SBWallHub_BLD" />
+				</ModelConditionState>		
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="WALL_SEGMENT">
+					<Model
+						Name="SBWall_SKN" />
+				</ModelConditionState>		
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING WALL_SEGMENT">
+					<Animation
+						AnimationName="SBWall_BLD"
+						AnimationMode="MATCH_UNPACKING" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="SBWallHub_BLD"
+						AnimationMode="MATCH_UNPACKING" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD WALL_SEGMENT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBWall_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBWallHub_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s" />
+				</AnimationState>	
+
+
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" 
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event 
+					Index="onDeath" 
+					FX="FX_Civ_Explosion_Tiny" />
+				<Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />					
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieHub"
+				CreationList="SBWallHub_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" 
+					DeathTypesForbidden="SUICIDED"
+					ExemptStatus="WALL_SEGMENT"/>
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieWall"
+				CreationList="SBWall_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" 
+					DeathTypesForbidden="SUICIDED"
+					RequiredStatus="WALL_SEGMENT"/>
+			</CreateObjectDie>			
+	
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+			</DestroyDie>	
+			<WallBuilderBehavior
+				id="ModuleTag_WallBuilder"
+				MaxNumSegments="10">
+				<ConnectingObjectFilter
+					Rule="NONE" >
+					<IncludeThing>SovietWallPiece</IncludeThing>
+					<IncludeThing>SovietWallSegmentPiece</IncludeThing>
+				</ConnectingObjectFilter>
+			</WallBuilderBehavior>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="5s" />
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="300" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_WallSegmentSelect">
+				<Override RequiredFlags="WALL_SEGMENT">
+					<AudioArrayVoice>
+						<AudioEntry Sound="SOV_WallSegment_Select" AudioType="voiceSelect" />
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior> 
+		</ClientBehaviors>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				Name="Geom_Orig"
+				MajorRadius="15.0"
+				MinorRadius="0.0"
+				Height="25.0">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="SOV_WallHub_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="SOV_Wall_Placed" AudioType="soundUnderConstruction" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="10"
+			ShroudClearingRange="50" />
+		<ProjectedBuildabilityInfo
+			Radius="0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

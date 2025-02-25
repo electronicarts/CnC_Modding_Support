@@ -1,0 +1,132 @@
+
+ 
+ 
+ 
+ 
+ 
+
+var camera Viewer
+
+// Reference the backbuffer
+var surface FrameBuffer color0
+
+// Define our frame render target
+//var texture FrameRenderTarget $WW3D.FrameBufferSize.x $WW3D.FrameBufferSize.y A8R8G8B8_TILED
+var texture FrameRenderTarget $WW3D.FrameBufferSize.x $WW3D.FrameBufferSize.y A16B16G16R16F_TILED
+
+////////////////
+// PostEffects
+////////////////
+var shader PostEffectLookupTableShader PostFX_LookupTable.fx
+
+proc PostEffectLookupTable
+	beginevent UpdatePostFXLookupTable
+        // Set render target back to back buffer
+		settarget 0 FrameBuffer
+
+		settexture PostEffect FrameBufferTexture FrameRenderTarget
+		setshader PostEffectLookupTableShader ResolveOnly
+		renderquad
+	endevent UpdatePostFXLookupTable
+endproc
+
+proc renderPostEffects
+    beginevent RenderPostEffects
+//	    callproc PostEffectDistortion
+//	    callproc PostEffectBloom
+	    callproc PostEffectLookupTable
+    endevent RenderPostEffects
+endproc
+ 
+///////////////////////
+// InGame main script
+///////////////////////
+proc InGame
+
+	beginevent UpdateFrameBuffer
+	
+		setcamera Viewer
+		visibleobjects Frame
+
+		setclearcolor 0 0 0 1
+		setcleardepth 1.0
+
+		clear
+
+        // Set render target to offscreen buffer
+		settarget 0 FrameBuffer FrameRenderTarget
+
+		renderTerrain
+
+    	renderRoads
+
+		// Render cliffs, sea walls, road segments over terrain but below scorch marks
+		renderbin TerrainLikeGroundObject
+
+//		renderScorchMarks
+
+   	   	renderTerrainTracks
+
+        // Bridges go above terrain, but below decals
+        renderbin Bridge
+
+		renderProps
+		
+		renderUnits
+
+		// Regular unassigned objects
+		renderbin Solid
+
+		renderStructures
+
+//		renderbin StaticSort5 // Underwater Sorting
+
+//		beginevent RenderUnderwater
+			// Apply underwater deferred shading, based on screen-depth texture
+//			callproc renderUnderwaterDeferred
+
+			// Render transparent objects and particles that should be under water and apply non-deferred underwater-like shading themselves
+//			renderbin Underwater
+//			renderbin Underwater BinCommand_RenderParticles
+//		endevent RenderUnderwater
+
+//		callproc updateWaterRefraction
+    	renderWater
+
+//		renderDecals
+
+    	renderbin Transparent
+
+        renderTransparentOutlineObjects
+
+//		callproc renderOutlines	// render outlines onto the screen
+
+//		renderBehindBuildingMarkers
+
+//		callproc renderBinsStaticSort
+
+		// $Note (WSK) - Soft particles require depth buffer to work
+		setbool Particle ReallyRenderSoftParticles false
+		renderParticles
+
+//		renderTerrainUI
+//		renderTracers
+		renderLasers
+//		renderConnectionLines
+//		renderRain
+
+    	callproc renderPostEffects // PostEffects will change current render target to be FrameBuffer
+
+//		renderDebugSystems
+//		renderTileFeedback
+
+		renderIconLayers
+		renderUI
+
+		renderDebugDisplays
+
+	
+	endevent UpdateFrameBuffer
+
+endproc
+

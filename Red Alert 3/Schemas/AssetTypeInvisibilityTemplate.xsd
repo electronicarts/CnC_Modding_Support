@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="InvisibilityType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INVALID" />
+			<xs:enumeration value="STEALTH" />
+			<xs:enumeration value="CAMOUFLAGE" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="InvisibilityNuggetOptions">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ALLOW_NEAR_TREES" />
+			<xs:enumeration value="DETECTED_BY_FRIENDLIES" />
+			<xs:enumeration value="DISCONTINUE_WHEN_REVEALED" />
+			<xs:enumeration value="UNTOGGLE_HIDDEN_WHEN_LEAVING_STEALTH" />
+			<xs:enumeration value="CAN_ATTACK_WHILE_ACTIVE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="InvisibilityNuggetOptionsBitFlags">
+		<xs:list itemType="InvisibilityNuggetOptions" />
+	</xs:simpleType>
+
+	<xs:complexType name="InvisibilityTemplate" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="IgnoreTreeCheckUpgrade" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="ForbiddenConditions" type="ModelConditionBitFlags" default="PREATTACK_A FIRING_A FIRING_OR_PREATTACK_A RELOADING_A USING_WEAPON_A PREATTACK_B FIRING_B FIRING_OR_PREATTACK_B RELOADING_B USING_WEAPON_B PREATTACK_C FIRING_C FIRING_OR_PREATTACK_C RELOADING_C USING_WEAPON_C"/>
+				<xs:attribute name="ForbiddenConditionExceptions" type="ModelConditionBitFlags" default=""/>
+				<xs:attribute name="ForbiddenStatus" type="ObjectStatusBitFlags" default="IS_FIRING_WEAPON IS_AIMING_WEAPON SPECIAL_ABILITY_PACKING_UNPACKING_OR_USING USING_ABILITY"/>
+				<xs:attribute name="CamouflageLevel" type="SageUnsignedInt" />
+				<xs:attribute name="InvisibilityType" type="InvisibilityType" default="STEALTH"/>
+				<xs:attribute name="Options" type="InvisibilityNuggetOptionsBitFlags" />
+				<xs:attribute name="EnteringStealthFX" type="FXListRef" />
+				<xs:attribute name="LeavingStealthFX" type="FXListRef" />
+				<xs:attribute name="HintDetectableStates" type="ObjectStatusBitFlags" default="IS_ATTACKING" />
+				<xs:attribute name="NoStealthForAttackWindow" type="Time" default="0s" />
+				<xs:attribute name="RequiredStatus" type="ObjectStatusBitFlags" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+</xs:schema>

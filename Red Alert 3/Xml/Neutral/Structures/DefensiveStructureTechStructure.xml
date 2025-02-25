@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBDefensiveStructureTechStructure.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+		<Include
+			type="instance"
+			source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include
+			type="instance"
+			source="DATA:Neutral/Props/NeutralDefensiveStructure_Collapse.xml" />
+		<Include type="all" source="ART:ABBarracks_particles.w3x" />
+
+	</Includes>
+	<GameObject
+		id="DefensiveStructureTechStructure"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_TechBuildingExpansionPoint"
+		ButtonImage="Portrait_TechBuildingExpansionPoint"
+		Side="Neutral"
+		EditorSorting="STRUCTURE"
+		CommandSet="EmptyCommandSet"		
+		KindOf="-NOT_AUTOACQUIRABLE +CAN_ATTACK +FS_BASE_DEFENSE +POWERED +CAN_SEE_THROUGH_STRUCTURE +LINE_OF_SIGHT_IGNORES_BUILDINGS"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		EditorName="DefensiveStructureTechStructure"
+		Description="DESC:DefensiveStructureTechBuilding"
+		TypeDescription="TYPE:TechStructure">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:DefensiveStructureTechBuilding</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="=$TECH_STRUCTURE_EFFECTIVE_COST"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="StructureArmor" 
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BoneFlag01 BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBDefensiveStructureTechStructure" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="OBBOX01" />
+					<WeaponMuzzleFlash
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="flash" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="OBBOX01" />
+					<Turret
+						TurretNameKey="TURRET"
+						TurretID="1" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<xi:include
+				href="DATA:Includes/TechBuildingFlagDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonFlagDraws/child::*)" />			
+		</Draws>
+		<Behaviors>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="YU_HotelDebris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_MediumBuildingDieExplosion" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NeutralDefensiveStructure_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">		
+				<!--WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietAntiStructureVehicleV4Rocket"/>
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-60d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="0.0">
+						<TurretAITargetChooserData
+							StartupDelay="1.0s"/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+				<WeaponSlotTurret
+					ID="2">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietAntiStructureVehicleV4Rocket"/>
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-60d"
+						PitchHeight="90%"
+						NaturalTurretAngle="90d"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="0.0">
+						<TurretAITargetChooserData
+							StartupDelay="1.0s"/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+				<WeaponSlotTurret
+					ID="3">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietAntiStructureVehicleV4Rocket"/>
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-60d"
+						PitchHeight="90%"
+						NaturalTurretAngle="180d"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="0.0">
+						<TurretAITargetChooserData
+							StartupDelay="1.0s"/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+				<WeaponSlotTurret
+					ID="4">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietAntiStructureVehicleV4Rocket"/>
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-60d"
+						PitchHeight="90%"
+						NaturalTurretAngle="270d"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="0.0">
+						<TurretAITargetChooserData
+							StartupDelay="1.0s"/>
+					</TurretSettings>
+				</WeaponSlotTurret-->
+				<WeaponSlotTurret
+					ID="5">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="DefensiveTechStructureWeapon"/>
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-60d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="180.0"
+						MaxIdleScanAngle="720.0">
+						<TurretAITargetChooserData
+							StartupDelay="1.0s"/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions"/>
+		</Behaviors>
+
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					IdleScanDelay="1.0s" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3000.0"
+				InitialHealth="3000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="82.0"
+				MinorRadius="82.0"
+				Height="13.0">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="65.0"
+				MinorRadius="65.0"
+				Height="17.0">
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="5.0"
+				MinorRadius="5.0"
+				Height="56.0">
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-27.487"
+					y="-27.6517"
+					z="58.0303" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="28.3569"
+					y="-27.6517"
+					z="71.5467" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="28.3569"
+					y="28.1922"
+					z="58.0303" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-27.487"
+					y="28.1922"
+					z="71.5467" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-27.487"
+					y="-27.6517"
+					z="71.5467" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="28.3569"
+					y="-27.6517"
+					z="58.0303" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="28.3569"
+					y="28.1922"
+					z="71.5467" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-27.487"
+					y="28.1922"
+					z="58.0303" />
+			</ContactPoint>
+		</Geometry>
+
+		<AudioArrayVoice>
+			<AudioEntry EvaEvent="FirebaseCaptured" AudioType="voiceDefectingTowards" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="500" />
+		<ProjectedBuildabilityInfo
+			Radius="210.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+	<ObjectCreationList
+		id="NeutralDefensiveStructure_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>NeutralDefensiveStructure_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+</AssetDeclaration>

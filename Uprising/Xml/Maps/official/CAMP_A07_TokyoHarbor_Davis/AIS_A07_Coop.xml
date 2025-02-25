@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+
+  </Includes>
+
+  <AIBuildStateDefinition
+    id="AIState_A07_Allied_TechUp">
+    <Heuristic>
+			<OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <BuildEntry Upgrade="Upgrade_AlliedTech3" Heuristic="UPGRADE_TECH" ForceTime="300s"/>
+  </AIBuildStateDefinition>
+
+  <AIStrategicStateDefinition
+     id="AIState_A07_P2A_RepelInvaders"
+     MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - Clear Invaders"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristicAllEnemies" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristicAllEnemies" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="16"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="true" SortByDistance="false"
+                    MicroManager="FearlessMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+    id="AIState_A07_P2A_Water_Attack"
+    MaxTargets="1">
+    <Heuristic>
+			<ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - GoAirAndNavy"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristicAllEnemies" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristicAllEnemies" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="8" MaxUnits="20"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="true"
+                    MicroManager="StandardMicroManager">
+        <CreateUnits UnitName="AlliedAntiNavalScout" MinUnits="1" MaxUnits="1"/>
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A07_P2A_Amphibious_Attack"
+    MaxTargets="2">
+    <Heuristic>
+			<ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - GoAirAndNavy"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristicAllEnemies_NonUnique" Priority="20"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="10" MaxUnits="20"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+    id="AIState_A07_FighterAircraftSimpleAttack"
+    MaxTargets="3">
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - Attack States"/>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+				<ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+					<IncludeThing>AlliedFighterAircraft</IncludeThing>
+					<IncludeThing>SovietFighterAircraft</IncludeThing>
+				</ObjectFilter>
+			</ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestAirborneTargetHeuristic"/>
+		<TargetHeuristic TargetHeuristic="ClosestAirborneTargetHeuristic_All"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+			<TeamTemplate MinUnits="1" MaxUnits="4"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK FIGHTER_AIRCRAFT" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MicroManager="FighterAircraftMicroManager" />
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_A07_VindicatorAttack_Closest"
+		MaxTargets="4">
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - Attack States"/>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+				<ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+					<IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+				</ObjectFilter>
+			</ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestSurfaceUnitHeuristic" Priority="10"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="10"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristicAllEnemies_NonUnique" Priority="5"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+			<TeamTemplate MinUnits="1" MaxUnits="4"
+                    RegisteredObjectSet="AIRCRAFT"
+      							IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="VindicatorMicroManager" >
+				<ObjectFilter Rule="ANY">
+					<IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+				</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+    id="AIState_A07_CenturyBomberAttack"
+    MaxTargets="4">
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - Attack States"/>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+				<ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+					<IncludeThing>AlliedBomberAircraft</IncludeThing>
+				</ObjectFilter>
+			</ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToAirSurfaceVehicleHeuristic" Priority="10"/>
+		<TargetHeuristic TargetHeuristic="SafestToAirPowerPlantHeuristic" Priority="10"/>
+		<TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="10"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic_NonUnique" Priority="5"/>
+		<Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND">
+			<TeamTemplate MinUnits="1" MaxUnits="2" MinPowerAdvantage="0.5"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="CenturyBomberMicroManager">
+				<ObjectFilter Rule="ANY">
+					<IncludeThing>AlliedBomberAircraft</IncludeThing>
+				</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="AIState_A07_P2B_Attack"
+		MaxTargets="2">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristicAllEnemies" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+			<TeamTemplate MinUnits="10" MaxUnits="20"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS AIR"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager">
+				<ObjectFilter Rule="ALL">
+					<ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+					<ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+					<ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+				</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+
+	<AIStrategicStateDefinition
+    id="AIState_A07_P2A_Expansion">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <EnemyNearbyHeuristic Distance="650.0" EnemyNearby="false"/>
+      <AllNearbyNodesFullHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ExpansionHeuristic"/>
+    <Tactic id="Expand" Tactic="SimpleExpansion" Distance="300">
+      <TeamTemplate MinUnits="1" MaxUnits="5"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager">
+        <CreateUnits UnitName="AlliedMiner"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A07_P2B_SiegeTeam"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A07_SuperWeapon" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="ClosestOffensiveStructureHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+			<TeamTemplate MinUnits="1" MaxUnits="2" 
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    Priority="DEFENSE_HIGH"
+                    AlwaysRecruit="false"
+                    MicroManager="A07_SiegeTeam_MicroManager">
+				<ObjectFilter Rule="ANY">
+					<IncludeThing>AlliedAntiStructureVehicle</IncludeThing>
+				</ObjectFilter>
+			</TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="AIState_A07_P2B_SiegeTeam_Escort"
+		MaxTargets="2">
+		<Heuristic>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+				<ObjectFilter
+					Rule="ANY"
+					Relationship="SAME_PLAYER">
+					<IncludeThing>AlliedAntiStructureVehicle</IncludeThing>
+				</ObjectFilter>
+			</ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="AITarget_A07_SiegeUnit" Priority="30"/>
+		<Tactic id="Attack" Tactic="StaticDefense" Distance="100" EndBehavior="DISBAND">
+			<TeamTemplate MinUnits="1" MaxUnits="5"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD"
+                    AlwaysRecruit="true"
+                    MicroManager="FearlessDefenseMicroManager">
+				<ObjectFilter Rule="ALL">
+					<ExcludeThing>AlliedAntiStructureVehicle</ExcludeThing>
+				</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+    id="AIState_A07_P2B_BaseDefense_StrikeTeam"
+    MaxTargets="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestOffensiveStructureHeuristic" Priority="30"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="6"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager">
+        <CreateUnits UnitName="AlliedAntiStructureVehicle" MinUnits="2"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A07_CommandAssault_Land"
+    MaxTargets="2"
+    ExecutionBeginFeedbackKey="PlanAttackBeaconPlaced"
+    ExecutionCanceledFeedbackKey="OrderCanceled"
+    ExecutionCompleteFeedbackKey="PlanAttackOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <BeaconExistsHeuristic Exists="true" Type="Assault"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BeaconAssaultHeuristic_Land"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="8" MinPowerAdvantage="0.5"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="COOP" AlwaysRecruit="false"
+                    MicroManager="A07_BeaconAssaultMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_A07_Coop_NavalYardBuildState">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - GoAirAndNavy"/>
+    </Heuristic>
+    <BuildEntry Build="AlliedAntiInfantryVehicle" Heuristic="FEWEST_UNIT" CountModifier="0.5"/>
+    <BuildEntry Build="AlliedAntiNavalScout" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiNavyShipTech1" Heuristic="FEWEST_UNIT" CountModifier="2.0"/>
+    <BuildEntry Build="AlliedAntiAirShip" Heuristic="FEWEST_UNIT" CountModifier="0.5"/>
+    <BuildEntry Build="AlliedAntiStructureShip" Heuristic="FEWEST_UNIT" CountModifier="0.5"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_A07_Coop_AirfieldBuildState">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FLAG - GoAirAndNavy"/>
+    </Heuristic>
+    <BuildEntry Build="AlliedFighterAircraft" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedSupportAircraft" Heuristic="FEWEST_UNIT" CountModifier="0.5"/>
+    <BuildEntry Build="AlliedAntiGroundAircraft" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedBomberAircraft" Heuristic="FEWEST_UNIT"/>
+  </AIBuildStateDefinition>
+
+</AssetDeclaration>

@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:JUBalloonBomb_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:JUBalloonBomb_FALL.w3x" />
+		<Include
+			type="all"
+			source="ART:JUBalloonBomb_DIE.w3x" />
+		<!-- this is the bomb part -->
+		<Include
+			type="all"
+			source="ART:JUBalloonBomb_BOMB.w3x" />
+
+		<Include
+			type="all"
+			source="ART:FXBalloonBits.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseProjectile.xml"/>
+	</Includes>
+	<GameObject
+		id="JapanBalloonBomb"
+		KindOf="SELECTABLE AIRCRAFT VEHICLE SKIRMISH_AI_DONT_CONSIDER_THREAT SKIRMISH_AI_ATTEMPT_TO_DODGE"
+		Side="Japan"
+		EditorSorting="SYSTEM"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		EditorName="JapanBalloonBombBalloon"
+		Description="Desc:JapanBalloonBombBalloon"
+		TypeDescription="Type:JapanBalloonBombBalloon"
+		SelectPortrait="Portrait_JapanBalloonBomb"
+		ButtonImage="Button_JapanBalloonBomb">
+		<DisplayName>NAME:JapanBalloonBombBalloon</DisplayName>
+		<ArmorSet
+			Armor="JapanBalloonArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			id="defaultLocomotor" 
+			Locomotor="JapanBalloonBombBalloonLocomotor"
+			Condition="NORMAL"
+			Speed="50.0" />
+    <SkirmishAIInformation
+      DodgeSafetyDistance="100.0">
+      <DodgeWithUnits Rule="ALL"
+        StatusBitFlagsExclude="AIRBORNE_TARGET">
+      </DodgeWithUnits>
+    </SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				NoRotate="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JUBalloonBomb_SKN" />
+					<Material ShaderName="ObjectsJapan.fx" TechniqueName="Default">
+						<Constants>
+							<Texture Name="DiffuseTexture">
+								<Value>JUBalloonBomb</Value>
+							</Texture>
+							<Texture Name="NormalMap">
+								<Value>JUBalloonBomb_NRM</Value>
+							</Texture>
+							<Texture Name="SpecMap">
+								<Value>JUBalloonBomb_SPM</Value>
+							</Texture>
+							<Float Name="EnvMult">
+								<Value>1.000000</Value>
+							</Float>
+							<Bool Name="AlphaTestEnable">
+								<Value>false</Value>
+							</Bool>
+						</Constants>
+					</Material>
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="JUBalloonBomb_FALL"
+						AnimationMode="ONCE"/>
+				</AnimationState>				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+				  
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<HeightDieUpdate
+				id="ModuleTag_HeightDieUpdate"
+				TargetHeight="2.0"
+				TargetHeightIncludesStructures="true"/>
+				
+			<!-- killed via collision. Just nuke ourselves and fire the AOE weapon. Don't spawn a falling bomb because we
+			want to damage whatever hit us -->
+			<FireWeaponWhenDead
+				id="ModuleTag_BalloonBombDeathWeapon_Collided"
+				InitiallyActive="true"
+				DeathWeapon="JapanBalloonBombWarhead">
+				<DieMuxData
+					DeathTypes="SUICIDED"/>
+			</FireWeaponWhenDead>
+
+			<!-- killed on the ground -->
+			<FireWeaponWhenDead
+				id="ModuleTag_BalloonBombDeathWeapon"
+				InitiallyActive="true"
+				DeathWeapon="JapanBalloonBombWarhead">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" 
+					ExemptStatus="AIRBORNE_TARGET"/>
+			</FireWeaponWhenDead>
+
+			<!-- killed in the air -->
+			<FireWeaponWhenDead
+				id="ModuleTag_BalloonFallingBombDeathWeapon"
+				InitiallyActive="true"
+				FireAtGround="true"
+				DeathWeapon="JapanBalloonFallingBombWeapon">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" 
+					RequiredStatus="AIRBORNE_TARGET"/>
+			</FireWeaponWhenDead>
+
+			<!-- spawn a rising balloon as long as you were nuked in the air, regardless of 
+			whether you were shot down or hit an aircraft -->
+			<CreateObjectDie
+				id="ModuleTag_CreateRisingBalloon"
+				CreationList="OCL_JapanRisingBalloon">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="AIRBORNE_TARGET"/>
+			</CreateObjectDie>
+			
+			<FireWeaponCollide
+				id="ModuleTag_FireWeaponCollide"
+				CollideWeapon="JapanBalloonBombSuicideWeapon"
+				FireOnce="true"
+				Flags="DESTROY_SELF_ON_COLLIDE DO_NOT_COLLIDE_WITH_PRODUCER"
+				WhereToFire="OWNER_POSITION"/>
+
+			<Physics
+				id="ModuleTag_Physics" />
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="AIRBORNE_TARGET"/>
+				<Event
+					Index="onDeath"
+					FX="FX_JapanBalloon" />
+			</FXListBehavior>
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="UnitAIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1000"/>
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="6.0"
+				Height="30.0"/>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="JAP_BalloonBomb_VoiceSelect" AudioType="voiceSelect" />
+			<AudioEntry Sound="JAP_BalloonBomb_VoiceAttack" AudioType="voiceAttack" />
+			<AudioEntry Sound="JAP_BalloonBomb_VoiceMove" AudioType="voiceMove" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="JAP_BalloonBomb_Ambient" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="100" />
+	</GameObject>
+
+	
+	<!-- Falling Bomb, drops to ground and explodes -->
+	
+	<GameObject
+		id="JapanFallingBalloonBomb"
+		inheritFrom="BaseProjectile"
+		Side="Japan"
+		EditorSorting="SYSTEM"
+		EditorName="JapanFallingBalloonBomb">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				NoRotate="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JUBalloonBomb_BOMB" />
+					<Material ShaderName="ObjectsJapan.fx" TechniqueName="Default">
+						<Constants>
+							<Texture Name="DiffuseTexture">
+								<Value>JUBalloonBomb</Value>
+							</Texture>
+							<Texture Name="NormalMap">
+								<Value>JUBalloonBomb_NRM</Value>
+							</Texture>
+							<Texture Name="SpecMap">
+								<Value>JUBalloonBomb_SPM</Value>
+							</Texture>
+							<Float Name="EnvMult">
+								<Value>1.000000</Value>
+							</Float>
+							<Bool Name="AlphaTestEnable">
+								<Value>false</Value>
+							</Bool>
+						</Constants>
+					</Material>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<ProjectileUpdate
+				id="ModuleTag_BombUpdate"
+				StateMachine="BombProjectile"
+				MinDetonationHeight="10"
+				MinTargetDistance="5">
+				<Movement>
+					<MoveToGround
+						InitialSpeed="5.0"
+						Acceleration="0.5"
+						TerminalVelocity="20.0" />
+				</Movement>
+			</ProjectileUpdate>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_JapanBalloon" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				xai:joinAction="Replace" 	  
+				id="ModuleTag_Body"
+				MaxHealth="1000"/>
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="JAP_BalloonBomb_Whistle" AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+
+	<!-- Rising Balloon -->
+
+	<GameObject
+		id="JapanRisingBalloon"
+		KindOf="NOT_AUTOACQUIRABLE UNATTACKABLE INERT"
+		Side="Japan"
+		EditorSorting="SYSTEM"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		EditorName="JapanRisingBalloon"
+		Description="Desc:JapanRisingBalloon"
+		TypeDescription="Type:JapanRisingBalloon">
+		<DisplayName>Name:JapanRisingBalloon</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<LocomotorSet
+			id="defaultLocomotor"
+			Locomotor="JapanBalloonRisingBalloonLocomotor"
+			Condition="NORMAL"
+			Speed="25.0" />
+
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				NoRotate="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JUBalloonBomb_SKN" />
+					<Material ShaderName="ObjectsJapan.fx" TechniqueName="Default">
+						<Constants>
+							<Texture Name="DiffuseTexture">
+								<Value>JUBalloonBomb</Value>
+							</Texture>
+							<Texture Name="NormalMap">
+								<Value>JUBalloonBomb_NRM</Value>
+							</Texture>
+							<Texture Name="SpecMap">
+								<Value>JUBalloonBomb_SPM</Value>
+							</Texture>
+							<Float Name="EnvMult">
+								<Value>1.000000</Value>
+							</Float>
+							<Bool Name="AlphaTestEnable">
+								<Value>true</Value>
+							</Bool>
+						</Constants>
+					</Material>
+          
+          
+				<ParticleSysBone
+						BoneName="FX_Fire_01"
+						FXParticleSystemTemplate="JapanBalloonDestructionFire"
+						FollowBone="true" />          
+				<ParticleSysBone
+						BoneName="FX_Fire_01"
+						FXParticleSystemTemplate="JapanBalloonDestructionLight"
+						FollowBone="true" />
+				<ParticleSysBone
+						BoneName="FX_Fire_01"
+						FXParticleSystemTemplate="JapanBalloonDestructionSmoke"
+						FollowBone="true" />          
+				<ParticleSysBone
+						BoneName="FX_Fire_01"
+						FXParticleSystemTemplate="JapanBalloonDestructionSparks"
+						FollowBone="true" />					
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="JUBalloonBomb_DIE"
+						AnimationMode="ONCE"/>
+				</AnimationState>				
+			</ScriptedModelDraw>
+		</Draws>			
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"
+				GravityMultiplier="-1.0" />
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="3s"
+				MaxLifetime="3s" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="UnitAIStateMachine"/>
+		</AI>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+	</GameObject>	
+</AssetDeclaration>

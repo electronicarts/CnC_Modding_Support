@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="Includes/Ref.xsd"/>
+	<xs:include schemaLocation="Includes/MetaDataCommon.xsd"/>
+
+
+	<xs:simpleType name="MapObjectFlagType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DRAWS_IN_MIRROR" />
+			<xs:enumeration value="ROAD_POINT1" />
+			<xs:enumeration value="ROAD_POINT2" />
+			<xs:enumeration value="OBSOLETE_BRIDGE_POINT1" />
+			<xs:enumeration value="OBSOLETE_BRIDGE_POINT2" />
+			<xs:enumeration value="ROAD_CORNER_TIGHT" />
+			<xs:enumeration value="ROAD_JOIN" />
+			<xs:enumeration value="DONT_RENDER" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="MapObjectBitFlags">
+		<xs:list itemType="MapObjectFlagType"></xs:list>
+	</xs:simpleType>
+
+
+	<xs:complexType name="StringPropertyPair">
+		<xs:attribute name="Key" type="xs:string" />
+		<xs:attribute name="Value" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="BoolPropertyPair">
+		<xs:attribute name="Key" type="xs:string" />
+		<xs:attribute name="Value" type="SageBool" />
+	</xs:complexType>
+
+	<xs:complexType name="IntPropertyPair">
+		<xs:attribute name="Key" type="xs:string" />
+		<xs:attribute name="Value" type="SageInt" />
+	</xs:complexType>
+
+	<xs:complexType name="RealPropertyPair">
+		<xs:attribute name="Key" type="xs:string" />
+		<xs:attribute name="Value" type="SageReal" />
+	</xs:complexType>
+
+	<xs:complexType name="AssetIdPropertyPair">
+		<xs:attribute name="Key" type="xs:string" />
+		<xs:attribute name="Value" type="BaseAssetReference"/>
+	</xs:complexType>
+
+	<xs:complexType name="AssetIdListPropertyPair">
+		<xs:attribute name="Key" type="xs:string" />
+		<xs:attribute name="Value" type="AssetIdList" />
+	</xs:complexType>
+
+	<xs:complexType name="Dictionary">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="BoolProperty" type="BoolPropertyPair" />
+			<xs:element name="IntProperty" type="IntPropertyPair" />
+			<xs:element name="RealProperty" type="RealPropertyPair" />
+			<xs:element name="StringProperty" type="StringPropertyPair" />
+			<xs:element name="UnicodeStringProperty" type="StringPropertyPair" />
+			<xs:element name="AssetIdProperty" type="AssetIdPropertyPair"  />
+			<xs:element name="AssetIdListProperty" type="AssetIdListPropertyPair"  />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="MapObject">
+		<xs:sequence>
+			<xs:element name="Position" type="Coord3D" />
+		</xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:refType="MapObject" />
+		<xs:attribute name="ThingTemplate" type="AssetReference" xas:refType="GameObject" />
+		<xs:attribute name="Flags" type="MapObjectBitFlags" />
+		<xs:attribute name="Angle" type="SageReal" />
+	</xs:complexType>
+
+	<xs:complexType name="MapObjectUSP">
+		<xs:complexContent>
+			<xs:extension base="MapObject">
+				<xs:attribute name="Faction" type="xs:string" />
+				<xs:attribute name="Team" type="xs:string" />
+				<xs:attribute name="Health" type="SageReal" />
+        <xs:attribute name="Unrest" type="SageReal" default="-1.0" />
+				<xs:attribute name="EventList" type="xs:string" />
+				<xs:attribute name="StrikeForceTemplate" type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="EnvironmentObject">
+		<xs:attribute name="Cloud" type="TextureRef" />
+		<xs:attribute name="Macro" type="TextureRef" />
+		<xs:attribute name="Environment" type="TextureRef" />
+	</xs:complexType>
+
+	<xs:complexType name="RoadObject">
+		<xs:attribute name="id" type="AssetReference" xas:refType="Road" />
+	</xs:complexType>
+
+	<xs:complexType name="PostEffectObject">
+		<xs:attribute name="Effect" type="TextureRef" />
+	</xs:complexType>
+	
+	<xs:complexType name="GameMap">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Waypoint" type="MapObject" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="Structure" type="MapObjectUSP" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="Unit" type="MapObjectUSP" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="Prop" type="MapObjectUSP" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="Audio" type="MapObject" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="Unknown" type="MapObject" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="Road" type="RoadObject" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="MapMetaData" type="MetaDataObject" minOccurs="0" maxOccurs="1" xas:pipelineOnly="true"/>
+					<xs:element name="EnvironmentData" type="EnvironmentObject" minOccurs="0" maxOccurs="1" />
+					<xs:element name="WorldDict" type="Dictionary" minOccurs="0" maxOccurs="1" />
+					<xs:element name="PostEffect" type="PostEffectObject" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

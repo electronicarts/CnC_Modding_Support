@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:NR_WarFactory.w3x" />
+    <Include type="all"	source="ART:NR_WarFactory_Door.w3x" /> 
+<!--		<Include type="all"	source="ART:NR_FutureTechWarFactory_GAR.w3x" /> -->
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+		<Include type="instance" source="DATA:Allied/Props/AlliedBarracks_Debris.xml" />
+		<Include type="instance" source="DATA:Civilian/Northern_Russia_NR/Props/NR_FutureTechWarFactory_Collapse.xml" />
+
+	</Includes>
+	<GameObject
+		id="NR_FutureTechWarFactory"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+    KindOf="+NOT_AUTOACQUIRABLE"
+    EditorName="NR_FutureTechWarFactory"
+	    	EditorSorting="STRUCTURE"
+		SelectPortrait="Portrait_Special_NR_Futuretech_WarFactory"
+		ButtonImage="Button_Special_NR_Futuretech_WarFactory"
+		Description="DESC:NR_FutureTechWarFactory"
+		TypeDescription="TYPE:NR_FutureTechWarFactory" 
+		Browser="REGION Northern_Russia_NR STRUCTURE">
+		<DisplayName xai:joinAction="Replace">Name:NR_FutureTechWarFactory</DisplayName>
+    <ArmorSet
+  Armor="StructureArmor"
+  DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false"
+				AffectedByStealth="false"
+				ExtraPublicBone="BoneGarrisonWall01 BoneGarrisonWall02 BoneGarrisonWall03 BoneGarrisonWall04 BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18	BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20 BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NR_WarFactory" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="NR_WarFactory"
+						AnimationMode="LOOP" />
+				</AnimationState>
+			</ScriptedModelDraw>	
+			
+<!-- DRAW DOOR01 -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Door"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NR_WarFactory_Door" />
+				</ModelConditionState>
+     
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="NR_WarFactory_Door"
+						AnimationMode="ONCE_BACKWARDS" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_WAITING_OPEN"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NR_WarFactory_Door"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_OPENING"
+					StateName="STATE_Open">
+					<Animation
+						AnimationName="NR_WarFactory_Door"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_CLOSING"
+					StateName="STATE_Closed"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NR_WarFactory_Door"
+						AnimationMode="ONCE_BACKWARDS" />
+				</AnimationState>
+
+			</ScriptedModelDraw>	
+
+<!--
+			<xi:include
+				href="../../../Includes/GarrisonFlagArmorLargeDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonArmorDraws/child::*)" />
+-->
+
+
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="FX_BuildingDebrisExplosion"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Large" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Tiny" />
+				<Event
+					Index="onDeath"
+					FX="FX_SpecialDebrisExplosionShakeSmall" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NR_FutureTechWarFactory_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+      <DestroyDie
+        id="ModuleTag_Die">
+        <DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+      </DestroyDie>
+
+		</Behaviors>
+
+    <Body>
+      <ActiveBody
+                  id="DefaultBody"
+                  MaxHealth="=$CIV_HEALTH_LARGE"
+                  />
+    </Body>
+    
+		<Geometry
+			IsSmall="false">
+      <Shape
+           Type= "BOX"
+           MajorRadius = "72.0694"
+           MinorRadius = "51.9393"
+           Height = "30.099"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "31.5572"
+            y = "0.0"
+            z = "0.0" />
+      </Shape>
+      <Shape
+           Type= "BOX"
+           MajorRadius = "42.6446"
+           MinorRadius = "38.1907"
+           Height = "79.2078"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "3.40555"
+            y = "0.0"
+            z = "0.0" />
+      </Shape>
+      <Shape
+           Type= "BOX"
+           MajorRadius = "27.1337"
+           MinorRadius = "35.0173"
+           Height = "61.5168"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "54.9257"
+            y = "-73.3943"
+            z = "0.0" />
+      </Shape>	
+		</Geometry>
+		<ClientBehaviors>
+				<AnimationSoundClientBehavior id="ModuleTag_AnimationSound">
+					<Sound Sound="TEC_WarFactory_Animation_Car_MoveStart" Animation="NR_WarFactory" Frame="32 122 216 302" />				
+					<Sound Sound="TEC_WarFactory_Animation_Car_DropUnload" Animation="NR_WarFactory" Frame="93 273" />				
+					<Sound Sound="TEC_WarFactory_Animation_Car_Load" Animation="NR_WarFactory" Frame="13 188" />	
+				</AnimationSoundClientBehavior>			
+		</ClientBehaviors>
+
+		<AudioArraySound>
+			<AudioEntry Sound="" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+
+	<ObjectCreationList
+		id="NR_FutureTechWarFactory_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>NR_FutureTechWarFactory_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>		
+</AssetDeclaration>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Tags></Tags>
+  <Includes>
+    <Include type="instance" source="DATA:Allied\Units\AlliedBomberAircraft.xml"/>
+  </Includes>
+
+	<ObjectCreationList
+	  id="OCL_CAMPAlliedBomberDrop1">
+		<CreateObject
+				Options="IGNORE_ALL_OBJECTS DONT_SET_PRODUCER ISSUE_MOVE_AFTER_CREATION FIRE_SPECIAL_POWER MOVE_TARGET_USES_OFFSET"
+				Disposition="LIKE_EXISTING"
+				FireSpecialPowerTemplate="SpecialPower_EjectPassengers">
+			<Offset
+					  x="35"
+					  y="35"
+					  z="190"/>
+			<CreateObject>CAMP_AlliedBomberAircraft_Infantry_1</CreateObject>
+		</CreateObject>		
+		<CreateObject
+				Options="IGNORE_ALL_OBJECTS DONT_SET_PRODUCER ISSUE_MOVE_AFTER_CREATION FIRE_SPECIAL_POWER MOVE_TARGET_USES_OFFSET"
+				Disposition="LIKE_EXISTING"
+				FireSpecialPowerTemplate="SpecialPower_EjectPassengers">
+			<Offset
+					  x="-35"
+					  y="35"
+					  z="190"/>
+			<CreateObject>CAMP_AlliedBomberAircraft_Infantry_1</CreateObject>
+		</CreateObject>
+		<CreateObject
+				Options="IGNORE_ALL_OBJECTS DONT_SET_PRODUCER ISSUE_MOVE_AFTER_CREATION FIRE_SPECIAL_POWER MOVE_TARGET_USES_OFFSET"
+				Disposition="LIKE_EXISTING"
+				FireSpecialPowerTemplate="SpecialPower_EjectPassengers">
+			<Offset
+					  x="35"
+					  y="-35"
+					  z="190"/>
+			<CreateObject>CAMP_AlliedBomberAircraft_Infantry_1</CreateObject>
+		</CreateObject>
+		<CreateObject
+				Options="IGNORE_ALL_OBJECTS DONT_SET_PRODUCER ISSUE_MOVE_AFTER_CREATION FIRE_SPECIAL_POWER MOVE_TARGET_USES_OFFSET"
+				Disposition="LIKE_EXISTING"
+				FireSpecialPowerTemplate="SpecialPower_EjectPassengers">
+			<Offset
+					  x="-35"
+					  y="-35"
+					  z="190"/>
+			<CreateObject>CAMP_AlliedBomberAircraft_Infantry_1</CreateObject>
+		</CreateObject>		
+	</ObjectCreationList>
+
+  <ObjectCreationList
+  id="OCL_CAMPAlliedBomberDrop2">
+    <CreateObject
+				Options="IGNORE_ALL_OBJECTS DONT_SET_PRODUCER ISSUE_MOVE_AFTER_CREATION FIRE_SPECIAL_POWER MOVE_TARGET_USES_OFFSET"
+				Disposition="LIKE_EXISTING"
+				FireSpecialPowerTemplate="SpecialPower_EjectPassengers">
+      <Offset
+					  x="-70"
+					  y="0"
+					  z="190"/>
+      <CreateObject>CAMP_AlliedBomberAircraft_Infantry_1</CreateObject>
+    </CreateObject>
+    <CreateObject
+				Options="IGNORE_ALL_OBJECTS DONT_SET_PRODUCER ISSUE_MOVE_AFTER_CREATION FIRE_SPECIAL_POWER MOVE_TARGET_USES_OFFSET"
+				Disposition="LIKE_EXISTING"
+				FireSpecialPowerTemplate="SpecialPower_EjectPassengers">
+      <Offset
+					  x="70"
+					  y="0"
+					  z="190"/>
+      <CreateObject>CAMP_AlliedBomberAircraft_Infantry_1</CreateObject>
+    </CreateObject>
+  </ObjectCreationList>
+
+
+
+  <!-- Pulled the AIRCRAFT_TRANSPORT_ONLY_GARRISONABLE_WHILE_PARKED kindof for now, until it gets fixed, can't preload infantry because of it -->
+	<GameObject
+		id="CAMP_AlliedBomberAircraft_Infantry_1"
+		inheritFrom="AlliedBomberAircraft"
+		KindOf="-AIRCRAFT_TRANSPORT_ONLY_GARRISONABLE_WHILE_PARKED +SUMMONED +IGNORES_SELECT_ALL +NO_COLLIDE -SELECTABLE"
+		EditorSorting="CAMPAIGN_UNITS"
+		EditorName="CAMP_AlliedBomberAircraft_Infantry_1">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				xai:joinAction="Replace"
+				OkToChangeModelColor="true" >
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AUBomberAircraft_SKN" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="Msl_pos" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="AUBomberAircraft_SKN" />
+					<ParticleSysBone
+						BoneName="FX_ENGINE_R02"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="AUBomberAircraft_SKN" />
+					<Texture
+						Original="AUBomberAircraft"
+						New="AUBomberAircraft_D" />	
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="FX_ENGINE_R01"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="FX_ENGINE_R01"
+						FXParticleSystemTemplate="AircraftDamageFire"
+						FollowBone="true" />
+				</ModelConditionState>				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="AUBomberAircraft_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="30" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+		  <TransportContain
+			id="ModuleTag_Contain"
+			xai:joinAction="Append">
+			<InitialPayload
+						Name="AlliedAntiInfantryInfantry"
+						Count="3" />
+			<InitialPayload
+						Name="AlliedAntiVehicleInfantry"
+						Count="2" />
+		  </TransportContain>
+			
+			<SpecialPower
+				id="ModuleTag_EjectPassengers"
+				xai:joinAction="Replace"
+				SpecialPowerTemplate="SpecialPower_EjectPassengers"
+				UpdateModuleStartsAttack="true" />
+			<EjectPassengersSpecialAbilityUpdate
+				id="ModuleTag_EjectPassengersUpdate"
+				xai:joinAction="Replace"
+				SpecialPowerTemplate="SpecialPower_EjectPassengers"
+				Height="150.0"
+				StartAbilityRange="0.0"
+				TimePerPassenger=".25s"
+				Radius="0"
+				RunOffMapWhenDone="true"
+				IgnoreTargetLocation="true" 
+				Options="RECONSTITUTE_STORED_COMMAND DO_NOT_DO_AI_SPECIAL_POWER"/>
+
+			<RunOffMapBehavior
+				id="ModuleTag_RunOffMapBehavior"
+				xai:joinAction="Replace"
+				FlyingOffMap="true"
+				RequiresSpecificTrigger="true" />
+
+      <WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate"
+        xai:joinAction="Remove"/>
+    </Behaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="A06_ParadropTransport_MoveLoop" AudioType="soundMoveLoop" />
+		</AudioArraySound>
+	</GameObject>
+
+</AssetDeclaration>

@@ -1,0 +1,898 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+
+	<!--Name: NOD Vehicle AF / Defense Heavy Tank T3 / Vien Extractor / Aftershock -->
+	<!-- Tib Vein Detonation ability has 3 distinct phases:
+			  phase 1: Earthquake - low AOE damage, slow and reduce dodge.
+			  phase 2: Explosion - one shot high AOE damage.
+			  phase 3: Tib Cloud - low AOE damage, low AOE DOT damage, and reduce armor.
+					   
+	Model Conditions:
+	   USER_1: set by whatever spawned cloud object is active and attached
+	-->
+	
+	<Includes>
+		 <!-- Art Includes -->
+		<Include type="all" source="ART:NUL_VehicleAF_SKN.w3x" />
+		<Include type="all" source="ART:NUL_VehicleAF_AIDA.w3x" />
+		<Include type="all" source="ART:NUL_VehicleAF_BLDA.w3x" />
+		<Include type="all" source="ART:NUL_VehicleAF_GTPA.w3x" />
+		<Include type="all" source="ART:NUL_VehicleAF_MOVA.w3x" />  <!-- Moving Unpacked -->
+		<Include type="all" source="ART:NUL_VehicleAF_MOVB.w3x" />  <!-- Moving & Spinning Unpacked -->
+		<Include type="all" source="ART:NUL_VehicleAF_MOVC.w3x" />  <!-- Moving Packed -->
+		<Include type="all" source="ART:NUL_VehicleAF_MOVD.w3x" />  <!-- Moving & Spinning Packed -->
+		<Include type="all" source="ART:NUL_VehicleAF_ATKA.w3x" />
+		<Include type="all" source="ART:NUL_VehicleAF_UPCK.w3x" />
+		<Include type="all" source="ART:NUL_VehicleAF_PCKA.w3x" />
+		<Include type="all" source="ART:NUL_VehicleAF_DMG.xml" />
+		<!-- Data Includes -->
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:Nod/Props/NODVehicleAFProps.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseHeavyVehicle.xml" />
+	</Includes>
+
+	<GameObject
+		id="NODVehicleAF"
+		inheritFrom="BaseHeavyVehicle"
+		HealthBoxHeightOffset="14"
+		HealthBar="Large"
+		SubGroupPriority="112"
+		SelectPortrait="Portrait_NOD_Vehicle_AF"
+		ButtonImage="Btn_NOD_Vehicle_AF"
+		Side="NOD"
+		KindOf="+SPAWNS_HUSK"
+		ParticipationValue="=$NODVEHICLEAF_PARTICIPATION_VALUE"
+		TransportSlotCount="4"
+		BuildTime="15"
+		CommandSet="NODVehicleAFCommandSet"
+		CommandPoints="=$NOD_VEHICLE_AF_COMMANDPOINT_COST"
+		VoicePriority="160"
+		EditorName="NOD_D3_Heavy_Blast(Aftershock)"
+		EditorSorting="UNIT"
+		WeaponCategory="BLAST"
+		Description="Desc:NODVehicleAF"
+		TypeDescription="Type:NODVehicleAF">
+		<ArmorSet
+			id="BaseHeavyVehicle_Armor"
+			xai:joinAction="Replace"
+			Armor="HeavyArmor_NonDirectional"
+			DamageFX="VehicleDamageFX" />
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODVehicleAF</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+
+		<LocomotorSet
+			Locomotor="NODVehicleAFLocomotor"
+			Condition="NORMAL"
+			Speed="80.0" />
+
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="NAF_Wheel_01 NAF_Wheel_02 NAF_Wheel_03"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="NAF_Wheel_01"
+				TrackMarksRightBone="NAF_Wheel_01"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUL_VehicleAF_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="NAF_Nail" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="NAF_Nail" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NUL_VehicleAF_SKN" />
+					<Texture
+						Original="NUL_VehicleAF"
+						New="NUL_VehicleAF_DMG" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUL_VehicleAF_SKN" />
+					<Texture
+						Original="NUL_VehicleAF"
+						New="NUL_VehicleAF_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NUL_VehicleAF_SKN" />
+					<Texture
+						Original="NUL_VehicleAF"
+						New="NUL_VehicleAF_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="NUL_VehicleAF_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NUL_VehicleAF_AIDA"
+						AnimationBlendTime="10"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="COMING_OUT_OF_FACTORY">
+					<Animation
+						AnimationName="NUL_VehicleAF_BLDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="10"
+						AnimationSpeedFactorMin="2.0"
+						AnimationSpeedFactorMax="2.0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_5">
+					<Animation
+						AnimationName="NUL_VehicleAF_GTPA"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					Flags="START_FRAME_LAST" 
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="NUL_VehicleAF_GTPA"
+						AnimationMode="ONCE_BACKWARDS"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					Flags="RESTART_ANIM_WHEN_COMPLETE" 
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="NUL_VehicleAF_MOVC"
+						AnimationPriority="80"
+						AnimationBlendTime="10"
+						AnimationMode="ONCE"/>
+					<ParticleSysBone
+						BoneName="NAF_Wheel_01"
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAF_Wheel_02"
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAF_Wheel_03"
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName="NUL_VehicleAF_UPCK"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"/>
+					<FXEvent
+						Frame="49"
+						FireWhenSkipped="true"
+						Effect="FX_NodSpikeFP"
+						Bone="NAF_Nail" />
+					<FXEvent
+						Frame="46"
+						FireWhenSkipped="true"
+						Effect="FX_NodSpikeFP"
+						Bone="NAF_Wheel_01" />
+					<FXEvent
+						Frame="41"
+						FireWhenSkipped="true"
+						Effect="FX_NodSpikeFP"
+						Bone="NAF_Wheel_02" />
+					<FXEvent
+						Frame="37"
+						FireWhenSkipped="true"
+						Effect="FX_NodSpikeFP"
+						Bone="NAF_Wheel_03" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= null and Prev == "STATE_FiringDeployedWeapon" then
+						CurDrawableSetTransitionAnimState("STATE_DeployedToMobile")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					StateName="STATE_FiringDeployedWeapon"
+					ConditionsYes="USER_1 RECYCLED">
+					<Animation
+						AnimationName="NUL_VehicleAF_ATKA"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					StateName="STATE_FiringDeployedWeapon"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="NUL_VehicleAF_ATKA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="6" />
+					<FXEvent
+						Frame="45"
+						FireWhenSkipped="true"
+						Effect="FX_NODVehicleAFPound"
+						Bone="" />
+					<!-- This effect needs to be replaced to represent the 2nd phase of the attack.-->
+					<FXEvent
+						Frame="90"
+						FireWhenSkipped="true"
+						Effect="FX_NODVehicleAFPound"
+						Bone="" />
+				</AnimationState>
+				<!-- waiting for next round of groundpound attack, freeze -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="WEAPONSTATE_ONE">
+					<Animation
+						AnimationName="NUL_VehicleAF_ATKA"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="STATE_DeployedToMobile">
+					<Animation
+						AnimationName="NUL_VehicleAF_PCKA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="6"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+				<!-- This unit has no primary weapon -->
+
+			<!-- dying, spawn a husk -->
+			<CreateObjectDie
+				id="ModuleTag_CreateHusk_Backup"
+				CreationList="NODVehicleAFHusk_Backup">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED SLAUGHTERED" />
+				<UpgradeRequired>Upgrade_BackupSystems</UpgradeRequired>
+			</CreateObjectDie>
+			<!-- If we have backup systems, then spawn husk on neutral team -->
+			<CreateObjectDie
+				id="ModuleTag_CreateHusk_NoBackup"
+				CreationList="NODVehicleAFHusk_NoBackup">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED SLAUGHTERED" />
+				<UpgradeForbidden>Upgrade_BackupSystems</UpgradeForbidden>
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Large_Die_OCL">
+				<DieMuxData
+					DeathTypes="SUICIDED" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXListUpgrade">
+				<TriggeredBy>Upgrade_BackupSystems</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeNODBackUpSystems" />
+			</FXListBehavior>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleAF_Death" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+				<Event Index="onDeath" FX="FX_GDIArtilleryHitBIG"/>
+			</FXListBehavior>
+
+			<SpecialPower
+				id="ModuleTag_ToggleDeployInfantry"
+				SpecialPowerTemplate="SpecialPower_NODVehicleAFDeploy"
+				UpdateModuleStartsAttack="true" />
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleDeployInfantryUpdate"
+				SpecialPowerTemplate="SpecialPower_NODVehicleAFDeploy"
+				UnpackTime="=$NODVEHICLEAF_LOCAL_UNPACK_TIME"
+				Options="BUSY_DURING_UNPACK">
+				<ToggleState
+					ObjectStatus="GENERIC_TOGGLE_STATE"
+					AIUpdateModuleId="ModuleTag_AIUpdate">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_COMBAT_DEPLOY">
+						<StateWeapon
+							Weapon="" />
+					</SkirmishAiInfo>
+				</ToggleState>
+				<!-- Deploy to the AOE Weapon -->
+				<ToggleState
+					ObjectStatus="SWITCHED_WEAPONS DEPLOYED TRANSFORMATION_TOGGLE_STATE IMMOBILE"
+					AIUpdateModuleId="ModuleTag_DeployedAI"
+					ModelConditions="WEAPONSTATE_ONE"
+					Flags="ACTIVATE_FIRE_WEAPON_UPDATE_MODULES" 
+					AttributeModifier="AttributeModifier_NODVehicleAFDeployed">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_COMBAT_DEPLOY"
+						NeverUseInState="IDLE RETREAT"
+						NeverUseWhenDodgingThreat="true"
+						NeverUseDuringTask="REPAIRING"
+						MaxWeaponRangePercent="75%"
+						DeployedUnitRangedWeaponType="SELF_CENTERED_AOE_RADIUS"
+						TimeToWaitForTarget="3s">
+						<StateWeapon
+							Weapon="NODVehicleAFWeapon_Deployed" />
+					</SkirmishAiInfo>
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+			
+			<!-- create a tibcloud that handles all phases of a single attack -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdateDeployed" 
+				FireInterval="=$NODVEHICLEAF_TOTAL_AOE_CYCLE_TIME">
+				<ObjectStatusValidation
+					ForbiddenStatus="GENERIC_TOGGLE_STATE DISABLED_FOR_RECYCLE" />
+				<FireWeaponNugget
+					WeaponName="NODVehicleAFWeapon_Deployed_CreateCloud" />
+			</FireWeaponUpdate>
+
+			<!-- This object creates a husk, so we replace the crate spawn module from base object -->
+			<ChanceCreateObjectDie
+				id="ModuleTag_CreateUpgradeObjectDie"
+				CreationList="OCL_CrateSpawnOnDeathWithHusk">
+			</ChanceCreateObjectDie>
+			
+		</Behaviors>
+
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					RotateToTargetWhenAiming="true"
+					SympathyRange="200.0" />
+			</AIUpdate>
+
+			<!-- This Unit uses a different AIUpdate when the unit is deployed.
+					This is a the same AI type as the base defenses because that 
+					StateMachine doesn't have unnecessary states (i.e. MOVETO) which
+					could cause problems if the Statii change on the object for some 
+					reason. -->
+			<AIUpdate
+				id="ModuleTag_DeployedAI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"/>
+			</AIUpdate>
+			
+		</AI>
+
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="2700" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+				<Key>LargeGroupAudioKey_TankLarge</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MoveLoop2">
+				<ModelConditionSound Sound="GDI_Mammoth_VehD_MoveLoop" RequiredFlags="MOVING" ExcludedFlags="DECELERATE RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_NOD_Aftershock_PackingUnpacking">
+				<ModelConditionSound Sound="NOD_Aftershock_VehAF_UnpackMS" RequiredFlags="UNPACKING" ExcludedFlags="WEAPONSTATE_ONE RECYCLED DYING"/>
+				<ModelConditionSound Sound="NOD_Aftershock_VehAF_PackUpMS" RequiredFlags="WEAPONSTATE_ONE UNPACKING" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<!-- 
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_NOD_Aftershock_TiberiumVeinCloudLoop">
+				<ModelConditionSound Sound="NOD_Aftershock_VehAF_TiberiumVeinWeaponCloudLoop1" RequiredFlags="WEAPONSTATE_ONE" ExcludedFlags="UNPACKING DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			 -->
+			 <ModelConditionAudioLoopClientBehavior id="ModuleTag_Revived">
+				<ModelConditionSound Sound="NOD_Aftershock_VehAF_Revived" RequiredFlags="USER_5" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_VoicePowerRestored">
+				<ModelConditionSound Sound="NOD_VehAFAftershock_VoiceSelect" RequiredFlags="USER_5" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="NOD_Aftershock_VehAF_VeinWeaponPound" ExcludedMC="RECYCLED" Animation="NUL_VehicleAF_ATKA" Frame="44 89"/>
+				<Sound Sound="NOD_Aftershock_VehAF_VeinWeaponFire" ExcludedMC="RECYCLED" Animation="NUL_VehicleAF_ATKA" Frame="40 87"/>
+				<Sound Sound="NOD_Aftershock_VehAF_AnimationPlungerDown" ExcludedMC="RECYCLED" Animation="NUL_VehicleAF_ATKA" Frame="159"/>
+				<Sound Sound="NOD_Aftershock_VehAF_AnimationPlungerDown" ExcludedMC="RECYCLED" Animation="NUL_VehicleAF_PCKA" Frame="4"/>
+				<Sound Sound="NOD_Aftershock_VehAF_AnimationPlungerDown" ExcludedMC="RECYCLED" Animation="NUL_VehicleAF_UPCK" Frame="5"/>
+				<Sound Sound="NOD_Aftershock_VehAF_AnimationPlungerDown_Delayed" ExcludedMC="RECYCLED" Animation="NUL_VehicleAF_GTPA" Frame="39"/> <!-- actually this sound is for when it returns to idle, but using blend -->
+			</AnimationSoundClientBehavior>
+			<ModelConditionSoundSelectorClientBehavior
+				id="ModuleTag_VoiceSelectDeploy">
+				<Override
+					RequiredFlags="WEAPONSTATE_ONE">
+					<AudioArrayVoice>
+						<AudioEntry Sound="NOD_VehAFAftershock_VoiceSelectDeployedMS" AudioType="voiceSelect"/>
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+
+		<Geometry>
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "40.0"
+					 MinorRadius = "40.0"
+					 Height = "20.0"
+					 ContactPointGeneration = "VEHICLE" >
+				<Offset
+						x = "0.0"
+						y = "4.03545"
+						z = "0.0" />
+			</Shape>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "15.0"
+					 MinorRadius = "15.0"
+					 Height = "75.0"
+					 ContactPointGeneration = "VEHICLE" >
+				<Offset
+						x = "0.0437679"
+						y = "-0.30979"
+						z = "25.8986" />
+			</Shape>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "40.0"
+					 MinorRadius = "40.0"
+					 Height = "100.0">
+			</Shape>
+
+		</Geometry>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_VehAFAftershock_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="NOD_VehAFAftershock_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="NOD_VehAFAftershock_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="NOD_VehAFAftershock_VoiceSelectMS" AudioType="voiceSelect"/>
+			<!-- NOD_VehAFAftershock_VoiceSelectDeployedMS -->
+			<AudioEntry Sound="NOD_VehAFAftershock_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+			<NamedEntry Sound="NOD_VehAFAftershock_VoiceMoveDeploy" Name="VoiceAftershockDeploy" />
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="NOD_Aftershock_VehAF_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="Nod_VehicleI_IdleLoop" AudioType="soundAmbient" />
+			<AudioEntry Sound="NOD_Aftershock_VehAF_MoveByLoop" AudioType="soundMoveLoop" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="500"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_BackupSystems</DisplayUpgrade>
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	--> 
+	<!--    WEAPONS			--> 
+	<!--////////////////////////////////////////	--> 
+	
+	<!-- Earthquake weapon (phase 1). Fired twice per cycle -->
+	<WeaponTemplate 
+		id="NODVehicleAFWeapon_Deployed" 
+		AttackRange="1.0" 
+		WeaponSpeed="999999.0" 
+		ClipSize="1" 
+		FireFX="" 
+		FireVeteranFX="" 
+		FireSound="" 
+		CanFireWhileMoving="false" 
+		Flags="NOT_ATTRACTED_BY_MAGNETS" 
+		RequiredAntiMask="ANTI_GROUND" 
+		ForbiddenAntiMask="ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY" 
+		InstantLoadClipOnActivate="true"
+		FinishAttackOnceStarted="true"
+		RadiusDamageAffects="ENEMIES NEUTRALS" > 
+		<Nuggets> 
+			<DamageNugget 
+				PartitionFilterTestType="CIRCLE"
+				Damage="9.0" 
+				Radius="=$NODVEHICLEAF_EARTHQUAKE_RADIUS" 
+				DamageType="BLAST" 
+				DeathType="EXPLODED" 
+				DamageFXType="NOD_TIBCLOUD" 
+				FXListVictim="FX_SeismicSlow" 
+				ForceFXPositionToVictim="true" > 
+			</DamageNugget> 
+			<AttributeModifierNugget 
+				PartitionFilterTestType="CIRCLE" 
+				AttributeModifierName="AttributeModifier_NODVehicleAFDeployedWeapon" 
+				Radius="=$NODVEHICLEAF_EARTHQUAKE_RADIUS" /> 
+		</Nuggets> 
+	</WeaponTemplate>
+
+	<!-- Tib Explosion weapon (phase 2) fired once per cycle -->
+	<WeaponTemplate
+		id="NODVehicleAFWeapon_Deployed_Explosion"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		ClipSize="1"
+		FireFX=""
+		FireVeteranFX=""
+		FireSound=""
+		CanFireWhileMoving="false"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_GROUND"
+		ForbiddenAntiMask="ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		InstantLoadClipOnActivate="true"
+		FinishAttackOnceStarted="true"
+		RadiusDamageAffects="ENEMIES NEUTRALS" >
+		<Nuggets>
+			<DamageNugget
+				PartitionFilterTestType="CIRCLE"
+				Damage="200.0"
+				Radius="=$NODVEHICLEAF_EXPLOSION_RADIUS"
+				DamageType="BLAST"
+				DeathType="EXPLODED"
+				DamageFXType="NOD_TIBCLOUD"
+				ForceFXPositionToVictim="true">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Tib Cloud weapon (phase 3) - fired by tib cloud object -->
+	<WeaponTemplate
+		id="NODVehicleAFWeapon_Deployed_Cloud"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		ClipSize="1"
+		FireFX="FX_NODVehicleAFLaunch"
+		FireVeteranFX="FX_NODVehicleAFLaunch"
+		CanFireWhileMoving="false"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_GROUND"
+		ForbiddenAntiMask="ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		InstantLoadClipOnActivate="true"
+		FinishAttackOnceStarted="true"
+		RadiusDamageAffects="ENEMIES NEUTRALS" >
+		<Nuggets>
+			<DamageNugget
+				PartitionFilterTestType="CIRCLE"
+				Damage="3.0"
+				Radius="=$NODVEHICLEAF_CLOUD_RADIUS"
+				DamageType="BLAST"
+				DeathType="EXPLODED"
+				FXListVictim="FX_NODTibCloud_Hit">
+			</DamageNugget>
+			<DOTNugget
+				PartitionFilterTestType="CIRCLE"
+				Damage="2.0"
+				Radius="=$NODVEHICLEAF_CLOUD_RADIUS"
+				DamageInterval="0.5s"
+				DamageDuration="=$NODVEHICLEAF_CLOUD_EFFECTDURATION"
+				DamageType="BLAST"
+				FXListVictim="FX_NODTibCloud_Hit"
+				DeathType="EXPLODED">
+			</DOTNugget>
+			<AttributeModifierNugget
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifier_NODVehicleAFDeployedCloudWeapon"
+				Radius="=$NODVEHICLEAF_CLOUD_RADIUS" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- weapon used to spawn the tib cloud object -->
+	<WeaponTemplate
+		id="NODVehicleAFWeapon_Deployed_CreateCloud"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		ReAcquireDetailType="PER_ATTACK"
+		ClipSize="1"
+		FireFX=""
+		FireVeteranFX=""
+		PreAttackFX=""
+		CanFireWhileMoving="true"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_VEHICLE ANTI_STRUCTURE"
+		ForbiddenAntiMask="ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		InstantLoadClipOnActivate="true">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />		
+		<Nuggets>
+			<WeaponOCLNugget
+				id="defaultOCLNugget"
+				WeaponOCL="OCL_NODVehicleAFWeapon_DeployedCloudCreation" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		OBJECT CREATION LISTS			-->
+	<!-- //////////////////////////////////////	-->
+	<ObjectCreationList
+		id="OCL_NODVehicleAFWeapon_DeployedCloudCreation">
+		<OCLModule>
+			<Modules>
+				<CreateObject
+					ObjectTemplate="NODVehicleAFTiberiumCloudObject"/>
+				<CopyParentUpgrades/>
+				<CopyParentAttributeModifiers/>
+				<AttachToSource/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="NODVehicleAFHusk_Backup">
+		<OCLModule>
+			<Modules>
+				<!-- Kick unit off of SkirmishAI teams when dead; immobile husk can confuse team -->
+				<SetTeam
+					ChangeSkirmishAITeamToDefaultSkirmishTeam="true"
+					SetToDefaultNeutralTeam="false" />
+				<ParentRelativePreOrient />
+				<SetTimedModelCondition
+					ModelCondition="USER_2"
+					Duration="6.2s"/>
+				<!-- This status is set on creation and removed via lua script from the husk when buildability is restored -->
+				<SetStatus Status="CANNOT_PROVIDE_BUILDABILITY"/>
+				<CreateObject
+					ObjectTemplate="NODVehicleAFHusk"/>
+				<CopyParentExperience/>
+				<CopyParentLayer/>
+				<CopyParentUpgrades/>
+				<SetHealth
+					MinHealth="50%"
+					MaxHealth="50%"/>
+				<SetInvulnerable
+					Duration="4.0s"/>
+				<ObjectList>
+					<ObjectTemplate>NODDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectOffset x="0" y="0" z="0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="2.0"
+							MinForcePitch="90d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="NODVehicleAFHusk_NoBackup">
+		<OCLModule>
+			<Modules>
+				<SetTeam />
+				<ParentRelativePreOrient />
+				<SetTimedModelCondition
+					ModelCondition="USER_2"
+					Duration="6.2s"/>
+				<!-- This status is set on creation and removed via lua script from the husk when buildability is restored -->
+				<SetStatus Status="CANNOT_PROVIDE_BUILDABILITY"/>
+				<CreateObject
+					ObjectTemplate="NODVehicleAFHusk"/>
+				<CopyParentExperience/>
+				<CopyParentLayer/>
+				<CopyParentUpgrades/>
+				<SetHealth
+					MinHealth="50%"
+					MaxHealth="50%"/>
+				<SetInvulnerable
+					Duration="4.0s"/>
+				<ObjectList>
+					<ObjectTemplate>NODDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectOffset x="0" y="0" z="0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="2.0"
+							MinForcePitch="90d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	
+	<!-- //////////////////////////////////////	-->
+	<!--	LOGIC COMMANDS AND COMMAND SET		-->
+	<!-- //////////////////////////////////////	-->
+	<LogicCommandSet
+		id="NODVehicleAFCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+		<Cmd>Command_NODVehicleAFDeploy</Cmd>
+	</LogicCommandSet>
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_NODVehicleAFDeploy">
+		<SpecialPower>SpecialPower_NODVehicleAFDeploy</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER" >
+			<AISpecialPowerInfo Heuristic="TOGGLE" />
+		</AISpecialPower>
+	</LogicCommand>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		SPECIAL POWER TEMPLATES			-->
+	<!-- //////////////////////////////////////	-->
+	<SpecialPowerTemplate
+		id="SpecialPower_NODVehicleAFDeploy"
+		ReloadTime="5s"
+		TargetType="NONE"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceAftershockDeploy"
+		WaypointModeTerminal="false"
+	/>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--	LOCOMOTORS								-->
+	<!-- ////////////////////////////////////////	-->
+	<LocomotorTemplate
+		id="NodVehicleAFLocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		TurnTimeSeconds="3.0s"
+		TurnTimeDamagedSeconds="3.0s"
+		MaxSpeedDamaged="100%"
+		AccelerationSeconds="1.5s"
+		BrakingSeconds="0.7s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="50.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="TREADS"
+		UseTerrainSmoothing="true"
+		AccelPitchLimit="2d"
+		PitchStiffness="0.5"
+		RollStiffness="0.5"
+		PitchDamping="0.8"
+		RollDamping="0.3"
+		ForwardAccelerationPitchFactor="0.0"
+		LateralAccelerationRollFactor="0.0"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		CanReverseMove="true"
+	/>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--	ATTRIBUTE MODIFIERS						-->
+	<!-- ////////////////////////////////////////	-->
+
+	<!-- this is applied to the object when its in it's deployed state -->
+	<AttributeModifier
+		id="AttributeModifier_NODVehicleAFDeployed"
+		Category="NONE">
+		<Modifier Type="SPEED" Value="0%"/>
+		<Modifier Type="ARMOR" Value="100%"/>
+	</AttributeModifier>
+
+	<!-- Applied to targets during Earthquake (phase 1), short duration so it wears off quickly when the unit leaves the attack area-->
+	<AttributeModifier
+		id="AttributeModifier_NODVehicleAFDeployedWeapon"
+		Category="NONE"
+		Duration="2.0s"
+		RenderBuffEffectFlags="VEIN_DETONATION">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:NODVehicleAF_Earthquake" />
+		<Modifier Type="SPEED" Value="25%"/>
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-50%" />
+	</AttributeModifier>
+	
+	<!-- Applied to vehicle while cloud is active -->
+	<AttributeModifier
+		id="AttributeModifier_NODVehicleAFDeployedAttacking"
+		Category="NONE"
+		Duration="=$NODVEHICLEAF_TIBCLOUD_LIFETIME"
+		ModelConditionsSet="USER_1"/>
+
+	<!-- Applied to targets during Tib Cloud (phase 3), short duration so it wears off quickly when the unit leaves the attack area-->
+	<AttributeModifier
+		id="AttributeModifier_NODVehicleAFDeployedCloudWeapon"
+		Category="NONE"
+		Duration="=$NODVEHICLEAF_CLOUD_EFFECTDURATION">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:NODVehicleAF_TibCloud" />
+		<Modifier Type="ARMOR" Value="125%"/>
+	</AttributeModifier>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--	EXPERIENCE LEVELS						-->
+	<!-- ////////////////////////////////////////	-->
+	<ExperienceLevelTemplate
+		id="NODVehicleAFExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_01"
+		ExperienceAward="12">
+		<Target>NODVehicleAF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAFExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_02"
+		Prerequisite="NODVehicleAFExperienceLevel_1"
+		RequiredExperience="24"
+		ExperienceAward="14">
+		<Target>NODVehicleAF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAFExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_03"
+		Prerequisite="NODVehicleAFExperienceLevel_2"
+		RequiredExperience="60"
+		ExperienceAward="16">
+		<Target>NODVehicleAF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAFExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_04"
+		Prerequisite="NODVehicleAFExperienceLevel_3"
+		RequiredExperience="108"
+		ExperienceAward="18">
+		<Target>NODVehicleAF</Target>
+	</ExperienceLevelTemplate>
+
+
+</AssetDeclaration>

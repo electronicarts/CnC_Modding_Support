@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+    <Include type="instance" source="DATA:SkirmishAI\States\SovietBaseStates.xml" />
+  </Includes>
+
+  <AIStrategicStateDefinition
+    id="AIState_S08_Soviet_LandAttackers"
+    MaxTargets="2">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="8" MaxUnits="16"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER" 
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S08_Soviet_Navy_BinghamAttack"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_player_pre_sub_split"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristic" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="CloseToShoreStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER" 
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="HIGH" AlwaysRecruit="true"
+                    MicroManager="StandardMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S08_Soviet_Navy_PremierAttack"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_player_obj_3"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristic" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="CloseToShoreStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="4" MaxUnits="8"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S08_SovietExpansion"
+    MaxRunningCopies="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimerHeuristic StartTime="360s" EndTime="-1s" CountFrom="AI_START"/>
+      <TimeSinceLastExpansionHeuristic Time="240s"/>
+      <EnemyNearbyHeuristic Distance="600.0" EnemyNearby="false"/>
+      <AllNearbyNodesFullHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ExpansionHeuristic"/>
+    <Tactic id="Expand" Tactic="SimpleExpansion" Distance="175">
+      <TeamTemplate MinUnits="1" MaxUnits="8" MinPowerAdvantage="1.0"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="DefenseMicroManager">
+        <CreateUnits UnitName="SovietSurveyor" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S08_Soviet_InfantryAttackers"
+    MaxTargets="4">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToGroundUnitHeuristic" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristic" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="20"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="4" MaxUnits="8"
+                    IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="VEHICLE IGNORES_SELECT_ALL HARVESTER" 
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+  id="AIState_S08_Soviet_Fighters"
+  MaxTargets="6">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirUnitHeuristic" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestAircraftHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RETURN_HOME_AND_DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="2" MaxUnits="6"
+                    IncludeKindOf="CAN_ATTACK FIGHTER_AIRCRAFT" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER ASSAULT_AIRCRAFT BOMBER_AIRCRAFT" 
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    MicroManager="StandardMicroManager" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+  id="AIState_S08_Soviet_AirAssaults"
+  MaxTargets="3">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirUnitHeuristic" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="2" MaxUnits="6"
+                    IncludeKindOf="CAN_ATTACK ASSAULT_AIRCRAFT BOMBER_AIRCRAFT" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER FIGHTER_AIRCRAFT" 
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_S08_Coop_Ambush"
+   MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_player_pre_sub_split"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_S08_AmbushWaypoint"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="250" EndBehavior="DISBAND" UseAestheticsManager="false" EndIfStateTurnsOff="true" >
+      <TeamTemplate MinUnits="1" MaxUnits="20"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MicroManager="DefenseMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+</AssetDeclaration>

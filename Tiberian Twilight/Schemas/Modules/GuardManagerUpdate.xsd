@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="GuardManagerUpdateOptionsType">
+		<xs:restriction base="xs:string">
+			<!-- prevents concentrated fire, useful for healing managers -->	  
+			<xs:enumeration value="NO_CONCENTRATED_FIRE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="GuardManagerUpdateOptionsBitFlags">
+		<xs:list itemType="GuardManagerUpdateOptionsType"/>
+	</xs:simpleType>	
+	
+	<xs:complexType name="GuardManagerUpdateModuleData">
+    <xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<!-- These offsets are used to arrange units that defend the guarded unit -->
+					<xs:element name="DefendOffset" type="Vector2" minOccurs="1" maxOccurs="unbounded" />
+
+					<!-- These offsets are used to arrange units that support the guarded unit -->
+					<xs:element name="SupportOffset" type="Vector2" minOccurs="1" maxOccurs="unbounded" />
+
+				</xs:sequence>
+				
+				<xs:attribute name="Options" type="GuardManagerUpdateOptionsBitFlags" default=""/>
+
+				<!-- How often this behavior should update -->
+				<xs:attribute name="RefreshDelay" type="Time" default="0s" />
+
+				<!-- only update the guard position list if the manager has rotate past this tolerance -->
+				<xs:attribute name="RotationTolerance" type="Angle" default="30d" />
+				
+				<!-- only update the guard position list if the manager has moved past this tolerance -->
+				<xs:attribute name="PositionTolerance" type="SageReal" default="20.0" />
+
+				<!-- Modifier to set on guards while registered.  Will remove modifier on deregistering -->
+				<xs:attribute name="GuardModifier" type="AttributeModifierRef" use="optional" />
+
+				<!-- This object filter is used to determine if a unit is a support unit or not as related to guarding (not player class) -->
+				<xs:attribute name="SupportFilter" type="ObjectFilterAssetRef" use="optional" />
+
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

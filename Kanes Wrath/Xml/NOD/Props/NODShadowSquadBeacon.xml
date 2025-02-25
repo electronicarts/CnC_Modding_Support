@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:SquadMarkNUSha.w3x" />
+		<Include
+			type="all"
+			source="ART:NUShdw_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:FXShadow_FP.w3x" />	
+		<Include
+			type="all"
+			source="ART:GPFlareGeo.w3x" />	
+		<Include
+			type="all"
+			source="ART:NUBBeacon.w3x" />			
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="NODShadowSquadBeacon"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_ShadowSquadBeacon"
+		ButtonImage="Portrait_ShadowSquadBeacon"
+		Side="NOD"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildCost="800"
+		BuildTime="8"
+		CommandSet="EmptyCommandSet"
+		CommandPoints="100" 
+		KindOf="RESIST_EMP IGNORES_SELECT_ALL TARGETABLE IMMOBILE CAN_ATTACK ATTACK_NEEDS_LINE_OF_SIGHT VEHICLE INFILTRATOR STEALTH_GARRISON SKIRMISH_AI_DONT_GARRISON CAN_CAPTURE SNIPER CAN_BE_FAVORITE_UNIT SCORE"
+		ThreatLevel="0"
+		ProductionQueueType="INFANTRY"
+		UnitCategory="INFANTRY"
+		WeaponCategory="GUN"
+		EditorName="NODShadowSquadBeacon"
+		Description="Desc:NODShadowSquadBeacon"
+		TypeDescription="Type:NODShadowSquadBeacon">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODShadowSquadBeacon</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<LocomotorSet
+			Locomotor="NormalRangedSquadLocomotor"
+			Condition="NORMAL"
+			Speed="80" />
+		<LocomotorSet
+			Locomotor="FlyingShadowSquadLocomotor"
+			Condition="NORMAL_UPGRADED"
+			Speed="100.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUBBeacon" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="Shocker"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="Shocker2"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="Shocker3"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="Shocker4"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="ShadowMachineGunRangefinder" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+
+			<Physics
+				id="ModuleTag_Physics"></Physics>
+			<LifetimeUpdate
+				id="ModuleTag_Lifetime"
+				DeathType="FADED"
+				MinLifetime="120s"
+				MaxLifetime="120s" />	
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>		
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Nod_ShadowBeaconExplosion" />
+			</FXListBehavior>		
+			
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				GiveNoXP="true" />
+			
+			<InvisibilityUpdate
+				id="ModuleTag_NODShadowBeaconInvisibility"
+				xai:joinAction="Replace"
+				UpdatePeriod="0.2s"
+				Options="STARTS_ACTIVE"
+				OpacityMin="30%"
+				OpacityMax="100%">
+				<InvisibilityNugget
+					EnteringStealthFX="FX_NODStealthTransitionOn"
+					LeavingStealthFX="FX_NODStealthTransitionOff" />			
+			</InvisibilityUpdate>
+			<InvisibilityUpdate
+				id="ModuleTag_Invisibility"
+				xai:joinAction="Remove"
+			/>
+							
+
+    </Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				AILuaEventsList="NODShadowSquadBeaconFunctions">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					SympathyRange="100.0" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="25.0" />
+		</Body>
+			<!-- used to blanket out EVA events inherited from BaseObjects/BaseVehicle.xml -->
+		<EvaEvents
+			EvaEventDieOwner="EmptyEva"
+			EvaEventProductionStarted="EmptyEva" 
+			EvaEventDamagedOwner="EmptyEva" 	
+			EvaEventDamagedFromShroudedSourceOwner="EmptyEva"
+			EvaEventDamagedByFireOwner="EmptyEva"  
+			EvaEventAmbushed="EmptyEva" 
+			EvaEventSecondDamageFarFromFirstScanRange="600"    
+			EvaEventSecondDamageFarFromFirstTimeoutMS="31000"
+			EvaEnemyObjectSightedEvent="EmptyEva" 
+			EvaEventDetectedEnemy="EmptyEva"
+			EvaEventAvailableForProduction="EmptyEva"
+			EvaEventBuildOnHold="EmptyEva"
+			EvaEventBuildCancelled="EmptyEva" 
+			EvaEventPromotedOwner="EmptyEva" />
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="20.0"
+				Height="13.0"></Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_Shadow_ArtilleryBeaconSelect" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="400"
+			MaxVisionBonusPercent="300"
+			VisionBonusTestRadius="200"
+			VisionBonusPercentPerFoot="1" />
+		<CrusherInfo
+			UseCrushAttack="false"
+			CrushableLevel="0"
+			CrusherLevel="0" />
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>		
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:FXPrisimLaser01.xml" />
+		<Include
+			type="all"
+			source="ART:FXPrisimLaser01b.xml" />
+		<Include
+			type="all"
+			source="ART:FXRailDistort.xml" />		
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureNoGarrison.xml" />		
+		<Include
+			type="instance"
+			source="DATA:GlobalData/Weapon.xml" />
+	</Includes>
+
+	<!--Eye weapon-->
+
+  <WeaponTemplate
+		id="MountRushmoreHeadEyeWeapon"
+		AttackRange="9999.0"
+		CanFireWhileMoving="false"
+		WeaponSpeed="999999.0"
+		AcceptableAimDelta="30d"
+		FireSound="A06_RushmoreLaserFire5"
+		FireFX="FX_AlliedPrismTowerFire"
+		FireVeteranFX="FX_AlliedPrismTowerFire"
+		RadiusDamageAffects="ENEMIES"
+		ClipSize="1"
+		Flags="NONE"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER ANTI_SUBMERGED"
+		
+		AutoReloadsClip="AUTO"
+		ReAcquireDetailType="PER_CLIP">
+    <!-- PreAttackDelay needed for NotifyWhenAttackingBehavior (hackish) -->
+    <PreAttackDelay
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+    <FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+    <ClipReloadTime
+			MinSeconds="5.0s"
+			MaxSeconds="5.0s" />
+    <Nuggets>
+      <ActivateLaserNugget
+				Lifetime="1s"
+				LaserId="1"/>
+      <ActivateLaserNugget
+        Lifetime="1s"
+        LaserId="2"/>
+      <WeaponOCLNugget
+				WeaponOCL="OCL_AlliedAntiVehicleVehicleTech3CannonNodeRegular"
+				ForbiddenTargetObjectStatus="HAS_SECONDARY_DAMAGE"/>
+      <DamageNugget
+				Damage="750.0"
+				Radius="0.0"
+				DelayTimeSeconds="0.1s"
+				DamageType="PRISM"
+				DeathType="LASERED"
+				ForbiddenTargetObjectStatus="HAS_SECONDARY_DAMAGE"/>
+      <SecondaryDamageNugget
+      Amount="=$FACTION_WEAPON_SECONDARY_DAMAGE_AMOUNT"/>
+    </Nuggets>
+  </WeaponTemplate>
+  
+  
+
+	<GameObject
+		id="BaseMountRushmoreHead"
+		inheritFrom="BaseCivilianStructureNoGarrison"
+		SelectPortrait="Portrait_AlliedBaseDefenseAdvanced"		
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_BASE_DEFENSE UNATTACKABLE NOT_AUTOACQUIRABLE CAN_ATTACK CAN_SEE_THROUGH_STRUCTURE LINE_OF_SIGHT_IGNORES_BUILDINGS"
+		RadarPriority="STRUCTURE"
+		WeaponCategory="CANNON"
+		PlacementViewAngle="225d">						
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">				
+				<WeaponSlotTurret
+					ID="1">					
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="MountRushmoreHeadEyeWeapon"/>
+					<TurretSettings
+						TurretTurnRate="360"
+						MinimumPitch="-20d"
+						AllowsPitch="true"
+						TurretPitchRate="180"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="10.0"
+						MaxIdleScanAngle="90.0"
+						ComeToHaltJiggle="0d"
+						MaxDeflectionClockwise="15d"
+						MaxDeflectionAntiClockwise="15d">
+						<TurretAITargetChooserData
+							IdleScanDelay="=$FAST_IDLE_SCAN_DELAY"
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			
+
+      <SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<HighlanderBody
+				id="DefaultBody"
+				MaxHealth="1.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Underpowered">
+				<ModelConditionSound Sound="A06_RushmoreHead_PowerDown" RequiredFlags="UNDERPOWERED" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="9999"
+			ShroudClearingRange="9999" />
+	</GameObject>
+</AssetDeclaration>

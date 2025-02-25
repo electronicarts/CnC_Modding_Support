@@ -1,0 +1,2868 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Tags/>
+  <Includes></Includes>
+
+<!--
+
+"OtherEveEventToBlock" takes the name of another Eva event. When this event plays, that other event acts like it played as well – that is, it has to wait out its timeout before it can play. This can be used if you want 2 Eva events to act like they are 2 variations of a single Eva event e.g. in one game, we had a special Eva event for being attacked by long range artillery. If our units were being attacked by a mixed group of artillery and non-artillery, we didn’t want to hear “We’re under attack!” “We’re being bombarded!” one right after the other. By tying the two events together, we got either “We’re under attack” or “We’re being bombarded!”
+
+"TimeToWaitBeforePlaying" simply delays the playing of an event for some seconds after it is reported. Useful for events which are logically triggered some time before the player sees the event, or where there’s no hook for a completion event. E.g. in one game, you could add a big magic tower to your castle – you clicked a button on the castle, there was a long build-up animation, and then finally the tower was ready to use. We wanted a “tower complete” event, but the engine didn’t have a hook for that. So instead we triggered the completion event when the button was first clicked, and just delayed it by 15 seconds. Of course, this only worked because once the tower started building, it couldn’t get delayed (e.g. the money was removed from your account immediately, not steadily during the buildup like it is now.)
+
+"QuietTime" means that the engine must not report the event for some number of seconds before the event will play again. E.g. if you are trying to build something, and you are at your command point limit, the production system sends Eva “Insufficient Command Points” messages every frame (as it tries to build and fails). We don’t want that EVA event triggering every 10 seconds, over & over again, while you are at or over the limit. By giving a QuietTime of 10s, you must be under the command point limit for 10 seconds, and then go back over, for the event to trigger. 
+
+- Ian Barkley-Yeung
+6/18/2009
+
+-->
+
+<!--
+
+AlwaysPlayFromHomeBase:
+	Only really matters if EVA sounds have a location (e.g. Type = "WORLD" instead of the current Type = "UI"). If EVA sounds are positional (like they were in B4ME2), they normally come from the location of the unit which is being attacked or the location of the building which was just destroyed or whatever. However, if you set AlwaysPlayFromHomeBase, then the sound always comes from your home base (what you get using the ‘H’ key, it used to be – probably the crawler now).
+
+CountAsJumpToLocation:
+	Is for the spacebar (jump to last EVA event). Normally, when an EVA event is played, you can spacebar to jump to the location of the event. But if it is set to false, you can’t. Useful for things like “low power” or “insufficient command points” which don’t really have a location.
+
+- Ian Barkley-Yeung
+6/16/2009
+
+-->
+
+  <!-- ===== CNC4 DEFINITIONS BEGIN ===== -->
+
+  <Defines>
+    <Define name="EVA_UNIT_CREATED_PRIORITY" value="5" />
+    <!-- Params for non-hero created event -->
+    <Define name="EVA_UNIT_CREATED_TIME_BETWEEN_EVENTS" value="10000ms" />
+    <!-- Params for non-hero created event -->
+    <Define name="EVA_UNIT_CREATED_EXPIRATION_TIME" value="10000ms" />
+    <!-- Params for non-hero created event -->
+
+    <Define name="EVA_HERO_CREATED_PRIORITY" value="6" />
+    <!-- Params for hero created event -->
+    <Define name="EVA_HERO_CREATED_TIME_BETWEEN_EVENTS" value="10000ms" />
+    <!-- Params for hero created event -->
+    <Define name="EVA_HERO_CREATED_EXPIRATION_TIME" value="10000ms" />
+    <!-- Params for hero created event -->
+
+    <Define name="EVA_HERO_HELP_ME_PRIORITY" value="7" />
+    <Define name="EVA_HERO_HELP_ME_TIME_BETWEEN_EVENTS" value="30000ms" />
+    <Define name="EVA_HERO_HELP_ME_EXPIRATION_TIME" value="10000ms" />
+
+    <Define name="EVA_BUILDING_COMPLETE_PRIORITY" value="6" />
+    <!-- Params for building finished construction event -->
+    <Define name="EVA_BUILDING_COMPLETE_TIME_BETWEEN_EVENTS" value="1000ms" />
+    <!-- Params for building finished construction event. Short because we want 2 buildings to announce twice -->
+    <Define name="EVA_BUILDING_COMPLETE_EXPIRATION_TIME" value="10000ms" />
+    <!-- Params for building finished construction event -->
+
+    <Define name="EVA_UPGRADE_COMPLETE_PRIORITY" value="6" />
+    <Define name="EVA_UPGRADE_COMPLETE_TIME_BETWEEN_EVENTS" value="1000ms" />
+    <Define name="EVA_UPGRADE_COMPLETE_EXPIRATION_TIME" value="10000ms" />
+
+    <Define name="EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME" value="2000ms" />
+    <!-- How long to hold on to any of our under-attack events -->
+
+    <Define name="EVA_SUPERWEAPON_READY_PRIORITY" value="10" />
+    <Define name="EVA_ENEMY_SUPERWEAPON_FIRED_PRIORITY" value="9" />
+    <Define name="EVA_ALLIED_SUPERWEAPON_FIRED_PRIORITY" value="8" />
+    <Define name="EVA_OWN_SUPERWEAPON_FIRED_PRIORITY" value="5" />
+    <Define name="EVA_SUPERWEAPON_FIRED_TIME_BETWEEN_EVENTS" value="10000ms" />
+    <Define name="EVA_SUPERWEAPON_FIRE_EXPIRATION_TIME" value="3000ms" />
+
+    <!-- Timeouts for anything which is basically an immediate reaction to a player button press (basically, a; fancy voice of a button 'click') -->
+    <Define name="EVA_GUI_PRIORITY" value="10" />
+    <Define name="EVA_GUI_TIME_BETWEEN_EVENTS" value="1000ms" />
+    <Define name="EVA_GUI_EXPIRATION_TIME" value="2000ms" />
+		
+	<!-- Settings for Allied AI feedback -->
+	<Define name="EVA_ALLIED_AI_PRIORITY" value="50" />
+	<Define name="EVA_ALLIED_AI_TIME_BETWEEN_EVENTS" value="4s" />
+	<Define name="EVA_ALLIED_AI_EXPIRATION_TIME" value="3s" />
+</Defines>
+
+  <!-- ===== CNC4 DEFINITIONS END ===== -->
+
+  <EvaSettings
+    id="TheEvaSettings" 
+	  EnemySightedMaxVoicePositionScanRange="1100" 
+	  MaxTimeToKeepJumpToEvents="60000ms" 
+	  MaxTimeBeforeResettingLastJumpTo="2000ms" 
+	  MinDistanceBetweenJumpToEvents="400"
+	  PercentHealthForMalfunctionTier3="8"
+	  PercentHealthForMalfunctionTier2="16"
+	  PercentHealthForMalfunction="25"
+	  PercentHealthForRecovery="50"
+	/>
+
+<!-- ===================  ENGINEER UPGRADES ================= -->
+
+<!-- ============= GLOBAL ===========  -->
+
+  <EvaEvent
+    id = "UpgradeEngineer_RangeBoost"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UORangeBoost" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UORangeBoost" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeEngineer_SpeedBoost"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UOSpeedBoost" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UOSpeedBoost" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeEngineer_RefireBoost"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UORefireBoost" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UORefireBoost" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_AccuracyBoost"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UOAccuracyBoost" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UOAccuracyBoost" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_UOBackupSystems"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UOBackupSystems" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UOBackupSystems" Side="NOD"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeEngineer_UOTier2Tech"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UOTier2Tech" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UOTier2Tech" Side="NOD"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeEngineer_UOTier3Tech"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UOTier3Tech" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UOTier3Tech" Side="NOD"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_UDMedicalTraining"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UDMedicalTraining" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UDMedicalModule" Side="NOD"/>
+  </EvaEvent>
+  
+  
+  <EvaEvent
+    id = "UpgradeEngineer_UDDefenseMatrix"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UDDefenseMatrix" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UDDefenseMatrix" Side="NOD"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_UDMobilityMatrix"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UDMobilityMatrix" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UDMobilityMatrix" Side="NOD"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeEngineer_UDEnhancedRepairs"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UDEnhancedRepairs" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UDEnhancedRepairs" Side="NOD"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeEngineer_UDEnhancedShields"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UDEnhancedShields" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_UDEnhancedShields" Side="NOD"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeEngineer_USChargedCapacitors"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_USChargedCapacitors" Side="GDI"/>
+    <SideSound Sound="NOD_InfPEngineer_USChargeCapacitors" Side="NOD"/>
+  </EvaEvent>
+  
+<!-- ============= GDI OFFENSE ===========  -->
+
+  <EvaEvent
+    id = "UpgradeEngineer_UOResonanceAmplifier"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UOResonanceAmplifier" Side="GDI"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_UOMissileStorm"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UOMissileStorm" Side="GDI"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_UODemoKit"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UODemoKit" Side="GDI"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_UOCompositeArmor"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UOCompositeArmor" Side="GDI"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_UOMirrorPlating"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UOMirrorPlating" Side="GDI"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_UODispersionBays"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UODispersionBays" Side="GDI"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "UpgradeEngineer_UOAdvancedCompositeArmor"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UOAdvancedCompositeArmor" Side="GDI"/>
+  </EvaEvent>
+
+
+
+<!-- ============= GDI DEFENSE ===========  -->
+
+
+  <EvaEvent
+    id = "UpgradeEngineer_UDAssaultPacks"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UDAssaultPacks" Side="GDI"/>
+  </EvaEvent>
+
+  
+  <EvaEvent
+    id = "UpgradeEngineer_UDReflectiveDozer"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UDReflectiveDozer" Side="GDI"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_UDStickyBombs"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_UDStickyBombs" Side="GDI"/>
+  </EvaEvent>
+
+
+<!-- ============= GDI SUPPORT ===========  -->
+
+
+  <EvaEvent
+    id = "UpgradeEngineer_USWeaponDampeners"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_USWeaponDampeners" Side="GDI"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeEngineer_USBerzerkerEngine"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_USBerzerkerEngine" Side="GDI"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeEngineer_USElectrolysisProjector"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_USElectrolysisProjector" Side="GDI"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_USAdvancedThrusters"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_USAdvancedThrusters" Side="GDI"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeEngineer_USDefensiveManeuvers"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_USDefensiveManeuvers" Side="GDI"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_USGravityField"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_USGravityField" Side="GDI"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeEngineer_USAugmentedReconstruction"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="GDI_InfJEngineer_USAugmentedReconstruction" Side="GDI"/>
+  </EvaEvent>
+
+  
+
+  <!-- ============= NOD OFFENSE ===========  -->
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_UOTrailofFlame"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_UOTrailofFlame" Side="NOD"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_UOArachnophobia"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_UOArachnophobia" Side="NOD"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_UOInfiltrationModule"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_UOInfiltrationModule" Side="NOD"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_UOStealthGenerator"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_UOStealthGenerator" Side="NOD"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_UOTiberiumCatalyst"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_UOTiberiumCatalyst" Side="NOD"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_UOStealthField"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_UOStealthField" Side="NOD"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_UOMobileStealthGenerator"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_UOMobileStealthGenerator" Side="NOD"/>
+  </EvaEvent>
+
+
+<!-- ============= NOD DEFENSE ===========  -->
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_UDDarkArmaments"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_UDDarkArmaments" Side="NOD"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeNodEngineer_UDDrilltip"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_UDDrilltip" Side="NOD"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeNodEngineer_UDImprovedConcealment"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_UDImprovedConcealment" Side="NOD"/>
+  </EvaEvent>
+
+
+<!-- ============= NOD SUPPORT ===========  -->
+
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_USCloakModule"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_USCloakModule" Side="NOD"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeNodEngineer_USInfusionEngine"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_USInfusionEngine" Side="NOD"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeNodEngineer_USDataWorm"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_USDataWorm" Side="NOD"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_USMobileStealthGenerator"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_USMobileStealthGenerator" Side="NOD"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "UpgradeNodEngineer_USHangarBay"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_USHangarBay" Side="NOD"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_USSpectrumBeam"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_USSpectrumBeam" Side="NOD"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeNodEngineer_USAmplificationOverride"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="NOD_InfPEngineer_USAmplificationOverride" Side="NOD"/>
+  </EvaEvent>
+
+ 
+  
+<!--  ===========================  END OF ENGINEER UPGRADES ============================= -->
+
+
+
+
+  <EvaEvent
+    id = "BuildingManuallyPoweredDown"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation ="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "BuildingManuallyPoweredUp"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation ="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "BuildingRepaired"
+    Priority ="4"
+    TimeBetweenEvents="10000ms"
+    ExpirationTime="1000ms">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "BridgeRepaired"
+    Priority ="5"
+    TimeBetweenEvents="10000ms" 
+    ExpirationTime="1000ms">
+    <!-- TimeBetweenEvents = 30 seconds. Don't play more often than this -->
+    <!-- ExpirationTime = 1 second.  If Eva is busy, hold the event this long before giving up -->    
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "LowPower"
+    Priority ="6"
+    TimeBetweenEvents="90000ms" 
+    AlwaysPlayFromHomeBase ="true"
+    CountAsJumpToLocation="false" >
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "BuildingStolen"
+    Priority ="6"
+    AlwaysPlayFromHomeBase ="true"
+    TimeBetweenEvents="10000ms"
+    ExpirationTime="1000ms">
+    <SideSound Sound="Geva_StructureLost" Side="GDI"/>
+    <SideSound Sound="Geva_StructureLost" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "BeaconPlacedPlayer"
+    Priority ="6"
+    AlwaysPlayFromHomeBase ="true"
+    TimeBetweenEvents="10000ms"
+    ExpirationTime="1000ms">
+    <SideSound Sound="Geva_BeaconDetecte" Side="GDI"/>
+    <SideSound Sound="Neva_BeaconDetecte" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "BeaconPlacedAlly"
+    Priority ="6"
+    AlwaysPlayFromHomeBase ="true"
+    TimeBetweenEvents="10000ms"
+    ExpirationTime="1000ms">
+    <SideSound Sound="Geva_BeaconDetecte" Side="GDI"/>
+    <SideSound Sound="Neva_BeaconDetecte" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "IncomingTransmission"
+    Priority ="100"
+    AlwaysPlayFromHomeBase ="true"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="0ms"
+    ExpirationTime="10000ms">
+    <!-- DO NOT CHANGE TimeBetweenEvents or you will lose satcams -->
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "IncomingRadarTransmission"
+    Priority ="100"
+    AlwaysPlayFromHomeBase ="true"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="0ms"
+    ExpirationTime="10000ms">
+    <!-- DO NOT CHANGE TimeBetweenEvents or you will lose movies -->
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "BuildingConstructionStarted"
+    Priority ="=$EVA_GUI_PRIORITY"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "BuildingResuming"
+    Priority ="=$EVA_GUI_PRIORITY"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+    
+    
+  <EvaEvent
+    id = "BuildingConstructionComplete"
+    Priority ="=$EVA_GUI_PRIORITY"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME">
+    <SideSound Sound="Geva_ConComplete" Side="GDI"/>
+    <SideSound Sound="Neva_ConComplete" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "EnemyBuildingCaptured"
+    Priority ="6"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="4000ms"
+    ExpirationTime="1000ms">
+    <SideSound Sound="Geva_BuildingCapt" Side="GDI"/>
+    <SideSound Sound="Neva_BuildingCapt" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+<!--
+  <EvaEvent
+    id = "ResourceStructureCaptured"
+    Priority ="6"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="4000ms"
+    ExpirationTime="1000ms">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+   <EvaEvent
+    id = "ResourceStructureLost"
+    Priority ="6"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="4000ms"
+    ExpirationTime="1000ms">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+-->
+
+
+  <!-- GOAL STRUCTURE AKA CONTROL HUB and CONTROL NODE START -->
+  <!--  GOAL STRUCTURE is referred to as the CONTROL HUB but utilizing the code that originally referred to it as Goal Structure -->
+  
+  <EvaEvent
+    id = "GoalStructureCaptured"
+    Priority ="3"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="4000ms"
+    ExpirationTime="5000ms">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+   <EvaEvent
+    id = "GoalStructureLost"
+    Priority ="6"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="4000ms"
+    ExpirationTime="1000ms">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+ 
+ 
+  <EvaEvent
+    id = "ControlHubUnderAttack"
+    Priority ="3"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="4000ms"
+    ExpirationTime="5000ms">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+   <EvaEvent
+    id = "ControlNodeUnderAttack"
+    Priority ="6"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="30s"
+    ExpirationTime="5s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "EnemyCapturedControlHub"
+    Priority ="3"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="4000ms"
+    ExpirationTime="5000ms">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+   <EvaEvent
+    id = "EnemyLostControlHub"
+    Priority ="6"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="4000ms"
+    ExpirationTime="1000ms">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+<!-- NEW EVENT: need to double check on whether or not this is needed.-->
+<!--
+   <EvaEvent
+    id = "ControlHubContested"
+    Priority ="6"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="4000ms"
+    ExpirationTime="1000ms">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+ --> 
+  
+<!-- GOAL STRUCTURE AKA CONTROL HUB and CONTROL NODE END -->
+
+  <EvaEvent
+    id = "EnemyCampSighted"
+    Priority ="3"
+    TimeToWaitBeforePlaying = "2s"
+    TimeBetweenEvents="30s"
+    ExpirationTime="5s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "HarvesterUnderAttack"
+    Priority ="3"
+    TimeBetweenEvents="30000ms"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "CriticalUnitUnderAttack"
+    Priority ="3"
+    TimeBetweenEvents="30000ms"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "CriticalStructureUnderAttack"
+    Priority ="3"
+    TimeBetweenEvents="30000ms"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <!-- Replace files with new formal line -->
+  <EvaEvent
+    id = "StructureUnderAttack"
+    Priority ="7"
+    TimeBetweenEvents="30s"
+    ExpirationTime="5s">
+    <SideSound Sound="Geva_StrucUndAttack" Side="GDI"/>
+    <SideSound Sound="Neva_StrucUndAttack" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "StructureSold"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "StructureRepairing"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+    <EvaEvent
+    id = "StructureCannotBuildDueToFullBuildQueue"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "StructurePlacementFailed"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- GDI POWERS -->
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "Tier1PowersAvailable"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "Tier2PowersAvailable"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="Geva_Tier2TechAvailable" Side="GDI"/>
+    <SideSound Sound="Neva_Tier2TechAvailable" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "Tier3PowersAvailable"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="Geva_Tier3TechAvailable" Side="GDI"/>
+    <SideSound Sound="Neva_Tier3TechAvailable" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <!-- Superweapon Events -->
+
+  <EvaEvent
+    id = "EnemyIonCannonDetected"
+    Priority ="6"
+    TimeBetweenEvents="2s"
+    ExpirationTime="15s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "AlliedIonCannonDetected"
+    Priority ="6"
+    TimeBetweenEvents="2s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "EnemyTempleOfNodDetected"
+    Priority ="6"
+    TimeBetweenEvents="2s"
+    ExpirationTime="15s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+<!-- Need to replace with NEW EVA once line is recorded -->
+  <EvaEvent
+    id = "AlliedTempleOfNodDetected"
+    Priority ="6"
+    TimeBetweenEvents="2s"
+    ExpirationTime="10s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "EnemyRiftGeneratorDetected"
+    Priority ="6"
+    TimeBetweenEvents="2s"
+    ExpirationTime="15s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "AlliedRiftGeneratorDetected"
+    Priority ="6"
+    TimeBetweenEvents="2s"
+    ExpirationTime="10s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "IonCannonReady"
+    Priority ="6"
+    TimeBetweenEvents="2s"
+    ExpirationTime="10s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "RiftGeneratorReady"
+    Priority ="6"
+    TimeBetweenEvents="2s"
+    ExpirationTime="10s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "LiquidTiberiumBombReady"
+    Priority ="6"
+    TimeBetweenEvents="2s"
+    ExpirationTime="10s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "AlliedIonCannonActivated"
+    Priority ="=$EVA_ALLIED_SUPERWEAPON_FIRED_PRIORITY"
+    TimeBetweenEvents="=$EVA_SUPERWEAPON_FIRED_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_SUPERWEAPON_FIRE_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "EnemyIonCannonActivated"
+    Priority ="=$EVA_ENEMY_SUPERWEAPON_FIRED_PRIORITY"
+    TimeBetweenEvents="=$EVA_SUPERWEAPON_FIRED_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_SUPERWEAPON_FIRE_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "OwnIonCannonActivated"
+    Priority ="=$EVA_OWN_SUPERWEAPON_FIRED_PRIORITY"
+    TimeBetweenEvents="=$EVA_SUPERWEAPON_FIRED_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_SUPERWEAPON_FIRE_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "AlliedRiftGeneratorActivated"
+    Priority ="=$EVA_ALLIED_SUPERWEAPON_FIRED_PRIORITY"
+    TimeBetweenEvents="=$EVA_SUPERWEAPON_FIRED_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_SUPERWEAPON_FIRE_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "EnemyRiftGeneratorActivated"
+    Priority ="=$EVA_ENEMY_SUPERWEAPON_FIRED_PRIORITY"
+    TimeBetweenEvents="=$EVA_SUPERWEAPON_FIRED_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_SUPERWEAPON_FIRE_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "OwnRiftGeneratorActivated"
+    Priority ="=$EVA_OWN_SUPERWEAPON_FIRED_PRIORITY"
+    TimeBetweenEvents="=$EVA_SUPERWEAPON_FIRED_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_SUPERWEAPON_FIRE_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+<!--  TIBERIUM MISSILE - using old CnC3 code for the NUCLEAR MISSILE -->
+
+  <EvaEvent
+    id = "NuclearMissileReady"
+    Priority ="6"
+    TimeBetweenEvents="2s"
+    ExpirationTime="10s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "AlliedNuclearMissileLaunched"
+    Priority ="=$EVA_ALLIED_SUPERWEAPON_FIRED_PRIORITY"
+    TimeBetweenEvents="=$EVA_SUPERWEAPON_FIRED_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_SUPERWEAPON_FIRE_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "EnemyNuclearMissileLaunched"
+    Priority ="=$EVA_ENEMY_SUPERWEAPON_FIRED_PRIORITY"
+    TimeBetweenEvents="=$EVA_SUPERWEAPON_FIRED_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_SUPERWEAPON_FIRE_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "OwnNuclearMissileLaunched"
+    Priority ="=$EVA_OWN_SUPERWEAPON_FIRED_PRIORITY"
+    TimeBetweenEvents="=$EVA_SUPERWEAPON_FIRED_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_SUPERWEAPON_FIRE_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "OwnLiquidTiberiumBombLaunched"
+    Priority ="=$EVA_OWN_SUPERWEAPON_FIRED_PRIORITY"
+    TimeBetweenEvents="=$EVA_SUPERWEAPON_FIRED_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_SUPERWEAPON_FIRE_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- =======================================  UNIT EVENTS ============================================================= -->
+  
+  <EvaEvent
+    id = "UnitConstructionStarted"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "UnitReady"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "UnitRepaired"
+    Priority ="4"
+    TimeBetweenEvents="10000ms"
+    ExpirationTime="1000ms">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UnitUnderAttack"
+    Priority ="5"
+    TimeBetweenEvents="30s"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME"
+	DontPlayIfOnScreen="true" 
+    CountAsJumpToLocation="false">
+	<SideSound Sound="Geva_UnitUndAttack" Side="GDI"/>
+    <SideSound Sound="Neva_UnitUndAttack" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+    <!-- Don't play both UnitUnderAttack and UnitUnderAttackFromShroudedUnit if we are being attacked from both a shrouded and non-shrouded unit -->
+    <OtherEvaEventToBlock>UnitUnderAttackFromShroudedUnit</OtherEvaEventToBlock>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UnitLost"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME"
+	DontPlayIfOnScreen="true" >
+	<SideSound Sound="Geva_UnitLost" Side="GDI"/>
+    <SideSound Sound="Neva_UnitLost" Side="NOD"/>
+    <SideSound Sound="Geva_UnitLost" Side="Alien"/>    
+    <OtherEvaEventToBlock>HarvesterLost</OtherEvaEventToBlock>
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+   <EvaEvent
+    id = "CriticalUnitLost"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME">
+    <SideSound Sound="Geva_CritUnitLost" Side="GDI"/>
+    <SideSound Sound="Neva_CritUnitLost" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+    <OtherEvaEventToBlock>UnitLost</OtherEvaEventToBlock>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "HarvesterLost"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+    <OtherEvaEventToBlock>UnitLost</OtherEvaEventToBlock>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "AircraftOutOfAmmoDamage"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME">
+    <SideSound Sound="Geva_UnitUndAttack" Side="GDI"/>
+    <SideSound Sound="Neva_UnitUndAttack" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+    <OtherEvaEventToBlock>UnitLost</OtherEvaEventToBlock>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UnitUnderAttackFromShroudedUnit"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME">
+    <SideSound Sound="Geva_UnitUndAttack" Side="GDI"/>
+    <SideSound Sound="Neva_UnitUndAttack" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+    <OtherEvaEventToBlock>UnitUnderAttack</OtherEvaEventToBlock>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "GenericUnitBeingBurned"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME">
+    <SideSound Sound="Geva_UnitUndAttack" Side="GDI"/>
+    <SideSound Sound="Neva_UnitUndAttack" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+    <OtherEvaEventToBlock>UnitUnderAttack</OtherEvaEventToBlock>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "DamagedByTiberium"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UnitAmbushed"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="=$EVA_UNIT_UNDER_ATTACK_EXPIRATION_TIME">
+    <SideSound Sound="Geva_UnitUndAttack" Side="GDI"/>
+    <SideSound Sound="Neva_UnitUndAttack" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+    <OtherEvaEventToBlock>UnitUnderAttack</OtherEvaEventToBlock>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "GenericEnemyUnitSighted"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="3s">
+    <SideSound Sound="Geva_EnemyUnitDet" Side="GDI"/>
+    <SideSound Sound="Neva_EnemyUnitDet" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "GenericEnemyStructureSighted"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="2s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+    <OtherEvaEventToBlock>EnemyCampSighted</OtherEvaEventToBlock>
+  </EvaEvent>
+ 
+
+  <EvaEvent
+    id = "BurrowedUnitDetected"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="Geva_BurrowedUnitDetected" Side="GDI"/>
+    <SideSound Sound="Neva_BurrowedUnitDetected" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+
+  <EvaEvent
+    id = "BurrowedStructureDetected"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="Geva_BurrowedStructureDetected" Side="GDI"/>
+    <SideSound Sound="Neva_BurrowedStructureDetected" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "WarningMothershipDeployed"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "MothershipDeployed"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "EnemyEngineerDetected"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+<!-- Removed -->
+  <EvaEvent
+    id = "EnemyCommandoDetected"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="3s">
+    <SideSound Sound="Geva_EnemyCommDete" Side="GDI"/>
+    <SideSound Sound="Neva_EnemyCommDete" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "EnemyStealthUnitDiscovered"
+    Priority ="4"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="Geva_StealthUnitDetected" Side="GDI"/>
+    <SideSound Sound="Neva_StealthUnitDetected" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UnitPromoted"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "DeploymentSuccessful"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound FirstOccurrenceSound="Geva_DeploymentSuccessfulCommander" Sound="Geva_InitializationBootUp" Side="GDI"/>
+    <SideSound FirstOccurrenceSound="Neva_DeploymentSuccessfulCommander" Sound="Neva_InitializationBootUp" Side="NOD"/>
+    <SideSound FirstOccurrenceSound="" Sound=""  Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "EnemyCrawlerDetected"
+    Priority ="2"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="Geva_CrawlerDetected" Side="GDI"/>
+    <SideSound Sound="Neva_CrawlerDetected" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- NEW EVENT  Removed -->
+  <EvaEvent
+    id = "EnemyCrawlerDeployed"
+    Priority ="2"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+ <!-- NEW Crawler Event -->
+ 
+  <EvaEvent
+    id = "CrawlerHeavyDamaged"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="Geva_Crawler50PercentDamaged" Side="GDI"/>
+    <SideSound Sound="Neva_Crawler50PercentDamaged" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CrawlerCritical"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="Geva_CrawlerCriticallyDamaged" Side="GDI"/>
+    <SideSound Sound="Neva_CrawlerCriticallyDamaged" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CrawlerUnderAttack"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+    <SideSound Sound="Geva_CrawlerUndAttack" Side="GDI"/>
+    <SideSound Sound="Neva_CrawlerUndAttack" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+<!--
+  <EvaEvent
+    id = "CrawlerDestroyed"
+    Priority ="3"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s"
+    CanPlayWithoutCrawler="true" >
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+-->
+  
+  <!-- NEW EVENT -->
+	<EvaEvent
+	  id = "EnemyCrawlerDestroyed"
+	  Priority ="3"
+	  TimeBetweenEvents="30s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyCrawlerDestroyed" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyCrawlerDestroyed" Side="NOD"/>
+		<SideSound Sound="" Side="Alien"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "CrawlerDecommissioned"
+	  Priority ="3"
+      TimeToWaitBeforePlaying = "1s"
+	  TimeBetweenEvents="20s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_CrawlerDecommissioned" Side="GDI"/>
+		<SideSound Sound="Neva_CrawlerDecommissioned" Side="NOD"/>
+	</EvaEvent>
+
+	
+	<!-- NEW EVENT -->
+	<EvaEvent
+	  id = "EvaMalfunction"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_CrawlerMalfunction" Side="GDI"/>
+		<SideSound Sound="Neva_CrawlerMalfunction" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EvaMalfunctionTier2"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_CrawlerMalfunctionTier2" Side="GDI"/>
+		<SideSound Sound="Neva_CrawlerMalfunctionTier2" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EvaMalfunctionTier3"
+	  Priority ="3"
+	  TimeBetweenEvents="15s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_CrawlerMalfunctionTier3" Side="GDI"/>
+		<SideSound Sound="Neva_CrawlerMalfunctionTier3" Side="NOD"/>
+	</EvaEvent>
+
+	<!-- NEW EVENT -->
+	
+	<EvaEvent
+	  id = "ControlNodeGained"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlNodeGained" Side="GDI"/>
+		<SideSound Sound="Neva_ControlNodeGained" Side="NOD"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "ControlNodeLost"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlNodeLost" Side="GDI"/>
+		<SideSound Sound="Neva_ControlNodeLost" Side="NOD"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "ControlPoint1CapturedFirst"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint1CapturedFirst" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint1CapturedFirst" Side="NOD"/>
+	</EvaEvent>
+	
+	
+	<EvaEvent
+	  id = "ControlPoint1Captured"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint1Captured" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint1Captured" Side="NOD"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "ControlPoint2CapturedFirst"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint2CapturedFirst" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint2CapturedFirst" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "ControlPoint2Captured"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint2Captured" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint2Captured" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "ControlPoint3CapturedFirst"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint3CapturedFirst" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint3CapturedFirst" Side="NOD"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "ControlPoint3Captured"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint3Captured" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint3Captured" Side="NOD"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "ControlPoint4CapturedFirst"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint4CapturedFirst" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint4CapturedFirst" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "ControlPoint4Captured"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint4Captured" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint4Captured" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "ControlPoint5CapturedFirst"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint5CapturedFirst" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint5CapturedFirst" Side="NOD"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "ControlPoint5Captured"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint5Captured" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint5Captured" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "ControlPoint1Lost"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint1Lost" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint1Lost" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "ControlPoint2Lost"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint2Lost" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint2Lost" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "ControlPoint3Lost"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint3Lost" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint3Lost" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "ControlPoint4Lost"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint4Lost" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint4Lost" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "ControlPoint5Lost"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_ControlPoint5Lost" Side="GDI"/>
+		<SideSound Sound="Neva_ControlPoint5Lost" Side="NOD"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "EnemyControlPoint1CapturedFirst"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint1CapturedFirst" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint1CapturedFirst" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyControlPoint1Captured"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint1Captured" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint1Captured" Side="NOD"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "EnemyControlPoint2CapturedFirst"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint2CapturedFirst" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint2CapturedFirst" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyControlPoint2Captured"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint2Captured" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint2Captured" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyControlPoint3CapturedFirst"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint3CapturedFirst" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint3CapturedFirst" Side="NOD"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "EnemyControlPoint3Captured"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint3Captured" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint3Captured" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyControlPoint4CapturedFirst"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint4CapturedFirst" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint4CapturedFirst" Side="NOD"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "EnemyControlPoint4Captured"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint4Captured" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint4Captured" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyControlPoint5CapturedFirst"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint5CapturedFirst" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint5CapturedFirst" Side="NOD"/>
+	</EvaEvent>
+	
+	<EvaEvent
+	  id = "EnemyControlPoint5Captured"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint5Captured" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint5Captured" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyControlPoint1Lost"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint1Lost" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint1Lost" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyControlPoint2Lost"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint2Lost" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint2Lost" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyControlPoint3Lost"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint3Lost" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint3Lost" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyControlPoint4Lost"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint4Lost" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint4Lost" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyControlPoint5Lost"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyControlPoint5Lost" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyControlPoint5Lost" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "Has3ControlPoints"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_Has3ControlPoints" Side="GDI"/>
+		<SideSound Sound="Neva_Has3ControlPoints" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "Has4ControlPoints"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_Has4ControlPoints" Side="GDI"/>
+		<SideSound Sound="Neva_Has4ControlPoints" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "Has5ControlPoints"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_Has5ControlPoints" Side="GDI"/>
+		<SideSound Sound="Neva_Has5ControlPoints" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyHas3ControlPoints"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyHas3ControlPoints" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyHas3ControlPoints" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyHas4ControlPoints"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyHas4ControlPoints" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyHas4ControlPoints" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EnemyHas5ControlPoints"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyHas5ControlPoints" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyHas5ControlPoints" Side="NOD"/>
+	</EvaEvent>
+
+	<!-- Points Remain Events -->
+
+	<EvaEvent
+	  id = "500CredsToVic"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_500CreditsToVictory" Side="GDI"/>
+		<SideSound Sound="Neva_500CreditsToVictory" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "Ene500CredsToVic"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_Enemy500CreditsToVictory" Side="GDI"/>
+		<SideSound Sound="Neva_Enemy500CreditsToVictory" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "VeryCloseToVic"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_CloseToVictory" Side="GDI"/>
+		<SideSound Sound="Neva_CloseToVictory" Side="NOD"/>
+	</EvaEvent>
+
+	<EvaEvent
+	  id = "EneVeryCloseToVic"
+	  Priority ="3"
+	  TimeBetweenEvents="10s"
+	  ExpirationTime="1s">
+		<SideSound Sound="Geva_EnemyCloseToVictory" Side="GDI"/>
+		<SideSound Sound="Neva_EnemyCloseToVictory" Side="NOD"/>
+	</EvaEvent>
+
+
+	<!-- Husk of a juggernaut, tripod, or avatar repaired and brought back online -->
+ <!-- removed since the husk play dialog now when brought back online -->
+  <EvaEvent
+    id = "HuskRepaired"
+    Priority ="5"
+    TimeBetweenEvents="30s"
+    ExpirationTime="1s">
+	<!-- <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/> -->
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "SelectDropzone"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "SelectLocation"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "SelectWormholeLocation"
+    Priority ="6"
+    TimeBetweenEvents="100ms"
+    ExpirationTime="1s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "SelectDecoyUnit"
+    Priority ="6"
+    TimeBetweenEvents="100ms"
+    ExpirationTime="1s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "SelectUnit"
+    Priority ="6"
+    TimeBetweenEvents="100ms"
+    ExpirationTime="1s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <!-- MISC EVENTS -->
+  <EvaEvent
+    id = "BuildOnHold"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "BuildCancelled"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  
+  <EvaEvent
+    id = "NewConstructionOptions"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "AllyDefeated"
+    Priority ="7"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+	id = "AllyLostCrawler"
+	Priority ="3"
+	TimeBetweenEvents="0s"
+	ExpirationTime="30s"
+	CountAsJumpToLocation="false">
+	<SideSound Sound="Geva_AllyLostCrawler" Side="GDI"/>
+	<SideSound Sound="Neva_AllyLostCrawler" Side="NOD"/>
+	<SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "EnemyDefeated"
+    Priority ="81"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s"
+    CountAsJumpToLocation="false">
+    <!-- Priority needs to be very high, and higher than LocalPlayerVictorious. When you defeat the last enemy, we always 
+    want the next words out of EVA's mouth to be "Enemy defeated. You are victorious.-->
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "LocalPlayerDefeated"
+    Priority ="80"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s"
+    CanPlayWithoutCrawler = "true"
+    CountAsJumpToLocation="false">
+    <!-- Priority  should be very high, we want this to always play next after EnemyDefeated-->
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "ObservedPlayerDefeated"
+    Priority ="75"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "LocalPlayerVictorious"
+    Priority ="80"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s"
+    CanPlayWithoutCrawler = "true"
+    CountAsJumpToLocation="false">
+    <!-- Priority  should be very high, we want this to always play next-->
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CannotBuildDueToCPLimit"
+    Priority ="7"
+    TimeBetweenEvents="60s"
+    ExpirationTime="15s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="Geva_InsuffCommand" Side="GDI"/>
+    <SideSound Sound="Neva_InsuffCommand" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "BuildQueuePausedDueToCPLimit"
+    Priority ="7"
+    TimeBetweenEvents="60s"
+    ExpirationTime="15s"
+    CountAsJumpToLocation="false"
+    QuietTime="10s">
+    <SideSound Sound="Geva_InsuffCommand" Side="GDI"/>
+    <SideSound Sound="Neva_InsuffCommand" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "BuildQueuePausedDueToFunds"
+    Priority ="7"
+    TimeBetweenEvents="60s"
+    ExpirationTime="15s"
+    CountAsJumpToLocation="false"
+    QuietTime="10s"
+    AlwaysPlayFromHomeBase="true">
+    <SideSound Sound="Geva_InsuffCommand" Side="GDI"/>
+    <SideSound Sound="Neva_InsuffCommand" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CannotBuildDueToFunds"
+    Priority ="7"
+    TimeBetweenEvents="60s"
+    ExpirationTime="15s"
+    CountAsJumpToLocation="false"
+    AlwaysPlayFromHomeBase="true">
+    <SideSound Sound="Geva_InsuffCommand" Side="GDI"/>
+    <SideSound Sound="Neva_InsuffCommand" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "CannotRepairDueToFunds"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CannotUsePowerDueToFunds"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="Geva_InsuffCommand" Side="GDI"/>
+    <SideSound Sound="Neva_InsuffCommand" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "SelectSpecialPowerTarget"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- NEW EVENT --> 
+  <EvaEvent
+    id = "SelectSpecialPowerTargetArea"
+    Priority ="=$EVA_GUI_PRIORITY"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "ReinforcementsReady"
+    Priority ="2"
+    TimeBetweenEvents="20s"
+    ExpirationTime="3s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "TiberiumFieldDepleted"
+    Priority ="6"
+    TimeBetweenEvents="30s"
+    ExpirationTime="3s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "NewMissionObjective"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s"> 
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>   
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "NewObjectiveReceived"
+    Priority ="3"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s"> 
+    <SideSound Sound="Geva_NewObjectReci" Side="GDI"/>
+    <SideSound Sound="Neva_NewObjectReci" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>   
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CompletedMissionObjective"
+    Priority ="4"
+    TimeBetweenEvents="20s"
+    ExpirationTime="5s">
+    <SideSound Sound="Geva_ObjectiveComp" Side="GDI"/>
+    <SideSound Sound="Neva_ObjectiveComp" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "NewBonusObjective"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="Geva_BonusObjectiveRec" Side="GDI"/>
+    <SideSound Sound="Neva_BonusObjectiveRec" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+
+
+  <EvaEvent
+    id = "CompletedBonusMissionObjective"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="Geva_BonusObjectiveComplete" Side="GDI"/>
+    <SideSound Sound="Neva_BonusObjectiveComplete" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "IntelDatabaseEntryReceived"
+    Priority ="1"
+    TimeBetweenEvents="2s"
+    ExpirationTime="6s"
+    SuppressOn360="true"
+    SuppressOnPC="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <!-- NEW EVENT -->
+  <EvaEvent
+    id = "Upgrading"
+    Priority ="=$EVA_GUI_PRIORITY"
+    CountAsJumpToLocation="false"
+    TimeBetweenEvents="=$EVA_GUI_TIME_BETWEEN_EVENTS"
+    ExpirationTime="=$EVA_GUI_EXPIRATION_TIME">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "UpgradeComplete"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="Geva_UpgradeComple" Side="GDI"/>
+    <SideSound Sound="Neva_UpgradeComple" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "NewTechnologyAcquired"
+    Priority ="6"
+    TimeBetweenEvents="5s"
+    ExpirationTime="3s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CTFYouHaveFlag"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="3s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CTFEnemyHasFlag"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CTFFlagDropped"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CTFEnemyDroppedFlag"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CTFFlagCaptured"
+    Priority ="8"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "CTFEnemyCapturedFlag"
+    Priority ="8"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+<!--
+  <EvaEvent
+    id = "ControlPointCaptured"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "ControlPointLost"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "ControlPointHasBeenCaptured"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+-->
+
+  <EvaEvent
+    id = "SiegeBarrierEngaged"
+    Priority ="99"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "SiegeBarrierDisengaged"
+    Priority ="99"
+    TimeBetweenEvents="0s"
+    ExpirationTime="30s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+ <!-- COUNTDOWN -START --> 
+
+  <EvaEvent
+    id = "Countdown01"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="500ms"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown02"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="500ms"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "Countdown03"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="500ms"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown04"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="500ms"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+  
+  <EvaEvent
+    id = "Countdown05"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="500ms"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown06"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="500ms"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown07"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="500ms"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown08"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="500ms"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown09"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="500ms"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown10SecsInGame"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="15s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown30SecsInGame"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="5s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="Geva_RemainSec30" Side="GDI"/>
+    <SideSound Sound="Neva_RemainSec30" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown1MinsInGame"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="Geva_RemainMin01" Side="GDI"/>
+    <SideSound Sound="Neva_RemainMin01" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown3MinsInGame"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="Geva_RemainMin03" Side="GDI"/>
+    <SideSound Sound="Neva_RemainMin03" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+
+  <EvaEvent
+    id = "Countdown5MinsInGame"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="Geva_RemainMin05" Side="GDI"/>
+    <SideSound Sound="Neva_RemainMin05" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown10MinsInGame"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="Geva_RemainMin10" Side="GDI"/>
+    <SideSound Sound="Neva_RemainMin10" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown15MinsInGame"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="Geva_RemainMin15" Side="GDI"/>
+    <SideSound Sound="Neva_RemainMin15" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "Countdown20MinsInGame"
+    Priority ="6"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="Geva_RemainMin20" Side="GDI"/>
+    <SideSound Sound="Neva_RemainMin20" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+<!--
+  <EvaEvent
+    id = "SiegeCountdown10Secs"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="1500ms"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "SiegeCountdown30Secs"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="5s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "SiegeCountdown1Mins"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "SiegeCountdown3Mins"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "SiegeCountdown5Mins"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "SiegeCountdown10Mins"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "SiegeCountdown15Mins"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+
+  <EvaEvent
+    id = "SiegeCountdown20Mins"
+    Priority ="5"
+    TimeBetweenEvents="0s"
+    ExpirationTime="10s"
+    CountAsJumpToLocation="false">
+    <SideSound Sound="" Side="GDI"/>
+    <SideSound Sound="" Side="NOD"/>
+    <SideSound Sound="" Side="Alien"/>
+  </EvaEvent>
+-->
+
+ <!-- FORMAL NAME is TCN Relay -->
+ <!-- MONUMENT MODE is CUT - 06/30/09 -->
+ 
+
+	<EvaEvent
+		id = "MonumentUnderAttack"
+		Priority ="99"
+		TimeBetweenEvents="30s"
+		ExpirationTime="5s">
+		<SideSound Sound="" Side="GDI"/>
+		<SideSound Sound="" Side="NOD"/>
+		<SideSound Sound="" Side="Alien"/>
+	</EvaEvent>
+
+	<EvaEvent
+		id = "MonumentHealthCritical"
+		Priority ="99"
+		TimeBetweenEvents="30s"
+		ExpirationTime="5s">
+		<SideSound Sound="" Side="GDI"/>
+		<SideSound Sound="" Side="NOD"/>
+		<SideSound Sound="" Side="Alien"/>
+	</EvaEvent>
+
+	<EvaEvent
+		id = "MonumentHealthDangerous"
+		Priority ="99"
+		TimeBetweenEvents="30s"
+		ExpirationTime="5s">
+		<SideSound Sound="" Side="GDI"/>
+		<SideSound Sound="" Side="NOD"/>
+		<SideSound Sound="" Side="Alien"/>
+	</EvaEvent>
+
+	<EvaEvent
+		id = "MonumentHealthDamaged"
+		Priority ="99"
+		TimeBetweenEvents="30s"
+		ExpirationTime="5s">
+		<SideSound Sound="" Side="GDI"/>
+		<SideSound Sound="" Side="NOD"/>
+		<SideSound Sound="" Side="Alien"/>
+	</EvaEvent>
+	
+	<EvaEvent
+		id = "MonumentHealthNicked"
+		Priority ="99"
+		TimeBetweenEvents="30s"
+		ExpirationTime="5s">
+		<SideSound Sound="" Side="GDI"/>
+		<SideSound Sound="" Side="NOD"/>
+		<SideSound Sound="" Side="Alien"/>
+	</EvaEvent>
+
+	<EvaEvent
+		id = "EnemyMonumentHealthNicked"
+		Priority ="7"
+		TimeBetweenEvents="30s"
+		ExpirationTime="5s">
+		<SideSound Sound="" Side="GDI"/>
+		<SideSound Sound="" Side="NOD"/>
+		<SideSound Sound="" Side="Alien"/>
+	</EvaEvent>
+
+	<EvaEvent
+		id = "EnemyMonumentHealthDamaged"
+		Priority ="7"
+		TimeBetweenEvents="30s"
+		ExpirationTime="5s">
+		<SideSound Sound="" Side="GDI"/>
+		<SideSound Sound="" Side="NOD"/>
+		<SideSound Sound="" Side="Alien"/>
+	</EvaEvent>
+
+	<EvaEvent
+		id = "EnemyMonumentHealthDangerous"
+		Priority ="7"
+		TimeBetweenEvents="30s"
+		ExpirationTime="5s">
+		<SideSound Sound="" Side="GDI"/>
+		<SideSound Sound="" Side="NOD"/>
+		<SideSound Sound="" Side="Alien"/>
+	</EvaEvent>
+
+	<EvaEvent
+		id = "EnemyMonumentHealthCritical"
+		Priority ="7"
+		TimeBetweenEvents="30s"
+		ExpirationTime="5s">
+		<SideSound Sound="" Side="GDI"/>
+		<SideSound Sound="" Side="NOD"/>
+		<SideSound Sound="" Side="Alien"/>
+	</EvaEvent>
+
+	<EvaEvent
+		id = "EnemyMonumentHealthFirstHit"
+		Priority ="7"
+		TimeBetweenEvents="30s"
+		ExpirationTime="5s">
+		<SideSound Sound="" Side="GDI"/>
+		<SideSound Sound="" Side="NOD"/>
+		<SideSound Sound="" Side="Alien"/>
+	</EvaEvent>
+
+
+	<!-- AI ally feedback -->
+
+	<!-- Told AI to do whatever it wants -->
+	<EvaEvent
+		id = "AlliedAIAutopilot"
+		Priority="=$EVA_ALLIED_AI_PRIORITY"
+		TimeBetweenEvents="=$EVA_ALLIED_AI_TIME_BETWEEN_EVENTS"
+		ExpirationTime="=$EVA_ALLIED_AI_EXPIRATION_TIME"
+		CountAsJumpToLocation="false">
+			<!-- TODO Need sounds -->
+ </EvaEvent>
+
+	<!-- Told AI to build up and attack a spot-->
+  <EvaEvent
+		id = "AlliedAIPlanAttack"
+		Priority="=$EVA_ALLIED_AI_PRIORITY"
+		TimeBetweenEvents="=$EVA_ALLIED_AI_TIME_BETWEEN_EVENTS"
+		ExpirationTime="=$EVA_ALLIED_AI_EXPIRATION_TIME"
+		CountAsJumpToLocation="false">
+			<!-- TODO Need sounds -->
+  </EvaEvent>
+
+	<!-- AI is done building up and attacking a spot -->
+  <EvaEvent
+		id = "AlliedAIPlanAttackDone"
+		Priority="=$EVA_ALLIED_AI_PRIORITY"
+		TimeBetweenEvents="=$EVA_ALLIED_AI_TIME_BETWEEN_EVENTS"
+		ExpirationTime="=$EVA_ALLIED_AI_EXPIRATION_TIME"
+		CountAsJumpToLocation="false">
+			<!-- TODO Need sounds -->
+  </EvaEvent>
+
+	<!-- Told AI to immediately attack a target -->
+  <EvaEvent
+		id = "AlliedAIStrikeTarget"
+		Priority="=$EVA_ALLIED_AI_PRIORITY"
+		TimeBetweenEvents="=$EVA_ALLIED_AI_TIME_BETWEEN_EVENTS"
+		ExpirationTime="=$EVA_ALLIED_AI_EXPIRATION_TIME"
+		CountAsJumpToLocation="false">
+			<!-- TODO Need sounds -->
+  </EvaEvent>
+
+	<!-- AI is done immediately attacking a target -->
+  <EvaEvent
+		id = "AlliedAIStrikeTargetDone"
+		Priority="=$EVA_ALLIED_AI_PRIORITY"
+		TimeBetweenEvents="=$EVA_ALLIED_AI_TIME_BETWEEN_EVENTS"
+		ExpirationTime="=$EVA_ALLIED_AI_EXPIRATION_TIME"
+		CountAsJumpToLocation="false">
+			<!-- TODO Need sounds -->
+  </EvaEvent>
+
+	<!-- Told AI to move all forces to a location -->
+  <EvaEvent
+	id = "AlliedAITakePosition"
+		Priority="=$EVA_ALLIED_AI_PRIORITY"
+		TimeBetweenEvents="=$EVA_ALLIED_AI_TIME_BETWEEN_EVENTS"
+		ExpirationTime="=$EVA_ALLIED_AI_EXPIRATION_TIME"
+		CountAsJumpToLocation="false">
+			<!-- TODO Need sounds -->
+  </EvaEvent>
+
+	<!-- AI is done moving all forces to a location -->
+  <EvaEvent
+		id = "AlliedAITakePositionDone"
+		Priority="=$EVA_ALLIED_AI_PRIORITY"
+		TimeBetweenEvents="=$EVA_ALLIED_AI_TIME_BETWEEN_EVENTS"
+		ExpirationTime="=$EVA_ALLIED_AI_EXPIRATION_TIME"
+		CountAsJumpToLocation="false">
+			<!-- TODO Need sounds -->
+  </EvaEvent>
+  
+
+</AssetDeclaration>

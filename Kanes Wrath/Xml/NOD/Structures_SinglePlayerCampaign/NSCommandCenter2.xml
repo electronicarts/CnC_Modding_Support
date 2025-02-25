@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBCommand2.w3x" />
+		<Include
+			type="all"
+			source="ART:NBCommand2_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:NBCommand2_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:NBCommand2_D3.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+	</Includes>
+	<GameObject
+		id="NOD_CommandCenter2"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		EditorName="NOD_CommandCenter2"
+		Browser="REGION NOD_Structures STRUCTURE">
+		
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false"
+				AffectedByStealth="false"
+				ExtraPublicBone="BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBCommand2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NBCommand2_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBCommand2_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBCommand2" />
+					<Texture
+						Original="NBCommand2"
+						New="NBCommand2_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBCommand2_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBCommand2_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NBCommand2_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NBCommand2_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="false" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="false" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<xi:include
+				href="../../Includes/GarrisonableStructureFlagDraw.xml" />
+		</Draws>
+		<Behaviors>
+<!--		
+			<StructureCollapseUpdate
+				id="ModuleTag_Collapse"
+				MinCollapseDelay="0"
+				MaxCollapseDelay="0"
+				CollapseDamping="0.5"
+				MaxShudder="0.6"
+				MinBurstDelay="250"
+				MaxBurstDelay="800"
+				BigBurstFrequency="4"
+				DestroyObjectWhenDone="true"
+				CollapseHeight="155" />
+-->				
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_ScorchMedium" />
+			</FXListBehavior>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModulTag_AIForLua"
+				AILuaEventsList="NeutralGarrisonableBuildingFunctions" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="6000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="67.8978"
+				MinorRadius="39.9925"
+				Height="45.0662"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+</AssetDeclaration>

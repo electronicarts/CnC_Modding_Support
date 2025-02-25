@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+		<Include type="all"	source="ART:TH_EmperorSonFlagpoleStatue.W3X" />
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="instance" source="DATA:Civilian/Tokyo_Harbor_TH/Props/TH_EmperorSonFlagpoleStatue_Collapse.xml" />
+		
+	</Includes>
+	<GameObject
+		id="TH_EmperorSonFlagpoleStatue"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		EditorName="TH_EmperorSonFlagpoleStatue"	
+    EditorSorting="STRUCTURE"
+		Browser="REGION Tokyo_Harbor_TH STRUCTURE"
+		SelectPortrait="Portrait_EmperorSonFlagPoleStatue"
+		ButtonImage="Button_EmperorSonFlagPoleStatue"
+		TypeDescription="TYPE:EmperorSonStatue"
+		Description="DESC:EmperorSonStatue">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:EmperorSonStatue</DisplayName>
+			<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18 BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TH_EmperorSonFlagpoleStatue" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_AttributeModifierAuraUpdate_EmpResolve"
+				AttributeModifierName="AttributeModifer_EmperorsStatue"
+				RefreshDelay="0.75s"
+				Range="400"
+				InitiallyActive="true">
+				<ObjectFilter
+					Rule="ANY"
+					Include="INFANTRY AIRCRAFT VEHICLE"
+					Relationship="ALLIES"
+					StatusBitFlagsExclude="SUBMERGED">
+				</ObjectFilter>
+			</AttributeModifierAuraUpdate>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="FX_BuildingDebrisExplosion"
+					CreationObject="YU_HotelDebris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Tiny" />
+				<Event Index="onDeath" FX="FX_Statue_DieExplosionAudio" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="TH_EmperorSonFlagpoleStatue_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>	
+			
+			<!-- civ buildings should have a CreateObjectDie to make a collapse version. -->
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+      <!-- This structure needs to be repairable via engineers and the repair tool -->
+      <xi:include href="DATA:Includes/GenericBuildingRepair.xml" />
+      <xi:include href="DATA:Includes/GenericEngineerContain.xml" />
+      
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_XLARGE"
+				/>
+		</Body>
+
+    <EvaEventArray>
+      <EvaEntry EvaEvent="CriticalStructureUnderAttack" EvaType="damagedAlly" />
+    </EvaEventArray>
+    
+		<Geometry
+			IsSmall="false">
+      <Shape
+     Type= "BOX"
+     MajorRadius = "30.4107"
+     MinorRadius = "23.8832"
+     Height = "92.1646"
+     ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "0.115633"
+            y = "-0.0187588"
+            z = "0.0" />
+      </Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+
+	<ObjectCreationList
+		id="TH_EmperorSonFlagpoleStatue_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>TH_EmperorSonFlagpoleStatue_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>	
+</AssetDeclaration>

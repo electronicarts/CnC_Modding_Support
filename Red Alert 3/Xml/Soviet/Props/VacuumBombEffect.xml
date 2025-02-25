@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:FXCrit01.xml" />
+	    <Include type="all"	source="ART:FXLightRays01.xml" />
+		<Include type="all"	source="ART:FXInvisBone.w3x" />
+	</Includes>
+	<GameObject
+		id="VacuumBombEffect"
+		Side="Soviet"
+		EditorSorting="SYSTEM"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="IMMOBILE UNATTACKABLE NOT_AUTOACQUIRABLE INERT INERT_SHROUD_REVEALER SKIRMISH_AI_ATTEMPT_TO_DODGE" 
+		EditorName="VacuumBombEffect">
+		<DisplayName>VacuumBombEffect</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+    <SkirmishAIInformation
+      DodgeSafetyDistance="500.0">
+    </SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<!-- need a model for the shadow.  -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="FXInvisBone" />
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosion"/>
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionRays"/>          				
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionFire"/>
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionFireMushroom"/>
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionFlash"/>
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionLight"/>
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionShockwave"/>          				          				
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionSmoke"/>
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionSmokeMushroom"/>
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionSmokeGround"
+          				OnlyIfOnLand ="true"
+						FollowBone="true"/>
+
+          			<!-- Play these if on water -->          				
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionWake"
+          				OnlyIfOnWater ="true"
+						FollowBone="true"/>          			
+          			<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionWaterMist"
+          				OnlyIfOnWater ="true"
+						FollowBone="true"/>
+					<ParticleSysBone 
+          				BoneName="INVISBONE01" 
+          				FXParticleSystemTemplate="VacuumBombExplosionSmoke"
+          				OnlyIfOnWater ="true"
+						FollowBone="true"/>
+
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			
+			<!-- NOTE: This was changed from a DestroyDie to a SlowDeath to keep it around for a short while.  
+					This is a necessary change for the Achievement System to properly score the kills. [tpreis - 08-01-2008] -->
+
+			<SlowDeath
+				id="ModuleTag_Death"
+				DestructionDelay="1s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			
+			<FireWeaponUpdate
+				id="ModuleTag_VacuumBombIncrementalWeapon"
+				FireInterval="0.25s">
+				<FireWeaponNugget
+					WeaponName="VacuumBombIncrementalWeapon" />
+			</FireWeaponUpdate>
+
+			<!-- CAN_TOPPLE CRUSHABLE_OBSTACLE -->
+			<GatherEjectUpdate
+				id="GatherEjectUpdate"
+				Lifetime="8s"
+				GatherAcceleration="0.01"
+				EffectDistance="200.0"
+				HeightOffGround="75.0">
+				<RotationSpeed x="0.05" z="0.1" />
+				<UnitSpacing x="20.0" y="20.0" z="20.0" />
+				<Filter
+					Rule="ANY"
+					Include="VEHICLE INFANTRY AIRCRAFT TIME_BOMB"
+					StatusBitFlagsExclude="UNATTACKABLE UNDER_IRON_CURTAIN IN_NANOHIVE"/>
+			</GatherEjectUpdate>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="5.0"
+				Height="5.0"/>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="SOV_VacuumBomb_Swell" AudioType="soundAmbient" />
+		</AudioArraySound>
+			
+		<VisionInfo
+			VisionRange="0"
+			ShroudClearingRange="300" />		
+			
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrushableLevel="0" />
+	</GameObject>
+</AssetDeclaration>

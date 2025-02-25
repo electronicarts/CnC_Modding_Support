@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:balance="uri:ea.com:eala:balance" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="ProjectilePathNode">
+		<xs:sequence>
+			<!--		- Coordinate System:
+						The x-axis is considered the line from the projectile to the target at launch 
+						(the "look-at" direction).
+						The y-axis is the left-right horizontal movement.
+						The z-axis is the vertical movement.
+						w is currently unused.
+					- The final coordinate in this list is considered the terminal node; ie, where
+					  the projectile hits the target
+					
+					- InVec dictates the direction tangent as Point is approached
+					- OutVec dictates the direction tangent as Point is being departed
+					- For a projectile to be "smooth" during these transitions, Invec, Point, 
+					  and OutVec should be collinear.  Conversely, if you want them jaggy, then 
+					  they should not be collinear.  This *DOES* still apply to the last Node,
+					  since the projectile will have to construct a segment from the last Node 
+					  to the final target location in several cases.  If you want the last Node
+					  to be where it hits the target, then you want to set Y and Z to 0 on its Point.
+					  
+					Notes:  
+					- How these look is limited by the framerate of the game.
+					  Fast-moving projectiles should have a small number of nodes, otherwise segments will
+					  be clipped.  The rule of thumb here is that a segment should be long enough 
+					  to last at least 3 logic frames, at speed, in the worst case.
+					- In general, gameplay correctness (eg the time it takes to get to target) 
+					  is respected over the aesthetics of the Bezier curve in these boundary cases.
+					- Successive segments should not be dramatically different in length,
+					  as it can cause hitches in the projectile velocity during segment transitions.
+					- No Node should have any of its vectors be of smaller magnitude than 
+					  1/1000'th of the magnitude of the final Node's Point vector, otherwise
+					  Very Bad Things will happen.
+			-->
+			<xs:element name="InVec" type="Vector4" minOccurs="1" maxOccurs="1" />
+			<xs:element name="Point" type="Vector4" minOccurs="1" maxOccurs="1" />
+			<xs:element name="OutVec" type="Vector4" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ProjectilePath" xas:runtimeWrapper="::ProjectilePath" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+				<!--	ComponentScale will linearly stretch the points along those ordinals relative to the other points,
+					so you don't have to manually edit each point just to stretch it in a direction
+				-->
+					<xs:element name="ComponentScale" type="Vector4" minOccurs="0" maxOccurs="1" />
+					<xs:element name="Node" type="ProjectilePathNode" minOccurs="2" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

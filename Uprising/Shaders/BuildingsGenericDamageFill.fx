@@ -1,0 +1,12 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// FX Shader for generic structures.
+//////////////////////////////////////////////////////////////////////////////
+
+#define SUPPORT_SPECMAP 1
+#define SUPPORT_DAMAGETEXTURE 1
+#define SUPPORT_FILLDAMAGETEXTURE 1
+#define SUPPORT_SSAO 1	// enable SSAO
+
+#include "Objects.fxh"

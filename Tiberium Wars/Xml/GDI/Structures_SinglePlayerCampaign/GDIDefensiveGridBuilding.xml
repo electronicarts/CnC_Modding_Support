@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GBDefense.W3X" />
+		<Include
+			type="all"
+			source="ART:GBDefense_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:GBDefense_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:GBDefense_D3.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GDI_DefensiveGridBuilding"
+		SelectPortrait="Portrait_GDIDefenseGridBuilding"
+		ButtonImage="Portrait_GDIDefenseGridBuilding"
+		Side="GDI"
+		Browser="REGION GDI_Structures STRUCTURE"
+		EnergyProduction="2000"
+		CommandSet="EmptyCommandSet"
+		KindOf="PRELOAD SELECTABLE CAN_CAST_REFLECTIONS SCORE FS_POWER STRUCTURE IMMOBILE NOT_AUTOACQUIRABLE KEEP_CLASSIFIED_WHEN_DEAD"
+		RadarPriority="STRUCTURE"
+		ThreatLevel="10"
+		ProductionQueueType="INVALID"
+		EditorName="GDI_DefensiveGridBuilding">
+		<DisplayName>Name:DefensiveGridStation</DisplayName>
+		<ArmorSet
+			Armor="GDIGuardianAPCArmor"
+			DamageFX="VehicleDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBDefense" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBDefense_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBDefense_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBDefense_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBDefense_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBDefense_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GBDefense_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBDefense_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+<!--
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="8s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+-->			
+<!--
+			<DestroyDie
+				id="ModuleTag_12">
+				<DieMuxData
+					DeathTypes="NONE CRUSHED SPLATTED" />
+			</DestroyDie>
+-->			
+			
+			<InfiltratorContain xmlns="uri:ea.com:eala:asset"
+				id="ModuleTag_DisabledInfiltratorContain" 
+				Effect="DISABLE"
+				Duration="15s">
+			<CanEnterFilter
+				Relationship="ENEMIES"
+				Rule="NONE">
+				<IncludeThing>GDIEngineer_ShadowAbility</IncludeThing>
+				<IncludeThing>GDIEngineer</IncludeThing>
+			</CanEnterFilter>
+		</InfiltratorContain>
+	
+      <xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+      <xi:include
+				href="DATA:Includes/GenericGDIBuildingDestruction.xml" />
+      <xi:include
+				href="DATA:Includes/GenericGDIBuildingSuicide.xml" />
+		
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_02"
+				MaxHealth="650.0"
+				InitialHealth="650.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="28.8829"
+				MinorRadius="2.6559"
+				Height="8.29967">
+				<Offset
+					x="14.9547"
+					y="2.61552"
+					z="75.143" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="13.3797"
+				MinorRadius="13.3797"
+				Height="69.3986">
+				<Offset
+					x="-0.482642"
+					y="2.44953"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="26.7595"
+				MinorRadius="26.7595"
+				Height="17.2633">
+				<Offset
+					x="-0.482643"
+					y="2.44953"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-8.14684"
+					y="-5.65446"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="6.83545"
+					y="-5.65445"
+					z="66.2588" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="6.83545"
+					y="9.32784"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.14684"
+					y="9.32784"
+					z="66.2588" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.14684"
+					y="-5.65445"
+					z="66.2588" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="6.83545"
+					y="-5.65446"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="6.83545"
+					y="9.32784"
+					z="66.2588" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.14684"
+					y="9.32784"
+					z="0.0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="320" />
+	</GameObject>
+</AssetDeclaration>

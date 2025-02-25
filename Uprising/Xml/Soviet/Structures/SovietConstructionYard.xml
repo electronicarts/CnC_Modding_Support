@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include
+			type="all"
+			source="ART:SBConstructionYard.w3x" />
+		<Include
+			type="all"
+			source="ART:SBConstructionYard_FX.w3x" />
+		<Include
+			type="all"
+			source="ART:SBConstructionYard_particles.w3x" />							
+		<Include
+			type="all"
+			source="ART:SBConstructionYard_GAG.w3x" />				
+
+		<Include
+			type="all"
+			source="ART:SBSuperweaponAdvanced_Platform.w3x" />
+		<Include
+			type="all"
+			source="ART:SBSuperweaponAdvanced_Platform_BLD.w3x" />
+
+		<Include
+			type="all"
+			source="ART:SUMCV_TRANS.w3x" />				
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseSovietStructure.xml" />
+	</Includes>
+	<Defines>
+		<Define name="SOVIET_CONYARD_LOCAL_UNPACK_TIME" value="2s" />
+	</Defines>	
+	<GameObject
+		id="SovietConstructionYard"
+		inheritFrom="BaseSovietStructure"
+		SelectPortrait="Portrait_SovietConYard_big"
+		ButtonImage="Button_SovietConYard_small"
+		Side="Soviet"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		EnergyProduction="50"
+		BuildTime="0.0"
+		PlacementViewAngle="315d"
+		CommandSet="SovietConstructionYardCommandSet"
+		KindOf="+CONSTRUCTION_YARD +FS_FACTORY"
+		RadarPriority="STRUCTURE"
+		CampnessValue="=$CAMPNESS_CONYARD"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="SovietConstructionYard"
+		Description="Desc:SovietConstructionYard"
+		TypeDescription="Type:SovietConstructionYard">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SovietConstructionYard</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="5000"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietConYardArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="CENTER" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+					ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBConstructionYard" />
+				</ModelConditionState>
+		
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="SBConstructionYard" />
+					<Texture
+						Original="SBBuilding_Holes"
+						New="SBBuilding_FP" />						
+					<Texture
+						Original="SBBuilding_Filler"
+						New="SBBuilding_FP" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING REALLYDAMAGED">
+					<Model
+						Name="SUMCV_TRANS" />
+					<Texture
+						Original="SBConstructionYard"
+						New="SBConstructionYard_D" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Model
+						Name="SUMCV_TRANS" />
+				</ModelConditionState>
+
+				<!-- UNPACKING -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName="SUMCV_TRANS"
+						AnimationMode="MATCH_UNPACKING"
+						AnimationBlendTime="0" />
+          <ParticleSysBone
+              BoneName="NONE"
+              FXParticleSystemTemplate="Con_Big"
+              FollowBone="true" />
+          <ParticleSysBone
+            BoneName="NONE"
+            FXParticleSystemTemplate="Con_Flash"
+            FollowBone="true" />
+          <ParticleSysBone
+            BoneName="NONE"
+            FXParticleSystemTemplate="Con_Lights"
+            FollowBone="true" />
+        </AnimationState>
+
+      </ScriptedModelDraw>
+
+<!-- DRAW GAG ANIMATION -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Gag"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBConstructionYard_GAG" />
+				</ModelConditionState>
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FROZEN">
+          <Model
+						Name="SBConstructionYard_GAG" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedCryoFrozenMistBuildingLarge"
+						FollowBone="true"/>          
+          <Material
+					  ShaderName="ObjectsFrozen.fx"
+					  TechniqueName="Default">
+            <Constants>
+              <Texture Name="DiffuseTexture">
+                <Value>SBConstructionYard</Value>
+              </Texture>
+              <Texture Name="NormalMap">
+                <Value>SBConstructionYard_NRM</Value>
+              </Texture>
+              <Texture Name="SpecMap">
+                <Value>SBConstructionYard_SPM</Value>
+              </Texture>
+              <Float Name="EnvMult">
+                <Value>1.000000</Value>
+              </Float>
+              <Bool Name="AlphaTestEnable">
+                <Value>false</Value>
+              </Bool>
+            </Constants>
+          </Material>
+        </ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Model
+						Name="" />
+				</ModelConditionState>				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle"
+					Flags="RESTART_ANIM_WHEN_COMPLETE DO_NOT_PLAY_WHEN_UNPOWERED">
+					<Animation
+						AnimationName="SBConstructionYard_GAG"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+	
+<!-- DRAW PLATFORM -->
+			
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBSuperweaponAdvanced_Platform" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING">
+					<Model
+						Name="SBSuperweaponAdvanced_Platform_BLD"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABPowerPlantWakeSplash"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="SBSuperweaponAdvanced_Platform_BLD"/>						
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING ">
+					<Animation
+						AnimationName="SBSuperweaponAdvanced_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>	
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupFlashes"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupSparksSeed"
+						FollowBone="true" />          
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="SBSuperweaponAdvanced_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>	
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupFlashes"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupSparksSeed"
+						FollowBone="true" />          
+				</AnimationState>						
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>							
+			</ScriptedModelDraw>
+			
+<!-- DRAW PARTICLES -->
+
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBConstructionYard_FX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="SBConstructionYard_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="SBConstructionYard_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+
+				</ModelConditionState>
+			</ScriptedModelDraw>						
+	
+		</Draws>
+		<Behaviors>			
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="SovietBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+				<Event
+					Index="onDeath"
+					FX="FX_LargeBuildingDieExplosionRumble" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData 
+					DeathTypes="ALL" />
+				<Event 
+					Index="onDeath" 
+					FX="FX_LargeBuildingDieExplosion" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieOnLand"
+				CreationList="SBConstructionYard_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="OVER_WATER" />
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieOnWater"
+				CreationList="SBConstructionYardPlatform_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="OVER_WATER" />
+			</CreateObjectDie>
+						
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>		
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="=$SOVIET_CONYARD_LOCAL_UNPACK_TIME" />
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				Type="MAIN_STRUCTURE"
+				MaxQueueEntries="1" />
+			<ProductionUpdate
+				id="ModuleTag_OtherProductionUpdate"
+				Type="OTHER_STRUCTURE"
+				MaxQueueEntries="1" />
+			<ProductionUpdateInfo
+				id="ModuleTag_ProductionUpdateInfo"/>
+			<QueueProductionExitUpdate
+				id="ModuleTag_QueueProduction"
+				ExitDelaySeconds="0.07s">
+				<UnitCreatePoint
+					x="-3.0"
+					y="0.0"
+					z="0.0" />
+				<NaturalRallyPoint
+					x="0.0"
+					y="0.0"
+					z="0.0" />
+			</QueueProductionExitUpdate>
+			
+			<xi:include
+				href="DATA:Includes/GenericPackPower.xml" />
+
+			<ReplaceSelfSpecialAbility
+				id="ModuleTag_ReplaceSelf"
+				SpecialPowerTemplate="SpecialPower_PackReplaceSelf"
+				Options="RECONSTITUTE_STORED_COMMAND"
+				NewObjectUnpackTime="2.0s"
+				ReplaceOptions="COPY_UPGRADES DISABLE_DURING_REPLACE DISABLE_NEW_OBJECT_DURING_UNPACK">
+				<ReplacementTemplate>SovietMCV</ReplacementTemplate>
+			</ReplaceSelfSpecialAbility>
+			
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/SovietConYardDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/SovietConYardSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainVision.xml" />				
+			<xi:include
+				href="DATA:Includes/InfiltratorContainRadarFreeze.xml" />				
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions"
+			/>
+
+		</Behaviors>		
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO" 
+				StateMachine="StructureAIStateMachine"
+			/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="5000.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Packing">
+				<ModelConditionSound Sound="SOV_MCV_PackWater" RequiredFlags="OVER_WATER STRUCTURE_UNPACKING" />
+				<ModelConditionSound Sound="SOV_MCV_PackLand" RequiredFlags="STRUCTURE_UNPACKING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<AnimationSoundClientBehavior id="AnimationSoundCB" >
+				<Sound Sound="SOV_MCV_Animation_Unpack1" ExcludedMC="OVER_WATER" Animation="SUMCV_TRANS" Frame="1" />
+				<Sound Sound="SOV_MCV_Animation_Unpack2" ExcludedMC="OVER_WATER" Animation="SUMCV_TRANS" Frame="47" />
+				<Sound Sound="SOV_MCV_Animation_UnpackWater1MS" RequiredMC="OVER_WATER" Animation="SUMCV_TRANS" Frame="1" />					
+				<Sound Sound="SOV_MCV_Animation_UnpackWater2MS" RequiredMC="OVER_WATER" Animation="SUMCV_TRANS" Frame="47" />
+			</AnimationSoundClientBehavior>	
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "49.5"
+				MinorRadius = "30.0"
+				Height = "43.0"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-10.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "14.587"
+				MinorRadius = "42.8455"
+				Height = "31.0208"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-33.0781"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "9.18982"
+				MinorRadius = "39.4178"
+				Height = "9.61645"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "18.1633"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "10.0"
+				MinorRadius = "10.0"
+				Height = "63.9494"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "9.16862"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "6.625"
+				MinorRadius = "7.8625"
+				Height = "72.9023"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-40.5171"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "10.0"
+				MinorRadius = "30.0"
+				Height = "10.0"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "48.6655"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "60.0"
+				MinorRadius = "45.0"
+				Height = "5.0" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="SOV_ConstructionYard_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+<!--
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+-->
+
+		<EvaEventArray>
+			<EvaEntry EvaEvent="ConstructionYardUnderAttack" EvaType="damagedOwner" />
+		</EvaEventArray>
+		
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="1000" />
+		<ProjectedBuildabilityInfo
+			Radius="480"
+			RadiusY="465"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+		<ProjectedBuildabilityInfo
+			Radius="600"
+			RadiusY="585"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE"
+			AllowedBuildabilityHeightVariation="-1.0">
+			<AllowedObjectFilter
+				 Rule="NONE">
+				<IncludeThing>AlliedNavalYard</IncludeThing>
+				<IncludeThing>SovietNavalYard</IncludeThing>
+				<IncludeThing>JapanNavalYard</IncludeThing>
+			</AllowedObjectFilter>
+		</ProjectedBuildabilityInfo>
+	</GameObject>
+</AssetDeclaration>

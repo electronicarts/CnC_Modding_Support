@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="StructureCollapsePhaseType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INITIAL" />
+			<xs:enumeration value="DELAY" />
+			<xs:enumeration value="BURST" />
+			<xs:enumeration value="ALMOST_FINAL" />
+			<xs:enumeration value="FINAL" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="SCBaseType">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Type" type="StructureCollapsePhaseType" />
+	</xs:complexType>
+
+	<xs:complexType name="SCFXListType">
+		<xs:complexContent>
+			<xs:extension base="SCBaseType">
+				<xs:sequence>
+					<xs:element name="FX" type="FXListRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SCOCLListType">
+		<xs:complexContent>
+			<xs:extension base="SCBaseType">
+			<xs:sequence>
+		 <xs:element name="OCL" type="ObjectCreationListRef" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="StructureCollapseUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="OCL" type="SCOCLListType" minOccurs="0" maxOccurs="5" />
+					<xs:element name="FX" type="SCFXListType" minOccurs="0" maxOccurs="5" />
+					<xs:element name="Die" type="DieMuxDataType" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+
+				<xs:attribute name="MinCollapseDelay" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="MaxCollapseDelay" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="MinBurstDelay" type="SageUnsignedInt" default="9999" />
+				<xs:attribute name="MaxBurstDelay" type="SageUnsignedInt" default="0" />
+
+				<xs:attribute name="BigBurstFrequency" type="SageInt" default="0" />
+				<xs:attribute name="CollapseDamping" type="SageReal" default="0" />
+				<xs:attribute name="MaxShudder" type="SageReal" default="0" />
+				<xs:attribute name="DestroyObjectWhenDone" type="SageBool" default="false" />
+				<xs:attribute name="CollapseHeight" type="SageReal" default="0" />
+
+				<xs:attribute name="CrushingWeapon" type="AssetReference" xas:refType="WeaponTemplate" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

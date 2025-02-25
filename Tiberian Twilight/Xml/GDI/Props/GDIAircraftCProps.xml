@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+
+	<Includes>
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="all" source="ART:GUSensor.w3x" />
+		<Include type="all" source="ART:FXspotlight.w3x" />
+		<Include type="all" source="ART:FXSensorPod.w3x" />
+		<Include type="all" source="ART:GUS_AircraftC_SKN.W3X" />
+		<Include type="all" source="ART:GUS_AircraftC_DMG.xml" />
+		<Include type="all" source="ART:GUS_AircraftC_FLYA.W3X" />
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+	</Includes>
+
+	<Defines>
+		<Define name="GDI_ORCA_SENSOR_POD_SCAN_RANGE" value="400.0" />
+	</Defines>
+	
+	<GameObject
+		id="GDIAircraftCSensorPodProjectile"
+		inheritFrom="baseunattackableprojectile"
+		Side="GDI"
+		KindOf="+UNATTACKABLE +INERT +IGNORE_FOR_VICTORY"
+		EditorName="GDIAircraftCSensorPodProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXSensorPod" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDISensorPodTrail"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_SensorDeath" />
+				<Event Index="onDeath" FX="FX_GDI_Hurricane_AirC_SensorPodImpact_AudioOnly" />
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="20"
+				FirstHeightMax="20"
+				SecondHeightMin="20"
+				SecondHeightMax="20"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH"
+				FlightPathAdjustDistPerSecond="100"
+				GroundHitFX="FX_SensorDeath">
+			</BezierProjectile>
+		</Behaviors>
+	</GameObject>
+	
+	<GameObject
+		id="GDIAircraftCSensorPod"
+		SelectPortrait="Portrait_NeutralSensorPod"
+		ButtonImage="Portrait_NeutralSensorPod"
+		Side="GDI"
+		EditorSorting="UNIT"
+		TransportSlotCount="0"
+		CommandSet="EmptyCommandSet"
+		IsTrainable="false"
+		KindOf="PRELOAD NO_COLLIDE UNATTACKABLE NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY IGNORES_SELECT_ALL"
+		RadarPriority="UNIT"
+		EditorName="GDIAircraftCSensorPod">
+		<DisplayName>Name:GDIAircraftCSensorPod</DisplayName>
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUSensor" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<SpotlightDraw
+				id="ModuleTag_Spotlight"
+				AttachToBoneInAnotherModule="GDISENSOR"
+				RefreshTime="2.0s"
+				SweepTime="1.0s">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXspotlight" />
+				</ModelConditionState>
+			</SpotlightDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics" />
+			<InvisibilityBehavior
+				id="ModuleTag_Invisibility"
+				InvisibilityTemplate="DefaultInvisibilityTemplate"
+			/>
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="=$GDI_ORCA_SENSOR_POD_SCAN_RANGE" />
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="30.0s"
+				MaxLifetime="30.0s" />
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Range="10.0"
+				Flags="TELEPORT STICK_TO_PARENT USE_GEOMETRY DIE_WHEN_DETACH_ALWAYS DETACH_WHEN_NO_PARENT">
+			</AttachUpdate>
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" 
+				/>
+			</DestroyDie>
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody"/>
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="7.0"
+				Height="13.0"></Shape>
+		</Geometry>
+<!--
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_Orca_SensorPodGroundImpact" AudioType="soundAmbient" /> moved to ondDeath FXListBehavior
+		</AudioArraySound>
+-->
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="=$GDI_ORCA_SENSOR_POD_SCAN_RANGE"
+			ShroudClearingRange="=$GDI_ORCA_SENSOR_POD_SCAN_RANGE" />
+		<CrusherInfo
+			CrushableLevel="0" />
+	</GameObject>
+
+	<ObjectCreationList
+		id="OCL_GDIAircraftCSensorPod">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="GDIAircraftCSensorPod"/>
+				<AttachToTarget/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+
+	<!--    /////////////////////////////////////   -->
+	<!--		The Collapsing ship which falls					-->
+	<!--		from the sky when the unit is killed		-->
+	<GameObject
+		id="GDIAircraftC_Dying"
+		EditorName="GDIAircraftC_Dying"
+		Description="Desc:GDIAircraftC_Dying"
+		Side="GDI"
+		KindOf="=$BASE_DYING_AIRCRAFT_KINDOF">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				OkToChangeModelColor="true" >
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUS_AircraftC_SKN" />
+					<Texture
+						Original="GUS_AircraftC"
+						New="GUS_AircraftC_DMG" />
+					<ParticleSysBone
+						BoneName="fx_exhaust03"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="fx_exhaust03"
+						FXParticleSystemTemplate="GDIVehicle_DamageSparks"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GUS_AircraftC_FLYA"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.2"
+						AnimationSpeedFactorMax="0.2" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+				
+			<Physics
+				id="ModuleTag_Physics"
+				TumbleRandomly="true"
+				MaxXRotationVelocity="40"
+				MaxYRotationVelocity="30"
+				MaxZRotationVelocity="0"
+				KillWhenRestingOnGround="true"/>
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplode_Medium" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Aircraft_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			
+			<FireWeaponWhenDead
+				id="ModuleTag_DeathWeapon"
+				DeathWeapon="GDIDyingAircraft_DeathWeapon_Medium"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="Tag_PropBody"/>
+		</Body>
+		
+		<xi:include	href="DATA:GDI/Includes/GDIAircraftCGeometry.xml" />
+		
+		<VisionInfo
+			VisionRange="250"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

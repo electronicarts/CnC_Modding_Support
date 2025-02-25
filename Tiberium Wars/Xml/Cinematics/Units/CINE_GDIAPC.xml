@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:CI_GUAPC_SKN.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="CI_GDIAPC"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_GDIAPC"
+		ButtonImage="Button_GDIAPC"
+		Side="Cinematic"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildCost="400"
+		BuildTime="15"
+		CommandSet="GDIAPCCommandSet"
+		KindOf="PRELOAD SELECTABLE CAN_ATTACK ATTACK_NEEDS_LINE_OF_SIGHT CAN_CAST_REFLECTIONS SCORE TRANSPORT VEHICLE"
+		RadarPriority="UNIT"
+		ThreatLevel="10"
+		ProductionQueueType="VEHICLE"
+		UnitCategory="VEHICLE"
+		EditorName="CI_GDIAPC">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">CI_GDI_APC</DisplayName>
+		<ArmorSet
+			Armor="GDIGuardianAPCArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			Locomotor="GDIAPCLocomotor"
+			Condition="NORMAL"
+			Speed="140.0" />
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				LeftFrontTireBone="TireLF"
+				RightFrontTireBone="TireRF"
+				MidLeftRearTireBone="TireLR"
+				MidRightRearTireBone="TireRR"
+				LeftRearTireBone="TireLR1"
+				RightRearTireBone="TireRR1"
+				TireRotationMultiplier="0.2"
+				PowerslideRotationAddition="1.25">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="CI_GUAPC_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretID="1" />
+				</ModelConditionState>
+			</TruckDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIAPCRocketWeapon" />
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIAPCShockwaveCannon"
+						ObjectStatus="WEAPON_UPGRADED_01" />
+					<TurretSettings
+						TurretTurnRate="180"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<Physics
+				id="ModuleTag_Physics" />
+			<ProductionUpdate
+				id="ModuleTag_PU" />
+			<HordeTransportContain
+				id="ModuleTag_Contain"
+				ObjectStatusOfContained="CAN_ATTACK ENCLOSED"
+				DamagePercentToUnits="100%"
+				ContainMax="1"
+				Slots="1"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="true"
+				AllowNeutralInside="false"
+				AllowOwnPlayerInsideOverride="true"
+				ShowPips="true"
+				KillPassengersOnDeath="true">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY" />
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="BONEGARRISON">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</PassengerData>
+			</HordeTransportContain>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="8s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="NONE CRUSHED SPLATTED" />
+			</DestroyDie>
+			<UnpauseSpecialPowerUpgrade
+				id="ModuleTag_OCLMinefieldUnpause"
+				SpecialPowerTemplate="SpecialPowerGDI_APCMinefield"
+				Permanent="true">
+				<TriggeredBy>Upgrade_APCMineLayer</TriggeredBy>
+			</UnpauseSpecialPowerUpgrade>
+			<OCLSpecialPower
+				id="ModuleTag_OCLMinefield"
+				SpecialPowerTemplate="SpecialPowerGDI_APCMinefield"
+				OCL="OCL_GDI_APCMinefield"
+				CreateLocation="CREATE_AT_LOCATION" />
+			<CommandSetUpgrade
+				id="ModuleTag_Dummy"
+				CommandSet="GDIAPCCommandSet">
+				<TriggeredBy>Upgrade_APCShockwaveCannon</TriggeredBy>
+			</CommandSetUpgrade>
+			<StatusBitsUpgrade
+				id="ModuleTag_UpgradeWeapon"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_APCShockwaveCannon</TriggeredBy>
+			</StatusBitsUpgrade>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES">
+				<UnitAITargetChooserData
+					SympathyRange="25.0" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="650.0"
+				InitialHealth="650.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="10.0"
+				Height="11.5"></Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<!-- <AudioEntry Sound="AudioEvent:HumveeVoiceCreate"		 AudioType="voiceCreated" /> -->
+			<!-- No longer support voiceCrush <AudioEntry Sound="AudioEvent:HumveeVoiceCrush" AudioType="voiceCrush" /> -->
+			<!-- <AudioEntry Sound="AudioEvent:HumveeVoiceUnload"		 AudioType="voiceUnload" />
+			<AudioEntry Sound="AudioEvent:HumveeVoiceMove"			 AudioType="voiceEnter" /> -->
+			<AudioEntry
+				Sound="AudioEvent:TEMP_PredatorVoiceSelect"
+				AudioType="voiceSelect" />
+			<AudioEntry
+				Sound="AudioEvent:TEMP_PredatorVoiceSelect"
+				AudioType="voiceMove" />
+			<AudioEntry
+				Sound="AudioEvent:TEMP_PredatorVoiceSelect"
+				AudioType="voiceGuard" />
+			<AudioEntry
+				Sound="AudioEvent:TEMP_PredatorVoiceSelect"
+				AudioType="voiceAttack" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry
+				Sound="AudioEvent:GuardianAPCMoveStart"
+				AudioType="soundMoveStart" />
+			<AudioEntry
+				Sound="AudioEvent:PredatorIdleLoop"
+				AudioType="soundAmbient" />
+			<!--	TruckLandingSound="RocketBuggyLand"
+				TruckPowerslideSound="RocketBuggyPowerslide"-->
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="320" />
+		<CrusherInfo
+			CrusherLevel="2"
+			CrushableLevel="2" />
+	</GameObject>
+</AssetDeclaration>

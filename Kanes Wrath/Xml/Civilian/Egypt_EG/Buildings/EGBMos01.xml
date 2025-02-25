@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:EGBMos01.w3x" />
+		<Include
+			type="all"
+			source="ART:EGBMos01_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:EGBMos01_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:EGBMos01_D3.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructure.xml" />
+	</Includes>
+	<GameObject
+		id="Egyptian_Mosque_01"
+		inheritFrom="BaseCivilianStructure"
+		EditorName="Egyptian_Mosque_01"
+        EditorSorting="STRUCTURE"
+		Browser="REGION Egypt_EG STRUCTURE">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false"
+				AffectedByStealth="false"
+				ExtraPublicBone="BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="EGBMos01" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="EGBMos01_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="EGBMos01_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="EGBMos01" />
+					<Texture
+						Original="EGBMos01"
+						New="EGBMos01_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="EGBMos01_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+            end
+          </Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="EGBMos01_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+            end
+          </Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="EGBMos01_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="EGBMos01_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="false" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="false" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<xi:include
+				href="../../../Includes/GarrisonFlagArmorDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonArmorDraws/child::*)" />
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					FX="FX_ScorchLarge" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_XLARGE" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="89.8625"
+				MinorRadius="53.7521"
+				Height="87.6573"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="10.077"
+					y="2.58207"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="37.4927"
+				MinorRadius="37.4927"
+				Height="61.746"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="-36.2326"
+					y="90.515"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="26.0049"
+				MinorRadius="26.0049"
+				Height="46.3095"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="20.0004"
+					y="69.0142"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="10.7044"
+				MinorRadius="10.7044"
+				Height="110.812"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="86.7082"
+					y="80.5915"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="34.7671"
+				MinorRadius="34.7671"
+				Height="42.4504"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="-7.56477"
+					y="-60.5422"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="23.5517"
+				MinorRadius="23.5517"
+				Height="40.2452"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="-70.4134"
+					y="-68.8118"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="10.6045"
+				MinorRadius="10.6045"
+				Height="110.261"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="-87.5038"
+					y="-29.6692"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+	</GameObject>
+</AssetDeclaration>

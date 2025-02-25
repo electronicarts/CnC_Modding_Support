@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBOreNode2a.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOreNode2a_GAG_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOreNode2a_GAG_DROP.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOreNode2a_GAG_FILL.w3x" />
+		<Include
+			type="all"
+			source="ART:NBOreNode2a_GAG_RETURN.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseOreNode.xml" />
+		<Include
+			type="all"
+			source="ART:Ore_Gold_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:Ore_Gold_N2ADROP.w3x" />
+		<Include
+			type="all"
+			source="ART:Ore_Gold_N1IDLA.w3x" />				
+	</Includes>
+	<GameObject
+		id="OreNode2a"
+		inheritFrom="BaseOreNode"
+		EditorName="OreNode2a"
+    Description="Desc:TechBuildingOreNode2">
+    <DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechBuildingOreNode2</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				xai:joinAction="Replace"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="DockStart DockAction DockEnd QUE01 QUE02 QUE03 QUE04 QUE05 QUE06">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBOreNode2a" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+			</ScriptedModelDraw>
+
+<!-- Draw Ore -->
+			
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_ARM"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="Ore_Gold_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="Ore_Gold_N1IDLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Unload" then
+						CurDrawableSetTransitionAnimState("TRANS_Unload")
+						end
+					</Script>							
+				</AnimationState>							
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					StateName="STATE_Unload"
+					ConditionsYes="DOCKING_ACTIVE">
+					<Animation
+						AnimationName="Ore_Gold_N2ADROP"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_Unload">
+					<Animation
+						AnimationName="Ore_Gold_N1IDLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>	
+						
+<!-- DRAW GAG -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_GAG"
+				xai:joinAction="Replace"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_TURN_TABLE">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBOreNode2a_GAG_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_idle"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="NBOreNode2a_GAG_DROP"
+						AnimationMode="MANUAL"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOCKING_ACTIVE"
+					StateName="STATE_drop"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBOreNode2a_GAG_DROP"
+						AnimationMode="ONCE"
+						AnimationAbsoluteTime="=$DELIVERY_TIME"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOCKING_EXTRACT"
+					StateName="STATE_fill"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBOreNode2a_GAG_FILL"
+						AnimationMode="MANUAL"
+						AnimationAbsoluteTime="=$EXTRACT_TIME"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOCKING_RETURN"
+					Flags="START_FRAME_LAST"
+					StateName="STATE_return">
+					<Animation
+						AnimationName="NBOreNode2a_GAG_RETURN"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="=$MOVE_TO_EXTRACT_TIME"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOCKING_MOVEBACK"
+					Flags="START_FRAME_FIRST"
+					StateName="STATE_return">
+					<Animation
+						AnimationName="NBOreNode2a_GAG_RETURN"
+						AnimationMode="ONCE"
+						AnimationAbsoluteTime="=$MOVE_TO_EXTRACT_TIME"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<QueueDockBehavior
+				id="ModuleTag_QueueDockBehavior"
+				TurnTableBoneName="BONE_TURN_TABLE"/>
+			<AssistedPlacementInfoBehavior
+				id="AssistedPlacementInfoBehavior_ModuleData">
+				<SuggestedOffset
+					x = "180.0"
+					y = "0.0"
+					z = "0.0" />
+			</AssistedPlacementInfoBehavior>
+		</Behaviors>
+		<ClientBehaviors>
+		<AnimationSoundClientBehavior id="ModuleTag_AnimationSound">
+				<Sound Sound="NEU_OreNode_CraneMoveCCW" Animation="NBOreNode2a_GAG_RETURN" RequiredMC="DOCKING_MOVEBACK" Frame="32" />
+				<Sound Sound="NEU_OreNode_CraneMoveCW" Animation="NBOreNode2a_GAG_RETURN" RequiredMC="DOCKING_RETURN" Frame="56" />
+			</AnimationSoundClientBehavior>
+		<ModelConditionAudioLoopClientBehavior id="ModuleTag_OreLoad">
+				<ModelConditionSound Sound="NEU_OreNode_Load" RequiredFlags="DOCKING_ACTIVE" ExcludedFlags="DYING" />
+		</ModelConditionAudioLoopClientBehavior>
+		<ModelConditionAudioLoopClientBehavior id="ModuleTag_PlatformTurn">
+				<ModelConditionSound Sound="ALL_Refinery_Platform_Rotate" RequiredFlags="DOCKING_ACTIVE" ExcludedFlags="DYING" />
+		</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "15.8347"
+				MinorRadius = "41.0594"
+				Height = "29.2901"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "15.3676"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "27.4506"
+				MinorRadius = "28.2412"
+				Height = "15.6676"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "56.0614"
+					y = "0.907684"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "7.36833"
+				MinorRadius = "7.67091"
+				Height = "40.2274"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "22.2872"
+					y = "43.1384"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "7.36833"
+				MinorRadius = "7.67091"
+				Height = "40.2274"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "22.5031"
+					y = "-43.4438"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+   
+  </Includes>
+
+  <!-- Opening Move -->
+
+  <SkirmishOpeningMove
+	id="EP01_J02_SovietOpeningMove"
+	Side="PlayerTemplate:Soviet">
+    <Order Build="SovietPowerPlant" />
+    <Order Build="SovietRefinery" />
+    <Order Build="SovietRefinery" />
+    <Order Build="SovietPowerPlant" />
+    <Order Build="SovietNavalYard" />
+    <Order Build="SovietNavalYard" />
+    <Order Time="100s" />
+  </SkirmishOpeningMove>
+
+  <AIBudgetStateDefinition
+    id="EP01_J02_DefenseBudget">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <!-- Need at least one structure that can build base defenses-->
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>SovietConstructionYard</IncludeThing>
+          <IncludeThing>SovietCrane</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+      <!-- Need at least one structure that's pre-requsite to building base defenses-->
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>SovietPowerPlant</IncludeThing>
+          <IncludeThing>SovietPowerPlantAdvanced</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+      <ConstantHeuristic Weight="5.0"/>
+    </Heuristic>
+    <Budget>
+      <AccountShare Account="PRODUCTION" Percent="80%"/>
+      <AccountShare Account="DEFENSE" Percent="20%"/>
+      <AccountShare Account="SLUSH_FUND" Percent="0%"/>
+    </Budget>
+  </AIBudgetStateDefinition>
+
+  <AIBuildStateDefinition
+		id="AIState_EP01_J02_SovietTech">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimerHeuristic StartTime="180s" EndTime="-1s"/>
+    </Heuristic>
+    <BuildEntry Build="SovietPowerPlantAdvanced" Heuristic="TECH" MinTime="180s" ForceTime="180s"/>
+    <BuildEntry Build="SovietTechStructure" Heuristic="TECH" MinTime="210s" ForceTime="210s"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+		id="AIState_EP01_J02_SovietCrane">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimerHeuristic StartTime="180s" EndTime="-1s"/>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="false">
+        <ObjectFilter
+          Relationship="SAME_PLAYER">
+          <IncludeThing>SovietCrane</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+      <EnemyNearbyHeuristic Distance="700.0" EnemyNearby="false"/>
+    </Heuristic>
+    <BuildEntry Build="SovietCrane" Heuristic="TECH" MinTime="240s" ForceTime="240s"/>
+  </AIBuildStateDefinition>
+  
+  <!-- Water Harassment & Assault -->
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietBalancedAttackWater"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="120s" EndTime="-1s" CountFrom="AI_START"/>
+      <IntervalHeuristic IntervalTime="90s" ActiveTime="15s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToWaterHarvesterHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="5" MaxUnits="20" MinPowerAdvantage="0.75"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+          <ExcludeThing>SovietBomberAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+   id="AIState_EP01_J02_SovietWaterAssault01"
+   MaxTargets="2">
+    <Heuristic>
+      <TimerHeuristic StartTime="240s" EndTime="-1s" CountFrom="AI_START"/>
+      <IntervalHeuristic IntervalTime="120s" ActiveTime="15s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="CloseToShoreStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToWaterUnitHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="4"
+      							MaxUnits="8"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>SovietAntiNavyShipTech2</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_EP01_J02_SovietWaterAssault02"
+   MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToWaterUnitHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="4"
+      							MaxUnits="8"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietLandAssualt"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+      <IntervalHeuristic IntervalTime="120s" ActiveTime="15s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestLandSurfaceUnitHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="4" MaxUnits="10"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  <!-- Observation Post Captures -->
+
+  <AIStrategicStateDefinition
+   id="AIState_EP01_J02_SovietCapture_ObsPost01"
+   MaxTargets="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrSoviet/FLAG - Capture ObsPost 01"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_01" Priority="20"/>
+    <Tactic id="Capture" Tactic="Engineer" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="3" MaxUnits="4"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER TRANSPORT"
+                    AllowedLocomotorTypes="AMPHIBIOUS AIR"
+                    Priority="HIGH" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="S05_CaptureTechLab">
+        <CreateUnits UnitName="SovietEngineer"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_EP01_J02_SovietCapture_ObsPost02"
+   MaxTargets="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrSoviet/FLAG - Capture ObsPost 02"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_02" Priority="20"/>
+    <Tactic id="Capture" Tactic="Engineer" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="3" MaxUnits="4"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER TRANSPORT"
+                    AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="HIGH" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="S05_CaptureTechLab">
+        <CreateUnits UnitName="SovietEngineer"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_EP01_J02_SovietCapture_ObsPost03"
+   MaxTargets="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrSoviet/FLAG - Capture ObsPost 03"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_03" Priority="20"/>
+    <Tactic id="Capture" Tactic="Engineer" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="3" MaxUnits="4"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER TRANSPORT"
+                    AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="HIGH" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="S05_CaptureTechLab">
+        <CreateUnits UnitName="SovietEngineer"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_EP01_J02_SovietCapture_ObsPost04"
+   MaxTargets="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrSoviet/FLAG - Capture ObsPost 04"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_04" Priority="20"/>
+    <Tactic id="Capture" Tactic="Engineer" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="3" MaxUnits="4"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER TRANSPORT"
+                    AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="HIGH" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="S05_CaptureTechLab">
+        <CreateUnits UnitName="SovietEngineer"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_EP01_J02_SovietCapture_ObsPost05"
+   MaxTargets="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrSoviet/FLAG - Capture ObsPost 05"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_05" Priority="20"/>
+    <Tactic id="Capture" Tactic="Engineer" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="3" MaxUnits="4"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER TRANSPORT"
+                    AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="HIGH" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="S05_CaptureTechLab">
+        <CreateUnits UnitName="SovietEngineer"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_EP01_J02_SovietCapture_ObsPost06"
+   MaxTargets="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrSoviet/FLAG - Capture ObsPost 06"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_06" Priority="20"/>
+    <Tactic id="Capture" Tactic="Engineer" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="3" MaxUnits="4"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER TRANSPORT"
+                    AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="HIGH" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="S05_CaptureTechLab">
+        <CreateUnits UnitName="SovietEngineer"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- Observation Post Defenses -->
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost01"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 01 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_01"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MicroManager="FearlessDefenseMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost02"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 02 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_02"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MicroManager="FearlessDefenseMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost03"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 03 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_03"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MicroManager="FearlessDefenseMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost04"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 04 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_04"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MicroManager="FearlessDefenseMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost05"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 05 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_05"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MicroManager="FearlessDefenseMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost06"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 06 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_06"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MicroManager="FearlessDefenseMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- Easy States -->
+
+  <AIStrategicStateDefinition
+   id="AIState_EP01_J02_SovietWaterAssault01_EASY"
+   MaxTargets="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <IntervalHeuristic IntervalTime="120s" ActiveTime="15s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="CloseToShoreStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToWaterUnitHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RETURN_HOME_AND_DISBAND">
+      <TeamTemplate MinUnits="2"
+      							MaxUnits="4"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MaxTypesOfUnits="2"
+                    MicroManager="FearlessMicroManager_EASY"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_EP01_J02_SovietWaterAssault02_EASY"
+   MaxTargets="1">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <IntervalHeuristic IntervalTime="90s" ActiveTime="15s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToWaterUnitHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RETURN_HOME_AND_DISBAND">
+      <TeamTemplate MinUnits="2"
+      							MaxUnits="4"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="false"
+                    MaxTypesOfUnits="2"
+                    MicroManager="FearlessMicroManager_EASY"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost01_EASY"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 01 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_01"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="5"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MaxTypesOfUnits="2"
+                    MicroManager="FearlessDefenseMicroManager_EASY">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost02_EASY"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 02 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_02"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="5"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MaxTypesOfUnits="2"
+                    MicroManager="FearlessDefenseMicroManager_EASY">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost03_EASY"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 03 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_03"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="5"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MaxTypesOfUnits="2"
+                    MicroManager="FearlessDefenseMicroManager_EASY">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost04_EASY"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 04 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_04"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="5"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MaxTypesOfUnits="2"
+                    MicroManager="FearlessDefenseMicroManager_EASY">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost05_EASY"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 05 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_05"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="5"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MaxTypesOfUnits="2"
+                    MicroManager="FearlessDefenseMicroManager_EASY">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_EP01_J02_SovietDefend_ObsPost06_EASY"
+    MaxTargets="2">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <ScriptedFlagHeuristic FlagName="PlyrNeutral/FLAG - OP 06 - Soviet Controlled"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J02_ObsPost_06"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="325" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="5"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="false"
+                    MaxTypesOfUnits="2"
+                    MicroManager="FearlessDefenseMicroManager_EASY">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+</AssetDeclaration>
+

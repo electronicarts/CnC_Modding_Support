@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+
+  </Includes>
+
+	<AIStrategicStateDefinition
+		id="AIState_NOD_3_1_NOD_CrawlerController"
+		MaxInactiveCopies="1"
+		PathfindingCheckType="None"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		CreateMcvPowerCanUse="true"	>
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<!-- Note that this target heuristic is called again every few seconds to keep updating the position -->
+		<TargetHeuristic TargetHeuristic="MaintainOffenseAndSupportCrawlerBehindFrontLines_Domination" Priority="50"/>
+		<TargetHeuristic TargetHeuristic="AITarget_Nod_2_3_NOD_01" Priority="40"/>
+		<!-- UseAestheticsManager=false because Crawlers do not currently handle formation movement -->
+		<Tactic
+			id="Controller"
+			Tactic="SimpleMovement"
+			EndBehavior="DISBAND"
+			UpdateTime="1.3s"
+			CountForFrontLines="false"
+			UseAestheticsManager="false">
+			<TeamTemplate MinUnits="1" MaxUnits="1"
+											  RegisteredObjectSet="CRAWLERS"
+											  IncludeKindOf="CRAWLER"
+											  ExcludeKindOf=""
+											  Priority="HIGH" AlwaysRecruit="true">
+				<MicroManager 
+				  MicroManager="CrawlerMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_NodLandDefense"
+			MaxTargets="3">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="FriendlyLandStructureHeuristic"/>
+		<Tactic id="Defense" Tactic="StaticDefense" Distance="300" EndBehavior="DISBAND">
+			<TeamTemplate MinUnits="3" MaxUnits="5"
+						  IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+						  AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+						  Priority="DEFENSE" AlwaysRecruit="true" SortByDistance="true">
+				<ObjectFilter Rule="ALL">
+				<!--	
+					<ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+					<ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+					<ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+					<ExcludeThing>SovietFighterAircraft</ExcludeThing>
+					<ExcludeThing>JapanAntiVehicleVehicleTech3</ExcludeThing>
+					<ExcludeThing>JapanAntiVehicleVehicleTech1</ExcludeThing>
+				-->	
+				</ObjectFilter>
+				<MicroManager
+					MicroManager="DefenseMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_NodOffAttack01"
+			MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="20s" EndTime="-1s" CountFrom="AI_START"/>
+			<IntervalHeuristic IntervalTime="99s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="3" MaxUnits="5"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AIR"
+				Priority="STANDARD" AlwaysRecruit="false">
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_NodOffAttack02"
+			MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="60s" EndTime="-1s" CountFrom="AI_START"/>
+			<IntervalHeuristic IntervalTime="133s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="3" MaxUnits="4"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AIR"
+				Priority="STANDARD" AlwaysRecruit="false">
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_NodOffAttackCoOp"
+			MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="6s" EndTime="-1s" CountFrom="AI_START"/>
+			<ScriptedFlagHeuristic FlagName="/Flag-P2IsHuman"/> 
+			<IntervalHeuristic IntervalTime="177s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="3" MaxUnits="4"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AIR"
+				Priority="STANDARD" AlwaysRecruit="false">
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="AIState_NOD_3_1_NodAttackCrawler"
+			MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic StartTime="22s" EndTime="-1s" CountFrom="AI_START"/>
+			<IntervalHeuristic IntervalTime="66s" ActiveTime="15s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="AITarget_EnemyCrawler_Mobile" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="AITarget_EnemyCrawler_Deployed" Priority="20"/>
+		<Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" UseAestheticsManager="true" >
+			<TeamTemplate MinUnits="3" MaxUnits="4"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AIR"
+				Priority="STANDARD" AlwaysRecruit="false">
+				<MicroManager
+					MicroManager="FearlessMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AITargetingHeuristic
+		id="AITarget_Nod_2_3_NOD_01"
+		HeuristicType="Waypoint"
+		Name="BaseWP-Nod_1"
+	/>
+
+</AssetDeclaration>

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!-- Way the pipeline should compress the data when writing PC data... -->
+	<xs:simpleType name="PCAudioCompressionSetting">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />				<!-- No compression -->
+			<xs:enumeration value="XAS" />				<!-- XAS on PC (IMA ADPCM - like) -->
+			<xs:enumeration value="EALAYER3" />		<!-- EALayer3 compression (much like MP3) -->
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="XenonAudioCompressionSetting">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />				<!-- No compression -->
+			<xs:enumeration value="XMA" />				<!-- XMA (360's special built-in compression type) -->
+			<xs:enumeration value="EALAYER3" />		<!-- EALayer3 compression (much like MP3) -->
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<!-- Audio file in the built data -->
+	<xs:complexType name="AudioFileRuntime" xas:runtimeWrapper="::AudioFileInfo">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence />
+				<xs:attribute name="SubtitleStringName" type="xs:string" use="required" />
+				<xs:attribute name="NumberOfChannels" type="xs:unsignedByte" use="required" />
+				<xs:attribute name="NumberOfSamples" type="SageInt" use="required" />
+				<xs:attribute name="SampleRate" type="SageInt" use="required" />
+				<xs:attribute name="HeaderData" type="SageInt" use="required" /> <!-- This will actually be a void * through the magic of xsd2cpp\[platform].config.xml -->
+				<xs:attribute name="HeaderDataSize" type="SageInt" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Audio file in the XML. Corresponds to 1 .wav file -->
+	<xs:complexType name="AudioFile" xas:runtimeWrapper="::AudioFileInfo" >
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence />
+ 				<xs:attribute name="File" type="FileReference" use="required" />
+				<xs:attribute name="PCSampleRate" type="SageInt" use="optional" />
+				<xs:attribute name="PCCompression" type="PCAudioCompressionSetting" use="optional" />
+				<xs:attribute name="PCQuality" type="SageInt" default="75" /> <!-- For EALAYER3 compression: How good is the compression? 0 = high compression, low quality. 100 = little compression, high quality -->
+				<xs:attribute name="IsStreamedOnPC" type="SageBool" use="optional" />
+				<xs:attribute name="XenonSampleRate" type="SageInt" use="optional" />
+				<xs:attribute name="XenonCompression" type="XenonAudioCompressionSetting" use="optional" />
+				<xs:attribute name="XenonQuality" type="SageInt" default="75" /> <!-- For EALAYER3 and XMA compression: How good is the compression? 0 = high compression, low quality. 100 = little compression, high quality -->
+				<xs:attribute name="IsStreamedOnXenon" type="SageBool" use="optional" />
+				<xs:attribute name="SubtitleStringName" type="xs:string" use="optional" />
+				<xs:attribute name="GUIPreset" type="xs:string" use="optional" /> <!-- If this was created by the Audio Asset Processor using a Preset, the name of the preset. Not used in game, just for later fixup if we need to change a preset -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="AudioFileRef"
+								 xas:isRef="true"
+								 xas:refType="AudioFile">
+		<xs:restriction base="AssetReference" />
+	</xs:simpleType>
+
+
+
+	<!-- Audio priority enum -->
+	<xs:simpleType name="AudioPriority">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LOWEST" />
+			<xs:enumeration value="LOW" />
+			<xs:enumeration value="NORMAL" />
+			<xs:enumeration value="HIGH" />
+			<xs:enumeration value="HIGHEST" />
+			<xs:enumeration value="CRITICAL" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!-- Volume sliders -->
+	<xs:simpleType name="AudioVolumeSlider">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SOUNDFX" />
+			<xs:enumeration value="VOICE" />
+			<xs:enumeration value="MUSIC" />
+			<xs:enumeration value="AMBIENT" />
+			<xs:enumeration value="MOVIE" />
+			<xs:enumeration value="NONE" /> <!-- Yes this is a real slider type - it means we not affected by any of the sliders on the options window --> 
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!-- Volume slider multipliers. A sound can multiply the volume of all sounds which use a slider. This is one such multiplication -->
+	<xs:complexType name="AudioVolumeSliderMultiplier">
+		<xs:attribute name="Slider" type="AudioVolumeSlider" use="required" />
+		<xs:attribute name="Multiplier" type="SageReal" use="required" />
+	</xs:complexType>
+	
+	<!-- One possible audio type flag -->
+	<xs:simpleType name="AudioTypeFlag">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="UI" />
+			<xs:enumeration value="WORLD" />
+			<xs:enumeration value="SHROUDED" />
+			<xs:enumeration value="VOICE" />
+			<xs:enumeration value="PLAYER" />
+			<xs:enumeration value="ALLIES" />
+			<xs:enumeration value="ENEMIES" />
+			<xs:enumeration value="EVERYONE" />
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- The complete collection of flags. Corresponds to the actual bitfiend in code -->
+  <xs:simpleType name="AudioTypeFlags">
+		<xs:list itemType="AudioTypeFlag" />
+  </xs:simpleType>
+
+	<!-- One possible audio control flag -->
+	<xs:simpleType name="AudioControlFlag">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LOOP" />
+			<xs:enumeration value="SEQUENTIAL" />
+			<xs:enumeration value="RANDOMSTART" />
+			<xs:enumeration value="INTERRUPT" />
+			<xs:enumeration value="FADE_ON_KILL" />
+			<xs:enumeration value="FADE_ON_START" />
+			<xs:enumeration value="ALLOW_KILL_MID_FILE" />
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- The complete collection of flags. Corresponds to the actual bitfiend in code -->
+  <xs:simpleType name="AudioControlFlags">
+		<xs:list itemType="AudioControlFlag" />
+  </xs:simpleType>
+
+	<!-- The basic type of any sound, be it sound effect, music, speech, ambient, or multisound -->
+	<xs:complexType name="BaseAudioEventInfo" abstract="true" xas:runtimeWrapper="::AudioEventInfo" >
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset" >
+			<!-- This type has no actual data. It exists simply because we want multisounds to be used anywhere other
+			     sounds can be, so we need a common basis for multisounds and sound effects (but not other game assets!)
+			     So this is the common basis for both. It lists all the attributes which normal sound effects and
+			     multisounds share - which at the moment is zilch. -->
+			     <xs:sequence></xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+			
+	<!-- Basis for any single sound (e.g. everything but multisounds) -->
+	<xs:complexType name="BaseSingleSound" abstract="true" xas:runtimeWrapper="::AudioEventInfo" >
+		<xs:complexContent>
+			<xs:extension base="BaseAudioEventInfo" >	
+				<xs:sequence>
+					<xs:element name="PitchShift" type="RealRange" minOccurs="0" maxOccurs="1" />
+					<xs:element name="PerFilePitchShift" type="RealRange" minOccurs="0" maxOccurs="1" />
+					<xs:element name="Delay" type="IntRange" minOccurs="0" maxOccurs="1" />
+					<xs:element name="VolumeSliderMultiplier" type="AudioVolumeSliderMultiplier" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Volume" type="Percentage" default="100" />
+				<xs:attribute name="VolumeShift" type="Percentage" default="0" />
+				<xs:attribute name="PerFileVolumeShift" type="Percentage" default="0" />
+				<xs:attribute name="MinVolume" type="Percentage" default="0" />
+				<xs:attribute name="PlayPercent" type="Percentage" default="100" />
+				<xs:attribute name="Limit" type="SageInt" default="0" />
+				<xs:attribute name="Priority" type="AudioPriority" default="NORMAL" />
+				<xs:attribute name="Type" type="AudioTypeFlags" default="" />
+				<xs:attribute name="Control" type="AudioControlFlags" default="" />
+				<xs:attribute name="MinRange" type="SageReal" default="160" />
+				<xs:attribute name="MaxRange" type="SageReal" default="640" />
+				<xs:attribute name="LowPassCutoff" type="Percentage" default="0" />
+				<xs:attribute name="ZoomedInOffscreenVolumePercent" type="Percentage" default="50" />
+				<xs:attribute name="ZoomedInOffscreenMinVolumePercent" type="Percentage" default="100" />
+				<xs:attribute name="ZoomedInOffscreenOcclusionPercent" type="Percentage" default="20" />
+				<xs:attribute name="ReverbEffectLevel" type="Percentage" default="0" />
+				<xs:attribute name="DryLevel" type="Percentage" default="0" />
+				<xs:attribute name="SubmixSlider" type="AudioVolumeSlider" use="optional" /> <!-- There is a default, but it's a complex calculation -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- A reference to an .SNR file in one of the Data\Audio\Sounds directories, together with the compression type and the weight (chance of playing) -->
+	<xs:complexType name="AudioFileRefWithWeight" 
+								 xas:isRef="true"
+								 xas:refType="AudioFile">
+		<xs:simpleContent>
+			<xs:extension base="AudioFileRef" >
+				<xs:attribute name="Weight" type="SageUnsignedInt" default="1000" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<!-- A reference to an subsound in a multisound -->
+	<xs:complexType name="MultisoundSubsoundRef" xas:isRef="true" xas:refType="BaseAudioEventInfo" >
+		<xs:simpleContent>
+			<xs:extension base="AudioEventInfoRef" >
+				<xs:attribute name="Weight" type="SageUnsignedInt" default="1000" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<!-- A non-streamed sound effect -->
+	<xs:complexType name="AudioEvent" xas:runtimeWrapper="::AudioEventInfo" >
+		<xs:complexContent>
+			<xs:extension base="BaseSingleSound">
+				<xs:sequence>
+					<xs:element name="Attack" type="AudioFileRefWithWeight" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="Sound" type="AudioFileRefWithWeight" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="Decay" type="AudioFileRefWithWeight" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- A streamed piece of music -->
+	<xs:complexType name="MusicTrack" xas:runtimeWrapper="::AudioEventInfo" >
+		<xs:complexContent>
+			<xs:extension base="BaseSingleSound">
+				<xs:sequence>
+					<xs:element name="Filename" type="AudioFileRef" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- A streamed speech -->
+	<xs:complexType name="DialogEvent" xas:runtimeWrapper="::AudioEventInfo" >
+		<xs:complexContent>
+			<xs:extension base="BaseSingleSound">
+				<xs:sequence>
+					<xs:element name="Filename" type="AudioFileRef" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<!-- An ambient stream -->
+	<xs:complexType name="AmbientStream" xas:runtimeWrapper="::AudioEventInfo" >
+		<xs:complexContent>
+			<xs:extension base="BaseSingleSound">
+				<xs:sequence>
+					<xs:element name="Filename" type="AudioFileRef" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<!-- One possible audio control flag for a multisound -->
+	<xs:simpleType name="MultisoundControlFlag">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LOOP" />
+			<xs:enumeration value="PLAY_ONE" />
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- The complete collection of flags. Corresponds to the actual bitfiend in code -->
+  <xs:simpleType name="MultisoundControlFlags">
+		<xs:list itemType="MultisoundControlFlag" />
+  </xs:simpleType>
+
+	<!-- This is just a way of saying that you can't have LOOP without the PLAY_ONE flag. I just haven't
+	     worked around some of the problems with LOOPing several one-shots at the same time, and I don't want
+	     to bother unless I need to... --> 
+	
+	<!--	Bleck can't get this to work with our current build pipeline
+	<xs:simpleType name="MultisoundControlFlag_Restricted" xas:runtimeWrapper="SageBinaryData::MultisoundControlFlags">
+		<xs:restriction base="MultisoundControlFlags">
+			<xs:enumeration value="" />
+			<xs:enumeration value="PLAY_ONE" />
+			<xs:enumeration value="LOOP PLAY_ONE" />
+			<xs:enumeration value="PLAY_ONE LOOP" />
+		</xs:restriction>
+	</xs:simpleType> -->
+
+	
+	<!-- A sound consisting of several other sounds -->
+	<xs:complexType name="Multisound" xas:runtimeWrapper="::AudioEventInfo" >
+		<xs:complexContent>
+			<xs:extension base="BaseAudioEventInfo">
+				<xs:sequence>
+					<xs:element name="Subsound" type="MultisoundSubsoundRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+                <xs:attribute name="Control" type="MultisoundControlFlags" default="" >
+                </xs:attribute>
+ 
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>
+

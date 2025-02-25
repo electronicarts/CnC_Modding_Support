@@ -1,0 +1,102 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// Scrape script for Shadow Mapping
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_SHADOW_SCRAPEH
+#define SCRAPE_SCRIPT_SHADOW_SCRAPEH
+
+//
+// ShadowMapping
+//
+
+// Shadow mapping
+var texture ShadowMapTexture $Sas.Shadow[0].MapSize $Sas.Shadow[0].MapSize R32F
+
+#if defined(EA_PLATFORM_WINDOWS)
+
+	#define ShadowMapRenderTarget ShadowMapTexture
+	var surface ShadowMapDepthBuffer edramdepth $Sas.Shadow[0].MapSize $Sas.Shadow[0].MapSize D24S8
+	
+#elif defined(EA_PLATFORM_XENON)
+
+	var surface ShadowMapRenderTarget edram $Sas.Shadow[0].MapSize $Sas.Shadow[0].MapSize R32F
+	var surface ShadowMapDepthBuffer edramdepth $Sas.Shadow[0].MapSize $Sas.Shadow[0].MapSize D24FS8
+	var surfacegroup ShadowMapGroup ShadowMapRenderTarget ShadowMapDepthBuffer
+
+#endif
+
+var camera ShadowMap
+
+// Moved from common because the shadow pass and depth pass render different things.
+proc renderShadowCasters
+	if DebugToggle BaselineRendering.IsEnabled
+		if DebugToggle TerrainCaster.IsEnabled
+			renderTerrain 
+		endif
+	endif
+
+	// Render cliffs, sea walls, road segments over terrain but below scorch marks
+	renderbin TerrainLikeGroundObject
+
+	renderbin Bridge
+	
+	if DebugToggle BaselineRendering.IsEnabled
+		renderProps
+	endif
+
+	beginevent RenderCasters_Units
+		callproc renderBinsUnit
+		callproc renderBinsUnitOutline
+	endevent RenderCasters_Units
+
+	renderbin Solid
+
+	if DebugToggle StructureCaster.IsEnabled
+		beginevent RenderCasters_Structures
+			renderbin Structure
+			callproc renderBinsStructureOutline
+		endevent RenderCasters_Structures
+	endif
+
+	renderbin StaticSort5 					// Underwater Sorting
+	callproc renderBinsStaticSort
+	//renderbin Transparent                  //Shadows turned off for transparent for stealth
+	//renderTransparentOutlineObjects
+
+endproc
+
+proc updateShadowTexture
+	if Sas ShadowMappingEnabled
+		beginevent UpdateShadowMap
+		
+		settarget 0 ShadowMapRenderTarget
+		setdepth ShadowMapDepthBuffer
+		
+		shadowMap.beginUpdate
+		beginShadowOverrideTechnique
+		
+		setclearcolor		1 1 1 1
+		setcleardepth       1.0
+		clear
+		
+		setcamera ShadowMap
+		visibleobjects ShadowMap
+		
+		callproc renderShadowCasters
+
+		endShadowOverrideTechnique
+		shadowMap.endUpdate
+		
+#if defined(EA_PLATFORM_XENON)
+		resolve ShadowMapTexture
+#endif
+
+		// Bind the texture to the scope variable		
+		settexture Sas Shadow[0].ShadowMap ShadowMapTexture
+	
+		endevent UpdateShadowMap
+	endif // Sas ShadowMappingEnabled
+endproc
+
+#endif // SCRAPE_SCRIPT_SHADOW_SCRAPEH

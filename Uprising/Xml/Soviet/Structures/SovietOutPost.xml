@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include
+			type="all"
+			source="ART:SBOutpost.w3x" />
+
+		<Include
+			type="all"
+			source="ART:SUSurveyor_Unpack.w3x" />
+		
+		<Include
+			type="all"
+			source="ART:SBOutpost_Platform.w3x" />
+		<Include
+			type="all"
+			source="ART:SBOutpost_Platform_BLD.w3x" />			
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseSovietStructure.xml" />
+	</Includes>
+	<Defines>
+		<Define name="SOVIET_OUTPOST_LOCAL_UNPACK_TIME" value="5s" />
+	</Defines>
+	<GameObject
+		id="SovietOutpost"
+		inheritFrom="BaseSovietStructure"
+		SelectPortrait="Portrait_SovietOutpost_big"
+		ButtonImage="Button_SovietOutpost_small"
+		Side="Soviet"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildTime="0"
+		CommandSet="SovietOutpostCommandSet"
+		KindOf="+OUTPOST +IGNORE_FOR_VICTORY"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="315d"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="SovietOutpost"
+		Description="DESC:SovietOutpost"
+		TypeDescription="Type:SovietOutpost"
+		HealthBoxHeightOffset="30">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SovietOutpost</DisplayName>
+		<GameDependency>
+			<RequiredObject>SovietConstructionYard</RequiredObject>
+		</GameDependency>			
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="1500"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietOutpostArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBOutpost" />
+				</ModelConditionState>
+			
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="SBOutpost" />
+					<Texture
+						Original="SBBuilding_Holes"
+						New="SBBuilding_FP" />						
+					<Texture
+						Original="SBBuilding_Filler"
+						New="SBBuilding_FP" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="SUSurveyor_Unpack" />
+				</ModelConditionState>
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+          <Model
+						Name="SBOutpost" />
+        </ModelConditionState>
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+          <Model
+						Name="SBOutpost" />
+          <Texture
+						Original="SUSurveyor"
+						New="SUSurveyor_D" />
+          <ParticleSysBone
+           BoneName="FX_Damage_01"
+           FXParticleSystemTemplate="VehicleDamageSmoke"
+           FollowBone="true" />
+          <ParticleSysBone
+						BoneName="FX_Damage_01"
+						FXParticleSystemTemplate="VehicleDamageFire"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="FX_Damage_01"
+						FXParticleSystemTemplate="VehicleDamageFire02"
+						FollowBone="true" />
+        </ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="SBOutpost"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING"
+					StateName="STATE_StartUnpak">
+					<Animation
+						AnimationName="SUSurveyor_Unpack"
+						AnimationMode="MATCH_UNPACKING" />
+				</AnimationState>
+			</ScriptedModelDraw>
+	
+<!-- DRAW PLATFORM -->
+			
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBOutpost_Platform" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="SBOutpost_Platform_BLD"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABPowerPlantWakeSplash"
+						FollowBone="true" />  						
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING ">
+					<Animation
+						AnimationName="SBOutpost_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>	
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="SBOutpost_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>	
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupFlashes"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="SovietOutpostSparksSeed"
+						FollowBone="true" />          
+				</AnimationState>						
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>							
+			</ScriptedModelDraw>
+						
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="SovietPowerPlant_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData 
+					DeathTypes="ALL" />
+				<Event 
+					Index="onDeath" 
+					FX="FX_SmallBuildingDieExplosion" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SBOutpost_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="OVER_WATER" />
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieOnWater"
+				CreationList="SBOutpostPlatform_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="OVER_WATER" />
+			</CreateObjectDie>			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackCompleteSound=""
+				UnpackTime="=$SOVIET_OUTPOST_LOCAL_UNPACK_TIME" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericSovietBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericSovietBuildingSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainVision.xml" />				
+			<xi:include
+				href="DATA:Includes/InfiltratorContainRadarFreeze.xml" />				
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" 
+				id="ModuleTag_StructureConstructionAudio">
+				<ModelConditionSound Sound="SOV_Outpost_Deploy" RequiredFlags="STRUCTURE_UNPACKING" ExcludedFlags="OVER_WATER"/>
+				<ModelConditionSound Sound="SOV_Outpost_DeployWaterMS" RequiredFlags="STRUCTURE_UNPACKING OVER_WATER"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<!--		
+			<AnimationSoundClientBehavior
+				id="AnimationSoundCB" >
+				<Sound
+					Sound="GDI_Surveyor_Unpack1"
+					Animation="GUSUVUPAK_UPK1"
+					Frame="5" />
+				<Sound
+					Sound="GDI_Surveyor_Unpack2"
+					Animation="GUSUVUPAK_UPK1"
+					Frame="52" />
+				<Sound
+					Sound="GDI_Surveyor_Unpack3"
+					Animation="GUSUVUPAK_UPK1"
+					Frame="59" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore1"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="2" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore2"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="26" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore3"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="35" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore4"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="48" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore5"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="71" />
+			</AnimationSoundClientBehavior>		
+			-->
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<PlacementShape
+				Type= "BOX"
+				MajorRadius = "30.0"
+				MinorRadius = "30.0"
+				Height = "5.0" />
+			<Shape
+				Type= "BOX"
+				MajorRadius = "16.0225"
+				MinorRadius = "16.0225"
+				Height = "22.185"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="AudioEvent:SOV_OutPost_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="" AudioType="soundUnderConstruction" />
+<!--
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="750" />
+		<ProjectedBuildabilityInfo
+			Radius="300"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

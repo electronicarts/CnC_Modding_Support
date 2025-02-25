@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+    <Include type="instance" source="DATA:SkirmishAI\States\SovietAirMarshallStates.xml" />
+  </Includes>
+
+  <AIStrategicStateDefinition
+    id="AIState_S07_CoopLandDefense"
+    MaxTargets="3">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="FriendlyLandStructureHeuristic"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="250" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="14"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="DEFENSE" AlwaysRecruit="true" SortByDistance="true"
+                    MicroManager="DefenseMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S07_LandAttack"
+    MaxTargets="2">
+    <Heuristic>
+      <TimerHeuristic StartTime="600s" EndTime="-1s" CountFrom="AI_START"/>
+      <EnemyNearbyHeuristic Distance="400.0" EnemyNearby="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristic" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristicAllEnemies" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="10" MaxUnits="24" MinPowerAdvantage="1.0"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_S07_NavalAttack"
+    MaxTargets="2">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterSiegeUnitHeuristicAllEnemies" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristicAllEnemies" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristicAllEnemies" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="2" MaxUnits="12"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="StandardFullAlphaStrikeMicroManager">
+        <CreateUnits UnitName="SovietAntiNavyShipTech2" MinUnits="2" MaxUnits="2"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_S07_FollowP1"
+    MaxTargets="1">
+    <Heuristic>
+          <ScriptedFlagHeuristic FlagName="Player_2/Flag-BearGuardP1"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestAllyUnitHeuristic" Priority="20"/>
+    <Tactic id="Defend" Tactic="StaticDefense"  EndBehavior="DISBAND" Distance="200" UseAestheticsManager="false" UpdateTime="0.1s" UseTransports="false" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" 
+      							MaxUnits="99" 
+      							IncludeKindOf="CAN_ATTACK" 
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER" 
+      							AllowedLocomotorTypes="AIR LAND WATER AMPHIBIOUS"
+                    Priority="HIGH" 
+                    AlwaysRecruit="true"
+                    MicroManager="A09_FollowPlayerMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_S07_PowerplantAttack"
+    MaxTargets="7">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="/Flag-HotSpot04PowerplantSelected"/>
+    </Heuristic>
+  	<TargetHeuristic TargetHeuristic="AITarget_S07_Powerplant01"/>
+  	<TargetHeuristic TargetHeuristic="AITarget_S07_Powerplant02"/>
+  	<TargetHeuristic TargetHeuristic="AITarget_S07_Powerplant03"/>
+  	<TargetHeuristic TargetHeuristic="AITarget_S07_Powerplant04"/>
+  	<TargetHeuristic TargetHeuristic="AITarget_S07_Powerplant05"/>
+  	<TargetHeuristic TargetHeuristic="AITarget_S07_Powerplant06"/>
+  	<TargetHeuristic TargetHeuristic="AITarget_S07_Powerplant07"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="6" MaxUnits="9"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S07_CoopCaptureTech"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="90s" EndTime="-1s" CountFrom="AI_START"/>
+      <EnemyNearbyHeuristic Distance="300.0" EnemyNearby="false"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestTechBuildingHeuristic"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="5" MaxUnits="10"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT VEHICLE SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="false"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    MicroManager="CaptureTechMicroManager">
+        <CreateUnits UnitName="SovietEngineer" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_S07_SovietStructureBuildState">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <BuildEntry Build="SovietPowerPlant" Heuristic="POWER"/>
+    <BuildEntry Build="SovietRefinery" Heuristic="REFINERY"/>
+    <BuildEntry Build="SovietBarracks" Heuristic="FACTORY"/>
+    <BuildEntry Build="SovietWarFactory" Heuristic="FACTORY"/>
+    <BuildEntry Build="SovietNavalYard" Heuristic="FACTORY"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_S07_SovietAirfieldStructureBuildState">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimerHeuristic StartTime="540s" EndTime="-1s" CountFrom="AI_START"/>
+    </Heuristic>
+    <BuildEntry Build="SovietAirfield" Heuristic="FACTORY"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_S07_SovietTechBuildState">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <BuildEntry Build="SovietPowerPlantAdvanced" Heuristic="TECH" ForceTime="240s"/>
+    <BuildEntry Build="SovietTechStructure" Heuristic="TECH" ForceTime="660s"/>
+    <BuildEntry Build="SovietSuperWeapon" Heuristic="TECH" ForceTime="900s"/>
+    <BuildEntry Build="SovietSuperWeaponAdvanced" Heuristic="TECH" ForceTime="1200s"/>
+  </AIBuildStateDefinition>
+
+</AssetDeclaration>

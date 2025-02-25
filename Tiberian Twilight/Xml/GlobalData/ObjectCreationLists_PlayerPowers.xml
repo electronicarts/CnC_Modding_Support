@@ -1,0 +1,794 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset">
+	<Includes>
+		<Include type="all"	source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NOD_BURROW_MINE_RADIUS_INNER_01" value="= 0.5 * $NOD_BURROW_MINE_RADIUS_01"/>
+		<Define name="NOD_BURROW_MINE_RADIUS_INNER_02" value="= 0.5 * $NOD_BURROW_MINE_RADIUS_02"/>
+		<Define name="NOD_BURROW_MINE_RADIUS_INNER_03" value="= 0.5 * $NOD_BURROW_MINE_RADIUS_03"/>
+
+		<Define name="GENERIC_PARABOLICUPDATE_INITIAL_DELAY" value="0s" />
+		<Define name="GENERIC_PARABOLICUPDATE_APPROACHTIME" value="4s" />
+		<Define name="GENERIC_PARABOLICUPDATE_START_DIST_FROM_TARGET" value="1250" />
+		<Define name="GENERIC_PARABOLICUPDATE_END_DIST_FROM_TARGET" value="500" />
+		<Define name="GENERIC_PARABOLICUPDATE_CRUISE_HEIGHT" value="300" />
+		<Define name="GENERIC_PARABOLICUPDATE_ATTACK_HEIGHT" value="200" />
+		<Define name="GENERIC_PARABOLICUPDATE_LEAVE_ROLL" value="-50d" />
+		<Define name="GENERIC_PARABOLICUPDATE_OPTIONS" value="UNATTACKABLE_DURING_FLEE" />
+
+		<Define name="GDI_ORCASTRIKE_INITIAL_DELAY" value="=$GENERIC_PARABOLICUPDATE_INITIAL_DELAY" />
+		<Define name="GDI_ORCASTRIKE_APPROACHTIME" value="=$GENERIC_PARABOLICUPDATE_APPROACHTIME" />
+		<Define name="GDI_ORCASTRIKE_START_DIST_FROM_TARGET" value="=$GENERIC_PARABOLICUPDATE_START_DIST_FROM_TARGET" />
+		<Define name="GDI_ORCASTRIKE_END_DIST_FROM_TARGET" value="=$GENERIC_PARABOLICUPDATE_END_DIST_FROM_TARGET" />
+		<Define name="GDI_ORCASTRIKE_CRUISE_HEIGHT" value="=$GENERIC_PARABOLICUPDATE_CRUISE_HEIGHT" />
+		<Define name="GDI_ORCASTRIKE_ATTACK_HEIGHT" value="=$GENERIC_PARABOLICUPDATE_ATTACK_HEIGHT" />
+		<Define name="GDI_ORCASTRIKE_LEAVE_ROLL" value="=$GENERIC_PARABOLICUPDATE_LEAVE_ROLL" />
+		<Define name="GDI_ORCASTRIKE_OPTIONS" value="=$GENERIC_PARABOLICUPDATE_OPTIONS" />
+
+		<Define name="GDI_SUPPLY_DROP_CREATION_OPTIONS" value="IGNORE_ALL_OBJECTS CREATE_AT_TARGET" />
+
+		<Define name="CALL_FOR_SUPPORT_NUGGET_CREATION_OPTIONS" value="IGNORE_ALL_OBJECTS DONT_SET_PRODUCER ISSUE_MOVE_AFTER_CREATION MOVE_USES_EVACUATE_AND_EXIT MOVE_TARGET_USES_OFFSET CREATE_AT_TARGET IGNORE_AI_AFTER_INITIAL_COMMAND" />
+		<Define name="GDI_ARMORED_CORPS_CREATION_OPTIONS" value="=$CALL_FOR_SUPPORT_NUGGET_CREATION_OPTIONS" />
+		<Define name="GDI_ARMORED_CORPS_CREATION_OPTIONS_LAST" value="=$GDI_ARMORED_CORPS_CREATION_OPTIONS + ' IGNORE_COMMANDPOINT_LIMIT'" />
+		<Define name="GDI_HEAVY_WALKERS_CREATION_OPTIONS" value="=$CALL_FOR_SUPPORT_NUGGET_CREATION_OPTIONS" />
+		<Define name="GDI_HEAVY_WALKERS_CREATION_OPTIONS_LAST" value="=$GDI_HEAVY_WALKERS_CREATION_OPTIONS + ' IGNORE_COMMANDPOINT_LIMIT'" />
+		<Define name="NOD_SCORPION_STRIKE_CREATION_OPTIONS" value="=$CALL_FOR_SUPPORT_NUGGET_CREATION_OPTIONS" />
+		<Define name="NOD_SCORPION_STRIKE_CREATION_OPTIONS_LAST" value="=$NOD_SCORPION_STRIKE_CREATION_OPTIONS + ' IGNORE_COMMANDPOINT_LIMIT'" />
+		<Define name="NOD_CANNON_FODDER_CREATION_OPTIONS" value="=$CALL_FOR_SUPPORT_NUGGET_CREATION_OPTIONS" />
+		<Define name="NOD_CANNON_FODDER_CREATION_OPTIONS_LAST" value="=$NOD_CANNON_FODDER_CREATION_OPTIONS + ' IGNORE_COMMANDPOINT_LIMIT'" />
+		<Define name="GDI_BLOODHOUNDS_CREATION_OPTIONS" value="=$CALL_FOR_SUPPORT_NUGGET_CREATION_OPTIONS" />
+		<Define name="GDI_BLOODHOUNDS_CREATION_OPTIONS_LAST" value="=$GDI_BLOODHOUNDS_CREATION_OPTIONS + ' IGNORE_COMMANDPOINT_LIMIT'" />
+		<Define name="GDI_AIRBORNE_CREATION_OPTIONS" value="=$CALL_FOR_SUPPORT_NUGGET_CREATION_OPTIONS" />
+		<Define name="GDI_AIRBORNE_CREATION_OPTIONS_LAST" value="=$GDI_AIRBORNE_CREATION_OPTIONS + ' IGNORE_COMMANDPOINT_LIMIT'" />
+		<Define name="NOD_BLACK_DISCIPLES_CREATION_OPTIONS" value="=$CALL_FOR_SUPPORT_NUGGET_CREATION_OPTIONS" />
+		<Define name="NOD_BLACK_DISCIPLES_CREATION_OPTIONS_LAST" value="=$NOD_BLACK_DISCIPLES_CREATION_OPTIONS + ' IGNORE_COMMANDPOINT_LIMIT'" />
+		<Define name="GDI_SHARPSHOOTERS_CREATION_OPTIONS" value="=$CALL_FOR_SUPPORT_NUGGET_CREATION_OPTIONS" />
+		<Define name="GDI_SHARPSHOOTERS_CREATION_OPTIONS_LAST" value="=$GDI_SHARPSHOOTERS_CREATION_OPTIONS + ' IGNORE_COMMANDPOINT_LIMIT'" />
+
+		<Define name="MUTANT_ALLIES_COUNT" value="3"/>
+		<Define name="MUTANT_ALLIES_DISPOSITION_ANGLE" value="120d"/>
+		<Define name="MUTANT_ALLIES_DISPOSITION_DISTANCE" value="10"/>
+
+		<Define name="CRAWLER_DISPOSITION_ANGLE" value="-45d"/>
+	</Defines>
+
+	<!-- Redeployment Drop Pods-->
+	<ObjectCreationList
+		id="OCL_PlayerRedeployment">
+		<!-- GDI Redeployment -->
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIRedeploymentDecal</ObjectTemplate>
+					<ObjectTemplate>GDIRedeploymentEgg</ObjectTemplate>
+					<ObjectOffset/>
+					<ObjectOffset/>
+					<SubModules>
+						<ForbiddenUpgrades>
+							<Upgrade>Upgrade_NODFaction</Upgrade>
+						</ForbiddenUpgrades>
+						<RequiredUpgrades>
+							<Upgrade>Upgrade_GDIFaction</Upgrade>
+						</RequiredUpgrades>
+						<TargetRelativePrePosition/>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+
+		<!-- NOD Redeployment -->
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODRedeploymentDecal</ObjectTemplate>
+					<ObjectTemplate>NODRedeploymentEgg</ObjectTemplate>
+					<ObjectOffset/>
+					<ObjectOffset/>
+					<SubModules>
+						<ForbiddenUpgrades>
+							<Upgrade>Upgrade_GDIFaction</Upgrade>
+						</ForbiddenUpgrades>
+						<RequiredUpgrades>
+							<Upgrade>Upgrade_NODFaction</Upgrade>
+						</RequiredUpgrades>
+						<TargetRelativePrePosition/>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- GDI Crawler Redeployment OCLs -->
+	<ObjectCreationList
+		id="OCL_GDIRedeployment_Crawler">
+
+
+		<!-- Offense Class-->
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET"
+			Disposition="ON_GROUND_ALIGNED ABSOLUTE_ANGLE"
+			StartingBusyTime="2s"
+			JustBuiltFrames="2s"
+			VeterancyLevel="0"
+			DispositionAngle="=$CRAWLER_DISPOSITION_ANGLE">
+			<Offset x="0" y="0" z="0" />
+			<RequiredUpgrade>Upgrade_OffenseClass</RequiredUpgrade>
+			<ForbiddenUpgrade>Upgrade_NODFaction</ForbiddenUpgrade>
+			<CreateObject>GDICrawlerBVehicle</CreateObject>
+		</CreateObject>
+	
+		<!-- Support Class-->
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET"
+			Disposition="ON_GROUND_ALIGNED ABSOLUTE_ANGLE"
+			StartingBusyTime="0.75s"
+			DisabledWhileBusy="true"
+			JustBuiltFrames="2s"
+			VeterancyLevel="0"
+			DispositionAngle="=$CRAWLER_DISPOSITION_ANGLE">
+			<Offset x="0" y="0" z="0" />
+			<RequiredUpgrade>Upgrade_SupportClass</RequiredUpgrade>
+			<ForbiddenUpgrade>Upgrade_NODFaction</ForbiddenUpgrade>
+			<CreateObject>GDICrawlerCVehicle</CreateObject>
+		</CreateObject>
+
+		<!-- Defense Class-->
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET"
+			Disposition="ON_GROUND_ALIGNED ABSOLUTE_ANGLE"
+			StartingBusyTime="2s"
+			JustBuiltFrames="2s"
+			VeterancyLevel="0"
+			DispositionAngle="=$CRAWLER_DISPOSITION_ANGLE">
+			<Offset x="0" y="0" z="0" />
+			<RequiredUpgrade>Upgrade_DefenseClass</RequiredUpgrade>
+			<ForbiddenUpgrade>Upgrade_NODFaction</ForbiddenUpgrade>
+			<CreateObject>GDICrawlerAVehicle</CreateObject>
+		</CreateObject>
+		
+	</ObjectCreationList>
+	
+	<!-- NOD Crawler Redeployment OCLs -->
+	<ObjectCreationList
+		id="OCL_NODRedeployment_Crawler">
+
+		<!-- Offense Class-->
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET"
+			Disposition="ON_GROUND_ALIGNED ABSOLUTE_ANGLE"
+			StartingBusyTime="2s"
+			JustBuiltFrames="2s"
+			DisabledWhileBusy="true"
+			VeterancyLevel="0"
+			DispositionAngle="=$CRAWLER_DISPOSITION_ANGLE">
+			<Offset x="0" y="0" z="0" />
+			<RequiredUpgrade>Upgrade_OffenseClass</RequiredUpgrade>
+			<ForbiddenUpgrade>Upgrade_GDIFaction</ForbiddenUpgrade>
+			<CreateObject>NodCrawlerBVehicle</CreateObject>
+		</CreateObject>
+		
+		<!-- Support Class-->
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET"
+			Disposition="ON_GROUND_ALIGNED ABSOLUTE_ANGLE"
+			StartingBusyTime="2s"
+			JustBuiltFrames="2s"
+			DisabledWhileBusy="true"
+			VeterancyLevel="0"
+			DispositionAngle="=$CRAWLER_DISPOSITION_ANGLE">
+			<Offset x="0" y="0" z="0" />
+			<RequiredUpgrade>Upgrade_SupportClass</RequiredUpgrade>
+			<ForbiddenUpgrade>Upgrade_GDIFaction</ForbiddenUpgrade>
+			<CreateObject>NodCrawlerCVehicle</CreateObject>
+		</CreateObject>
+
+		<!-- Defense Class-->
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET"
+			Disposition="ON_GROUND_ALIGNED ABSOLUTE_ANGLE"
+			StartingBusyTime="2s"
+			JustBuiltFrames="2s"
+			DisabledWhileBusy="true"
+			VeterancyLevel="0"
+			DispositionAngle="=$CRAWLER_DISPOSITION_ANGLE">
+			<Offset x="0" y="0" z="0" />
+			<RequiredUpgrade>Upgrade_DefenseClass</RequiredUpgrade>
+			<ForbiddenUpgrade>Upgrade_GDIFaction</ForbiddenUpgrade>
+			<CreateObject>NODCrawlerAVehicle</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+
+	<!-- //////////////////////////////////// -->
+	<!--	 Start of CNC4 Player Power OCLs		-->
+	<!-- //////////////////////////////////// -->
+
+	<!-- GDI Support Player Powers-->
+	<ObjectCreationList
+		id="OCL_GDIScoutDronePlayerPower">
+		<OCLModule>
+			<Modules>
+				<AddToTeamManager/>
+				<CreateObject
+					ObjectTemplate="GDIScoutDrone"/>
+				<MoveToTargetLocation/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_NOD_VeinDetonation_Master">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODVeinDetonation_WarningFlare"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+	<ObjectCreationList
+		id="OCL_NOD_VeinDetonation">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODVeinDetonation_Earthquake"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- Engineer Elite -->
+	<ObjectCreationList
+		id="OCL_GDIEngineerEliteDropPod">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIEngineerEliteDecal</ObjectTemplate>
+					<ObjectTemplate>GDIEngineerEliteDropPod</ObjectTemplate>
+					<ObjectOffset/>
+					<ObjectOffset/>
+					<SubModules>
+						<TargetRelativePrePosition/>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_GDIEngineerElite">
+		<OCLModule>
+			<Modules>
+				<SetStatus Status="NO_PLAYER_THREAT"/>
+				<TargetRelativePrePosition/>
+				<AlignToTerrain/>
+				<CreateObject ObjectTemplate="GDIInfantryJElite" />
+				<SetVeterancyLevel Level="3" Options="SUPPRESS_LEVELUP_FX" />
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- Repair Zone (Field Repairs) Player Power -->
+	<ObjectCreationList
+		id="OCL_GDIRepairZoneProxyObject">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="GDIRepairZoneProxyObject"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+	<!-- OCL_GDIRestorationProxyObject-->
+	<ObjectCreationList
+		id="OCL_GDIRestorationProxyObject">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="GDIRestorationProxyObject"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+	<!-- EMP Mines -->
+	<ObjectCreationList
+			id="OCL_GDIEMPMines_Master">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIEMPMines_DropPodDecal</ObjectTemplate>
+					<ObjectTemplate>GDIEMPMines_DropPodWarningFlare</ObjectTemplate>
+					<ObjectOffset/>
+					<ObjectOffset/>
+					<SubModules>
+						<TargetRelativePrePosition/>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	<ObjectCreationList
+			id="OCL_GDIEMPMines_DropPod">
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="GDIEMPMines_DropPod"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!--  NOTE: This is the minefield created after the drop pod lands -->
+	<!--  This OCL defines all locations, the radius in the Special Power is only for UI feedback -->
+	<ObjectCreationList
+		id="OCL_BuildGDIEMPMines">
+		<!-- center -->
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="GDIEMPMine"/>
+			</Modules>
+		</OCLModule>
+		<!-- first ring -->
+		<OCLModule>
+			<Modules>
+				<RadialList
+					Count="4"
+					Radius="30"
+					Angle="65d">
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject
+							ObjectTemplate="GDIEMPMine"/>
+					</SubModules>
+				</RadialList>
+			</Modules>
+		</OCLModule>
+		<!-- outer ring -->
+		<OCLModule>
+			<Modules>
+				<RadialList
+					Count="9"
+					Radius="65"
+					Angle="40d">
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject
+							ObjectTemplate="GDIEMPMine"/>
+					</SubModules>
+				</RadialList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- Point Defense Shields-->
+	<ObjectCreationList
+		id="OCL_GDIPointDefenseShield">
+		<CreateObject
+			Options="ATTACH_TO_SOURCE">
+			<CreateObject>GDIPointDefenseShield</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_GDIFirehawkAirstrike_Master">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIFirehawkAirstrikeEgg</ObjectTemplate>
+					<ObjectOffset/>
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+	<ObjectCreationList
+		id="OCL_GDIFirehawkAirstrike">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIFirehawkAirstrike_RocketAircraft</ObjectTemplate>
+					<ObjectTemplate>GDIFirehawkAirstrike_RocketAircraft</ObjectTemplate>
+					<ObjectTemplate>GDIFirehawkAirstrike_RocketAircraft</ObjectTemplate>
+	
+					<ObjectTemplate>GDIFirehawkAirstrike_BombAircraft</ObjectTemplate>
+					<ObjectTemplate>GDIFirehawkAirstrike_BombAircraft</ObjectTemplate>
+					<ObjectTemplate>GDIFirehawkAirstrike_BombAircraft</ObjectTemplate>
+
+					<ObjectTemplate>GDIFirehawkAirstrike_BombAircraft</ObjectTemplate>
+					<ObjectTemplate>GDIFirehawkAirstrike_BombAircraft</ObjectTemplate>
+					<ObjectTemplate>GDIFirehawkAirstrike_BombAircraft</ObjectTemplate>
+					
+					<ObjectOffset x="0.0" y="-600.0" z="700.0" />
+					<ObjectOffset x="150.0" y="-620.0" z="500.0" />
+					<ObjectOffset x="-150.0" y="-620.0" z="500.0" />
+
+					<ObjectOffset x="0.0" y="-800.0" z="720.0" />
+					<ObjectOffset x="150.0" y="-820.0" z="720.0" />
+					<ObjectOffset x="-150.0" y="-820.0" z="720.0" />
+
+					<ObjectOffset x="0.0" y="-1000.0" z="720.0" />
+					<ObjectOffset x="150.0" y="-1020.0" z="720.0" />
+					<ObjectOffset x="-150.0" y="-1020.0" z="720.0" />
+					<SubModules>
+						<SetStatus Status="NO_PLAYER_THREAT"/>
+						<CreateObject/>
+						<MoveToTargetLocation/>
+					</SubModules>
+				</ObjectList>	
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+			id="OCL_BuildGDISeismicDisturbance">
+		<OCLModule>
+			<Modules>
+				<CreateObject
+					ObjectTemplate="GDISeismicDisturbance"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+	<!-- Nod Support Player Powers -->
+	<!-- The Hand of LEGION Player Power Hacker creation OCL -->
+	<!--	NOTE: This is the APC that unburrows to deliver the NODHackerElite -->
+	<ObjectCreationList
+			id="OCL_BuildNODHackerElite_BurrowPod">
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODBurrowPod_HackerElite"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+	<!--  NOTE: This is what is created after the apc unburrows -->
+	<ObjectCreationList
+		id="OCL_BuildNODHackerElite">
+		<OCLModule>
+			<Modules>
+				<SetStatus Status="NO_PLAYER_THREAT"/>
+				<AlignToTerrain/>
+				<SetTimedModelCondition
+					ModelCondition="USER_1"
+					Duration="1.5s"/>
+				<CreateObject
+					ObjectTemplate="NODInfantryCElite"/>
+				<SetVeterancyLevel
+					Level="4"
+					Options="SUPPRESS_LEVELUP_FX" />
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+	<ObjectCreationList
+		id="OCL_NOD_ObeliskOfLife">
+		<OCLModule>
+			<Modules>
+				<SetStatus Status="NO_PLAYER_THREAT"/>
+				<TargetRelativePrePosition/>
+				<AlignToTerrain/>
+				<ClearRemovables/>
+				<CreateObject
+					ObjectTemplate="NODObeliskOfLife"/>
+				<AddToGridSystems/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>	
+
+	<!-- ///////////////////////////////////////// -->
+	<!-- The Burrow Mines Player Power OCL -->
+	<!--	NOTE: This is the APC that unburrows to deliver the NOD Burrow Mines -->
+	<ObjectCreationList
+		id="OCL_BuildNODBurrowMines_BurrowPod_Master">
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODBurrowMinesWarningFlare"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	<ObjectCreationList
+		id="OCL_BuildNODBurrowMines_BurrowPod">
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODBurrowPod_BurrowMines"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!--  NOTE: This is the minefield created after the apc unburrows -->
+	<!--   This OCL defines all locations, the radius in the Special Power is only for UI feedback -->
+	<ObjectCreationList
+		id="OCL_BuildNODBurrowMines">
+		<!-- center -->
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODIncendiaryMine"/>
+				<TriggerFX
+					FXList="FX_NOD_BurrowMines"/>
+			</Modules>
+		</OCLModule>
+		<!-- first ring -->
+		<OCLModule>
+			<Modules>
+				<RadialList
+					Count="4"
+					Radius="30"
+					Angle="65d">
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject
+							ObjectTemplate="NODIncendiaryMine"/>
+						<TriggerFX
+							FXList="FX_NOD_BurrowMines"/>
+					</SubModules>
+				</RadialList>
+			</Modules>
+		</OCLModule>
+		<!-- outer ring -->
+		<OCLModule>
+			<Modules>
+				<RadialList
+					Count="9"
+					Radius="65"
+					Angle="40d">
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject
+							ObjectTemplate="NODIncendiaryMine"/>
+						<TriggerFX
+							FXList="FX_NOD_BurrowMines"/>
+					</SubModules>
+				</RadialList>
+			</Modules>
+		</OCLModule>			
+	</ObjectCreationList>
+	
+	<!-- ///////////////////////////////////////// -->
+	<!-- ////////////////////////////////////////// -->
+	<!-- The Megalisk Player Power Megalisk Obelisk creation OCL -->
+	<!--	NOTE: This is the pod that unburrows to deliver the Megalisk -->
+	<ObjectCreationList
+			id="OCL_BuildNODMegaliskObelisk_BurrowPod">
+		<OCLModule>
+			<Modules>
+				<SetStatus Status="NO_PLAYER_THREAT"/>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODBurrowPod_MegaliskObelisk"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!--  NOTE: This is the Megalisk created after the pod unburrows -->
+	<ObjectCreationList
+		id="OCL_BuildNODMegaliskObelisk">
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODMegaliskObelisk"/>
+				<AddToGridSystems/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	<!-- ////////////////////////////////////////// -->
+
+	<ObjectCreationList
+		id="OCL_SubterraneanStrike_Master">
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODSubterraneanStrikeWarningFlare"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	<ObjectCreationList
+		id="OCL_SubterraneanStrike_Egg">
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODSubterraneanStrikeEgg"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_SubterraneanStrike_SpawnDrill">
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODSubterraneanStrikeDrill"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+
+	<!-- Sonic Artillery Egg -->
+	<ObjectCreationList
+		id="OCL_SonicArtillery_Master">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDISonicArtilleryDecal</ObjectTemplate>
+					<ObjectTemplate>GDISonicArtilleryWarningFlare</ObjectTemplate>
+					<ObjectOffset/>
+					<ObjectOffset/>
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	<ObjectCreationList
+		id="OCL_SonicArtillery">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDISonicArtilleryEgg</ObjectTemplate>
+					<ObjectOffset/>
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- Supply Drop Egg -->
+	<ObjectCreationList
+		id="OCL_GDI_SupplyDrop_Master">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDISupplyDropDecal</ObjectTemplate>
+					<ObjectTemplate>GDISupplyDropWarningFlare</ObjectTemplate>
+					<ObjectOffset/>
+					<ObjectOffset/>
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	<ObjectCreationList
+		id="OCL_GDI_SupplyDropPod">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDISupplyDropPod</ObjectTemplate>
+					<ObjectOffset/>
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- Supply Drop Crate Spawn -->
+	<ObjectCreationList
+		id="OCL_SupplyDrop_Crate">
+		<OCLModule>
+			<Modules>
+				<RadialList
+					Count="2"
+					Radius="20"
+					Angle="20d">
+					<SubModules>
+						<AlignToTerrain/>
+						<SetTeam
+							SetToDefaultNeutralTeam="true" />
+						<CreateObject
+							ObjectTemplate="UpgradeCrate"/>
+					</SubModules>
+				</RadialList>
+			</Modules>
+		</OCLModule>
+		<!-- first ring -->
+		<OCLModule>
+			<Modules>
+				<RadialList
+					Count="6"
+					Radius="60"
+					Angle="60d">
+					<SubModules>
+						<AlignToTerrain/>
+						<SetTeam
+							SetToDefaultNeutralTeam="true" />
+						<CreateObject
+							ObjectTemplate="VeterancyCrate"/>
+					</SubModules>
+				</RadialList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- Intro 2 Special Deploy List -->
+
+	<ObjectCreationList
+			id="OCL_GDIRedeployment_Crawler_Intro_2">
+
+		<!-- Offense Class-->
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET"
+			Disposition="ON_GROUND_ALIGNED ABSOLUTE_ANGLE"
+			StartingBusyTime="2s"
+			JustBuiltFrames="2s"
+			VeterancyLevel="0"
+			DispositionAngle="=$CRAWLER_DISPOSITION_ANGLE">
+			<Offset x="0" y="0" z="0" />
+			<RequiredUpgrade>Upgrade_OffenseClass</RequiredUpgrade>
+			<ForbiddenUpgrade>Upgrade_NODFaction</ForbiddenUpgrade>
+			<CreateObject>GDICrawlerBVehicle</CreateObject>
+		</CreateObject>
+
+		<!-- Support Class-->
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET"
+			Disposition="ON_GROUND_ALIGNED ABSOLUTE_ANGLE"
+			StartingBusyTime="2s"
+			DisabledWhileBusy="true"
+			JustBuiltFrames="2s"
+			VeterancyLevel="0"
+			DispositionAngle="=$CRAWLER_DISPOSITION_ANGLE">
+			<Offset x="0" y="0" z="0" />
+			<RequiredUpgrade>Upgrade_SupportClass</RequiredUpgrade>
+			<ForbiddenUpgrade>Upgrade_NODFaction</ForbiddenUpgrade>
+			<CreateObject>GDICrawlerCVehicle</CreateObject>
+		</CreateObject>
+
+		<!-- Defense Class-->
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET"
+			Disposition="ON_GROUND_ALIGNED ABSOLUTE_ANGLE"
+			StartingBusyTime="2s"
+			JustBuiltFrames="2s"
+			VeterancyLevel="0"
+			DispositionAngle="135d">
+			<Offset x="0" y="0" z="0" />
+			<RequiredUpgrade>Upgrade_DefenseClass</RequiredUpgrade>
+			<ForbiddenUpgrade>Upgrade_NODFaction</ForbiddenUpgrade>
+			<CreateObject>GDICrawlerAVehicle</CreateObject>
+		</CreateObject>
+
+	</ObjectCreationList>
+	
+</AssetDeclaration>

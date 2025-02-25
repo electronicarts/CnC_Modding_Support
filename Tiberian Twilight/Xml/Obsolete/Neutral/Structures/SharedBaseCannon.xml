@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NB_TechStructC.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechStructC_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:CBDefTow.w3x" />
+		<Include
+			type="all"
+			source="ART:CBDefTow_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:CBDefTow_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:CBDefTow_D3.w3x" />
+		<Include
+			type="all"
+			source="ART:TEMP_Red.xml" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+	</Includes>
+	<GameObject
+		id="SharedBaseCannon"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_TechBuildingDefensiveTower"
+		ButtonImage="Portrait_TechBuildingDefensiveTower"
+		Side="Neutral"
+		EditorSorting="STRUCTURE"
+		CommandSet="EmptyCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH CAN_ATTACK RESIST_REDEPLOYMENT_KILL"
+		RadarPriority="STRUCTURE"
+		EditorName="SharedBaseCannon"
+		Description="DESC:TechStructureC">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:TechStructureC</DisplayName>
+		<ArmorSet
+			Armor="StructureArmor"
+			DamageFX="VehicleDamageFX"  />
+		<!-- eventually there will be a different weapon per faction -->
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechStructC_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon" />
+					<WeaponMuzzleFlash
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon" />						
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretPitch="Turret_Pitch"
+						TurretID="1" />						
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="CBDefTow_D3" />
+					<Texture
+						Original="CBDefTow_D1"
+						New="TEMP_Red" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="CBDefTow_D2" />
+					<Texture
+						Original="CBDefTow_D1"
+						New="TEMP_Red" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="CBDefTow_D1" />
+					<Texture
+						Original="CBDefTow_D1"
+						New="TEMP_Red" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBDefTow_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBDefTow_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="CBDefTow_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="CBDefTow_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SharedBaseCannon" />
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-75d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData
+							CanPickDynamicTargets="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<RebuildHoleExposeDie
+				id="ModuleTag_RebuildHoleExposeDie"
+				Options="" 
+				HoleObject="SharedBaseCannonHole"
+				FadeInTimeSeconds="3.0s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</RebuildHoleExposeDie>
+      <!-- Cannot be captured! -->
+			<!--<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />-->
+			<xi:include
+				href="../../Includes/GenericSharedBaseBuildingRepair.xml" />
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="2.0s" />
+			<!--<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="TechStructureEFunctions"
+			/>-->
+			<!-- indestructible by default (set in LUA) but becomes attackable as soon 
+			as someone captures us -->
+			<!--<StatusBitsUpgrade
+				id="ModuleTag_StatusBitUpgrade"
+				StatusToClear="UNATTACKABLE">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+			</StatusBitsUpgrade>-->
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="50000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="6.61454"
+				MinorRadius="13.0224"
+				Height="14.8827">
+				<Offset
+					x="2.53894"
+					y="-17.7596"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.363"
+				MinorRadius="15.363"
+				Height="69.0392">
+				<Offset
+					x="2.95235"
+					y="1.0505"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="-9.13983"
+					z="-2.11332e-007" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="-9.13983"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="11.6674"
+					z="6.98181e-007" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="11.6674"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="-9.13983"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="-9.13983"
+					z="-2.11332e-007" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="11.6674"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="11.6674"
+					z="6.98181e-007" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="DefensiveTower_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="1000"
+			ShroudClearingRange="1000" />
+	</GameObject>
+</AssetDeclaration>

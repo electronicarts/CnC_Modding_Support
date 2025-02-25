@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="../Includes/AIBaseType.xsd"/>
+
+
+	<xs:simpleType name="AIBaseSortingOrder">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PREFER_OLDEST" />
+			<xs:enumeration value="PREFER_NEWEST" />
+			<xs:enumeration value="PREFER_SMALLEST" />
+			<xs:enumeration value="PREFER_LARGEST" />
+			<xs:enumeration value="PREFER_MOST_RECENTLY_ATTACKED" />
+			<xs:enumeration value="PREFER_LEAST_RECENTLY_ATTACKED" />
+			<xs:enumeration value="PREFER_CLOSEST" /> <!-- Only applies to some uses of AIBaseSelectionCriteria, where there is an obvious starting position -->
+		</xs:restriction>
+	</xs:simpleType>
+
+  <!-- When we want to choose a base -->
+	<xs:complexType name="AIBaseSelectionCriteria">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="RequiredBaseTypes" type="AIBaseTypeBitFlags" default="" /> <!-- Building will only be placed in base with ALL of these flags set -->
+		<xs:attribute name="ExcludedBaseTypes" type="AIBaseTypeBitFlags" default="" /> <!-- Building will only be placed in base with NONE of these flags set -->
+		<xs:attribute name="PreferredBaseTypes" type="AIBaseTypeBitFlags" default="" />
+		<xs:attribute name="PreferredNotBaseTypes" type="AIBaseTypeBitFlags" default="" /> <!-- Building will be placed in the base with the highest 
+																																													  (# of PreferredBaseTypes set) minus (# of PreferredNotBaseTypes set) -->
+		<xs:attribute name="SortOrder" type="AIBaseSortingOrder" default="PREFER_NEWEST" /> <!-- How to sort the bases if multiple bases pass the other checks.
+																																																 NOTE: PreferredBaseTypes/PreferredNotBaseTypes override this -->
+	</xs:complexType>
+
+</xs:schema>

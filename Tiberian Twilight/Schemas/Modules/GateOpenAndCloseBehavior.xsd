@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="GateOpenAndCloseBehaviorOptionsType">
+		<xs:restriction base="xs:string">
+			<!-- Will repel units that collide with closed gate -->
+			<xs:enumeration value="OPEN_BY_DEFAULT" />
+			
+			<!-- Will repel units that collide with closed gate -->
+			<xs:enumeration value="REPEL_ON_COLLIDE" />
+
+			<!-- Will automatically open/close based on status check -->
+			<xs:enumeration value="OPEN_CLOSE_ON_STATUS" />		
+			
+			<!-- Will open gate if the object does not have an active ShieldBody -->
+			<xs:enumeration value="REQUIRE_SHIELDS_FOR_CLOSE" />
+
+			<!-- Will open gate if the object is disabled -->
+			<xs:enumeration value="OPEN_WHEN_DISABLED" />
+		
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="GateOpenAndCloseBehaviorOptionsBitFlags">
+		<xs:list itemType="GateOpenAndCloseBehaviorOptionsType"/>
+	</xs:simpleType>
+	
+	<xs:complexType name="GateOpenAndCloseBehaviorModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<!-- Gate will open/close when all of the status bits are set -->
+					<xs:element name="OpenStatusValidation" type="ObjectStatusValidationDataType" minOccurs="0" maxOccurs="1" />
+
+					<xs:element name="GeometriesForOpen" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="GeometriesForClosed" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+
+					<!-- Position offsets that objects in the way of the gate closing will move towards -->
+					<xs:element name="OutOfTheWayPosition" type="Vector3" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Options" type="GateOpenAndCloseBehaviorOptionsBitFlags" default=""/>
+				<xs:attribute name="ResetFrames" type="SageDurationUnsignedInt" default="0" />
+				<xs:attribute name="PercentOpenForPathing" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="ProxyUnitsName" type="xs:string" />
+				<xs:attribute name="SoundOpeningGateLoop" type="AudioEventInfoRef" />
+				<xs:attribute name="SoundFinishedOpeningGate" type="AudioEventInfoRef" />
+				<xs:attribute name="SoundClosingGateLoop" type="AudioEventInfoRef" />
+				<xs:attribute name="SoundFinishedClosingGate" type="AudioEventInfoRef" />
+				<xs:attribute name="TimeBeforePlayingOpenSound" type="SageDurationUnsignedInt" default="0" />
+				<xs:attribute name="TimeBeforePlayingClosedSound" type="SageDurationUnsignedInt" default="0" />
+
+				<xs:attribute name="ForceOpenWhenModelConditionNotSet" type="ModelConditionBitFlags" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

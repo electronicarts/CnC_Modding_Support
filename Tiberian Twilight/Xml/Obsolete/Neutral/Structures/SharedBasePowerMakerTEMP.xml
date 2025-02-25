@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+		<Include
+			type="all"
+			source="ART:GB_ResourceStructure_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:GB_ResourceStructure_BLDB.w3x" />
+		<Include
+			type="all"
+			source="ART:GB_ResourceStructure_IDLA.w3x" />
+		<Include
+			type="all"
+			source="ART:GB_ResourceStructure_IDLB.w3x" />
+		<Include
+			type="all"
+			source="ART:GB_ResourceStructure_IDLC.w3x" />
+
+	</Includes>
+	<GameObject
+		id="SharedBasePowerMakerTEMP"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_NeutralEMPCenter"
+		ButtonImage="Portrait_NeutralEMPCenter"
+		Side="Gdi"
+		EditorSorting="STRUCTURE"
+		BuildCost="2000"
+		BuildTime="20"
+		EnergyProduction="100"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		CommandSet="TibSpikeCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS SUPPLY_GATHERING_CENTER UNIQUE_UNIT NOT_AUTOACQUIRABLE TIBERIUM_BASED NOT_SELLABLE"
+		RadarPriority="STRUCTURE"
+		EditorName="SharedBasePowerMakerTEMP"
+		Description="Desc:NodResourceStructure"
+		MaxSimultaneousOfType="1">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODResourceStructure</DisplayName>
+		<ArmorSet
+			Armor="TechStructureArmor" />
+		<SkirmishAIInformation
+			BuildingPlacementType="HomebaseDefault" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GB_ResourceStructure_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="GB_ResourceStructure_BLDB" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GB_ResourceStructure_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GB_ResourceStructure_SKN" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="DO_NOT_PLAY_WHEN_UNPOWERED RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GB_ResourceStructure_IDLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+					<Animation
+						AnimationName="GB_ResourceStructure_IDLB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Animation
+						AnimationName="GB_ResourceStructure_IDLC"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="GB_ResourceStructure_BLDB"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="4.7s" />
+			<!--<EngineerContain
+				id="ModuleTag_EngineerContain"
+				NameOfVoiceToUseForFriendlyEnter="VoiceEngineerRepair"
+				NameOfVoiceToUseForHostileEnter="VoiceCaptureBuilding"
+				EvaEventForRepair="BuildingRepaired"
+				EvaEventForCapture="EnemyBuildingCaptured"
+				FXForRepair="FX_Building_Repaired"
+				FXForCapture="FX_Building_Captured"
+				FXForCaptureAndReplace="FX_Building_Captured">
+				<CanEnterFilter
+					Rule="NONE">
+					<IncludeThing>GDIInfantryJ</IncludeThing>
+					<IncludeThing>NODInfantryP</IncludeThing>
+					<IncludeThing>ScrinInfantryJ</IncludeThing>
+				</CanEnterFilter>
+			</EngineerContain>-->
+<!--
+				UnpackSound="EMP_WeaponTarget"
+				TriggerSound="EMP_WeaponTarget"
+-->
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions"
+			/>
+      <!-- Commented out for temporary version without rebuild hole because WB can't test for it -->
+      <!--<RebuildHoleExposeDie
+				id="ModuleTag_RebuildHoleExposeDie"
+				Options=""
+				HoleObject="SharedBasePowerMakerHole"
+				FadeInTimeSeconds="3.0s">
+        <DieMuxData
+					DeathTypes="ALL" />
+      </RebuildHoleExposeDie>-->
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="20000.0" />
+		</Body>
+		
+		<!-- no worky -->
+		<!--
+   		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_EMP_WeaponTarget">
+				<ModelConditionSound Sound="EMP_WeaponTarget" RequiredFlags="UNPACKING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+-->
+			<ClientBehaviors>
+			<AnimationSoundClientBehavior
+				id="ModuleTag_ASCB">					
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationBLDB_Ambient1"
+					Animation="GB_ResourceStructure_BLDB"
+					Frame="1" />	
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationBLDB_Ambient2"
+					Animation="GB_ResourceStructure_BLDB"
+					Frame="71" />	
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationBLDB_Ambient3"
+					Animation="GB_ResourceStructure_BLDB"
+					Frame="124" />		
+					
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationBLDB1"
+					Animation="GB_ResourceStructure_BLDB"
+					Frame="13" />	
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationBLDB2"
+					Animation="GB_ResourceStructure_BLDB"
+					Frame="32" />	
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationBLDB3"
+					Animation="GB_ResourceStructure_BLDB"
+					Frame="65" />		
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationBLDB4"
+					Animation="GB_ResourceStructure_BLDB"
+					Frame="87" />	
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationBLDB5"
+					Animation="GB_ResourceStructure_BLDB"
+					Frame="94" />	
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationBLDB6"
+					Animation="GB_ResourceStructure_BLDB"
+					Frame="124" />		
+					
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationIDLA_MS"
+					Animation="GB_ResourceStructure_IDLA"
+					Frame="5" />	
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationIDLA_MS"
+					Animation="GB_ResourceStructure_IDLB"
+					Frame="5 105" />	
+				<Sound
+					Sound="GDI_ResourceStuctureAnimationIDLA_MS"
+					Animation="GB_ResourceStructure_IDLC"
+					Frame="5 105" />	
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="17.889"
+				MinorRadius="18.281"
+				Height="68.8869">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="17.9483" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="46.0929"
+				MinorRadius="47.1028"
+				Height="18.4735">
+				<Offset
+					x="-2.05226"
+					y="0.468147"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-36.5161"
+					y="-35.037"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="29.6288"
+					y="-35.0369"
+					z="13.1842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="29.6288"
+					y="31.108"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-36.5161"
+					y="31.108"
+					z="13.1842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-36.5161"
+					y="-35.0369"
+					z="13.1842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="29.6288"
+					y="-35.037"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="29.6288"
+					y="31.108"
+					z="13.1842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-36.5161"
+					y="31.108"
+					z="0.0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="GDI_ResourceStucture_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+			<AudioEntry Sound="GDI_ResourceStucture_AmbientLoopMS" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="400" />
+	</GameObject>
+</AssetDeclaration>

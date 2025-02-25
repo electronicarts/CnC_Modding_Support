@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+		<Include
+			type="all"
+			source="ART:Soviet_Place_Holder.xml" />
+		<Include
+			type="all"
+			source="ART:SBSuperweapon_SKN.w3x" />		
+			<Include
+			type="all"
+			source="ART:SBSuperweapon_IDLA.w3x" />		
+		<Include
+			type="all"
+			source="ART:SBSuperweapon_BLD.w3x" />				
+		<Include
+			type="all"
+			source="ART:SBSuperweapon_FX.w3x" />
+		<Include
+			type="all"
+			source="ART:SBSuperweapon_FXFire_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:SBSuperweapon_FXFire_IDLA.w3x" />
+		<Include
+			type="all"
+			source="ART:SBSuperweapon_FXFire_RDYA.w3x" />
+		<Include
+			type="all"
+			source="ART:SBSuperweapon_FXFire_FIRA.w3x" />
+		<Include
+			type="all"
+			source="ART:SBSuperweaponAdvanced_Platform.w3x" />
+		<Include
+			type="all"
+			source="ART:SBSuperweaponAdvanced_Platform_BLD.w3x" />
+		<Include
+			type="all"
+			source="ART:SBSuperweapon_Scaffold.w3x" />
+										
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseSovietStructure.xml" />
+	</Includes>
+	<Defines>
+		<Define name="SOVIET_SUPERWEAPON_LOCAL_UNPACK_TIME" value="30s" />
+	</Defines>
+	<GameObject
+		id="SovietSuperWeapon"
+		inheritFrom="BaseSovietStructure"
+		ButtonImage="Button_SovietSuperWeapon_small"
+		SelectPortrait="Portrait_SovietSuperWeapon_big"
+		Side="Soviet"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		
+		BuildTime="0.0"
+		EnergyProduction="-75"
+		CommandSet="SovietSuperWeaponCommandSet"
+		KindOf="+POWERED +REVEAL_TO_ALL +UNIQUE_UNIT +SUPER_WEAPON"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="SovietSuperWeapon"
+		Description="Desc:SovietSuperWeapon"
+		TypeDescription="Type:SovietSuperWeapon"
+		MaxSimultaneousOfType="1">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SovietSuperWeapon</DisplayName>
+		<GameDependency>
+      <RequiredObject>SovietTechStructure</RequiredObject>
+    </GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="1500"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietSuperWeaponArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="CENTER">
+      <ConstructionBaseSelectionCriteria
+        ExcludedBaseTypes="NO_BUILD_RADIUS CAPTURED"
+        PreferredBaseTypes="MAIN_BASE"
+        SortOrder="PREFER_OLDEST" />
+    </SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+		    ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBSuperweapon_SKN" />					
+				</ModelConditionState>
+		
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="SBSuperweapon_SKN" />
+					<Texture
+						Original="SBBuilding_Holes"
+						New="SBBuilding_FP" />						
+					<Texture
+						Original="SBBuilding_Filler"
+						New="SBBuilding_FP" />
+				</ModelConditionState>	
+								
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="SBSuperweapon_IDLA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBSuperweapon_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="SBSuperweapon_BLD"
+						AnimationMode="MATCH_UNPACKING"
+						AnimationBlendTime="0"
+						AnimationAbsoluteTime="=$SOVIET_SUPERWEAPON_LOCAL_UNPACK_TIME"/>
+				</AnimationState>								
+			</ScriptedModelDraw>
+
+<!-- DRAW FIRING FX -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_FireFX">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBSuperweapon_FXFire_SKN" />
+				</ModelConditionState>
+
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="SBSuperweapon_FXFire_IDLA"
+						AnimationMode="LOOP"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_Ready" then
+						CurDrawableSetTransitionAnimState("TRANS_Firing")
+						end
+					</Script>
+				</AnimationState>
+
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPECIALPOWER1_READY"
+					StateName="STATE_Ready">
+					<Animation
+						AnimationName="SBSuperweapon_FXFire_RDYA"/>
+				</AnimationState>
+
+
+			<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_Firing" >
+				<Animation
+					AnimationName="SBSuperweapon_FXFire_FIRA"
+					AnimationMode="ONCE" />
+			</AnimationState>
+
+		</ScriptedModelDraw>
+
+<!-- DRAW PLATFORM -->
+			
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBSuperweaponAdvanced_Platform" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING OVER_WATER">
+					<Model
+						Name="SBSuperweaponAdvanced_Platform_BLD"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABPowerPlantWakeSplash"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="SBSuperweaponAdvanced_Platform_BLD"/>						
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD OVER_WATER">
+					<Model
+						Name="SBSuperweaponAdvanced_Platform_BLD"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABPowerPlantWakeSplash"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="SBSuperweaponAdvanced_Platform_BLD"/>
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>		
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING ">
+					<Animation
+						AnimationName="SBSuperweaponAdvanced_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>	
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupFlashes"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupSparksSeed"
+						FollowBone="true" />          
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="SBSuperweaponAdvanced_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>	
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupFlashes"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupSparksSeed"
+						FollowBone="true" />          
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBSuperweaponAdvanced_Platform_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBSuperweaponAdvanced_Platform_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>							
+			</ScriptedModelDraw>
+
+<!-- DRAW SCAFFOLD -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Scaffold"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="SBSuperweapon_Scaffold" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING JUST_BUILT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="SBSuperweapon_Scaffold" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBSuperweapon_Scaffold"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>					
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="SBSuperweapon_Scaffold"
+						AnimationMode="MATCH_UNPACKING"
+						AnimationBlendTime="0"
+						AnimationAbsoluteTime="=$SOVIET_SUPERWEAPON_LOCAL_UNPACK_TIME"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+									
+<!-- DRAW PARTICLES -->
+
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBSuperweapon_FX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="SBSuperweapon_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="SBSuperweapon_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+
+				</ModelConditionState>
+			</ScriptedModelDraw>						
+
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="SovietPowerPlant_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />
+		
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />					
+				<Event 
+					Index="onDeath" 
+					FX="FX_SOV_IronCurtain_Die" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SBSuperWeapon_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"
+					ExemptStatus="OVER_WATER" />
+			</CreateObjectDie>	
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieOnWater"
+				CreationList="SBSuperWeaponPlatform_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"
+					RequiredStatus="OVER_WATER" />
+			</CreateObjectDie>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</DestroyDie>									
+
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpack"
+				UnpackTime="=$SOVIET_SUPERWEAPON_LOCAL_UNPACK_TIME" />
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_IronCurtain"
+				SpecialPowerTemplate="SpecialPowerIronCurtain"
+				OCL="OCL_IronCurtain"
+				CreateLocation="CREATE_AT_LOCATION" 
+				AvailableAtStart="false"
+				CanAffectObjectFilter="SovietIronCurtainSpecialPowerObjectFilter"/>
+		
+			<!--Monitors when this special power template is ready to fire and sets a model condition-->
+			<MonitorSpecialPowerTimerUpdate
+				id="ModuleTag_IronCurtainReadyToFireUpdate"
+				SpecialPowerTemplate="SpecialPowerIronCurtain"
+				ReadyCondition="SPECIALPOWER1_READY"
+			/>
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericSovietBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericSovietBuildingSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainSuperWeapon.xml" />				
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="5000.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_SuperWeaponReady">
+				<ModelConditionSound Sound="SOV_IronCurtain_Ready" RequiredFlags="SPECIALPOWER1_READY" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+	<ClientUpdates>
+		<EvaAnnounceSpecialPowerReadyClientUpdate
+			id="SuperWeaponReady"
+			AnnouncementEventOwner="IronCurtainReady"
+			SpecialPowerTemplate="SpecialPowerIronCurtain"
+			JustMonitorPercentReady="true" 
+			/>
+		<EvaAnnounceClientCreate
+          id="SuperWeaponDetected" 
+          AnnouncementEventEnemy="WarnIronCurtainDetected"
+          UseObjectsPosition="true" />
+          <!--           AnnouncementEventAlly="AlliedIonCannonDetected" -->
+    </ClientUpdates>
+
+		<Geometry
+			IsSmall="false">
+			<PlacementShape
+				 Type= "BOX"
+				 MajorRadius = "60.0"
+				 MinorRadius = "45.0"
+				 Height = "5.0" />
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "40.0"
+				 MinorRadius = "35.0"
+				 Height = "5.0" >
+				<Offset
+					x = "-10.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "20.0"
+     MinorRadius = "20.0"
+     Height = "60.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "-20.7613"
+        y = "0.0"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "20.0"
+     MinorRadius = "20.0"
+     Height = "41.4"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "36.4475"
+        y = "0.0"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "9.4"
+     MinorRadius = "44.2"
+     Height = "20.7"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "35.3883"
+        y = "0.0"
+        z = "0.0" />
+</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="SOV_IronCurtain_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+<!--
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="100" />
+		<ProjectedBuildabilityInfo
+			Radius="180"
+			RadiusY="165"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

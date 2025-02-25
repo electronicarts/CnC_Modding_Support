@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include type="all"	source="ART:SUFighterAircraft_SKN.w3x" />
+    <Include type="all"	source="ART:SUFighterAircraft_FP.w3x" />
+		<Include type="all"	source="ART:SUFighterAircraft_ACC.w3x" />
+		<Include type="all"	source="ART:SUFighterAircraft_DEC.w3x" />
+		<Include type="all"	source="ART:SUFighterAircraft_HVRA.w3x" />
+		<Include type="all"	source="ART:SUFighterAircraft_MOVA.w3x" />
+			
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseVehicle.xml" />
+		<Include type="all"	source="ART:FXInvisBone.w3x" />
+		<Include type="all"	source="ART:FX_MigBones.w3x" />
+	</Includes>
+	<GameObject
+		id="SovietFighterAircraft"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_SovietFighterAircraft_big"
+		ButtonImage="Button_SovietFighterAircraft_small"
+		Side="Soviet"
+		SubGroupPriority="615"
+		EditorSorting="UNIT"		
+		BuildTime="10"
+		CommandSet="SovietFighterAircraftCommandSet"
+		KindOf="CAN_CAST_REFLECTIONS CAN_ATTACK SELECTABLE SCORE AIRCRAFT VEHICLE FIGHTER_AIRCRAFT LINE_OF_SIGHT_IGNORES_BUILDINGS CAN_BE_FAVORITE_UNIT LIMITED_PRODUCTION_AIRCRAFT"
+		RadarPriority="UNIT"
+		ThreatLevel="10"
+		ProductionQueueType="AIRCRAFT"
+		UnitCategory="AIRCRAFT"
+		WeaponCategory="MISSILE"
+		VoicePriority="148"
+		EditorName="SovietFighterAircraft"
+		Description="Desc:SovietFighterAircraft"
+		TypeDescription="Type:SovietFighterAircraft"
+		UnitIntro="Soviet_Mig_UnitIntro">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SovietFighterAircraft</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="1000"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietFighterAircraftArmor"
+			DamageFX="AircraftDamageFX" />
+		<LocomotorSet
+			Locomotor="BasicHelicopterTaxiLocomotor"
+			Condition="TAXIING"
+			Speed="30" />
+		<LocomotorSet
+			Locomotor="SovietFighterAircraftLocomotor"
+			Condition="NORMAL"
+			Speed="210.0" />
+		<!-- Need ConquerMetricsOverrideDefendingAntiMask or else the TAXIING locomotor will make the AI try to build anti-ground units against this -->
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true"
+			ConquerMetricsOverrideDefendingAntiMask="ANTI_AIRBORNE_VEHICLE" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FX_WEAPON_01 FX_WEAPON_02 FX_JET_EXHAUST_01">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SUFighterAircraft_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON_" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON_" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="SUFighterAircraft_FP" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="SUFighterAircraft_SKN" />
+					<ParticleSysBone
+						BoneName="FX_JET_EXHAUST_01"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="SUFighterAircraft_SKN" />
+					
+					<ParticleSysBone
+						BoneName="FX_JET_EXHAUST_01"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_JET_EXHAUST_01"
+						FXParticleSystemTemplate="AircraftDamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_JET_EXHAUST_01"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<!-- Evasive Maneuvers FX -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6">
+					<Model
+						Name="SUFighterAircraft_SKN" />
+					<ParticleSysBone
+						BoneName="FX_bone1"
+						FXParticleSystemTemplate="Soviet_MigContrail_Eavade"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_bone2"
+						FXParticleSystemTemplate="Soviet_MigContrail_Eavade"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimNickName="HVRA"
+						AnimationName="SUFighterAircraft_HVRA"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+					<Script>
+            			CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_01")
+            			CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_02")
+            			CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_03")
+            			CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_04")
+            			CurDrawableHideSubObjectPermanently("FX_Jet_Exhaust_05")
+          			</Script>						
+				</AnimationState>
+                <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="WALKING"
+					Flags="START_FRAME_LAST">
+                    <Animation
+						AnimNickName="HVRA"
+						AnimationName="SUFighterAircraft_HVRA"
+						AnimationMode="ONCE" />
+					<Script>
+            			CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_01")
+            			CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_02")
+            			CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_03")
+            			CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_04")
+            			CurDrawableHideSubObjectPermanently("FX_Jet_Exhaust_05")
+          			</Script>
+                </AnimationState>
+
+                <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="LOCOMOTOR_TAXIING"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimNickName="HVRA"
+						AnimationName="SUFighterAircraft_HVRA"
+						AnimationMode="ONCE" />
+					<Script>
+						CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_01")
+						CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_02")
+						CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_03")
+						CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_04")
+						CurDrawableHideSubObjectPermanently("FX_Jet_Exhaust_05")
+					</Script>
+				 </AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE">
+					<Animation
+						AnimationName="SUFighterAircraft_ACC"
+						AnimationMode="ONCE" />
+          <Script>
+            CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_01")
+            CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_02")
+            CurDrawableHideSubObjectPermanently("FX_Jet_Exhaust_03")
+            CurDrawableHideSubObjectPermanently("FX_Jet_Exhaust_04")
+            CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_05")
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE">
+          <Animation
+						AnimationName="SUFighterAircraft_DEC"
+						AnimationMode="ONCE" />
+          <Script>
+            CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_01")
+            CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_02")
+            CurDrawableHideSubObjectPermanently("FX_Jet_Exhaust_03")
+            CurDrawableHideSubObjectPermanently("FX_Jet_Exhaust_04")
+            CurDrawableHideSubObjectPermanently("FX_Jet_Exhaust_05")
+          </Script>
+        </AnimationState>
+
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+          <Animation
+						AnimationName="SUFighterAircraft_MOVA"
+						AnimationMode="LOOP" />
+          <Script>
+            CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_01")
+            CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_02")
+            CurDrawableHideSubObjectPermanently("FX_Jet_Exhaust_03")
+            CurDrawableHideSubObjectPermanently("FX_Jet_Exhaust_04")
+            CurDrawableShowSubObjectPermanently("FX_Jet_Exhaust_05")
+          </Script>
+				</AnimationState>				
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_FX">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FX_MigBones" />
+					<ParticleSysBone
+						BoneName="FX_bone1"
+						FXParticleSystemTemplate="FireHawkConTrail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_bone2"
+						FXParticleSystemTemplate="FireHawkConTrail"
+						FollowBone="true" />
+				</ModelConditionState>
+				<!-- These blank states are here to prevent contrail drawing during Stratofighter 
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PACKING_TYPE_1 UNPACKING USER_1"/>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PACKING_TYPE_1 PACKING USER_1"/>-->
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietFighterAircraftFlakMissile" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<!-- gravity mult of 30 is temporary -->
+			<Physics
+				id="ModuleTag_Physics"
+				GravityMultiplier="30" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieAir"
+				CreationList="SUFighterAircraft_Dying_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="AIRBORNE_TARGET"/>
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieGround"
+				CreationList="SUFighterAircraft_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="AIRBORNE_TARGET" />
+			</CreateObjectDie>
+			<DynamicsUpdate
+				id="ModuleTag_DefaultDynamicsUpdate"
+				xai:joinAction="Remove" />
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<!--Please make sure the model condition duration matches the attribute mod duration-->
+			<ReturnToProducerSpecialPower
+				id="ModuleTag_ReturnToProducerSpecialPower"
+				SpecialPowerTemplate="SpecialPowerReturnToProducer"
+				AttributeModifier="AttributeModifier_ReturnToBase"
+				AttributeModifierAffectsSelf="true"
+				SetModelCondition="USER_1"
+				SetModelConditionTime="30s"/>
+			
+			<!-- These help the AI decide when to use EVASIVE MANEUVERS -->
+			<!-- Note: Evasive maneuvers was cut from this unit TSP-->
+			<TrackIncomingWeaponFireBehavior
+					 id="TrackIncomingWeaponFireForEvasion" />
+			<TrackDamage
+					 id="TrackDamageForEvasion"
+					 TimeToTrack="1s"
+					 InstantWeaponsOnly="true" />
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_SOV_MigFighterDie" />
+			</FXListBehavior>
+			<StatusBitsUpgrade
+				id="ModuleTag_VeterancyUpgrade"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_Veterancy_HEROIC</TriggeredBy>
+			</StatusBitsUpgrade>
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_JetAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				KeepsParkingSpaceWhenAirborne="true"
+				OutOfAmmoDamagePerSecond="1.5"
+				ReturnToBaseWhenVictimDead="true"
+				StateMachine="HelicopterAIStateMachine">
+				<UnitAITargetChooserData 
+					IdleScanDelay="=$FAST_IDLE_SCAN_DELAY"/>
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="240" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="16.0"
+				MinorRadius="11.0"
+				Height="8.0"
+				ContactPointGeneration="VEHICLE">
+				<Offset
+					x="-4" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="SOV_MigFighter_VoiceMoveAttack" AudioType="voiceAttack" />
+			<AudioEntry Sound="SOV_MigFighter_VoiceCreate" AudioType="voiceCreated" />
+			<AudioEntry Sound="SOV_MigFighter_VoiceMove" AudioType="voiceMove" />
+			<AudioEntry Sound="SOV_MigFighter_VoiceRetreat" AudioType="voiceRetreatToCastle" />
+			<AudioEntry Sound="SOV_MigFighter_VoiceSelectMS" AudioType="voiceSelect" />
+			<AudioEntry Sound="SOV_MigFighter_VoiceSelectBattleMS" AudioType="voiceSelectBattle" />
+			<AudioEntry Sound="SOV_MigFighter_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" /> 
+			<NamedEntry Sound="SOV_MigFighter_VoiceMoveReturnToBase" Name="ReturnToProducer" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry
+				Sound="SOV_MigFighter_MovStart"
+				AudioType="soundMoveStart" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

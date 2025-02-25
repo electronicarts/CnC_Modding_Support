@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+  		<Include type="instance" source="DATA:SkirmishAI\States\SovietShockSpecialistStates.xml" />  		
+  </Includes>
+
+<!-- Part 1 - Follow Player -->
+
+   <AIStrategicStateDefinition
+    id="AIState_S02_FollowPlayer01"
+    MaxTargets="1">
+    <Heuristic>
+          <ScriptedFlagHeuristic FlagName="Player_2/AIFLAG_FollowPlayer"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestAllyUnitHeuristic" Priority="20"/>
+    <Tactic id="Defend" Tactic="StaticDefense"  EndBehavior="DISBAND" Distance="275" UseAestheticsManager="false" UpdateTime="0.1s" UseTransports="false" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" 
+      							MaxUnits="99" 
+      							IncludeKindOf="CAN_ATTACK" 
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER" 
+      							AllowedLocomotorTypes="AIR LAND WATER AMPHIBIOUS"
+                    Priority="HIGH" 
+                    AlwaysRecruit="true"
+                    MicroManager="S02_FollowPlayerMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+<!-- Part 2 - Fight -->
+
+   <AIStrategicStateDefinition
+   id="AIState_S02_Fight01"
+   MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/AIFLAG_Fight"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_S02_Barracks01" Priority="60"/>
+    <TargetHeuristic TargetHeuristic="AITarget_S02_PowerPlant01" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="AITarget_S02_MCV01" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="AITarget_S02_TechStructure01" Priority="30"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" UseTransports="false" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="99"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER AIRCRAFT"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HOTSPOT"
+                    AlwaysRecruit="false"
+                    AllowRecruitUnitsInCombat="true"
+                    MicroManager="FearlessMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+
+<!-- BELOW ARE DEPRECATED -->
+
+<!-- Attack State - Get AI to use Transport -->
+
+   <AIStrategicStateDefinition
+   id="AIState_S02_Escape01"
+   MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/AIFLAG_Escape"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_S02_Evacuate" Priority="30"/>
+    <Tactic id="Attack" Tactic="SimpleAttack"  EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="99"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER AIRCRAFT"
+      							AllowedLocomotorTypes="LAND WATER AMPHIBIOUS"
+                    Priority="HIGH"
+                    AlwaysRecruit="true"
+                    AllowRecruitUnitsInCombat="true"
+                    MicroManager="BlankMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+<!-- Hotspots -->
+
+   <AIStrategicStateDefinition
+   id="AIState_S02_Hotspot01"
+   MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="AIFLAG_Hotspot01"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="30"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" GatherWaypoint="AIWP_Lane01" UseTransports="false" EndBehavior="RAMPAGE" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="99"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER AIRCRAFT"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HOTSPOT"
+                    AlwaysRecruit="false"
+                    AllowRecruitUnitsInCombat="true"
+                    MicroManager="FearlessMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+   <AIStrategicStateDefinition
+   id="AIState_S02_Hotspot02"
+   MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="AIFLAG_Hotspot02"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="30"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" GatherWaypoint="AIWP_Lane02" UseTransports="false" EndBehavior="RAMPAGE" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="99"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER AIRCRAFT"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HOTSPOT"
+                    AlwaysRecruit="false"
+                    AllowRecruitUnitsInCombat="true"
+                    MicroManager="FearlessMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+</AssetDeclaration>

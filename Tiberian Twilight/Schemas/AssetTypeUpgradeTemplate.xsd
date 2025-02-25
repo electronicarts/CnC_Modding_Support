@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:balance="uri:ea.com:eala:balance" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	
+	<xs:include schemaLocation="Includes/UpgradeDef.xsd"/>
+	<xs:include schemaLocation="Includes/PlayerClassType.xsd"/>
+
+
+	<!-- Upgrade Tooltip Hint Info -->
+	<xs:complexType name="UpgradeTooltipHintInfo" >
+		<xs:sequence />
+		<xs:attribute name="GenericTextLabel" type="xs:string" />
+		<xs:attribute name="AttributeModifierReference" type="AttributeModifierRef" default="" />
+	</xs:complexType>
+
+	<xs:complexType name="PlayerClassEquivalencyType">
+		<xs:sequence />
+		<xs:attribute name="PlayerClass" type="PlayerClassType" />
+		<!-- It would be great if this could be a strong ref but our pipeline can't 
+		handle the resulting circular dependencies. -->
+		<xs:attribute name="EquivalentUpgrade" type="UpgradeTemplateWeakRef" />
+	</xs:complexType>
+	
+	<xs:complexType name="UpgradeTemplate" xas:runtimeWrapper="::UpgradeTemplate" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="TooltipHint" type="UpgradeTooltipHintInfo" minOccurs="0" maxOccurs="1" />
+					<xs:element name="GameDependency"	type="GameDependencyType" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="NextUpgrade" type="UpgradeTemplateRef" minOccurs="0" maxOccurs="1" />
+					<xs:element name="ResourceCosts" type="MoneyTransaction" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="PlayerClassEquivalency" type="PlayerClassEquivalencyType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="DisplayName" balance:field="Name" type="xs:string" />
+				<xs:attribute name="Description" balance:field="Description" type="xs:string" />
+				<xs:attribute name="TypeDescription" balance:field="TypeDescription" type="xs:string" />
+				<xs:attribute name="AcquireHint" balance:field="AcquireHint" type="xs:string" />
+				<xs:attribute name="Type" balance:field="Type" type="UpgradeType" />
+				<xs:attribute name="BuildTime" balance:field="BuildTime" type="Time" />
+				<xs:attribute name="BuildCost" balance:field="BuildCost" type="SageInt" />
+				<xs:attribute name="Rank" type="SageInt" default="1" /> <!-- lowest rank is 1-->
+				<xs:attribute name="ResearchSound" type="AudioEventInfoRef" />
+				<xs:attribute name="ResearchCompleteEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="UnitSpecificSound" type="AudioEventInfoRef"/>
+				<xs:attribute name="UpgradeFX" type="FXListRef" />
+				<xs:attribute name="LocalPlayerGainsUpgradeEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="AlliedPlayerGainsUpgradeEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="EnemyPlayerGainsUpgradeEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="LocalPlayerLosesUpgradeEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="AlliedPlayerLosesUpgradeEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="EnemyPlayerLosesUpgradeEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="LocalPlayerProductionStartedEvaEvent" type="EvaEventRef" default="" use="optional" />
+				<xs:attribute name="LocalPlayerBuildOnHoldEvaEvent" type="EvaEventRef" default="" use="optional" />
+				<xs:attribute name="LocalPlayerBuildCancelledEvaEvent" type="EvaEventRef" default="" use="optional" />
+				<xs:attribute name="UseObjectTemplateForCostDiscount" type="GameObjectWeakRef" />
+				<xs:attribute name="GroupName" type="AssetId" />
+				<xs:attribute name="GroupOrder" type="SageUnsignedInt" />
+				<xs:attribute name="SkirmishAIHeuristic" type="AIUpgradeHeuristicType" />
+				<xs:attribute name="Options" type="UpgradeOptionsBitFlags" default=""/>
+				<xs:attribute name="GDIIconImage" type="ImageWeakRef" />
+				<xs:attribute name="NodIconImage" type="ImageWeakRef" />
+				<xs:attribute name="WaypointQueueable" type="SageBool" default="false" />
+				<xs:attribute name="RequiresEntitlement" type="SageBool" default="true" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

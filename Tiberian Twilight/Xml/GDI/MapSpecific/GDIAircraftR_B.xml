@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+
+	<!-- GDI Aircraft R / Stratospheric Transport / UNIT AIRCRAFT VERSION (GDIAircraftR is now a Structure)-->
+	<!-- ModelCondition usage:
+		'USER_4' - preparing to take off (for fx) (done in script)
+		'USER_5' - starting crane animation for repair (done in script)
+	-->
+
+<!-- Note: GDIAircraftR_B references GDIAircraftR textures -->
+
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseAircraft.xml" />
+
+		<!-- ART -->
+		<Include type="all"	source="ART:GUX_AircraftR_B_SKN.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_B_FLYA.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_B_FLYD.w3x" />
+
+		<Include type="all"	source="ART:GUX_AircraftR_B_Crane_SKN.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_B_Crane_IDLA.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_B_Crane_RPRA.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_B_Crane_STRT.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_B_Crane_STWA.w3x" />
+
+		<Include type="all"	source="ART:GUX_AircraftR_B_FX_IDLA.w3x" />
+		<Include type="all"	source="ART:GUX_AircraftR_B_FX_STRT.w3x" />
+
+		<Include type="all" source="ART:GUX_AircraftR_DMG.xml" />
+
+	</Includes>
+	<GameObject
+		id="GDIAircraftR_B"
+		inheritFrom="BaseAircraft"
+		SelectPortrait="Portrait_GDI_Aircraft_R"
+		ButtonImage="Btn_GDI_Aircraft_R"
+		Side="GDI"
+		TransportSlotCount="0"
+		BuildTime="12"
+		CommandSet="GDIAircraftRCommandSet"
+		CommandPoints="0"
+		KindOf="+ASSAULT_AIRCRAFT +NO_COLLIDE"
+		ThreatLevel="10"
+		WeaponCategory="MISSILE"
+		VoicePriority="148"
+		EditorName="GDIAircraftR_B"
+		Description="Desc:GDIAircraftR"
+		TypeDescription="Type:GDIAircraftR">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="900"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIAircraftR</DisplayName>
+		<ArmorSet
+			Armor="HeavyArmor"
+			DamageFX="VehicleDamageFX" />
+
+		<LocomotorSet
+			Locomotor="BasicHelicopterTaxiLocomotor"
+			Condition="TAXIING"
+			Speed="10" />
+		
+		<LocomotorSet
+			id="DefaultLocomotorSet" 
+			Locomotor="GDIAircraftRLocomotor"
+			Condition="NORMAL"
+			Speed="175.0" /> 
+
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 
+					BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 
+					BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18
+					BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20 BONE_CONTACT_POINT_21 BONE_CONTACT_POINT_22 BONE_CONTACT_POINT_23 BONE_CONTACT_POINT_24 BONE_CONTACT_POINT_25
+					Frame04 Frame07 Frame11 Frame13 
+					Bone_Engine_Front_R Bone_Engine_Rear_R Bone_Engine_Front_L Bone_Engine_Rear_L EngineBlock 
+					FX_LRearEngine_FXBONE FX_LFrontEngine_FXBONE FX_RRearEngine_FXBONE FX_RFrontEngine_FXBONE
+					FX_RFrontEngineLight_FXBONE FX_RRearEngineLight_FXBONE FX_LFrontEngineLight_FXBONE FX_LRearEngineLight_FXBONE 
+					FX_RearEngineL_BONE FX_RearEngineR_BONE"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUX_AircraftR_B_SKN" />
+
+					<!-- ENGINE FX: REAR ENGINES -->
+					<ParticleSysBone
+						BoneName="FX_RearEngineL_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_B_Embers"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineL_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_BurnerLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineR_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_B_Embers"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RearEngineR_BONE"
+						FXParticleSystemTemplate="GDIAircraftR_B_BurnerLight"
+						FollowBone="true" />
+
+					<!-- ENGINE FX: REAR WING ENGINES -->
+					<ParticleSysBone
+						BoneName="FX_LRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_B_Embers180"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_LRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_B_BurnerLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_B_Embers180"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RRearEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_B_BurnerLight"
+						FollowBone="true" />
+
+					<!-- ENGINE FX: FRONT ENGINES -->
+					<ParticleSysBone
+						BoneName="FX_LFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_B_Embers180"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_LFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_B_BurnerLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_B_Embers180"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_RFrontEngine_FXBONE"
+						FXParticleSystemTemplate="GDIAircraftR_B_BurnerLight"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUX_AircraftR_B_SKN" />
+					<Texture
+						Original="GUX_AircraftR"
+						New="GUX_AircraftR_DMG" />
+					
+					<!-- Bone 06: FX_GDIAircraftR_Damage -->
+					<ParticleSysBone
+						BoneName="Bone_contact_point_06"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageFlare"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_06"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageEmbers"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_06"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_06"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageSmoke"
+						FollowBone="true" />
+
+					<!-- Bone 09: FX_GDIAircraftR_Damage -->
+					<ParticleSysBone
+						BoneName="Bone_contact_point_09"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageFlare"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_09"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageEmbers"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_09"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_09"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageSmoke"
+						FollowBone="true" />
+
+					<!-- Bone 14: FX_GDIAircraftR_Damage -->
+					<ParticleSysBone
+						BoneName="Bone_contact_point_14"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageFlare"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_14"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageEmbers"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_14"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_14"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageSmoke"
+						FollowBone="true" />
+					
+					<!-- Bone 16: FX_GDIAircraftR_DamageSmall -->
+					<ParticleSysBone
+						BoneName="Bone_contact_point_16"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageEmbersSmall"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_16"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageFlare"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_16"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageSmokeSmall"
+						FollowBone="true" />
+
+					<!-- Bone 17: FX_GDIAircraftR_DamageSmall -->
+					<ParticleSysBone
+						BoneName="Bone_contact_point_17"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageEmbersSmall"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_17"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageFlare"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_17"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageSmokeSmall"
+						FollowBone="true" />
+
+					<!-- Bone 19: FX_GDIAircraftR_DamageSmall -->
+					<ParticleSysBone
+						BoneName="Bone_contact_point_19"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageEmbersSmall"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_19"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageFlare"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_19"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageSmokeSmall"
+						FollowBone="true" />
+
+					<!-- Bone 24: FX_GDIAircraftR_DamageSmall -->
+					<ParticleSysBone
+						BoneName="Bone_contact_point_24"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageEmbersSmall"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_24"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageFlare"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_24"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageSmokeSmall"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUX_AircraftR_B_SKN" />
+					<Texture
+						Original="GUX_AircraftR"
+						New="GUX_AircraftR_DMG" />
+					
+					<!-- Bone 15: FX_GDIAircraftR_DamageSmall -->
+					<ParticleSysBone
+						BoneName="Bone_contact_point_15"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageEmbersSmall"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_15"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageFlare"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_contact_point_15"
+						FXParticleSystemTemplate="GDIAircraftR_B_DamageSmokeSmall"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_IDLE">
+					<Animation
+						AnimationName="GUX_AircraftR_B_FLYA"
+						AnimationBlendTime="60"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING REALLYDAMAGED">
+					<Animation
+						AnimationName="GUX_AircraftR_B_FLYD"
+						AnimationBlendTime="60"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="GUX_AircraftR_B_FLYA"
+						AnimationBlendTime="60"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Animation
+						AnimationName="GUX_AircraftR_B_FLYD"
+						AnimationBlendTime="60"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+			
+		</Draws>
+		<Behaviors>
+
+			<Physics id="ModuleTag_Physics" />
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIAircraftR_B_Explode01" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIAircraftR_B_Explode02" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIAircraftR_B_Explode03" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIAircraftR_B_Explode04" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIAircraftR_B_Explode05" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIAircraftR_B_Explode06" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0.0s"
+				SinkRate="0.0"
+				DestructionDelay="0.0s">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<OCL
+					Type="INITIAL">
+					<OCL>GDI_Generic_Large_Die_OCL</OCL>
+				</OCL>
+				<Sound
+					Type="INITIAL"
+					List="GDI_GST_AirRB_DieExplosion" />
+			</SlowDeath>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="200.0"
+					FX="FX_GDIVehicleL_Damage"/>
+			</BuildingDestructionBehavior>
+
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_AI"
+				NeedsRunway="false"
+				KeepsParkingSpaceWhenAirborne="false"
+				StateMachine="JetAIStateMachine"
+				AutoAcquireEnemiesWhenIdle="NO">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					RotateToTargetWhenAiming="false"
+					SympathyRange="0.0" />
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="12000">
+			</ActiveBody>
+
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_FlyingLoop">
+				<ModelConditionSound Sound="GDI_GST_AirRB_MoveDamagedLoopMS" RequiredFlags="FLYING REALLYDAMAGED" ExcludedFlags="DAMAGED RECYCLED DYING"/>
+				<ModelConditionSound Sound="GDI_GST_AirRB_MoveLoop" RequiredFlags="FLYING" ExcludedFlags="REALLYDAMAGED RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ReallyDamaged">
+				<ModelConditionSound Sound="GDI_GST_AirRB_ReallyDamaged" RequiredFlags="REALLYDAMAGED" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<!-- <Sound Sound="GDI_GST_AirRB_AmbientSweeteners_PlayPercent" Animation="GUX_AircraftR_B_AIDA" Frame="0"/> -->
+
+				<Sound Sound="GDI_RepairArm1_servoA" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="0" />
+				<Sound Sound="GDI_RepairArm1_servoB" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="227" />
+				<Sound Sound="GDI_RepairArm1_servoC" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="338" />
+				<Sound Sound="GDI_RepairArm1_servoD" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="454" />
+				<Sound Sound="GDI_RepairArm1_servoE" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="562" />
+				<Sound Sound="GDI_RepairArm1_servoF" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="705" />
+				<Sound Sound="GDI_RepairArm1_stopA" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="86" />
+				<Sound Sound="GDI_RepairArm1_stopB" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="308" />
+				<Sound Sound="GDI_RepairArm1_stopC" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="536" />
+				<Sound Sound="GDI_RepairArm1_stopD" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="675" />
+				<Sound Sound="GDI_RepairArm1_stopE" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="770" />
+
+				<Sound Sound="GDI_RepairArm3_servoA" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="0" />
+				<Sound Sound="GDI_RepairArm3_servoB" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="91" />
+				<Sound Sound="GDI_RepairArm3_servoC" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="173" />
+				<Sound Sound="GDI_RepairArm3_servoD" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="247" />
+				<Sound Sound="GDI_RepairArm3_servoE" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="304" />
+				<Sound Sound="GDI_RepairArm3_servoF" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="417" />
+				<Sound Sound="GDI_RepairArm3_servoG" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="487" />
+				<Sound Sound="GDI_RepairArm3_servoH" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="695" />
+				<Sound Sound="GDI_RepairArm3_stopA" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="54" />
+				<Sound Sound="GDI_RepairArm3_stopB" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="144" />
+				<Sound Sound="GDI_RepairArm3_stopC" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="226" />
+				<Sound Sound="GDI_RepairArm3_stopD" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="288" />
+				<Sound Sound="GDI_RepairArm3_stopE" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="401" />
+				<Sound Sound="GDI_RepairArm3_stopF" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="468" />
+				<Sound Sound="GDI_RepairArm3_stopG" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="564" />
+				<Sound Sound="GDI_RepairArm3_stopH" Animation="GUX_AircraftR_B_Crane_RPRA" Frame="797" />
+
+				<Sound Sound="GDI_RepairArms_STRT" Animation="GUX_AircraftR_B_Crane_STRT" Frame="0" />
+				<Sound Sound="GDI_RepairArm3_servoA" Animation="GUX_AircraftR_B_Crane_STRT" Frame="26" />
+				<Sound Sound="GDI_RepairArm3_servoB" Animation="GUX_AircraftR_B_Crane_STRT" Frame="82" />
+				<Sound Sound="GDI_RepairArm3_stopB" Animation="GUX_AircraftR_B_Crane_STRT" Frame="95" />
+				<Sound Sound="GDI_RepairArm3_stopA" Animation="GUX_AircraftR_B_Crane_STRT" Frame="141" />
+
+				<Sound Sound="GDI_RepairArms_STWA" Animation="GUX_AircraftR_B_Crane_STWA" Frame="0" />
+				<Sound Sound="GDI_RepairArm3_servoE" Animation="GUX_AircraftR_B_Crane_STWA" Frame="44" />
+				<Sound Sound="GDI_RepairArm3_servoG" Animation="GUX_AircraftR_B_Crane_STWA" Frame="140" />
+				<Sound Sound="GDI_RepairArm3_stopF" Animation="GUX_AircraftR_B_Crane_STWA" Frame="92" />
+				<Sound Sound="GDI_RepairArm3_stopE" Animation="GUX_AircraftR_B_Crane_STWA" Frame="135" />
+				<Sound Sound="GDI_RepairArm3_stopH" Animation="GUX_AircraftR_B_Crane_STWA" Frame="199" />
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		<Geometry>
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "107.145"
+				 MinorRadius = "246.831"
+				 Height = "121.265"
+				 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-132.402"
+					y = "-0.852081"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "396.835"
+				 MinorRadius = "133.422"
+				 Height = "121.265"
+				 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-52.0022"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_GST_AirRB_FireDamagedLoop" AudioType="soundAmbientDamaged"/>
+			<AudioEntry Sound="GDI_GST_AirRB_FireReallyDamagedLoop" AudioType="soundAmbientReallyDamaged"/>
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="250"
+			ShroudClearingRange="300" />
+	</GameObject>
+
+	<!-- This object is spawned when the unit takes off from the ground and fires a meta impact weapon -->
+	<GameObject
+		id="GDIAircraftRTakeoffWeaponObject"
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE NO_COLLIDE INERT PASS_EXPERIENCE_TO_PRODUCER"
+		EditorName="GDIAircraftRTakeoffWeaponObject">
+		<DisplayName>GDIAircraftRTakeoffWeaponObject</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+		</Draws>
+		<Behaviors>
+
+			<!-- kills object so weapon is fired -->
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="0.1s"
+				MaxLifetime="0.1s" />
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_TeraSweepExp_Lg" />
+			</FXListBehavior>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+	</GameObject>
+
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET			-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LogicCommandSet
+		id="GDIAircraftRCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+	</LogicCommandSet>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOCOMOTORS								-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LocomotorTemplate
+		id="GDIAircraftRLocomotor"
+		Surfaces="AIR"
+		TurnTimeSeconds="4.0s"
+		TurnTimeDamagedSeconds="5.0s"
+		SlowTurnRadius="50.0"
+		FastTurnRadius="50.0"
+		AccelerationSeconds="1.5s"
+		Lift="10%"
+		LiftDamaged="10%"
+		BrakingSeconds="1.5s"
+		MinTurnSpeed="0%"
+		PreferredHeight="275"
+		PreferredHeightDamping="2.0"
+		AllowMotiveForceWhileAirborne="true"
+		BehaviorZ="SURFACE_RELATIVE_HEIGHT"
+		Appearance="HOVER"
+		
+		PitchByZVelCoef="0.0"
+		PitchStiffness="0.0"
+		RollStiffness="0.1"
+		PitchDamping="0.0"
+		RollDamping="0.5"
+		ForwardVelocityPitchFactor="0.0"
+		LateralVelocityRollFactor="0.0"
+		Apply2DFrictionWhenAirborne="true"
+		AirborneTargetingHeight="2"
+		LocomotorWorksWhenDead="true"
+		
+		TakeOffAndLandingSpeed="10.0"
+		TakeOffAndLandingSlowDownDelta="35.0"
+		TakeOffAndLandingSlowDownTime="3.0s"
+
+		EasingTakeOffAndLanding="true"
+		EasingPercentage="50%"
+
+		RudderCorrectionDegree="0.169"
+		RudderCorrectionRate="0.027"
+		ElevatorCorrectionDegree="0.103"
+		ElevatorCorrectionRate="0.016"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		/>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    MODIFIERS AND UPGRADES		 			-->
+	<!-- ////////////////////////////////////////	-->
+
+</AssetDeclaration>

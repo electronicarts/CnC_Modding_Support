@@ -1,0 +1,88 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="TargetingBaseCompare" xas:runtimeWrapper="TargetingSorts::BaseCompare">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TargetingDistanceCompare" xas:runtimeWrapper="TargetingSorts::DistanceCompare">
+		<xs:complexContent>
+			<xs:extension base="TargetingBaseCompare">
+				<xs:sequence/>
+				<xs:attribute name="Tolerance" type="SageReal" default="30.0" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TargetingCombatChainCompare" xas:runtimeWrapper="TargetingSorts::CombatChainCompare">
+		<xs:complexContent>
+			<xs:extension base="TargetingBaseCompare">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TargetingInTurretArcCompare" xas:runtimeWrapper="TargetingSorts::InTurretArcCompare">
+		<xs:complexContent>
+			<xs:extension base="TargetingBaseCompare">
+				<xs:sequence/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="TargetingCompareList">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Compare" type="AssetReference" xas:refType="TargetingBaseCompare" minOccurs="1" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="TargetingCompareListRef" xas:refType="TargetingCompareList">
+		<xs:restriction base="AssetReference" />
+	</xs:simpleType>
+
+	<xs:complexType name="BaseAITargetChooserData">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="IdleScanDelay" type="Time" default="0.8s" />
+		<xs:attribute name="ReacquireDelay" type="Time" default="5s" />
+		<xs:attribute name="StartupDelay" type="Time" default="0s" />
+		<xs:attribute name="SympathyRange" type="SageReal" default="25.0" />
+		<xs:attribute name="CheckVisionRange" type="SageBool" default="false" />
+		<!-- CanPickDynamicTargets: this should be false in the AI section of a unit if it has only turrets, for performance reasons.
+		     No need to be acquiring targets with the tank if the turret is also acquiring units and is the only part that attacks. -->
+		<xs:attribute name="CanPickDynamicTargets" type="SageBool" default="true" />
+		<xs:attribute name="RotateToTargetWhenAiming" type="SageBool" default="true" />
+		<!-- Special hack for the Ion Storm weapon so that it will damage structures -->
+		<xs:attribute name="CanAutoAcquireNonAutoAcquirable" type="SageBool" default="false"/>
+	</xs:complexType>
+
+	<xs:complexType name="UnitAITargetChooserData">
+		<xs:complexContent>
+			<xs:extension base="BaseAITargetChooserData">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="TargetingCompareList" type="TargetingCompareListRef" default="DefaultTargetingCompareList" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TurretAITargetChooserData">
+		<xs:complexContent>
+			<xs:extension base="BaseAITargetChooserData">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="TargetingCompareList" type="TargetingCompareListRef" default="DefaultTurretTargetingCompareList" />
+				<xs:attribute name="ActiveWhenPerformingSpecialAbility" type="SageBool" default="false" />
+				<!-- CanAcquireDynamicIfAssignedOutOfRange: allows target to shoot dynamic targets while en route to assigned target. -->
+				<xs:attribute name="CanAcquireDynamicIfAssignedOutOfRange" type="SageBool" default="false" />
+				<xs:attribute name="CanPickTargetsOutOfTurretAngle" type="SageBool" default="false" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GBSilo.w3x" />
+		<Include
+			type="all"
+			source="ART:GBSiloD2_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBSiloD2_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBSiloD3_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBSiloD3_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBSilo_TIB.w3x" />
+		<Include
+			type="all"
+			source="ART:GBSilo_ASN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBSilo_AAN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBEmpty_ABLD.W3X" />				
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GDITiberiumSilo"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_GDITiberiumSilo"
+		ButtonImage="Portrait_GDITiberiumSilo"
+		Side="GDI"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="500"
+		BuildTime="5"
+		CommandSet="GDITiberiumSiloCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_MONEY_STORAGE IGNORE_FOR_VICTORY NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="315d"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="GDITiberiumSilo"
+		Description="Desc:GDITiberiumSilo"
+		TypeDescription="Type:GDITiberiumSilo">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDITiberiumSilo</DisplayName>
+		<GameDependency>
+			<RequiredObject>GDIRefinery</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="GDITiberiumSiloArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="SPREAD" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBSilo" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="GBSilo_ASN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBSiloD3_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBSiloD2_SN" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDISiloDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDISiloDamagedDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDISiloDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBSilo" />
+					<Texture
+						Original="GBSilo"
+						New="GBSilo_D" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDISiloDamagedSteam"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDISiloDamagedDist2"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="GBSilo_AAN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Medium"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBSiloD3_AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Des_Medium"
+						FollowBone="false" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBSiloD2_AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GBSiloD2_AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBSiloD3_AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<!-- DRAW TIBERIUM METER -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_TIB"
+				OkToChangeModelColor="false">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBSilo_TIB" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>					
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableHideSubObject("Tib_25")
+						CurDrawableHideSubObject("Tib_50")
+						CurDrawableHideSubObject("Tib_75")
+						CurDrawableHideSubObject("Tib_100")
+						CurDrawableHideSubObject("FXGlows_25")
+						CurDrawableHideSubObject("FXGlows_50")
+						CurDrawableHideSubObject("FXGlows_75")
+						CurDrawableHideSubObject("FXGlows_100")
+					</Script>
+				</AnimationState>
+				<!-- BUILD UP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING"
+					StateName="STATE_Buildup">
+					<Animation
+						AnimationName="NBEmpty_ABLD"
+						AnimationMode="ONCE" />
+				</AnimationState>				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MONEY_STORED_AMOUNT_1">
+					<Script>
+						CurDrawableShowSubObject("Tib_25")
+						CurDrawableHideSubObject("Tib_50")
+						CurDrawableHideSubObject("Tib_75")
+						CurDrawableHideSubObject("Tib_100")
+						CurDrawableShowSubObject("FXGlows_25")
+						CurDrawableHideSubObject("FXGlows_50")
+						CurDrawableHideSubObject("FXGlows_75")
+						CurDrawableHideSubObject("FXGlows_100")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MONEY_STORED_AMOUNT_2">
+					<Script>
+						CurDrawableHideSubObject("Tib_25")
+						CurDrawableShowSubObject("Tib_50")
+						CurDrawableHideSubObject("Tib_75")
+						CurDrawableHideSubObject("Tib_100")
+						CurDrawableHideSubObject("FXGlows_25")
+						CurDrawableShowSubObject("FXGlows_50")
+						CurDrawableHideSubObject("FXGlows_75")
+						CurDrawableHideSubObject("FXGlows_100")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MONEY_STORED_AMOUNT_3">
+					<Script>
+						CurDrawableHideSubObject("Tib_25")
+						CurDrawableHideSubObject("Tib_50")
+						CurDrawableShowSubObject("Tib_75")
+						CurDrawableHideSubObject("Tib_100")
+						CurDrawableHideSubObject("FXGlows_25")
+						CurDrawableHideSubObject("FXGlows_50")
+						CurDrawableShowSubObject("FXGlows_75")
+						CurDrawableHideSubObject("FXGlows_100")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MONEY_STORED_AMOUNT_4">
+					<Script>
+						CurDrawableHideSubObject("Tib_25")
+						CurDrawableHideSubObject("Tib_50")
+						CurDrawableHideSubObject("Tib_75")
+						CurDrawableShowSubObject("Tib_100")
+						CurDrawableHideSubObject("FXGlows_25")
+						CurDrawableHideSubObject("FXGlows_50")
+						CurDrawableHideSubObject("FXGlows_75")
+						CurDrawableShowSubObject("FXGlows_100")
+					</Script>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<DistributedMoney
+				id="ModuleTag_DistributedMoney"
+				Capacity="2000"
+				OnDieSpawnPercentage="25" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="FactionStructureTiberiumFieldOCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</CreateObjectDie>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Medium" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericGDIBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericGDIBuildingSuicide.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO" 
+				AILuaEventsList="BuildingPowerFunctions"
+			/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="18.0"
+				Height="20.0">
+				<Offset
+					x="3.0"
+					y="-15.0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="12.0"
+				Height="46.0">
+				<Offset
+					x="-1.0"
+					y="19.0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="3.5"
+				MinorRadius="11.0"
+				Height="42.0">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-10.0"
+					y="30.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="8.0"
+					y="30.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="20.0"
+					y="-28.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="8.0"
+					y="30.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-12.0"
+					y="-30.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="8.0"
+					y="30.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-12.0"
+					y="-30.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-10.0"
+					y="30.0"
+					z="0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="AudioEvent:GDI_SiloSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="0.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

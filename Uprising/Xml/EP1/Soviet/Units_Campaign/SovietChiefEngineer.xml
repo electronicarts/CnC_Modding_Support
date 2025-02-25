@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include type="all"	source="ART:SUScientist_SKN.w3x" />
+		<Include type="all"	source="ART:SUScientist_ABTA.w3x" />
+		<Include type="all"	source="ART:SUScientist_AIDA.w3x" />
+		<Include type="all"	source="ART:SUScientist_BATA.w3x" />
+		<Include type="all"	source="ART:SUScientist_BIDA.w3x" />
+		<Include type="all"	source="ART:SUScientist_DTBA.w3x" />
+		<Include type="all"	source="ART:SUScientist_HITA.w3x" />
+		<Include type="all"	source="ART:SUScientist_RUNA.w3x" />
+		<Include type="all"	source="ART:SUScientist_FLYA.w3x" />
+		<Include type="all"	source="ART:SUScientist_LNDA.w3x" />
+		<Include type="all"	source="ART:SUScientist_GTPA.w3x" />
+
+		<Include type="all"	source="ART:FXHealingAura.w3x" />	
+		<Include type="all"	source="ART:FXHealingAura_DIE.w3x" />		
+
+		<Include type="all"	source="ART:FXEngineer_FP.w3x" />
+		<Include type="all"	source="ART:FXTracerGDISniper.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseInfantry.xml" />
+	</Includes>
+	<GameObject
+		id="SovietChiefEngineer"
+		inheritFrom="BaseInfantry"
+		SelectPortrait="Portrait_SovietChiefScientist"
+		ButtonImage="Button_SovietChiefScientist"
+		Side="Soviet"
+		SubGroupPriority="830"
+		EditorSorting="CAMPAIGN_UNITS"		
+		BuildTime="10"
+		CommandSet="SovietChiefEngineerCommandSet"
+		IsTrainable="true"
+		KindOf="PRELOAD SELECTABLE CAN_CAST_REFLECTIONS INFANTRY SCORE SKIRMISH_AI_DONT_GARRISON CAN_CAPTURE CAN_BE_FAVORITE_UNIT CYCLE_SELECTION DONT_SUBMERGE_BY_WAVES"
+		RadarPriority="UNIT"
+		ThreatLevel="10"
+		ProductionQueueType="INFANTRY"
+		UnitCategory="INFANTRY"
+		WeaponCategory="GUN"
+		VoicePriority="68"
+		EditorName="SovietChiefEngineer"
+		Description="Desc:SovietChiefEngineer"
+		TypeDescription="Type:SovietChiefEngineer"
+		HealthBoxHeightOffset="30"
+		UnitIntro="Soviet_Scientist_UnitIntro">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SovietchiefEngineer</DisplayName>
+		<!--<Prerequisites
+			Object="GDIBarracks" />-->
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="500"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietEngineerArmor"
+			DamageFX="InfantryDamageFX" />
+		<LocomotorSet
+			id="defaultLocomotor"
+			Locomotor="TestReactiveLocomotorHUMAN"
+			Condition="NORMAL"
+			Speed="55" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="B_WEAPONA_FX">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SUScientist_SKN" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="true"
+					StateName="STATE_Bored">
+					<Animation
+						AnimationName="SUScientist_BIDA"
+						AnimationMode="ONCE"
+						AnimationPriority="100"
+						AnimationBlendTime="15" 
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_Parachuting" then
+            			CurDrawableSetTransitionAnimState("TRANS_fromParachuting")
+						elseif Prev == "STATE_Selected" then
+						CurDrawableSetTransitionAnimState("TRANS_attentionToBored")
+						elseif Prev == "STATE_stunned_flailing" then
+						CurDrawableSetTransitionAnimState("STATE_stunned_landing")
+						end
+					</Script>
+				</AnimationState>
+				
+				<!-- meta impact anims -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STUNNED_FLAILING"
+					StateName="STATE_stunned_flailing">
+					<Animation
+						AnimationName="SUScientist_FLYA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING SPLATTED">
+					<Animation
+						AnimationName="SUScientist_LNDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STUNNED_STANDING_UP">
+					<Animation
+						AnimationName="SUScientist_GTPA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STUNNED"
+					StateName="STATE_stunned_landing">
+					<Animation
+						AnimationName="SUScientist_LNDA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				
+				<!-- radiation death -->
+<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING DEATH_5">
+					<Animation
+						AnimationName="NPRadiation_DIEA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+-->				
+				<!-- sword death -->
+<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING DEATH_4">
+					<Animation
+						AnimationName="SUEngineer_DTKA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+-->
+				<!-- fire death -->
+<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING DEATH_3">
+					<Animation
+						AnimationName="SUEngineer_DTFA"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="HIPS"
+						FXParticleSystemTemplate="InfantryFireDeath"
+						FollowBone="true" />
+				</AnimationState>
+-->
+				<!-- prism/laser death -->
+<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING DEATH_2">
+					<Animation
+						AnimationName="SUEngineer_DTPA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+-->
+				<!-- tesla death -->
+<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING DEATH_1">
+					<Animation
+						AnimationName="NPSkeleton_DIEA"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="HIPS"
+						FXParticleSystemTemplate="Soviet_TeslaDeath_Spark"
+						FollowBone="true" />
+				</AnimationState>
+-->
+				<!-- dying when running -->
+<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING_WASMOVING">
+					<Animation
+						AnimationName="SUScientist_RNDA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+-->				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimNickName="DTA"
+						AnimationName="SUScientist_DTBA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+<!--								
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="AFFECTED_BY_EMP">
+					<Animation
+						AnimationName="SUScientist_CWRZ"
+						AnimationMode="LOOP" />
+						<ParticleSysBone
+							BoneName="NONE"
+							FXParticleSystemTemplate="Allied_DogStun01"
+							FollowBone="true" />
+					<ParticleSysBone
+							BoneName="NONE"
+							FXParticleSystemTemplate="Allied_DogStunGlows01"
+							FollowBone="true" />
+				</AnimationState>
+-->
+			
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+					StateName="STATE_Moving" 
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="SUScientist_RUNA"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="1.0"
+						AnimationSpeedFactorMax="1.0" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="HIT_REACTION">
+					<Animation
+						AnimationName="SUScientist_HITA"
+						AnimationMode="LOOP" />
+				</AnimationState>				
+<!--
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="EMOTION_CELEBRATING"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="SUScientist_CHRA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+-->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					StateName="STATE_Selected">
+					<Animation
+						AnimationName="SUScientist_AIDA"
+						AnimationMode="ONCE"
+						AnimationPriority="100"
+						AnimationBlendTime="15"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_Suppressed" then
+						CurDrawableSetTransitionAnimState("TRANS_fromSuppressedB")
+						end
+						if Prev == "STATE_Parachuting" then
+						CurDrawableSetTransitionAnimState("TRANS_fromParachuting")
+						end
+						if Prev == "STATE_Bored" then
+						CurDrawableSetTransitionAnimState("TRANS_boredToAttention")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_boredToAttention">
+					<Animation
+						AnimationName="SUScientist_BATA"
+						AnimationMode="ONCE" 
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_attentionToBored">
+					<Animation
+						AnimationName="SUScientist_ABTA"
+						AnimationMode="ONCE" 
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- Draw the Healing Aura seperately so we dont have to re-export all this units anims -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawHealingAura"
+				NoRotate="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXHealingAura" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Bored">
+					<Animation
+						AnimationName="FXHealingAura"
+						AnimationMode="ONCE" />
+				</AnimationState>	
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="FXHealingAura_DIE"
+						AnimationMode="ONCE" />
+				</AnimationState>				
+			</ScriptedModelDraw>	
+
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw"
+				MinLength="100.0"
+				MaxLength="100.0"
+				Width="15.0"
+				MinSpeed="35"
+				MaxSpeed="35"
+				SweepSpeed="0.0"
+				SpreadAngle="0.0"
+				MinTracersPerFrame="0.01"
+				MaxTracersPerFrame="0.01"
+				FrameLifeTime="35"
+				WeaponSlotType="PRIMARY_WEAPON"
+				Texture="FXTracerGDISniper"
+				UseAdditiveBlending="true" >
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="0.0"
+					g="0.0"
+					b="0.0"
+					a="0.0" />
+			</TracerModelDraw>
+			
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics" />
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate" />
+			<EmotionTrackerUpdate
+				id="Module_ETU">
+				<TauntAndPointExcluded
+					Rule="NONE" />
+					<AddEmotion>CheerIdle_Base</AddEmotion>
+					<AddEmotion>CheerBusy_Base</AddEmotion>
+			</EmotionTrackerUpdate>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="6s"
+				SinkRate="2.4"
+				DestructionDelay="10.0s">
+                <DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="ELECTROCUTED LASERED BURNED STABBED IRRADIATED"
+                    ExemptStatus="OVER_WATER"/>
+                <Sound
+					Type="INITIAL"
+					List="SOV_SovietScientist_VoiceDie" />
+            </SlowDeath>
+            
+            <SlowDeath
+				id="ModuleTag_DeathWater"
+                Fade="true"
+                FadeDelay="6s"
+                FadeTime="2s"
+				SinkDelay="0.5s"
+				SinkRate="1.2"
+				DestructionDelay="10.0s">
+                <DieMuxData
+					DeathTypes="ALL"
+                    RequiredStatus="OVER_WATER"/>
+                <Sound
+					Type="INITIAL" List="SOV_SovietScientist_VoiceDie" />
+			</SlowDeath>
+	
+	<SlowDeath
+				id="ModuleTag_TeslaDeath"
+				DeathFlags="DEATH_1"
+				SinkDelay="7s"
+				SinkRate="2.4"
+				DestructionDelay="8.5s">
+                <DieMuxData
+					DeathTypes="ELECTROCUTED"
+					DeathTypesForbidden="LASERED BURNED STABBED IRRADIATED"
+                    ExemptStatus="OVER_WATER"/>
+				<Sound Type="INITIAL" List="SOV_SovietScientist_VoiceDieShock" />
+			</SlowDeath>
+			
+			<SlowDeath
+				id="ModuleTag_LaserDeath"
+				DeathFlags="DEATH_2"
+				SinkDelay="7s"
+				SinkRate="2.4"
+				DestructionDelay="8.5s">
+				<DieMuxData
+					DeathTypes="LASERED"
+					DeathTypesForbidden="ELECTROCUTED BURNED STABBED IRRADIATED"
+                    ExemptStatus="OVER_WATER"/>
+				<Sound Type="INITIAL" List="SOV_SovietScientist_VoiceDie" />
+			</SlowDeath>
+			
+			<SlowDeath
+				id="ModuleTag_FireDeath"
+				DeathFlags="DEATH_3"
+				SinkDelay="7s"
+				SinkRate="2.4"
+				DestructionDelay="8.5s">
+				<DieMuxData
+					DeathTypes="BURNED"
+					DeathTypesForbidden="ELECTROCUTED LASERED STABBED IRRADIATED"
+                    ExemptStatus="OVER_WATER"/>
+                <Sound Type="INITIAL" List="SOV_SovietScientist_VoiceDieFire" />
+            </SlowDeath>
+            
+            <SlowDeath
+				id="ModuleTag_SwordDeath"
+				DeathFlags="DEATH_4"
+				SinkDelay="7s"
+				SinkRate="2.4"
+				DestructionDelay="8.5s">
+                <DieMuxData
+					DeathTypes="STABBED"
+					DeathTypesForbidden="ELECTROCUTED LASERED BURNED IRRADIATED"
+                    ExemptStatus="OVER_WATER"/>
+				<Sound Type="INITIAL" List="SOV_SovietScientist_VoiceDie" />
+			</SlowDeath>
+			
+			<SlowDeath
+				id="ModuleTag_RadiationDeath"
+				DeathFlags="DEATH_5"
+				SinkDelay="7s"
+				SinkRate="2.4"
+				DestructionDelay="8.5s">
+				<DieMuxData
+					DeathTypes="IRRADIATED"
+					DeathTypesForbidden="ELECTROCUTED LASERED BURNED STABBED"
+					ExemptStatus="OVER_WATER"/>
+				<Sound Type="INITIAL" List="SOV_SovietScientist_VoiceDiePoison" />
+			</SlowDeath>
+		
+			<xi:include
+				href="DATA:Includes/CaptureBehavior.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:Behaviors/child::*)" />			
+			<StatusBitsUpgrade
+				id="ModuleTag_VeterancyUpgrade"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_Veterancy_HEROIC</TriggeredBy>
+			</StatusBitsUpgrade>
+
+		  <!-- passive healing behavior-->
+		  <PassiveAreaEffectBehavior
+			  id="ModuleTag_PassiveHeal"
+			  EffectRadius="100.0"
+			  HealingPercentPerSecond="5%"
+			  AffectWoundedOnly="true"
+			  AffectUnderAttack="true"
+			  NonStackable="true"
+			  ShowDebugCircle="false"
+			  DisabledTypesToProcess="HELD">
+			<AllowFilter
+				Rule="ANY"
+				Relationship="ALLIES"
+				Include="INFANTRY">
+			  <ExcludeThing>SovietScoutVehicle</ExcludeThing>
+			</AllowFilter>
+		  </PassiveAreaEffectBehavior>
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="1000.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_YurikoVoiceDieFall">
+				<ModelConditionSound Sound="SOV_SovietScientist_VoiceDieYurikoFall" RequiredFlags="IMPENDING_DOOM" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_YurikoVoiceUp">
+				<ModelConditionSound Sound="SOV_SovietScientist_VoiceDieYurikoUp" RequiredFlags="STUNNED_FLAILING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="BodyfallGenericDirt" ExcludedMC="OVER_WATER" Animation="SUScientist_DTBA" Frame="20" />
+				<Sound Sound="SOV_Scientist_CrashGroundImpactMS" ExcludedMC="OVER_WATER" Animation="SUScientist_LNDA" Frame="4" />
+				<Sound Sound="BodyfallGenericDirt" ExcludedMC="OVER_WATER" Animation="SUScientist_LNDA" Frame="8 16" />
+			</AnimationSoundClientBehavior>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_WaterSounds">
+				<Override RequiredFlags="OVER_WATER">
+					<AudioArraySound>
+						<AudioEntry Sound="SOV_Engineer_MoveStartWater" AudioType="soundMoveStart" />
+						<AudioEntry Sound="SOV_Engineer_MoveLoopWaterMS" AudioType="soundMoveLoop" />
+					</AudioArraySound>
+					<AudioArrayVoice>
+						<AudioEntry Sound="SOV_Engineer_Water_VoiceSelectMS" AudioType="voiceSelect" />
+						<AudioEntry Sound="SOV_Engineer_Water_VoiceSelectBattleMS" AudioType="voiceSelectBattle" />
+						<AudioEntry Sound="SOV_Engineer_Water_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" /> 
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_WaterEntrySplash">
+				<ModelConditionSound Sound="Infantry_WaterSplash" RequiredFlags="OVER_WATER" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape 
+				Type= "CYLINDER"
+				MajorRadius = "5.0"
+				MinorRadius = "5.0"
+				Height = "15.0"
+				ContactPointGeneration = "SQUAD_MEMBER" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="SOV_SovietScientist_VoiceAttack" AudioType="voiceAttack" />
+			<AudioEntry Sound="SOV_SovietScientist_VoiceFear" AudioType="voiceFear" />
+			<AudioEntry Sound="SOV_SovietScientist_VoiceMove" AudioType="voiceMove" />
+			<AudioEntry Sound="SOV_SovietScientist_VoiceMoveAttack" AudioType="voiceAttackAfterMoving" />
+			<AudioEntry Sound="SOV_SovietScientist_VoiceSelect" AudioType="voiceSelect" />
+			<AudioEntry Sound="SOV_SovietScientist_VoiceSelectBattle" AudioType="voiceSelectBattle" />
+			<AudioEntry Sound="SOV_SovietScientist_VoiceSelectUnderFire" AudioType="voiceSelectUnderFire" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="SOV_Scientist_MoveStart" AudioType="soundMoveStart" />
+		</AudioArraySound>
+		
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="100" />
+	</GameObject>
+		
+</AssetDeclaration>

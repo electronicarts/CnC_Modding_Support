@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:AUSurvyrX_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:AUSurvyr_FP.w3x" />			
+		<Include
+			type="all"
+			source="ART:AUSurvyr_MOVA.w3x" />
+		<Include
+			type="all"
+			source="ART:AUSurvyr_UPAK.w3x" />
+		<Include
+			type="all"
+			source="ART:AUSurvyr_UPAK2.w3x" />
+		<Include
+			type="all"
+			source="ART:AUSurvyr_UPAK3.w3x" />
+		<Include
+			type="all"
+			source="ART:AUSurvyrR_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:AUSurvyrR_DIEA.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="AlienExplorer"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_ALIENExplorer"
+		ButtonImage="Portrait_ALIENExplorer"
+		Side="ALIEN"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildCost="1500"
+		BuildTime="15"
+		CommandSet="AlienExplorerCommandSet"
+		KindOf="PRELOAD SELECTABLE CAN_ATTACK ATTACK_NEEDS_LINE_OF_SIGHT CAN_CAST_REFLECTIONS SCORE VEHICLE EXPANSION_UNIT IGNORES_SELECT_ALL"
+		ProductionQueueType="OTHER_STRUCTURE"
+		UnitCategory="VEHICLE"
+		RadarPriority="UNIT"
+		VoicePriority="40"
+		EditorName="AlienExplorer"
+		Description="Desc:AlienExplorer"
+		TypeDescription="Type:AlienExplorer">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:ALIENEXPLORER</DisplayName>
+		<GameDependency>
+			<RequiredObject>AlienDronePlatform</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="AlienExplorerArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			Locomotor="AlienExplorerLocomotor"
+			Condition="NORMAL"
+			Speed="60.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="false" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AUSurvyrX_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="AUSurvyr_FP" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="AUSurvyrR_SKN" />
+					<ParticleSysBone
+						BoneName="Head"
+						FXParticleSystemTemplate="AlienDamageFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Head"
+						FXParticleSystemTemplate="AlienDamageFireGlow01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Head"
+						FXParticleSystemTemplate="AlienDamageFireGlow02"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="AUSurvyrX_SKN" />
+					<Texture
+						Original="AUSurvyr"
+						New="AUSurvyr_d" />
+					<ParticleSysBone
+						BoneName="Head"
+						FXParticleSystemTemplate="AlienDamageFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Head"
+						FXParticleSystemTemplate="AlienDamageFireGlow01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Head"
+						FXParticleSystemTemplate="AlienDamageFireGlow02"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="AUSurvyrX_SKN" />
+					<Texture
+						Original="AUSurvyr"
+						New="AUSurvyr_d" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="AUSurvyr_MOVA" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="AUSurvyrR_DIEA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate" />
+			<Physics
+				id="ModuleTag_Physics" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="8s"
+				SinkRate="1.0"
+				DestructionDelay="15s">
+				<OCL
+					Type="INITIAL">
+					<OCL>OCL_ALIENSurveyorDebris</OCL>
+				</OCL>
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="TOPPLED" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_ALIENVehicleExplode" />
+			</FXListBehavior>
+			<xi:include
+				href="DATA:Includes/GenericUnpackPower.xml" />
+			<xi:include
+				href="DATA:Includes/GenericUnpackUpdate.xml" />
+			<ReplaceSelfUpgrade
+				id="ModuleTag_ReplaceSelf"
+				NewObjectUnpackTime="30.0s"
+				CheckBuildAssistant="true">
+				<TriggeredBy>Upgrade_UnPack</TriggeredBy>
+				<ReplacementTemplate>AlienMiniMCVOutpost</ReplacementTemplate>
+			</ReplaceSelfUpgrade>
+			<AISpecialPowerUpdate
+				id="ModuleTag_MCVBuildConyardAI"
+				CommandButtonName="Command_UnpackExplorer"
+				SpecialPowerAIType="SPECIAL_POWER_BUILD_CONYARD" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="2000.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="10.0"				
+				Height="55.0"></Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="ALI_Explorer_SoundCreate"
+				AudioType="voiceCreated" />
+			<AudioEntry
+				Sound="ALI_Explorer_SoundMove"
+				AudioType="voiceMove" />
+			<AudioEntry
+				Sound="ALI_Explorer_SoundSelectMS"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<!-- ALI_Explorer_SoundSpecial -->
+		<AudioArraySound>
+			<AudioEntry
+				Sound="ALI_Explorer_IdleLoop"
+				AudioType="soundAmbient" />
+			<AudioEntry
+				Sound="ALI_Explorer_MoveStart"
+				AudioType="soundMoveStart" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="320" />
+		<CrusherInfo
+			CrusherLevel="0"
+			CrushEqualLevelProps="true"
+			CrushableLevel="2" />
+	</GameObject>
+</AssetDeclaration>

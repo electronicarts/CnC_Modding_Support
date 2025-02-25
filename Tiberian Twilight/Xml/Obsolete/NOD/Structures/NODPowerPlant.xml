@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBPower.w3x" />
+		<Include
+			type="all"
+			source="ART:NBPower_ASN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBPower_AAN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBPowerD2_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBPowerD2_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBPowerD3_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBPowerD3_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBPower.w3x" />
+		<Include
+			type="all"
+			source="ART:NBPower.w3x" />
+		<Include
+			type="all"
+			source="ART:NBTibCore.w3x" />
+		<Include
+			type="all"
+			source="ART:NBTibCore_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:FXTracerGDI.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="NODPowerPlant"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_NODPowerPlant"
+		ButtonImage="Portrait_NODPowerPlant"
+		Side="NOD"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildTime="1"
+		EnergyBonus="2"
+		CommandSet="NODPowerPlantCommandSet"
+		KindOf="+FS_POWER +NOT_AUTOACQUIRABLE +AUTO_ACQUIRABLE_BY_AI +CRUSHABLE_BUILDING +STRUCTURE_HUB +CAN_HAVE_BUILDABILITY"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="45d"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="NODPowerPlant"
+		Description="Desc:NODPowerPlant"
+		TypeDescription="Type:NODPowerPlant">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODPowerPlant</DisplayName>
+		<ArmorSet
+			Armor="NODPowerPlantArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BuildingPlacementType="SpreadDefault" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_01"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBPower" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBPower_ASN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBPowerD2_SN" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="NodPPSparks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="NodPPSparks"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBPowerD2_SN" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="NodPPSparks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="NodPPSparks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone03"
+						FXParticleSystemTemplate="NODDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone03"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone03"
+						FXParticleSystemTemplate="NODDamagedFireDistortion"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NBPowerD3_SN" />
+				</ModelConditionState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBPower_AAN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Large"
+						FollowBone="true" />
+				</AnimationState>
+				<!-- DAMAGED ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="NBPowerD2_AN"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<!-- REALLY DAMAGED ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBPowerD2_AN"
+						AnimationMode="MANUAL" />
+					<Script>
+					Prev = CurDrawablePrevAnimationState();
+					if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_DamagedToReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_DamagedToReallyDamaged")
+					end
+				</Script>
+				</AnimationState>
+				<!-- DYING ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="NBPowerD3_AN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Des_Large"
+						FollowBone="false" />
+				</AnimationState>
+				<!-- Transitions -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_DamagedToReallyDamaged">
+					<Animation
+						AnimationName="NBPowerD2_AN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_TibCore"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+<!--
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBTibCore_ASN" />
+				</ModelConditionState>
+-->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 DAMAGED">
+					<Model
+						Name="NBTibCore_D1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 REALLYDAMAGED">
+					<Model
+						Name="NBTibCore_D1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 DYING">
+					<Model
+						Name="NBTibCore_D1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="NBTibCore" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="DO_NOT_PLAY_WHEN_UNPOWERED">
+					<Animation
+						AnimationName="NBTibCore"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<!-- BUILDUP ANIMATION -->
+				<!--
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBTibCore_AAN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Large"
+						FollowBone="true" />
+				</AnimationState>
+-->
+				<!-- DAMAGED ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="NBTibCore_D1"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<!-- REALLY DAMAGED ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBTibCore_D1"
+						AnimationMode="MANUAL" />
+					<Script>
+					Prev = CurDrawablePrevAnimationState();
+					if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_DamagedToReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_DamagedToReallyDamaged")
+					end
+				</Script>
+				</AnimationState>
+				<!-- DYING ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="NBTibCore_D1"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Des_Large"
+						FollowBone="false" />
+				</AnimationState>
+				<!-- Transitions -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_DamagedToReallyDamaged">
+					<Animation
+						AnimationName="NBTibCore_D1"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw"
+				MinLength="35.0"
+				MaxLength="35.0"
+				Width="5.0"
+				MinSpeed="30"
+				MaxSpeed="40"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame="1"
+				MaxTracersPerFrame="1"
+				FrameLifeTime="10"
+				WeaponSlotType="PRIMARY_WEAPON"
+				Texture="FXTracerGDI"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_BulletHitLargeGDI">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="0.0"
+					g="0.0"
+					b="0.0" />
+			</TracerModelDraw>
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw02"
+				MinLength="35.0"
+				MaxLength="50.0"
+				Width="5.0"
+				MinSpeed="60"
+				MaxSpeed="80"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame="1"
+				MaxTracersPerFrame="1"
+				FrameLifeTime="10"
+				WeaponSlotType="SECONDARY_WEAPON"
+				Texture="FXTracerGDI"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_BulletHitLargeGDI">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="0.0"
+					g="0.0"
+					b="0.0" />
+			</TracerModelDraw>
+		</Draws>
+		<Behaviors>
+			<StructureHubBehavior
+				id="ModuleTag_AttachUpdate"
+				FullModelConditionSet="STRUCTURE_HUB_SLOTS_FULL">
+				<ConnectionShadowInfo
+					Type="ALPHA_DECAL_DYNAMIC"
+					SizeX="256"
+					SizeY="32"
+					OpacityStart="0"
+					OpacityFadeInTime="2s"
+					OpacityPeak="1"
+					OpacityFadeOutTime="2s"
+					OpacityEnd="0"
+					OverrideLODVisibility="true"
+					Texture="wire" />
+				<BuildabilityCountUpgrade MaxCount="3" RequiredUpgrade="Upgrade_Tech_Up_Rank1" />
+				<BuildabilityCountUpgrade MaxCount="2" RequiredUpgrade="Upgrade_NODFaction" />
+			</StructureHubBehavior>
+
+			<ProductionUpdate
+				id="ProductionUpdateModuleTag"
+				Type="UPGRADE"  />
+
+			<StatusBitsUpgrade
+				id="ModuleTag_UpgradeWeaponAntiInfantry"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_HubAntiInfantry</TriggeredBy>
+			</StatusBitsUpgrade>
+			<StatusBitsUpgrade
+				id="ModuleTag_UpgradeWeaponAntiAir"
+				StatusToSet="WEAPON_UPGRADED_02">
+				<TriggeredBy>Upgrade_HubAntiAir</TriggeredBy>
+			</StatusBitsUpgrade>
+			<RemoveUpgradeUpgrade
+				id="ModuleTag_CommandSet_RemoveFor_AntiInfantry">
+				<TriggeredBy>Upgrade_HubAntiInfantry</TriggeredBy>
+				<UpgradeToRemove>Upgrade_HubAntiAir</UpgradeToRemove>
+			</RemoveUpgradeUpgrade>
+			<RemoveUpgradeUpgrade
+				id="ModuleTag_CommandSet_RemoveFor_AntiAir">
+				<TriggeredBy>Upgrade_HubAntiAir</TriggeredBy>
+				<UpgradeToRemove>Upgrade_HubAntiInfantry</UpgradeToRemove>
+			</RemoveUpgradeUpgrade>
+
+			<HordeGarrisonContain
+				id="ModuleTag_HordeGarrison"
+				ObjectStatusOfContained="UNSELECTABLE CAN_ATTACK"
+				ContainMax="2"
+				EnterSound="GenericBuilding_Garrison"
+				ExitSound="GenericBuilding_Ungarrison"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="false"
+				AllowNeutralInside="false"
+				AllowOwnPlayerInsideOverride="true"
+				ShowPips="true"
+				KillPassengersOnDeath="false"
+				ResetUpgradesOnEmpty="false">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY">
+					<ExcludeThing>ScrinInfantryB</ExcludeThing>
+				</PassengerFilter>
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="BONEGARRISON">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</PassengerData>
+				<MemberTemplateStatusInfo
+					ThingTemplate="GDIInfantryFSquad"
+					ObjectStatus="CAN_SPOT_FOR_BOMBARD" />
+				<ExitOffset
+					y="-80" />
+			</HordeGarrisonContain>
+
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIWatchTowerGun"
+						ObjectStatus="WEAPON_UPGRADED_01" />
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-60d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData
+							StartupDelay="1.0s"/>
+					</TurretSettings>
+					<Weapon
+							Ordering="PRIMARY_WEAPON"
+							Template="GDIAABattery"
+							ObjectStatus="WEAPON_UPGRADED_02" />
+					<TurretSettings
+						TurretTurnRate="1800"
+						TurretPitchRate="720"
+						AllowsPitch="true"
+						MinimumPitch="-15d"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData
+							ReacquireDelay="30.0s">
+						</TurretAITargetChooserData>
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<AttributeModifierUpgrade
+				id="Upgrade_VehicleArmor_01"
+				AttributeModifier="Modifier_UpgradeArmor_1_Tier2">
+				<TriggeredBy>Upgrade_ImprovedDefenses1</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<AttributeModifierUpgrade
+				id="Upgrade_VehicleArmor_02"
+				AttributeModifier="Modifier_UpgradeArmor_2_Tier2">
+				<TriggeredBy>Upgrade_ImprovedDefenses2</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<AttributeModifierUpgrade
+				id="Upgrade_VehicleArmor_03"
+				AttributeModifier="Modifier_UpgradeArmor_3_Tier2">
+				<TriggeredBy>Upgrade_ImprovedDefenses3</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<AttributeModifierUpgrade
+				id="Upgrade_VehicleArmor_01"
+				AttributeModifier="Modifier_UpgradeHealth_TechUp1_DefenseHub">
+				<TriggeredBy>Upgrade_Tech_Up_Rank1</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<AttributeModifierUpgrade
+				id="Upgrade_VehicleArmor_02"
+				AttributeModifier="Modifier_UpgradeHealth_TechUp2_DefenseHub">
+				<TriggeredBy>Upgrade_Tech_Up_Rank2</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildDamaged_Medium" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericNODBuildingSuicideNoSpawn.xml" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions"
+			/>
+			<PowerUpgrade
+				id="ModuleTag_DefenseOnly">
+				<TriggeredBy>Upgrade_DefenseClass</TriggeredBy>
+			</PowerUpgrade>
+			<!-- Structure has no buildability when unpacking or when all slots are full -->
+			<ProjectedBuildabilityOverrideBehavior
+				id="BuildabilityOverride" >
+				<Override
+					ModelConditionsToReject="STRUCTURE_HUB_SLOTS_FULL STRUCTURE_UNPACKING RUBBLE"
+					StatusToReject="NOT_IN_WORLD">
+					<ProjectedBuildabilityInfo
+						Radius="300"
+						BuildPlacementTypes="MAIN_STRUCTURE" />
+				</Override>
+				<Override>
+					<!-- Otherwise, we have no buildability - not even the default DISPLAY_ONLY buildability 
+							 (e.g. we don't want to display a buildability box when we are full) -->			
+				</Override>
+			</ProjectedBuildabilityOverrideBehavior>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					SympathyRange="25.0"
+					IdleScanDelay="0.2s"/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="10000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "27.7657"
+				MinorRadius = "16.6304"
+				Height = "28.8532" >
+				<Offset
+					x = "0.710335"
+					y = "0.435268"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "32.7635"
+				MinorRadius = "21.9521"
+				Height = "14.4266" >
+				<Offset
+					x = "0.710335"
+					y = "0.435268"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "4.0"
+				MinorRadius = "4.0"
+				Height = "14.4266" >
+				<Offset
+					x = "-19.8892"
+					y = "-32.8606"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "4.0"
+				MinorRadius = "8.88"
+				Height = "24.5252" >
+				<Offset
+					x = "1.16163"
+					y = "-24.6029"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "4.0"
+				MinorRadius = "8.88"
+				Height = "24.5252" >
+				<Offset
+					x = "1.16163"
+					y = "25.4366"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "6.0"
+				MinorRadius = "6.0"
+				Height = "15.0036" >
+				<Offset
+					x = "-22.7741"
+					y = "33.5058"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "4.0"
+				MinorRadius = "4.0"
+				Height = "52.32" >
+				<Offset
+					x = "14.1122"
+					y = "22.6757"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "2.5"
+				MinorRadius = "2.5"
+				Height = "65.9232" >
+				<Offset
+					x = "14.1122"
+					y = "22.6757"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "13.5707"
+				MinorRadius = "16.6304"
+				Height = "37.9647" >
+				<Offset
+					x = "0.710334"
+					y = "0.435268"
+					z = "0.0" />
+			</Shape>
+<!-- Tiberium Core -->			
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "13.2939"
+				MinorRadius = "7.9971"
+				Height = "16.6174" >
+				<Offset
+					x = "-54.1601"
+					y = "0.732512"
+					z = "0.0" />
+			</Shape>			
+			<ContactPoint>
+				<Pos x= "-15.7387" y = "-15.4544" z = "1.69766" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "16.1939" y = "-15.4544" z = "33.6302" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "16.1939" y = "16.4782" z = "1.69766" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "-15.7387" y = "16.4782" z = "33.6302" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "-15.7387" y = "-15.4544" z = "33.6302" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "16.1939" y = "-15.4544" z = "1.69766" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "16.1939" y = "16.4782" z = "33.6302" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "-15.7387" y = "16.4782" z = "1.69766" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_PowerPlantSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="500"
+			ShroudClearingRange="400" />
+		<!-- Just so that we get feedback when placing the hub, before it is actually created... The real buildability
+			   is controlled by the module -->
+		<ProjectedBuildabilityInfo
+			Radius="300"
+			BuildPlacementTypes="DISPLAY_ONLY" />
+	</GameObject>
+</AssetDeclaration>

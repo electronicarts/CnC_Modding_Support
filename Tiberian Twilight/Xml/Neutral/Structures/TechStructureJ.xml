@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<!-- TechStructureJ / Junkyard -->
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:JTTechStructureJ_SKN.w3x" />
+		<Include type="all"	source="ART:JTTechStructureJ_IDLA.w3x" />
+		<Include type="all"	source="ART:JTTechStructureJ_SPWN.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="TechStructureJ"
+		inheritFrom="BaseStructure"
+		SubGroupPriority="472"
+		SelectPortrait="Portrait_Neutral_JT_TechStr_J_GDI"
+		ButtonImage="Portrait_TechStructureJ"
+		Side="Neutral"
+		BuildTime="15"
+		EditorSorting="STRUCTURE"
+		CommandSet="EmptyCommandSet"
+		KindOf="+ALWAYS_VISIBLE +UNATTACKABLE"
+		RadarPriority="STRUCTURE"
+		EditorName="TechStructureJ"
+		Description="Desc:TechStructureJ">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechStructureJ</DisplayName>
+		<ArmorSet
+			Armor="InvulnerableArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				ExtraPublicBone="ROTATION CRATE_01 CRATE_02 CRATE_03 CRATE_04 CRATE_05 CRATE_06 CRATE_07 CRATE_08"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JTTechStructureJ_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="JTTechStructureJ_IDLA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="JTTechStructureJ_SPWN"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<CircularOCLUpdate
+				id="ModuleTag_CircularOCLUpdate"
+				IdleTime="20s"
+				TurnTime="1s"
+				PivotBone="ROTATION"
+				Options="BLOCKED_BY_SPAWNS_CREATED_BY_OUR_THING_TYPE">
+				<OCLInfo OCL="OCL_VeterancyCrate" ProducingModelConditions="USER_1"/>
+				<OCLInfo OCL="OCL_VeterancyCrate" ProducingModelConditions="USER_1"/>
+				<OCLInfo OCL="OCL_VeterancyCrate" ProducingModelConditions="USER_1"/>
+				<OCLInfo OCL="OCL_UpgradeCrate"  ProducingModelConditions="USER_1"/>
+				<SlotInfo SpawnBone="CRATE_01" ProducingOCLOffsetTime="1.6s"/>
+				<SlotInfo SpawnBone="CRATE_02" ProducingOCLOffsetTime="1.6s"/>
+				<SlotInfo SpawnBone="CRATE_03" ProducingOCLOffsetTime="1.6s"/>
+				<SlotInfo SpawnBone="CRATE_04" ProducingOCLOffsetTime="1.6s"/>
+				<SlotInfo SpawnBone="CRATE_05" ProducingOCLOffsetTime="1.6s"/>
+				<SlotInfo SpawnBone="CRATE_06" ProducingOCLOffsetTime="1.6s"/>
+				<SlotInfo SpawnBone="CRATE_07" ProducingOCLOffsetTime="1.6s"/>
+				<SlotInfo SpawnBone="CRATE_08" ProducingOCLOffsetTime="1.6s"/>
+				<BlockingObjectFilter
+					Rule="NONE"
+					Relationship="SAME_PLAYER" 
+					Include="CRATE"/>
+				<ObjectStatusValidation ForbiddenStatus="UNPACKING" />
+			</CircularOCLUpdate>
+
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="2.0s" />
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="StructureAIStateMachine"
+				AutoAcquireEnemiesWhenIdle="NO">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="NEU_Junkyard_StrJ_AnimationPlatformRotate_Delayed" Animation="JTTechStructureJ_SPWN" Frame="0"/>
+				<Sound Sound="NEU_Junkyard_StrJ_AnimationPushCrateOut" Animation="JTTechStructureJ_SPWN" Frame="0"/>
+				<Sound Sound="NEU_Junkyard_StrJ_AnimationRetract" Animation="JTTechStructureJ_SPWN" Frame="45"/>
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+
+		<Geometry>
+			<!-- an larger box to prevent structures from being built near us -->
+			<PlacementShape
+				Type="BOX"
+				MajorRadius="100.0"
+				MinorRadius="100.0"
+				Height="5.0"/>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="10"
+				Height="55.0"/>
+		</Geometry>
+		<!-- 
+		<AudioArrayVoice>
+			<AudioEntry Sound="NEU_Junkyard_StrJ_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice> 
+		 -->
+	</GameObject>
+
+	<ObjectCreationList
+		id="OCL_VeterancyCrate">
+		<OCLModule>
+			<Modules>
+				<ParentRelativePrePosition>
+					<Offset/>
+				</ParentRelativePrePosition>
+				<ClampToGround/>
+				<!-- point away -->
+				<OrientTowardsParentPreOrient Angle="180d"/>
+				<CreateObject ObjectTemplate="VeterancyCrate"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_UpgradeCrate">
+		<OCLModule>
+			<Modules>
+				<ParentRelativePrePosition>
+					<Offset/>
+				</ParentRelativePrePosition>
+				<ClampToGround/>
+				<!-- point away -->
+				<OrientTowardsParentPreOrient Angle="180d"/>
+				<CreateObject ObjectTemplate="UpgradeCrate"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+</AssetDeclaration>

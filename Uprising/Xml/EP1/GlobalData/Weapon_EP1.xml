@@ -1,0 +1,2338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags />
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+	</Includes>
+
+	<!-- ***** Allied ***** -->
+
+	<!-- ////////////////////////// -->
+	<!--   AlliedArtilleryVehicle   -->
+	<!-- ////////////////////////// -->
+	<WeaponTemplate
+		id="AlliedArtilleryVehicleMachineGun"
+		FiringLoopSound="ALL_Pacifier_MachineGunLoopMS"
+		FiringLoopSoundContinuesDuringReload="false"
+		FireFX="FX_Allied_Artillery_PrimaryFire"
+		FireVeteranFX="FX_Allied_Artillery_PrimaryFireVet"
+		AttackRange="250.0"
+		WeaponSpeed="999999.0"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		CanFireWhileMoving="true"
+		ClipSize="8"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		ReAcquireDetailType="PER_CLIP">
+		<FiringDuration
+			MinSeconds="0.2s"
+			MaxSeconds="0.2s" />
+		<ClipReloadTime
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<DamageNugget
+				Damage="18.0"
+				Radius="0.0"
+				DamageType="AUTO_CANNON"
+				DamageFXType="SOVIET_MACHINEGUN"
+				DeathType="NORMAL"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="AlliedArtilleryVehicleSiegePreAttackArtillery"
+		AttackRange="740.0"
+		MinimumAttackRange="250"
+		CanFireWhileMoving="false"
+		WeaponSpeed="999999.0"
+        Flags="NOT_ATTRACTED_BY_MAGNETS"
+		AcceptableAimDelta="90d">
+		<Nuggets>				 
+			<WeaponOCLNugget
+				WeaponOCL="OCL_AlliedArtilleryPreAttack_Marker">
+			</WeaponOCLNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="AlliedArtilleryVehicleSiegeArtillery"		
+		FireSound="ALL_SiegeTank_CannonFire"
+		FireFX="FX_Allied_Artillery_Fire"
+		FireVeteranFX="FX_Allied_Artillery_FireVet"		
+		AttackRange="740.0"
+		MinimumAttackRange="250"
+		WeaponSpeed="250.0"
+		MinWeaponSpeed="225"
+		MaxWeaponSpeed="275"
+		Flags="RELOAD_WHEN_ATTACK_STOPS FORCE_EMPTY_ENTIRE_CLIP"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		CanFireWhileMoving="false"
+		ClipSize="5"		
+		FinishAttackOnceStarted="true"
+		HitPercentage="0%"
+		ScatterIndependently="true"
+		ScatterAlways="true"
+		ScatterRadius="30"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"		
+		ReAcquireDetailType="PRE_SHOT"
+		PreAttackType="PER_CLIP"
+		PreAttackWeapon="AlliedArtilleryVehicleSiegePreAttackArtillery">
+		<PreAttackDelay
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<ClipReloadTime
+			MinSeconds="4.0s"
+			MaxSeconds="4.0s" />
+		<WeaponAiHintInfo
+			UseAsWarheadForDamageCalculations="AlliedArtilleryVehicleSiegeArtilleryBarrageWeaponWarhead" />
+		<Nuggets>
+			<ProjectileNugget
+				id="AlliedArtilleryVehicleSiegeArtillery_ProjectileNugget" 
+				WarheadTemplate="AlliedArtilleryVehicleSiegeArtilleryBarrageWeaponWarhead"
+				ProjectileTemplate="AlliedArtilleryVehicleBarrageProjectile">				
+        <SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE" />        
+				<VeterancyProjectiles
+					VeterancyLevel="HEROIC"
+					ProjectileTemplate="AlliedArtilleryVehicleBarrageProjectile_Veteran"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- this weapon should only allow attack for the bridge gatehouse -->
+	<WeaponTemplate
+		id="AlliedArtilleryVehicleSiegeArtilleryForBridges"
+		inheritFrom="AlliedArtilleryVehicleSiegeArtillery"
+		HitPercentage="100%"
+		ScatterIndependently="false"
+		ScatterAlways="false"
+		HitStoredTarget="true"
+		ProjectileCollidesWith="NEUTRAL STRUCTURES"
+		RequiredAntiMask="ANTI_STRUCTURE"
+		ForbiddenAntiMask="ANTI_SUBMERGED">
+		<Nuggets>
+			<ProjectileNugget
+				id="AlliedArtilleryVehicleSiegeArtillery_ProjectileNugget">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="BRIDGE_GATEHOUSE"
+					Exclude="BRIDGE_SEGMENT BRIDGE" />
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="AlliedArtilleryVehicleSiegeArtilleryBarrageWeaponWarhead"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS SELF"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE">
+		<Nuggets>
+      <MetaImpactNugget
+      id="DefaultMetaImpaceNugget"
+      ShockWaveAmount="50"
+      ShockWaveRadius="50.0"
+      ShockWaveZMult="1.0"
+      ShockWaveClearFlingHeight="15.0"
+      ForbiddenTargetObjectStatus="LEECHED_TARGET_ACTIVE"
+      ForbiddenTargetModelCondition="STUNNED STUNNED_STANDING_UP STUNNED_FLAILING">
+        <SpecialObjectFilter
+					Rule="ANY"
+					Include="INFANTRY">
+        </SpecialObjectFilter>
+      </MetaImpactNugget>
+			<DamageNugget
+				id="DefaultDamageNugget" 
+				Damage="150.0"
+				DamageType="EXPLOSIVE"
+				DeathType="EXPLODED"
+				Radius="40.0">
+				<DamageScalarDetails Scalar= "50%">
+						<Filter
+							Rule="ALL"
+							Relationship="ALLIES" />
+				</DamageScalarDetails>	
+			</DamageNugget>			
+			<SuppressionNugget
+			   Radius="60.0"
+			   Suppression="25"
+			   DurationSeconds="3s" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- ///////////////////////// -->
+	<!--   AlliedGunshipAircraft   -->
+	<!-- ///////////////////////// -->
+  
+	<!-- AimDirection must match circling direction -->
+	<!-- 2 barrels so clipsize is 2 -->
+	<WeaponTemplate
+		  id="AlliedGunshipAircraftWeapon"
+		  AimDirection="0d"
+		  AcceptableAimDelta="5d"
+		  AttackRange="400.0"
+		  MinimumAttackRange="50"
+		  UseCenterForRangeCheck="true"
+		  CanFireWhileMoving="true"
+		  ClipSize="12"
+		  ScatterRadius="30"
+		  RadiusDamageAffects="ENEMIES"
+		  FireFX="FX_Allied_Gunship_Fire"
+		  FireVeteranFX="FX_Allied_Gunship_Fire"
+		  FireSound="ALL_Gunship_ColliderCannonWeaponFire"
+      Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		  WeaponSpeed="500"
+		  MinWeaponSpeed="500"
+		  MaxWeaponSpeed="500"
+		  MinTargetPitch="-45d"
+		  MaxTargetPitch="45d"
+		  RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER">
+	  <FiringDuration
+		  MinSeconds="2.0s"
+		  MaxSeconds="2.0s" />
+	  <ClipReloadTime
+		  MinSeconds="2.0s"
+		  MaxSeconds="2.0s" />
+	  <Nuggets>
+		<ProjectileNugget
+			ProjectileTemplate="AlliedGunshipAircraftWeaponProjectile"
+			WarheadTemplate="AlliedGunshipAircraftWeaponWarhead">
+		  <VeterancyProjectiles
+			  VeterancyLevel="HEROIC"
+			  ProjectileTemplate="AlliedGunshipAircraftWeaponProjectile_Veteran"/>
+		</ProjectileNugget>
+		<InformTargetNugget />
+	  </Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="AlliedGunshipAircraftWeaponWarhead"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER" >
+	  <Nuggets>
+      <DamageNugget
+        id="DefaultDamageNugget"
+        Damage="100.0"
+			  Radius="50.0"
+			  DamageTaperOff="30"
+			  DamageType="EXPLOSIVE"
+			  DeathType="EXPLODED">
+        <DamageScalarDetails Scalar= "50%">
+          <Filter
+            Rule="NONE"
+						Include="INFANTRY" />
+        </DamageScalarDetails>
+      </DamageNugget>
+      <MetaImpactNugget
+        id="DefaultMetaImpactNugget"
+        ShockWaveAmount="50"
+			  ShockWaveRadius="50.0"
+			  ShockWaveTaperOff="25.0"
+			  ForbiddenTargetModelCondition="STUNNED STUNNED_STANDING_UP STUNNED_FLAILING"/>
+    </Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="AlliedGunshipAircraftAutoCannon"
+		AttackRange="300.0"
+		UseCenterForRangeCheck="true"
+		AcceptableAimDelta="1d"
+		CanFireWhileMoving="true"
+		ClipSize="10"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		FireSound="ALL_Gunship_MachineGunWeaponFire"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		ReAcquireDetailType="PER_CLIP">
+	  <FiringDuration
+		  MinSeconds="0.1s"
+		  MaxSeconds="0.1s" />
+	  <ClipReloadTime
+		  MinSeconds="0.5s"
+		  MaxSeconds="0.5s" />
+	  <Nuggets>
+		<DamageNugget
+			Damage="12.0"
+			Radius="0.0"
+			DamageType="AUTO_CANNON"
+			DamageFXType="SOVIET_MACHINEGUN"
+			DeathType="NORMAL">
+		<DamageScalarDetails Scalar= "50%">
+					<Filter
+						Rule="NONE"
+						Include="STRUCTURE" />
+				</DamageScalarDetails>
+						</DamageNugget>
+	  </Nuggets>
+	</WeaponTemplate>
+
+	<!-- ///////////////////////////// -->
+	<!--   AlliedFutureTank					   -->
+	<!-- ///////////////////////////// -->
+
+	<WeaponTemplate
+		id="AlliedFutureTankNeutronScrambler"
+		inheritFrom="ScatterableWeapon"
+		FireSound="ALL_FutureTank_Weapon1FireMS"
+		FireFX="FX_Allied_FutureTank_Fire"
+		FireVeteranFX="FX_Allied_FutureTank_Fire"
+		AttackRange="250.0"
+		WeaponSpeed="999999.0"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		ProjectileCollidesWith="ENEMIES NEUTRAL STRUCTURES WALLS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		CanFireWhileMoving="true"
+		ClipSize="2"
+		ShotsPerBarrel="1" 
+		ReAcquireDetailType="PER_CLIP"
+		PreAttackType="PER_TARGET"
+		UpdateBarrelModelConditions="true">
+		<PreAttackDelay
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<FiringDuration
+			MinSeconds="3s"
+			MaxSeconds="3s" />
+		<Nuggets>
+			<ProjectileNugget
+				id="defaultProjectileNugget" 
+				ProjectileTemplate="AlliedFutureTankNeutronWeaponProjectile"
+				WarheadTemplate="AlliedFutureTankNeutronWeaponWarhead">
+        <SpecialObjectFilter
+            Rule="ALL"
+            Exclude="BRIDGE BRIDGE_SEGMENT BRIDGE_ENDCAP BRIDGE_GATEHOUSE" />
+			</ProjectileNugget>
+			<InformTargetNugget />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="AlliedFutureTankNeutronScrambler_Veteran"
+		inheritFrom="AlliedFutureTankNeutronScrambler">
+		<Nuggets>
+			<ProjectileNugget
+				id="defaultProjectileNugget"
+				ProjectileTemplate="AlliedFutureTankNeutronWeaponProjectile_Vet"
+				WarheadTemplate="AlliedFutureTankNeutronWeaponWarhead_Vet">
+			</ProjectileNugget>
+			<InformTargetNugget />
+		</Nuggets>
+	</WeaponTemplate>
+
+  <WeaponTemplate
+		id="AlliedFutureTankNeutronWeaponWarhead"
+		RadiusDamageAffects="ENEMIES"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		ProjectileCollidesWith="ENEMIES NEUTRAL STRUCTURES WALLS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER" >
+		<Nuggets>
+			<!-- This is a mini damage amount for campaign purposes -->
+			<DamageNugget
+				id="defaultDamageNugget"
+				Damage="0.1"
+				DamageType="NEUTRON"/>
+      <WeaponOCLNugget
+				id="defaultOCLNugget" 
+				WeaponOCL="OCL_AlliedFutureTankNeutronScramblerNode"
+				TargetAsPrimaryObject="false">
+        <SpecialObjectFilter
+          Rule="ALL"
+          Exclude="BRIDGE BRIDGE_SEGMENT BRIDGE_ENDCAP BRIDGE_GATEHOUSE" />
+      </WeaponOCLNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="AlliedFutureTankNeutronWeaponWarhead_Vet"
+		inheritFrom="AlliedFutureTankNeutronWeaponWarhead">
+		<Nuggets>
+			<WeaponOCLNugget
+				id="defaultOCLNugget"
+				WeaponOCL="OCL_AlliedFutureTankNeutronScramblerNode_Vet">
+			</WeaponOCLNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="AlliedFutureTankNeutronWeapon_IncrementalWeapon"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		ProjectileCollidesWith="ENEMIES NEUTRAL STRUCTURES WALLS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER ANTI_AIRBORNE_INFANTRY ANTI_AIRBORNE_VEHICLE" >
+		<!-- 		FireSound="ALL_FutureTank_Weapon_NeutronScramblerImpactBig" no worky -->
+		<!--		FireFX="FX_ALL_FutureTank_Weapon_NeutronScramblerImpactBig" plays late -->
+		<Nuggets>
+			<DamageNugget
+				Damage="10.0"
+				DamageType="NEUTRON"
+				DamageFXType="ALLIED_BOMB"
+				DeathType="DETONATED">
+        <SpecialObjectFilter
+          Rule="ALL"
+          Exclude="BRIDGE BRIDGE_SEGMENT BRIDGE_ENDCAP BRIDGE_GATEHOUSE" />
+				<DamageScalarDetails Scalar= "25%">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</DamageScalarDetails>
+						<DamageScalarDetails Scalar= "50%">
+					<Filter
+						Rule="ALL"
+						Relationship="ALLIES" />
+			</DamageScalarDetails>	
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="AlliedFutureTankLaserSweepWeapon"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		PreAttackType="PER_SHOT"
+		AttackRange="275.0"
+		ClipSize="=$UNLIMITED_CLIP_SIZE">
+		<!--		FireSound="ALL_FutureTank_DeathRayWeaponFire" no worky -->
+		<Nuggets>
+			<DamageNugget
+				Damage="50.0"
+				Radius="5.0"
+				RadiusAffectsBridges="true"
+				DelayTimeSeconds="0.1s"
+				DamageType="EXPLOSIVE"
+				DeathType="LASERED">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="AIRCRAFT ORE_NODE BRIDGE_SEGMENT BRIDGE_ENDCAP"
+					StatusBitFlagsExclude="AIRBORNE_TARGET SUBMERGED" />
+				<DamageScalarDetails Scalar= "30%">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</DamageScalarDetails>
+			</DamageNugget>
+			<LineDamageNugget
+				id="DefaultDamageNugget"
+				Damage="25.0"
+				LineWidth="5.0"
+				DamageType="EXPLOSIVE"
+				DamageFXType="JAPAN_FORCE"
+				DeathType="NORMAL"
+				UseDynamicLineLength="true"
+				RadiusAffectsBridges="true"
+				OverShootDistance="0.0">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="AIRCRAFT ORE_NODE BRIDGE_SEGMENT BRIDGE_ENDCAP"
+					StatusBitFlagsExclude="AIRBORNE_TARGET SUBMERGED" />
+				<DamageScalarDetails Scalar= "30%">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</DamageScalarDetails>
+				</LineDamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+  <!-- ///////////////////////////// -->
+  <!--   AlliedLegionnaireInfantry   -->
+  <!-- ///////////////////////////// -->
+	<WeaponTemplate
+		id="AlliedLegionnaireInfantryFreezeSpray"
+		AttackRange="200.0"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		WeaponSpeed="750"
+		RadiusDamageAffects="ENEMIES"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		FiringLoopSound="ALL_CryoLegionaire_FreezeWeaponLoop"
+		FiringLoopSoundContinuesDuringReload="true"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		AcceptableAimDelta="1d"
+		CanFireWhileMoving="false"
+		DamageDealtAtSelfPosition="true"
+		ReAcquireDetailType="PER_CLIP"
+		IgnoresContactPoints="true" >
+    <!-- this little preattack delay is so we restart the firing animation for each shot, otherwise the anim gets out of sync with the FX-->
+    <PreAttackDelay
+			MinSeconds="0.01s"
+			MaxSeconds="0.01s" />
+    <FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+    <Nuggets>
+      <ActivateLaserNugget
+        id="defaultActivateLaserNugget"
+				Lifetime="1.9s"
+				LaserId="101"
+        OnlyIfInactive="true"/>
+      <ActivateLaserNugget
+        id="defaultActivateLaserNugget2"
+				Lifetime="1.9s"
+				LaserId="102"
+        OnlyIfInactive="true"/>
+			<SecondaryDamageNugget
+				Amount="20"
+				Radius="225"
+				Arc="60d"
+				DamageTaperOff="5">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE"
+					StatusBitFlagsExclude="SUBMERGED AIRBORNE_TARGET PARACHUTING">
+				</SpecialObjectFilter>
+				<ForbiddenUpgrade>Upgrade_AlliedHighTechnology</ForbiddenUpgrade>
+			</SecondaryDamageNugget>
+			<!-- High Technology Special power weapon -->
+			<SecondaryDamageNugget
+				Amount="25"
+				Radius="225"
+				Arc="60d"
+				DamageTaperOff="5">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE"
+					StatusBitFlagsExclude="SUBMERGED AIRBORNE_TARGET PARACHUTING">
+				</SpecialObjectFilter>
+				<RequiredUpgrade>Upgrade_AlliedHighTechnology</RequiredUpgrade>
+			</SecondaryDamageNugget>
+		</Nuggets>
+		<IncompatibleAttributeModifier>AttributeModifier_Garrisoned</IncompatibleAttributeModifier>
+	</WeaponTemplate>
+  <!-- Veteran sweep laser -->
+  <WeaponTemplate
+		id="AlliedLegionnaireInfantryFreezeSprayVeteran"
+		inheritFrom="AlliedLegionnaireInfantryFreezeSpray">
+    <Nuggets>
+      <ActivateLaserNugget
+				id="defaultActivateLaserNugget"
+				LaserId="103" />
+      <ActivateLaserNugget
+				id="defaultActivateLaserNugget2"
+				LaserId="104" />
+    </Nuggets>
+  </WeaponTemplate>
+	
+	<!-- check the StartAbilityRange in the unit's WeaponFireSpecialAbilityUpdate to determine the weapon range. -->
+	<WeaponTemplate
+		id="AlliedLegionnaireLeapWeapon"
+		IdleAfterFiringDelaySeconds="0s"
+		AttackRange="300.0"
+		MinimumAttackRange="20"
+		WeaponSpeed="300"
+		ProjectileSelf="true"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		AutoReloadsClip="AUTO"
+		PreAttackType="PER_SHOT"
+		FireFX="FX_Allied_LegionnaireLeapFire"
+		FireVeteranFX="FX_None"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		HitPercentage="0%"
+		ProjectileSelfUsesPathfinder="true">
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead" />
+			<InformTargetNugget />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="AlliedLegionnaireInfantryLandWeapon"
+		FireFX="FX_Allied_LegionnaireLeapLand"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		FireVeteranFX="FX_Allied_LegionnaireLeapLand">
+		<Nuggets>
+			<DamageNugget
+				id="DefaultDamageNugget"
+				Damage="20.0"
+				Radius="50.0"
+				DamageType="MELEE"
+				DeathType="CRUSHED">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ENEMIES NEUTRAL"
+					StatusBitFlagsExclude="NO_COLLISIONS">
+				</SpecialObjectFilter>
+			</DamageNugget>
+			<!-- The Meta Impact should be selective -->
+			<MetaImpactNugget
+				ShockWaveAmount="50"
+				ShockWaveRadius="50.0"
+				ForbiddenTargetModelCondition="STUNNED STUNNED_STANDING_UP STUNNED_FLAILING">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES"
+					Include="INFANTRY"
+					StatusBitFlagsExclude="NO_COLLISIONS">
+				</SpecialObjectFilter>
+			</MetaImpactNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<!-- IF Base Defense and IFV Weapon -->
+	<WeaponTemplate
+		id="ABD_AlliedLegionnaireWeapon"
+		AttackRange="300.0"
+		WeaponSpeed="999999.0"
+		FiringLoopSound="ALL_CryoLegionnaire_FreezeWeapon_GarrisonLoop"
+		ImpactLoopSound="ALL_Cryocopter_CryobeamImpactLoop"
+		RetargetedWhileLoopingSound="ALL_CryoLegionnaire_FreezeWeapon_GarrisonFire"
+		FiringLoopSoundContinuesDuringReload="false"
+		RadiusDamageAffects="ENEMIES"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		CanFireWhileMoving="true"
+		AcceptableAimDelta="20d"
+		ReAcquireDetailType="PER_CLIP"
+		RequiredAntiMask="ANTI_STRUCTURE ANTI_GROUND ANTI_WATER ANTI_AIRBORNE_INFANTRY ANTI_AIRBORNE_VEHICLE">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="1.0s"
+				LaserId="0">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="INFANTRY VEHICLE HUGE_VEHICLE AIRCRAFT STRUCTURE TIME_BOMB"
+					Exclude="BRIDGE_GATEHOUSE"
+					StatusBitFlagsExclude="SUBMERGED"/>
+			</ActivateLaserNugget>
+			<!-- Normal Weapon -->
+			<SecondaryDamageNugget
+				Amount="75">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE"
+					StatusBitFlagsExclude="SUBMERGED">
+				</SpecialObjectFilter>
+				<ForbiddenUpgrade>Upgrade_AlliedHighTechnology</ForbiddenUpgrade>
+			</SecondaryDamageNugget>
+
+			<!-- High Technology Special power weapon -->
+			<SecondaryDamageNugget
+				Amount="100">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE"
+					StatusBitFlagsExclude="SUBMERGED">
+				</SpecialObjectFilter>
+				<RequiredUpgrade>Upgrade_AlliedHighTechnology</RequiredUpgrade>
+			</SecondaryDamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="AAAVT1_AlliedLegionnaireWeapon"
+		inheritFrom="ABD_AlliedLegionnaireWeapon"/>
+
+
+	<!-- /////////////////////////// -->
+	<!--   CryoSpill Death Weapon    -->
+	<!-- /////////////////////////// -->
+	<WeaponTemplate
+		id="CryoSpillDeathWeapon"
+		WeaponSpeed="999999.0"
+		PreAttackFX="FX_None"
+		FireFX="FX_Allied_LegionnaireDeath"
+		FireVeteranFX="FX_Allied_LegionnaireDeath"
+		CanFireWhileMoving="false"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		RadiusDamageAffects="ENEMIES"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER">
+		<Nuggets>
+			<SecondaryDamageNugget
+				Amount="1000"
+				Radius="30"
+				DamageTaperOff="20">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE"
+					StatusBitFlagsExclude="SUBMERGED AIRBORNE_TARGET PARACHUTING">
+				</SpecialObjectFilter>
+			</SecondaryDamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	
+	<!-- ***** Soviet ***** -->
+
+	<!-- /////////////////////////// -->
+	<!--   SovietDesolatorInfantry   -->
+	<!-- /////////////////////////// -->
+	<WeaponTemplate
+		id="SovietDesolatorSpray"
+		AttackRange="225.0"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		WeaponSpeed="750"
+		FireFX=""
+		FireVeteranFX="FX_SovietDesolatorPrimaryFireVet"
+		FiringLoopSound="SOV_DesolatorTrooper_SprayGunFire"
+		FiringLoopSoundContinuesDuringReload="true"
+		RadiusDamageAffects="ENEMIES"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		AcceptableAimDelta="160d"
+		CanFireWhileMoving="false"
+		DamageDealtAtSelfPosition="false"
+		ReAcquireDetailType="PER_CLIP"
+		IgnoresContactPoints="true">
+		<!-- this little preattack delay is so we restart the firing animation for each shot, otherwise the anim gets out of sync with the FX-->
+		<FiringDuration
+			MinSeconds="0.25s"
+			MaxSeconds="0.25s" />
+		<ClipReloadTime
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ActivateStreamNugget
+				id="StreamNugget" 
+				Lifetime="1s"
+				StreamId="0">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES"
+					Include="INFANTRY VEHICLE"
+					StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+			</ActivateStreamNugget>
+			<ActivateStreamNugget
+				id="StreamNugget"
+				Lifetime="1s"
+				StreamId="0">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES"
+					Include="STRUCTURE"
+					StatusBitFlags="BLATTED CONTAINER_OCCUPIED"
+					StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+			</ActivateStreamNugget>
+			<SlavesAttackNugget
+				id="SlaveAttackNugget" 
+				SkipSlavesCanAttackCheck="true">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES"
+					Include="INFANTRY VEHICLE"
+					StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+			</SlavesAttackNugget>
+			<SlavesAttackNugget
+				id="SlaveAttackNuggetStructures"
+				SkipSlavesCanAttackCheck="true">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES"
+					Include="STRUCTURE"
+					StatusBitFlags="BLATTED CONTAINER_OCCUPIED" 
+					StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+			</SlavesAttackNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietDesolatorSpray_Dummy"
+		inheritFrom="SovietDesolatorSpray">
+		<Nuggets>
+			<ActivateStreamNugget
+				id="StreamNugget"
+				xai:joinAction="Replace"  xmlns:xai="uri:ea.com:eala:asset:instance"
+				Lifetime="1s"
+				StreamId="1"/>
+			<SlavesAttackNugget
+				id="SlaveAttackNugget"
+				xai:joinAction="Remove"  xmlns:xai="uri:ea.com:eala:asset:instance"/>
+		</Nuggets>
+	</WeaponTemplate>
+		
+	<WeaponTemplate
+		id="AAAVT1_SovietDesolatorWeapon"
+		inheritFrom="SovietDesolatorSpray"/>
+
+	<WeaponTemplate
+		id="SovietDesolatorAttachingWeapon"
+		AttackRange="=$DESOLATOR_INFANTRY_SPRAY_ATTACH_RANGE"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		WeaponSpeed="999999.0"
+		FireFX=""
+		FireVeteranFX=""
+		FireSound=""
+		RadiusDamageAffects="ENEMIES"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT IGNORE_TARGET_AS_OBSTACLE"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		AcceptableAimDelta="1d"
+		CanFireWhileMoving="false"
+		DamageDealtAtSelfPosition="false"
+		ReAcquireDetailType="PER_CLIP"
+		IgnoresContactPoints="true"
+		MeleeWeapon="true">		
+		<Nuggets>			
+			<AttachNugget
+				AttachModuleId="ModuleTag_AttachUpdate"
+				ForbiddenTargetObjectStatus="AIRBORNE_TARGET VEHICLE_ATTACHED UNDERGOING_REPAIR SPECIAL_ARMOR_ACTIVE NOT_IN_WORLD">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="VEHICLE STRUCTURE INFANTRY"					
+					Relationship="ENEMIES NEUTRAL">
+					<ExcludeThing>SovietScoutVehicle</ExcludeThing>
+				</SpecialObjectFilter>
+			</AttachNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietDesolatorAttachedDamage"
+		AttackRange="25.0"
+		WeaponSpeed="999999.0"
+		ReAcquireDetailType="PRE_FIRE"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		FiringLoopSound=""
+		RadiusDamageAffects="ENEMIES"
+		AcceptableAimDelta="180d"
+		CanFireWhileMoving="true"
+        Flags="NOT_ATTRACTED_BY_MAGNETS"
+		VirtualDamage="SHARE"
+		RequiredAntiMask="ANTI_GROUND ANTI_WATER ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE"
+		FinishAttackOnceStarted="true"
+		MeleeWeapon="true">
+		<FiringDuration
+			MinSeconds="0.25s"
+			MaxSeconds="0.25s" />
+		<Nuggets>
+			<!--
+			<TintObjectsNugget
+				PreColorTime="0s"
+				SustainedColorTime="3.0s"
+				PostColorTime="0s"
+				Frequency="0"
+				Amplitude="0">
+				<Color R="0" G="4" B="0"/>
+			</TintObjectsNugget>
+			-->
+			<DamageNugget
+				Damage="10.0"
+				DamageType="RADIATION"
+				DeathType="EXPLODED"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietBlatGun"
+		AttackRange="250.0"
+		MinimumAttackRange="50" 
+		WeaponSpeed="350"
+		FireSound="SOV_DesolatorTrooper_BlatGunFire"
+		FireFX=""
+		FireVeteranFX=""
+		AcceptableAimDelta="10d"
+		ClipSize="1"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		CanFireWhileMoving="true"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER">
+		<FiringDuration
+				MinSeconds=".5s"
+				MaxSeconds=".5s" />
+		<ClipReloadTime
+				MinSeconds="0.5s"
+				MaxSeconds="0.5s" />
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="SovietBlatGunProjectile"
+				WarheadTemplate="SovietBlatGunWarhead">
+				<VeterancyProjectiles
+					VeterancyLevel="HEROIC"
+					ProjectileTemplate="SovietBlatGunProjectile_Vet"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietBlatGunWarhead"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		ProjectileCollidesWith  = "ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER" >
+		<Nuggets>
+			<WeaponOCLNugget
+				WeaponOCL="OCL_DesolatorBlatGoo"
+				TargetAsPrimaryObject="false">
+				<!-- bridge objects do not take goo damage -->
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE BRIDGE_SEGMENT BRIDGE_ENDCAP BRIDGE" />
+			</WeaponOCLNugget>
+			<DamageNugget
+				Damage="22.0"
+				DamageType="RADIATION"
+				DeathType="EXPLODED"/>			
+			<!-- this will shatter frozen units -->
+			<DamageNugget
+				Damage="10.0"
+				DamageType="EXPLOSIVE"
+				DeathType="EXPLODED">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="STRUCTURE VEHICLE INFANTRY"
+					Relationship="ENEMIES NEUTRAL"
+					StatusBitFlags="UNDER_FROZEN" />
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietBlatAttachedDamage"
+		AttackRange="25.0"
+		WeaponSpeed="999999.0"
+		ReAcquireDetailType="PRE_FIRE"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		FiringLoopSound="SOV_TerrorDrone_Dismantle"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		AcceptableAimDelta="180d"
+		CanFireWhileMoving="true"
+        Flags="NOT_ATTRACTED_BY_MAGNETS"
+		VirtualDamage="SHARE"
+		RequiredAntiMask="ANTI_GROUND ANTI_WATER ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE"
+		FinishAttackOnceStarted="true"
+		MeleeWeapon="true">
+		<FiringDuration
+			MinSeconds="0.25s"
+			MaxSeconds="0.25s" />
+		<Nuggets>
+			<TintObjectsNugget
+				PreColorTime="0s"
+				SustainedColorTime="1.0s"
+				PostColorTime="0s"
+				Frequency="0"
+				Amplitude="0"
+				Radius="1">
+				<!-- bridge objects are not really affected so do not tint them -->
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE BRIDGE_SEGMENT BRIDGE_ENDCAP BRIDGE" />
+				<Color R="0" G="2" B="0"/>
+			</TintObjectsNugget>
+			<DamageNugget
+				Damage="1.0"
+				DamageType="RADIATION"
+				DeathType="EXPLODED">
+				<DamageScalarDetails Scalar= "50%">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</DamageScalarDetails>
+			</DamageNugget>
+			<AttributeModifierNugget
+				AttributeModifierName="AttributeModifier_SovietDesolatorInfantryBlatSlowdown">
+				<!-- Applying this modifier to bridge objects causes the managed body system to break -->
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE BRIDGE_SEGMENT BRIDGE_ENDCAP BRIDGE" />
+			</AttributeModifierNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<!-- //////////////////////////// -->
+	<!--   SovietHeavyWalkerVehicle   -->
+	<!-- //////////////////////////// -->
+	<WeaponTemplate
+		id="SovietHeavyWalkerGrenadeWeapon"
+		AttackRange="225.0"
+		MinimumAttackRange="20"
+		WeaponSpeed="300"
+		MinWeaponSpeed="275"
+		MaxWeaponSpeed="325"
+		ScatterAlways="true"
+		ScatterRadius="20"
+		ScatterIndependently="true"
+		FireSound="SOV_ProtoSickle_WeaponGrenadeFire"
+		FireFX="FX_SovietGrenadeLaunch"
+		FireVeteranFX="FX_SovietGrenadeLaunchVet"
+		AcceptableAimDelta="10d"
+		ClipSize="3"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		CanFireWhileMoving="true"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER">
+		<FiringDuration
+				MinSeconds=".2s"
+				MaxSeconds=".2s" />
+		<ClipReloadTime
+				MinSeconds="2.5s"
+				MaxSeconds="2.5s" />
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="SovietHeavyWalkerGrenadeWeaponProjectile"
+				WarheadTemplate="SovietHeavyWalkerGrenadeWeaponWarhead">
+				<VeterancyProjectiles
+					VeterancyLevel="HEROIC"
+					ProjectileTemplate="SovietHeavyWalkerGrenadeWeaponProjectile_Vet"/>
+			</ProjectileNugget>
+			<SuppressionNugget
+				Radius="20.0"
+				Suppression="20"
+				DurationSeconds="5.0s" />
+			<InformTargetNugget />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietHeavyWalkerGrenadeWeaponWarhead"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		ProjectileCollidesWith  = "ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER" >
+		<Nuggets>
+			<DamageNugget
+				Damage="15.0"
+				Radius="20.0"
+				DamageTaperOff="15"
+				DamageType="EXPLOSIVE"
+        DamageFXType="ALLIED_MISSILE" 
+				DeathType="EXPLODED">
+			<DamageScalarDetails Scalar= "150%">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</DamageScalarDetails>
+			</DamageNugget>
+			<SuppressionNugget
+				Radius="20.0"
+				Suppression="20"
+				DurationSeconds="5s" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietHeavyWalkerRocketWeapon"
+		inheritFrom="ScatterableWeapon"
+		AttackRange="225.0"
+		MinimumAttackRange="20"
+		WeaponSpeed="250"
+		MinWeaponSpeed="200"
+		MaxWeaponSpeed="300"
+		FireSound="SOV_ProtoSickle_WeaponRocketFire"
+		FireFX="FX_SovietRocketLaunch"
+		FireVeteranFX="FX_SovietRocketLaunchVet"
+		AcceptableAimDelta="10d"
+		VirtualDamage="SHARE"
+		ClipSize="10"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		CanFireWhileMoving="true"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ANTI_PARACHUTE" >
+		<FiringDuration
+				MinSeconds=".1s"
+				MaxSeconds=".1s" />
+		<ClipReloadTime
+				MinSeconds="8s"
+				MaxSeconds="8s" />
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="SovietHeavyWalkerRocketWeaponProjectile"
+				WarheadTemplate="SovietHeavyWalkerRocketWeaponWarhead">
+				<VeterancyProjectiles
+					VeterancyLevel="HEROIC"
+					ProjectileTemplate="SovietHeavyWalkerRocketWeaponProjectile_Vet"/>
+			</ProjectileNugget>
+			<SuppressionNugget
+				Radius="10.0"
+				Suppression="10"
+				DurationSeconds="5.0s" />
+			<InformTargetNugget />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietHeavyWalkerRocketWeaponWarhead"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		ProjectileCollidesWith ="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ANTI_PARACHUTE" >
+		<Nuggets>
+			<DamageNugget
+				Damage="7.0"
+				Radius="10.0"
+				DamageTaperOff="0"
+				DamageType="ROCKET"
+        DamageFXType="ALLIED_MISSILE"
+				DeathType="EXPLODED">
+			<DamageScalarDetails Scalar= "500%">
+					<Filter
+						Rule="ANY"
+						Include="INFANTRY VEHICLE"
+						StatusBitFlags="AIRBORNE_TARGET"/>
+				</DamageScalarDetails>
+				</DamageNugget>
+			<SuppressionNugget
+				Radius="10.0"
+				Suppression="10"
+				DurationSeconds="5s" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietHeavyWalkerVehicleLeapWeapon"
+		IdleAfterFiringDelaySeconds="0s"
+		AttackRange="350.0"
+		MinimumAttackRange="20"
+		WeaponSpeed="300"
+		ProjectileSelf="true"
+		ProjectileSelfUsesPathfinder="false"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		AutoReloadsClip="AUTO"
+		PreAttackType="PER_SHOT"
+		FireFX="FX_None"
+		FireVeteranFX="FX_None"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		HitPercentage="0%" >
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead" />
+			<InformTargetNugget />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietHeavyWalkerVehicleLandDeployWeapon"
+		FireFX="FX_SovietSickleLand"
+    Flags="NOT_ATTRACTED_BY_MAGNETS"
+    FireVeteranFX="FX_SovietSickleLand">
+		<Nuggets>
+			<DamageNugget
+				id="DefaultDamageNugget"
+				Damage="120.0"
+				DamageTaperOff="40"
+				Radius="50.0"
+				DamageType="MELEE"
+				DeathType="CRUSHED">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ENEMIES"
+					StatusBitFlagsExclude="NO_COLLISIONS" />
+			</DamageNugget>
+			
+			<!-- Allows for the "crushing" of vehicles that are underneath us -->
+			<DamageNugget
+				id="CrushingDamageNugget"
+				Damage="999999.0"
+				Radius="15.0"
+				DamageType="CRUSH"
+				DeathType="CRUSHED">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="VEHICLE"
+					Relationship="ENEMIES" />
+			</DamageNugget>
+
+			<!-- The Meta Impact should be selective -->
+			<MetaImpactNugget
+				ShockWaveAmount="50"
+				ShockWaveRadius="50.0"
+				ShockWaveTaperOff="1.0"
+				ForbiddenTargetModelCondition="STUNNED STUNNED_STANDING_UP STUNNED_FLAILING">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES"
+					Include="INFANTRY"
+					StatusBitFlagsExclude="NO_COLLISIONS">
+				</SpecialObjectFilter>
+			</MetaImpactNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- //////////////////////// -->
+	<!--   SovietGrinderVehicle   -->
+	<!-- //////////////////////// -->
+	<WeaponTemplate
+		id="SovietGrinderVehicleGrindWeapon"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		ReAcquireDetailType="PER_ATTACK"
+		ClipSize="1"
+    FireFX="FX_Sov_Grinder_Grind"
+		FireVeteranFX="FX_Sov_Grinder_Grind"
+		FiringLoopSound="SOV_Grinder_WeaponLoop"
+		AcceptableAimDelta="35d"
+		CanFireWhileMoving="true"
+    Flags="NOT_ATTRACTED_BY_MAGNETS IGNORE_TARGET_AS_OBSTACLE"
+		RequiredAntiMask="ANTI_VEHICLE ANTI_STRUCTURE"
+		ForbiddenAntiMask="ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		InstantLoadClipOnActivate="true"
+    FinishAttackOnceStarted="true"
+		MeleeWeapon="true"
+		ContactWeapon="true"
+		ChaseWeapon="true">
+		<FiringDuration
+			MinSeconds="0.12s"
+			MaxSeconds="0.12s" />
+		<ClipReloadTime
+			MinSeconds="0.12s"
+			MaxSeconds="0.12s" />
+		<Nuggets>
+
+			<!-- Without the upgrade, still need to destroy the target, but no benefit -->
+			<DamageNugget
+				id="defaultDamageNugget" 
+				Damage="30.0"
+				DelayTimeSeconds="0.0s"
+				DamageType="EXPLOSIVE"
+				DeathType="CRUSHED"
+				DamageFXType="SOVIET_MORTAR" 
+				PartitionFilterTestType="SPHERE">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="INFANTRY VEHICLE STRUCTURE"
+					Exclude="ORE_NODE"
+					StatusBitFlagsExclude="SUBMERGED AIRBORNE_TARGET PARACHUTING"/>
+				<ForbiddenUpgrade>Upgrade_SovietCrushPuppiesPower</ForbiddenUpgrade>
+			</DamageNugget>
+
+			<!-- This player power grants the attacker a percentage of the victims health -->
+			<LeechPercentMaxHealthDamageNugget
+				id="leechDamageNugget"
+				Damage="30.0"
+				DelayTimeSeconds="0.0s"
+				DamageType="EXPLOSIVE"
+				DeathType="CRUSHED"
+				DamageFXType="SOVIET_MORTAR"
+				PartitionFilterTestType="SPHERE"
+				PercentMaxHealthToTake="1%">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="INFANTRY VEHICLE"
+					Exclude="ORE_NODE STRUCTURE"
+					StatusBitFlagsExclude="SUBMERGED AIRBORNE_TARGET PARACHUTING"/>
+				<RequiredUpgrade>Upgrade_SovietCrushPuppiesPower</RequiredUpgrade>
+			</LeechPercentMaxHealthDamageNugget>
+					<!-- He should not however get health from structures -->
+			<DamageNugget
+				id="upgradedDamageNugget"
+				Damage="30.0"
+				DelayTimeSeconds="0.0s"
+				DamageType="EXPLOSIVE"
+				DeathType="CRUSHED"
+				DamageFXType="SOVIET_MORTAR"
+				PartitionFilterTestType="SPHERE" >
+				<SpecialObjectFilter
+					Rule="NONE"
+					Include="STRUCTURE"
+					Exclude="ORE_NODE"/>
+				<RequiredUpgrade>Upgrade_SovietCrushPuppiesPower</RequiredUpgrade>
+			</DamageNugget>
+
+			<ParalyzeNugget
+				ParalyzeType="USER_PARALYZE"
+				DurationSeconds="1.0s">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="INFANTRY VEHICLE"
+					Exclude="ORE_NODE BRIDGE_GATEHOUSE"
+					StatusBitFlagsExclude="SUBMERGED AIRBORNE_TARGET PARACHUTING UNDER_IRON_CURTAIN">
+					<ExcludeThing>JapanMechaKing</ExcludeThing>
+				</SpecialObjectFilter>
+			</ParalyzeNugget>
+			
+			<!-- Stop the Grinder as well -->
+			<ParalyzeNugget
+				ParalyzeType="TEMPORARILY_BUSY"
+				DurationSeconds="0.4s"
+				OnlyAffectOwnerWhenTriggered="true" />
+			
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+			id="SovietGrinderVehicleGrindWeapon_Infantry"
+			inheritFrom="SovietGrinderVehicleGrindWeapon"
+			RequiredAntiMask="ANTI_INFANTRY"
+			ContactWeapon="false"
+			FireFX=""
+			FireVeteranFX=""/>
+
+		<!-- Soviet Grinder Vet Weapon for new FX -->
+	<WeaponTemplate
+		id="SovietGrinderVehicleGrindVeteranWeapon"
+		inheritFrom="SovietGrinderVehicleGrindWeapon">
+		<Nuggets>
+			<DamageNugget
+					id="defaultDamageNugget"
+					DamageFXType="SOVIET_MORTAR"/>
+			<LeechPercentMaxHealthDamageNugget
+					id="leechDamageNugget"
+					DamageFXType="SOVIET_MORTAR"/>
+			<DamageNugget
+					 id="upgradedDamageNugget"
+					 DamageFXType="SOVIET_MORTAR"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+			id="SovietGrinderVehicleGrindVeteranWeapon_Infantry"
+			inheritFrom="SovietGrinderVehicleGrindVeteranWeapon"
+			RequiredAntiMask="ANTI_INFANTRY"
+			ContactWeapon="false"
+			FireFX=""
+			FireVeteranFX=""/>
+
+	<!-- //////////////////////// -->
+	<!--   SovietMortarcycle	  -->
+	<!-- //////////////////////// -->
+
+
+	<WeaponTemplate
+		id="SovietMortarcycleMolotovCocktail"
+		AttackRange="210.0"
+		MinimumAttackRange="40"
+		WeaponSpeed="300"
+		MinWeaponSpeed="290"
+		MaxWeaponSpeed="310"
+		AcceptableAimDelta="45d"
+		PreAttackType="PER_SHOT"
+		ClipSize="1"
+		FireSound="SOV_Conscript_MolotovCocktailThrow"
+		AutoReloadsClip="AUTO"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		CanFireWhileMoving="true"
+		RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE"
+		RadiusDamageAffects="ENEMIES"
+		>
+		<PreAttackDelay
+			MinSeconds="0.0s"
+			MaxSeconds="0.0s" />
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<ClipReloadTime
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<WeaponAiHintInfo
+			IsAntiGarrisonWeapon="true"
+			MaxSpeedOfTarget="30" />
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="SovietMortarcycleMolotovCocktailProjectile"
+				WarheadTemplate="SovietMortarcycleMolotovCocktailWarhead">
+				<VeterancyProjectiles
+					VeterancyLevel="HEROIC"
+					ProjectileTemplate="SovietMortarCycleMolotovCocktailProjectile_Veteran"/>
+			</ProjectileNugget>
+			<SuppressionNugget
+				Radius="30.0"
+				Suppression="25"
+				DurationSeconds="4s" />
+			<InformTargetNugget />
+		</Nuggets>
+		<ScatterRadiusVsType
+			Radius="5.0">
+			<Filter
+				Rule="NONE"
+				Include="INFANTRY" />
+		</ScatterRadiusVsType>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietMortarcycleMolotovCocktailWarhead"
+		ProjectileCollidesWith="ENEMIES"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		HitStoredTarget="true"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE" >
+		<Nuggets>
+			<DamageContainedNugget
+				MaxUnitsToDamage="1"
+				WindowBlastFX="FX_None"
+				Damage="50"
+				DamageType="EXPLOSIVE"
+				DeathType="BURNED">
+				<DamageObjectFilter
+					Rule="NONE"
+					Include="INFANTRY" />
+			</DamageContainedNugget>
+			<DamageNugget
+				id="DefaultDamageNugget"
+				Damage="24.0"
+				Radius="30.0"
+				DamageTaperOff="16"
+				DamageType="EXPLOSIVE"
+				DamageFXType="SOVIET_MOLOTOV"
+				DeathType="BURNED" />
+		</Nuggets>
+		<HitStoredObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE" />
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="SovietMortarcycleMortar"
+		AcceptableAimDelta="10d"
+		AttackRange="330.0"
+		UseCenterForRangeCheck="false"
+		MinimumAttackRange="150.0"
+		CanFireWhileMoving="false"
+		ClipSize="1"
+		FireSound="SOV_MortarCycle_MortarFireMS"
+		RadiusDamageAffects="ENEMIES"
+		FireFX="FX_SovietMortarLaunch"
+		FireVeteranFX="FX_SovietMortarLaunchVet"
+		FinishAttackOnceStarted="true"
+		Flags="RELOAD_WHEN_ATTACK_STOPS FORCE_EMPTY_ENTIRE_CLIP"	
+		ReAcquireDetailType="PER_CLIP"
+		ScatterIndependently="true"
+		ScatterAlways="false" 
+		ScatterRadius="1"		
+		WeaponSpeed="200"
+		MinWeaponSpeed="190"
+		MaxWeaponSpeed="210"
+		MinTargetPitch="-45d"
+		MaxTargetPitch="45d"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		RevealShroudOnFire="true">
+		<PreAttackDelay
+		  MinSeconds="1s"
+		  MaxSeconds="1s" />		
+		<FiringDuration
+			MinSeconds="1s"
+			MaxSeconds="1s" />
+		<ClipReloadTime
+			MinSeconds="2s"
+			MaxSeconds="2s" />
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="SovietMortarcycleMortarWeaponProjectile"
+				WarheadTemplate="SovietMortarcycleMortarWarhead">		
+				<VeterancyProjectiles
+					VeterancyLevel="HEROIC"
+					ProjectileTemplate="SovietMortarcycleMortarWeaponProjectile_Veteran"/>
+			</ProjectileNugget>
+			<InformTargetNugget />
+		</Nuggets>
+	</WeaponTemplate>		
+
+	<WeaponTemplate
+		id="SovietMortarcycleMortarWarhead"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		HitStoredTarget="true"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER" >
+		<Nuggets>
+			<DamageNugget
+				Damage="100.0"
+				Radius="50.0"
+				DamageTaperOff="10"
+				DamageType="EXPLOSIVE"
+				DeathType="EXPLODED">
+			</DamageNugget>
+			<MetaImpactNugget
+				ShockWaveAmount="50"
+				ShockWaveRadius="50.0"
+				ShockWaveTaperOff="0.0"
+				ForbiddenTargetModelCondition="STUNNED STUNNED_STANDING_UP STUNNED_FLAILING">
+			</MetaImpactNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+
+	<!-- ***** Japan ***** -->
+
+	<!-- /////////////////////// -->
+	<!--   JapanArcherInfantry   -->
+	<!-- /////////////////////// -->
+	<!-- note AcceptableAimDelta is quite high to allow them to shoot circling aircraft directly above them. -->
+	<WeaponTemplate
+		id="JapanArcherInfantryEnergyBow"
+		AttackRange="200.0"
+		WeaponSpeed="500"
+		FireSoundPerClip="JAP_NinjaArcher_WeaponFire1_Arrow"
+		RadiusDamageAffects="ENEMIES"
+		AcceptableAimDelta="20d"
+		ClipSize="1"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		CanFireWhileMoving="false"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		PreAttackType="PER_SHOT"
+		ReAcquireDetailType="PRE_FIRE">
+		<PreAttackDelay
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<ClipReloadTime
+			MinSeconds="2.3s"
+			MaxSeconds="2.3s" />
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="JapanArcherInfantryEnergyArrowWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowProjectile">
+				<VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowProjectile_Veteran"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="AAAVT1_JapanArcherWeapon"
+		inheritFrom="JapanArcherInfantryEnergyBow_IFV"/>	
+
+	<WeaponTemplate
+		id="JapanArcherInfantryEnergyArrowWarhead"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ANTI_PARACHUTE">
+		<Nuggets>
+			<DamageNugget
+				Damage="60.0"
+				DamageType="GUN"
+				DamageFXType="JAPAN_PLASMA"
+				DeathType="NORMAL"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+   <!-- Archer infantry anti-air weapon -->
+
+		<WeaponTemplate
+		id="JapanArcherInfantryEnergyBow_Aircraft"
+		inheritFrom="JapanArcherInfantryEnergyBow"
+		AttackRange="200.0"
+		AcceptableAimDelta="90d"
+		RequiredAntiMask="ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ANTI_PARACHUTE">
+	</WeaponTemplate>
+
+  <!-- Archer infantry IFV weapon -->
+
+		<WeaponTemplate
+		id="JapanArcherInfantryEnergyBow_IFV"
+		inheritFrom="JapanArcherInfantryEnergyBow"
+		AttackRange="250.0"
+		AcceptableAimDelta="20d"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ANTI_PARACHUTE">
+	</WeaponTemplate>
+
+
+		<!-- The Arrow Barrage MIRV-ing attack -->
+	<WeaponTemplate
+		id="JapanArcherInfantryEnergyArrowBarrage"
+		inheritFrom="ScatterableWeapon"
+		AttackRange="300.0"
+		MinimumAttackRange="100"
+		WeaponSpeed="300"
+		ClipSize="1"
+		AutoReloadsClip="AUTO"
+		CanFireWhileMoving="false"
+		RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE"
+		FireFX="FX_JAP_ArcherMaiden_BarrageFire"
+		FireVeteranFX="FX_JAP_ArcherMaiden_BarrageFire_Vet"
+		ReAcquireDetailType="PRE_FIRE"
+		RadiusDamageAffects="ENEMIES"
+		RevealShroudOnFire="true"	>
+		<!-- FireSound="JAP_NinjaArcher_WeaponFire1_Arrow" why doesn't this work? -->
+		<Nuggets>
+			<!-- this projectile is the logical one which does damage. -->
+			<ProjectileNugget
+				WarheadTemplate="JapanArcherInfantryEnergyArrowBarrageArrowWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageMIRVingDamageProjectile">
+			</ProjectileNugget>
+			<!-- this projectile splits into multiple ones, and just visually represents the mirv -->
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageMIRVingProjectile">
+        <VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageMIRVingProjectileVet"/>
+			</ProjectileNugget>
+			<InformTargetNugget />
+		</Nuggets>
+	</WeaponTemplate>
+
+		<!-- this weapon fires half way through the JapanArcherInfantryEnergyArrowBarrage's
+			  projectile trajectory, and creates a load of individual dummy projectiles.
+			  When the WeaponSpeed is zero, pick random number from min to max -->
+	<WeaponTemplate
+		id="JapanArcherInfantryEnergyArrowBarrageArrowLauncher"
+		inheritFrom="ScatterableWeapon"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ENEMIES"
+		WeaponSpeed="0"
+		MinWeaponSpeed="250"
+		MaxWeaponSpeed="250"
+		ScatterIndependently="true"
+		ScatterRadius="=$JAPAN_ARCHER_ARROW_BARRAGE_RADIUS"
+		ClipSize="1"
+		RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectile">
+        <VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet"/>
+      </ProjectileNugget>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectile">
+        <VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet"/>
+			</ProjectileNugget>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectile">
+        <VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet"/>
+			</ProjectileNugget>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectile">
+        <VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet"/>
+			</ProjectileNugget>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectile">
+        <VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet"/>
+			</ProjectileNugget>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectile">
+        <VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet"/>
+			</ProjectileNugget>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectile">
+        <VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet"/>
+			</ProjectileNugget>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectile">
+        <VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet"/>
+			</ProjectileNugget>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectile">
+        <VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet"/>
+			</ProjectileNugget>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectile">
+        <VeterancyProjectiles
+						VeterancyLevel="HEROIC"
+						ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+  <WeaponTemplate
+		id="JapanArcherInfantryEnergyArrowBarrageArrowLauncherVet"
+		inheritFrom="ScatterableWeapon"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ENEMIES"
+		WeaponSpeed="0"
+		MinWeaponSpeed="250"
+		MaxWeaponSpeed="250"
+		ScatterIndependently="true"
+		ScatterRadius="=$JAPAN_ARCHER_ARROW_BARRAGE_RADIUS"
+		ClipSize="1"
+		RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE">
+    <FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+    <Nuggets>
+      <ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet">
+      </ProjectileNugget>
+      <ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet">
+      </ProjectileNugget>
+      <ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet">
+      </ProjectileNugget>
+      <ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet">
+      </ProjectileNugget>
+      <ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet">
+      </ProjectileNugget>
+      <ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet">
+      </ProjectileNugget>
+      <ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet">
+      </ProjectileNugget>
+      <ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet">
+      </ProjectileNugget>
+      <ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet">
+      </ProjectileNugget>
+      <ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead"
+				ProjectileTemplate="JapanArcherInfantryEnergyArrowBarrageArrowProjectileVet">
+      </ProjectileNugget>
+    </Nuggets>
+  </WeaponTemplate>
+
+	<!-- this is the main single weapon for the arrow mirv. -->
+	<WeaponTemplate
+		id="JapanArcherInfantryEnergyArrowBarrageArrowWarhead"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS SELF"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE">
+		<Nuggets>
+			<DamageNugget
+				id="DefaultDamageNugget"
+				Damage="20.0"
+				DamageTaperOff="20.0"
+				DamageType="AUTO_CANNON"
+				DeathType="NORMAL"
+				Radius="=$JAPAN_ARCHER_ARROW_BARRAGE_RADIUS"/>
+			<SuppressionNugget
+				 Radius="30.0"
+				 Suppression="50"
+				 DurationSeconds="5s" />
+		</Nuggets>
+	</WeaponTemplate>
+
+
+	<!-- //////////////////// -->
+	<!--   JapanFortessShip   -->
+	<!-- //////////////////// -->
+	<WeaponTemplate
+		id="JapanFortressShipMissilePods"
+		AttackRange="300.0"
+		MinimumAttackRange="30"
+		WeaponSpeed="300"
+		MinWeaponSpeed="290"
+		MaxWeaponSpeed="310"
+		FireFX="FX_Japan_DefenderVX_Fire"
+		FireVeteranFX="FX_Japan_DefenderVX_Fire_Vet"
+		FireSound="JAP_EmperorsPearl_MissilePodFire"
+		AcceptableAimDelta="45d"
+		VirtualDamage="SHARE"
+		ClipSize="8"
+		AutoReloadsClip="AUTO"
+		PreAttackType="PER_CLIP"
+		CanFireWhileMoving="true"
+		RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE"
+		RadiusDamageAffects="ENEMIES">
+		<PreAttackDelay
+			MinSeconds="0.25s"
+			MaxSeconds="0.25s" />
+		<FiringDuration
+			MinSeconds="0.07s"
+			MaxSeconds="0.07s" />
+		<ClipReloadTime
+			MinSeconds="5s"
+			MaxSeconds="5s" />
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="JapanFortressShipMissileProjectileWarhead"
+				ProjectileTemplate="JapanFortressShipMissileProjectile">
+				<VeterancyProjectiles
+					VeterancyLevel="HEROIC"
+					ProjectileTemplate="JapanFortressShipMissileProjectile_Veteran"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="JapanFortressShipMissilePods_Aircraft"
+		inheritFrom="JapanFortressShipMissilePods"
+		MinimumAttackRange="0"
+		AcceptableAimDelta="180d"
+		RequiredAntiMask="ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ANTI_PARACHUTE">
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="JapanFortressShipMissilePods_JapanAdvancedMissilePack"
+		inheritFrom="JapanFortressShipMissilePods"
+		ClipSize="11">
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="JapanFortressShipMissilePods_Aircraft_JapanAdvancedMissilePack"
+		inheritFrom="JapanFortressShipMissilePods_Aircraft"
+		ClipSize="11">
+	</WeaponTemplate>
+
+	<WeaponTemplate
+			id="JapanFortressShipMissileProjectileWarhead"
+			ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+			RadiusDamageAffects="ENEMIES NEUTRALS"
+			Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+			RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ANTI_PARACHUTE">
+		<Nuggets>
+			<DamageNugget
+				Damage="25.0"
+				Radius="20.0"
+				DamageType="ROCKET"
+				DamageFXType="JAPAN_MISSILE"
+				DeathType="EXPLODED" />
+			<SuppressionNugget
+				Radius="20.0"
+				Suppression="10"
+				DurationSeconds="1s" />
+		</Nuggets>
+		<ScatterRadiusVsType
+			Radius="10.0">
+			<Filter
+				Rule="NONE"
+				Include="INFANTRY" />
+		</ScatterRadiusVsType>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="JapanFortressShipCannonWeapon"
+		AttackRange="400.0"
+		MinimumAttackRange="30"
+		WeaponSpeed="750"
+		ScatterRadius="30"
+		FireSound="JAP_EmperorsPearl_WaterWeapon_CannonFire"
+		FireFX="FX_JapanAntiStructureGunFire"
+		FireVeteranFX="FX_JapanAntiStructureGunFire_Vet"
+		RadiusDamageAffects="ENEMIES"
+		CanFireWhileMoving="true"
+		ClipSize="4"
+		ReAcquireDetailType="PRE_FIRE"
+		Flags="RELOAD_WHEN_ATTACK_STOPS"
+		ShotsPerBarrel="1"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		WeaponRecoil="1d"
+		AcceptableAimDelta="1d"
+		RevealShroudOnFire="true">
+		<FiringDuration
+			MinSeconds="0.25s"
+			MaxSeconds="0.25s" />
+		<ClipReloadTime
+			MinSeconds="5.0s"
+			MaxSeconds="5.0s"	/>
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="JapanFortressShipCannonWeaponProjectile"
+				WarheadTemplate="JapanFortressShipCannonWeaponWarhead">
+				<VeterancyProjectiles
+					VeterancyLevel="HEROIC"
+					ProjectileTemplate="JapanFortressShipCannonWeaponProjectileVeteran"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="JapanFortressShipCannonWeaponWarhead"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_STRUCTURE ANTI_WATER ANTI_GROUND"
+		Flags="NOT_ATTRACTED_BY_MAGNETS">
+		<Nuggets>
+			<DamageNugget
+				Damage="75.0"
+				Radius="15.0"
+				DamageTaperOff="0.0"
+				DamageType="CANNON"
+				DamageFXType="JAPAN_CANNON"
+				DeathType="NORMAL">
+				<DamageScalarDetails Scalar= "50%">
+					<Filter
+						Rule="ALL"
+						Relationship="ALLIES" />
+				</DamageScalarDetails>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="JapanFortressShipAirborneSeigeCannonWeapon"
+		AttackRange="600.0"
+		MinimumAttackRange="100.0"
+		WeaponSpeed="99999.0"
+		FireSound="JAP_EmperorsPearl_SiegeLaserWeapon_Fire"
+		FireFX="FX_JapanPearlLaserFire"
+		FireVeteranFX="FX_JapanPearlLaserFire"
+		RadiusDamageAffects="ENEMIES"
+		CanFireWhileMoving="false"
+		ClipSize="1"
+		ReAcquireDetailType="PER_CLIP"
+		Flags="RELOAD_WHEN_ATTACK_STOPS FORCE_EMPTY_ENTIRE_CLIP"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		WeaponRecoil="1d"
+		RevealShroudOnFire="true">
+		<ClipReloadTime
+			MinSeconds="4.0s"
+			MaxSeconds="4.0s"	/>
+		<Nuggets>
+			<ActivateLaserNugget
+				id="defaultActivateLaserNugget" 
+				Lifetime="1s"
+				LaserId="101"/>
+		</Nuggets>
+	</WeaponTemplate>
+		<!-- Veteran sweep laser -->
+	<WeaponTemplate
+		id="JapanFortressShipAirborneSeigeCannonWeaponVeteran"
+		inheritFrom="JapanFortressShipAirborneSeigeCannonWeapon">
+		<Nuggets>
+			<ActivateLaserNugget
+				id="defaultActivateLaserNugget"
+				LaserId="102" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="JapanFortressShipAirborneSeigeCannonWeapon_SweepingWeapon"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_STRUCTURE ANTI_WATER ANTI_GROUND"
+		Flags="NOT_ATTRACTED_BY_MAGNETS">
+		<Nuggets>
+			<WeaponOCLNugget
+				id="defaultOCLNugget" 
+				WeaponOCL="OCL_JapanFortressShipAirborneSeigeCannonWeaponNode">
+			</WeaponOCLNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="JapanFortressShipAirborneSeigeCannonWeapon_SweepingWeapon_Veteran"
+		inheritFrom="JapanFortressShipAirborneSeigeCannonWeapon_SweepingWeapon">
+		<Nuggets>
+			<WeaponOCLNugget
+				id="defaultOCLNugget"
+				WeaponOCL="OCL_JapanFortressShipAirborneSeigeCannonWeaponNode_Veteran">
+			</WeaponOCLNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="JapanFortressShipAirborneSeigeCannonWeapon_NodeExplosion"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_STRUCTURE ANTI_WATER ANTI_GROUND"
+		Flags="NOT_ATTRACTED_BY_MAGNETS">
+		<Nuggets>
+			<DamageNugget
+				id="DefaultDamageNugget" 
+				Damage="250.0"
+				Radius="25.0"
+        RadiusAffectsBridges="true" 
+				DamageTaperOff="200.0"
+				DamageType="EXPLOSIVE"
+				DeathType="NORMAL">
+        <SpecialObjectFilter
+          Rule="ALL"
+          Exclude="BRIDGE BRIDGE_SEGMENT BRIDGE_ENDCAP" />
+				<DamageScalarDetails Scalar= "50%">
+					<Filter
+						Rule="ALL"
+						Relationship="ALLIES" />
+				</DamageScalarDetails>
+				<DamageScalarDetails Scalar= "50%">
+					<Filter
+						Rule="NONE"
+						Include="STRUCTURE" />
+				</DamageScalarDetails>
+			</DamageNugget>
+			<MetaImpactNugget
+				ShockWaveAmount="50"
+				ShockWaveRadius="25.0"
+				ShockWaveTaperOff="25.0"
+				ForbiddenTargetModelCondition="STUNNED STUNNED_STANDING_UP STUNNED_FLAILING">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES"
+					StatusBitFlagsExclude="NO_COLLISIONS">
+				</SpecialObjectFilter>
+			</MetaImpactNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<!-- //////////////////////// -->
+	<!--   JapanSentinelVehicle   -->
+	<!-- //////////////////////// -->
+	<WeaponTemplate
+		id="JapanSentinelVehicleLaserGlaiveWeapon"
+		FireSoundPerClip="JAP_Sentinel_GlaiveSwipeFire"
+		FireFX="FX_SentinalSpearAttack"
+		FireVeteranFX="FX_SentinalSpearAttackVet"
+		RadiusDamageAffects="ENEMIES"
+		AttackRange="35.0"
+		ClipSize="1"
+		WeaponSpeed="999999.0"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		CanFireWhileMoving="false"
+		DamageDealtAtSelfPosition="true"
+		AcceptableAimDelta="10d"
+		IgnoresContactPoints="true"
+		HitStoredTarget="true"
+		MeleeWeapon="true"
+		ChaseWeapon="true"
+		FinishAttackOnceStarted="true"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		ReAcquireDetailType="PER_CLIP">
+		<PreAttackDelay
+			MinSeconds="0.6s"
+			MaxSeconds="0.6s" />
+		<FiringDuration
+			MinSeconds="0.8s"
+			MaxSeconds="0.8s" />
+		<ClipReloadTime
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<!-- Note: the damage radius MUST be the AttackRange + half the unit's width unless you want overshoot-->
+			<DamageNugget
+				id="DefaultDamageNugget" 
+				Damage="100.0"
+				Radius="105.0"
+				DamageArc="75d"
+				DelayTimeSeconds="0.0s" 
+				DamageType="CANNON"
+				DamageFXType="JAPAN_GLAIVE"
+				DeathType="NORMAL"
+				PartitionFilterTestType="SPHERE"
+				ForceFXPositionToVictim="true"/>
+			<MetaImpactNugget
+				id="DefaultMetaImpactNugget" 
+				ShockWaveAmount="25"
+				ShockWaveRadius="100.0"
+				ShockWaveArc="75d"
+				ForbiddenTargetModelCondition="STUNNED STUNNED_STANDING_UP STUNNED_FLAILING"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- The glaive blast special power -->
+	<WeaponTemplate
+		id="JapanSentinelVehicleLaserGlaiveBlastWeapon"
+		AttackRange="300.0"
+		ReAcquireDetailType="PRE_FIRE"
+		ClipSize="1"
+		FireSound="JAP_KingOni_LaserFire"
+		AcceptableAimDelta="10d"
+		CanFireWhileMoving="true"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+    Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<ClipReloadTime
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<Nuggets>
+			<DamageNugget
+				id="JapanSentinelVehicleLaserGlaiveBlastDamageNugget"
+				Damage="0.01"
+				Radius="1.0"
+				DamageType="MAGIC"
+				DeathType="NORMAL"/>
+			<!-- Linear Damage Nugget does no damage, only used for the sweep FX -->
+			<ActivateLinearDamageNugget
+				id="JapanSentinelVehicleLaserGlaiveBlastLinearDamageNugget"
+				 Lifetime="2.0s"/>
+		</Nuggets>
+	</WeaponTemplate>
+	<!-- triggered by LinearDamageUpdate in JapanSentinelVehicle -->
+	<WeaponTemplate
+		id="JapanSentinelVehicleLaserGlaiveBlastSweepingWeapon"
+		RadiusDamageAffects="ENEMIES NEUTRALS">
+		<Nuggets>
+			<DamageNugget
+				id="DefaultNugget" 
+				Damage="100.0"
+				DamageType="EXPLOSIVE"
+				DeathType="NORMAL">
+			<DamageScalarDetails Scalar= "50%">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</DamageScalarDetails>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	
+	<!-- ***** Yuriko ***** -->
+	<WeaponTemplate
+		id="JapanCommandoTech1PsyonicCrush_EP1"
+		AttackRange="75.0"
+		AcceptableAimDelta="15d"
+		ClipSize="1"
+		FiringLoopSound="JAP_YurikoOmega_PsyonicLoopMS"
+		AutoReloadsClip="AUTO"
+		PreAttackType="PER_TARGET"
+		CanFireWhileMoving="false"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_LIFTED_GROUND_UNIT ANTI_WATER ANTI_SUBMERGED"
+		RadiusDamageAffects="ENEMIES"
+		FinishAttackOnceStarted="false"
+        Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS">
+		<PreAttackDelay
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<WeaponAiHintInfo
+			UseLongLockOnTimeCode="true" />
+		<Nuggets>
+			<StripMaxHealthPercentNugget
+				  AmountToStrip="4%"
+				  DamageType="KI"
+				  DamageFXType="JAPAN_PSIONIC"
+				  DeathType="SLAUGHTERED">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="INFANTRY STRUCTURE VEHICLE VALID_TARGET_FOR_C4 TIME_BOMB"
+                    StatusBitFlagsExclude="UNCONTROLLABLY_SCARED">
+					<ExcludeThing>JapanIzumi</ExcludeThing>
+				</SpecialObjectFilter>
+			</StripMaxHealthPercentNugget>
+
+			<ActivateLiftObjectNugget
+				Lifetime="0.2s"
+				LiftObjectLinkID="1">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="INFANTRY VEHICLE STRUCTURE VALID_TARGET_FOR_C4 TIME_BOMB"
+                    StatusBitFlagsExclude="UNCONTROLLABLY_SCARED UNDER_IRON_CURTAIN">
+					<ExcludeThing>JapanScientist</ExcludeThing>
+					<ExcludeThing>JapanIzumi</ExcludeThing>
+				</SpecialObjectFilter>
+
+			</ActivateLiftObjectNugget>
+		</Nuggets>
+
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="JapanCommandoTech1PsyonicBlast_EP1"
+		AttackRange="200.0"
+		ClipSize="1"
+		AutoReloadsClip="AUTO"
+		CanFireWhileMoving="false"
+		RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE ANTI_AIRBORNE_INFANTRY"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		Flags="NOT_ATTRACTED_BY_MAGNETS">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<DamageNugget
+				Damage="500.0"
+				Radius="125.0"
+				DelayTimeSeconds="0.4s"
+				DamageType="SNIPER"
+				DeathType="SLAUGHTERED"
+				PartitionFilterTestType="CIRCLE" />
+			<MetaImpactNugget					
+					ShockWaveAmount="89.0"
+					ShockWaveRadius="200.0"
+					ShockWaveZMult="6.5"
+					ShockWaveClearRadius="false">
+				<SpecialObjectFilter
+					Rule="NONE"
+					Include="INFANTRY"
+					StatusBitFlagsExclude="NO_COLLISIONS">
+					<ExcludeThing>JapanScientist</ExcludeThing>
+					<ExcludeThing>JapanIzumi</ExcludeThing>
+				</SpecialObjectFilter>
+			</MetaImpactNugget>
+			<ParalyzeNugget
+				ParalyzeType="EMP"
+				Radius="125.0"
+				DurationSeconds="4.0s">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="VEHICLE STRUCTURE"
+          Exclude="CIVILIAN_BUILDING" 
+					StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+			</ParalyzeNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+	   id="YurikoPsyonicAirborneKiller_EP1"
+	   AttackRange="150.0"
+	   AcceptableAimDelta="15d"
+	   ClipSize="1"
+	   FiringLoopSound="JAP_YurikoOmega_PsyonicLoop"
+	   AutoReloadsClip="AUTO"
+	   PreAttackType="PER_TARGET"
+	   CanFireWhileMoving="false"
+	   RequiredAntiMask="ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+	   ForbiddenAntiMask="ANTI_LIFTED_GROUND_UNIT"
+	   RadiusDamageAffects="ENEMIES"
+	   Flags="NOT_ATTRACTED_BY_MAGNETS RELOAD_WHEN_ATTACK_STOPS">
+		<PreAttackDelay
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<ClipReloadTime
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ActivateLiftObjectNugget
+				id="LiftObjectNugget"  
+				Lifetime="5.0s"
+				LiftObjectLinkID="1">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Include="TRANSFORMER INFANTRY VEHICLE STRUCTURE VALID_TARGET_FOR_C4"
+                    StatusBitFlagsExclude="UNCONTROLLABLY_SCARED UNDER_IRON_CURTAIN">
+					<ExcludeThing>AlliedWallPiece</ExcludeThing>
+					<ExcludeThing>AlliedGunshipAircraft</ExcludeThing>
+					<ExcludeThing>SovietWallPiece</ExcludeThing>
+					<ExcludeThing>JapanWallPiece</ExcludeThing>
+				</SpecialObjectFilter>				
+			</ActivateLiftObjectNugget>
+			<DamageNugget
+				Damage="250.0"
+				DamageType="EXPLOSIVE"
+				DeathType="EXPLODED">
+				<SpecialObjectFilter
+					Rule="NONE">
+					<IncludeThing>AlliedGunshipAircraft</IncludeThing>
+				</SpecialObjectFilter>
+			</DamageNugget>
+			<AttributeModifierNugget
+				AttributeModifierName="AttributeModifier_50PercentSlower">
+				<SpecialObjectFilter
+					Rule="NONE">
+					<IncludeThing>AlliedGunshipAircraft</IncludeThing>
+				</SpecialObjectFilter>
+			</AttributeModifierNugget>
+		</Nuggets>
+
+	</WeaponTemplate>
+
+
+
+  <WeaponTemplate
+    id="FlingableProp_Vehicle_DeathWeapon"
+    RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+    Flags="NOT_ATTRACTED_BY_MAGNETS"
+    FireFX="FX_None">
+    <Nuggets>
+      <DamageNugget
+				id="DefaultDamageNugget"
+				Damage="400"
+				Radius="25"
+				DamageType="GRENADE"
+				DeathType="NORMAL"
+				RadiusAffectsBridges="true">
+        <SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE"
+					StatusBitFlagsExclude="SUBMERGED AIRBORNE_TARGET">
+          <ExcludeThing>JapanYurikoTech1</ExcludeThing>
+          <ExcludeThing>JapanYurikoTech2</ExcludeThing>
+          <ExcludeThing>JapanYurikoTech3</ExcludeThing>
+        </SpecialObjectFilter>
+      </DamageNugget>
+      <MetaImpactNugget
+				ShockWaveAmount="50"
+				ShockWaveRadius="70.0"
+				ShockWaveTaperOff="10"
+				ForbiddenTargetModelCondition="STUNNED STUNNED_STANDING_UP STUNNED_FLAILING">
+        <SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE"
+					StatusBitFlagsExclude="SUBMERGED AIRBORNE_TARGET">
+          <ExcludeThing>JapanYurikoTech1</ExcludeThing>
+          <ExcludeThing>JapanYurikoTech2</ExcludeThing>
+          <ExcludeThing>JapanYurikoTech3</ExcludeThing>
+        </SpecialObjectFilter>
+      </MetaImpactNugget>
+    </Nuggets>
+  </WeaponTemplate>
+	
+	<WeaponTemplate
+		id="CryoBarrelWeapon"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		PreAttackFX="FX_None"
+		FireFX="FX_Allied_LegionnaireDeath"
+		FireVeteranFX="FX_Allied_LegionnaireDeath"
+		CanFireWhileMoving="false"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER">
+		<Nuggets>
+			<SecondaryDamageNugget
+				Amount="1500"
+				Radius="100">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="BRIDGE_GATEHOUSE"
+					StatusBitFlagsExclude="SUBMERGED AIRBORNE_TARGET PARACHUTING">
+          <ExcludeThing>JapanYurikoTech1</ExcludeThing>
+          <ExcludeThing>JapanYurikoTech2</ExcludeThing>
+          <ExcludeThing>JapanYurikoTech3</ExcludeThing>
+				</SpecialObjectFilter>
+			</SecondaryDamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+  <WeaponTemplate
+    id="Leech_FutureTank"
+    inheritFrom="AlliedFutureTankNeutronScrambler" 
+		ClipSize="1" 
+		ForbiddenFiringObjectStatus="">
+		<PreAttackDelay
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<FiringDuration
+			MinSeconds="1s"
+			MaxSeconds="1s" />
+		<ClipReloadTime
+			MinSeconds="2s"
+			MaxSeconds="2s" />
+	</WeaponTemplate>
+
+  <WeaponTemplate
+    id="Leech_GigaFortress"
+    inheritFrom="JapanFortressShipMissilePods_Aircraft" 
+    ForbiddenFiringObjectStatus=""
+	RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ANTI_PARACHUTE"/>
+  
+</AssetDeclaration>

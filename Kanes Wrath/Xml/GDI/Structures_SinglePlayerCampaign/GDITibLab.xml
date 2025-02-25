@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GBTibLab.W3X" />
+		<Include
+			type="all"
+			source="ART:GBTibLab_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:GBTibLab_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:GBTibLab_D3.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+	</Includes>
+	<GameObject
+		id="GDI_TibLab"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		SelectPortrait="Portrait_GDITibLab"
+		ButtonImage="Portrait_GDITibLab"
+		EditorName="GDI_TibLab"
+		KindOf="SELECTABLE STRUCTURE PRELOAD IMMOBILE CAN_CAST_REFLECTIONS GARRISON AUTO_RALLYPOINT COVER KEEP_CLASSIFIED_WHEN_DEAD IGNORE_FOR_VICTORY CIVILIAN_BUILDING NOT_SELLABLE AIRCRAFT_PATH_AROUND DONT_HIDE_IF_FOGGED"
+		Browser="REGION GDI_STRUCTURES STRUCTURE">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:GDILiquidTibLab</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				AffectedByStealth="false"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBTibLab" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBTibLab_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBTibLab_D2" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIImpFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIImpDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpDist"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBTibLab_D1" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIRefinerySmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBTibLab_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBTibLab_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GBTibLab_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+          <ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIRefinerySmoke"
+						FollowBone="false" />
+          <ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIRefineryDamagedFire"
+						FollowBone="false" />          
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBTibLab_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="false" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="false" />          
+				</AnimationState>
+			</ScriptedModelDraw>
+			<xi:include
+				href="../../Includes/GarrisonFlagArmorDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonArmorDraws/child::*)" />
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="8s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_AwesomeXplosion" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_AlienTibRockHit" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_ScorchLarge" />
+			</FXListBehavior>	
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_02"
+				MaxHealth="20000.0" />
+		</Body>
+    <Geometry
+			IsSmall="false">
+
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "42.302"
+           MinorRadius = "42.9241"
+           Height = "38.9842" >
+        <Offset
+            x = "0.0"
+            y = "0.0"
+            z = "0.0" />
+      </Shape>
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "64.0751"
+           MinorRadius = "20.3215"
+           Height = "51.8407" >
+        <Offset
+            x = "0.0"
+            y = "0.0"
+            z = "0.0" />
+      </Shape>
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "14.308"
+           MinorRadius = "25.2982"
+           Height = "123.173" >
+        <Offset
+            x = "0.0"
+            y = "0.0"
+            z = "0.0" />
+      </Shape>
+    </Geometry>
+    <AudioArraySound>
+      <AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+      <AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+    </AudioArraySound>
+    <ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="320" />
+	</GameObject>
+</AssetDeclaration>

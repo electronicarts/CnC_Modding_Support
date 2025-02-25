@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="SpecialPowerTemplateFlag">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NEEDS_TARGET" />
+			<xs:enumeration value="NEEDS_OBJECT_FILTER" />
+			<xs:enumeration value="NO_FORBIDDEN_OBJECTS" />
+			<xs:enumeration value="NO_FORBIDDEN_MODEL_STATES" />
+			<xs:enumeration value="WATER_OK" />
+			<xs:enumeration value="LIMIT_DISTANCE" />
+			<xs:enumeration value="RESPECT_RECHARGE_TIME_DISCOUNT" />
+			<xs:enumeration value="PATHABLE_ONLY" />
+			<xs:enumeration value="NOT_CLIFF_CELL" />
+			<xs:enumeration value="FOGGED_SHROUDED_CELLS_OK" />
+			<xs:enumeration value="KILL_SPECIAL_OBJECTS" />
+			<xs:enumeration value="TARGET_NEEDS_OBJECT_STATUS" />
+			<xs:enumeration value="SHARED_SYNC" />
+			<xs:enumeration value="HAS_PUBLIC_TIMER" />
+			<xs:enumeration value="IS_PLAYER_POWER" />
+			<xs:enumeration value="FIND_REACHABLE_TARGETS" />
+			<xs:enumeration value="IGNORE_MAP_EXTENTS"/>
+			<xs:enumeration value="IGNORE_SELF_IN_NEEDED_OBJECT_FILTER"/>
+			<xs:enumeration value="NOT_ON_BRIDGE"/>
+			<xs:enumeration value="NOT_BENEATH_BRIDGE"/>
+			<xs:enumeration value="NOT_WHILE_BENEATH_BRIDGE"/>
+			<xs:enumeration value="DISABLE_FOR_MULTIPLE_SELECTION"/>
+			<xs:enumeration value="CHECK_SPECIALPOWERSTORE_CANUSE"/>
+			<xs:enumeration value="USE_CHAINED_COMMAND_MONEY"/>
+			<!-- RA3 -->
+			<xs:enumeration value="CANNOT_LEAVE_ENCLOSURE"/>
+			<xs:enumeration value="DO_NOT_REACQUIRE_TARGET"/>
+            <xs:enumeration value="NOT_ON_OBSTACLES"/>
+			<!-- allows us to make exceptions to the special powers that can still function when attacked by Hydrofoil's secondary -->
+			<xs:enumeration value="CAN_NOT_BE_SCRAMBLED"/>
+			<xs:enumeration value="CANNOT_TARGET_SELF"/>
+			<xs:enumeration value="TREAT_BRIDGES_AS_LOCATIONS"/>
+			<xs:enumeration value="NOT_IN_NANOSWARM"/>
+			<!-- ARENA -->
+			<xs:enumeration value="IN_TEAM_SPAWNZONE"/>
+			<xs:enumeration value="NOT_IN_ENEMY_SPAWNZONE"/>
+			<xs:enumeration value="NOT_IN_ENEMY_NOSPELL_ZONE"/>
+			<xs:enumeration value="CHARGE_ON_PLAYER_THREAT"/>
+			<xs:enumeration value="REQUIRE_STORED_RESOURCE"/>
+			<xs:enumeration value="DEDUCT_STORED_RESOURCE"/>
+			<xs:enumeration value="NO_TELEMETRY"/>
+			<xs:enumeration value="NO_RELOAD_TIME_DURING_MATCH_INTRO"/>
+			<xs:enumeration value="NEEDS_ENTITLEMENT"/>
+			<xs:enumeration value="NO_SCORING" />
+			<!-- when this power is triggered, restart timers on all special power modules with this flag. -->
+			<xs:enumeration value="RESET_ALL_MODULE_RECHARGE_WHEN_TRIGGERED" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="SpecialPowerTemplateBitFlag">
+		<xs:list itemType="SpecialPowerTemplateFlag"></xs:list>
+	</xs:simpleType>
+
+	<xs:simpleType name="SpecialPowerTemplateTargetType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LOCATION" />
+			<xs:enumeration value="LOCATION_AND_ANGLE" />
+			<xs:enumeration value="OBJECT" />
+			<xs:enumeration value="OBJECT_OR_LOCATION" />
+			<xs:enumeration value="OBJECT_OR_LOCATION_AND_ANGLE" />
+			<xs:enumeration value="NONE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+  <xs:simpleType name="SpecialPowerRestrictionType"
+                 xas:useEnumPrefix="false"
+                 xas:enumItemPrefix="SPECIALPOWER_RESTRICTION_"
+                 xas:targetNamespace="" >
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="UNRESTRICTED" />
+      <xs:enumeration value="1" />
+			<xs:enumeration value="2" />
+    </xs:restriction>
+  </xs:simpleType>
+
+	<xs:complexType name="SpecialPowerTooltipHintInfo" >
+		<xs:sequence />
+		<xs:attribute name="TypeLabel" type="xs:string" default="" />
+		<xs:attribute name="GenericTextLabel" type="xs:string" default="" />
+		<xs:attribute name="AttributeModifierReference" type="AttributeModifierRef" default="" />
+	</xs:complexType>
+
+	<!--	
+	m_requiredSciencesVector
+	-->
+	<xs:complexType name="SpecialPowerTemplate" xas:runtimeWrapper="::SpecialPowerTemplate" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="TooltipHintPassive" type="SpecialPowerTooltipHintInfo" minOccurs="0" maxOccurs="1" />
+					<xs:element name="TooltipHintActive" type="SpecialPowerTooltipHintInfo" minOccurs="0" maxOccurs="1" />
+					<xs:element name="ObjectFilter" type="ObjectFilter" xas:byValue="true" minOccurs="0" maxOccurs="1" />
+					<xs:element name="ForbiddenObjectFilter" type="ObjectFilter" xas:byValue="true" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="GameDependency"	type="GameDependencyType" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="ForbiddenPlayerTech" type="PlayerTechRef" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="ResourceCosts" type="MoneyTransaction" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="CommandPointsNeededToCast" type="SageUnsignedInt" />
+				<xs:attribute name="RequiredPlayerTech" type="PlayerTechRef" />
+				<xs:attribute name="DisplayName" type="xs:string" />
+				<xs:attribute name="Description" type="xs:string" />
+				<xs:attribute name="TargetType" type="SpecialPowerTemplateTargetType" use="required" />
+				<xs:attribute name="Flags" type="SpecialPowerTemplateBitFlag" />
+				<xs:attribute name="ReloadTime" type="Time" />
+				<xs:attribute name="InitiateSound" type="AudioEventInfoRef" />
+				<xs:attribute name="InitiateAtLocationSound" type="AudioEventInfoRef" />
+				<xs:attribute name="ViewObjectDuration" type="Time" />
+				<xs:attribute name="ViewObjectRange" type="SageReal" />
+				<xs:attribute name="RadiusCursorRadius" type="SageReal" />
+				<xs:attribute name="PreventConditions" type="ObjectStatusBitFlags" />
+				<xs:attribute name="RequiredConditions" type="ObjectStatusBitFlags" />
+				<xs:attribute name="DisallowedTargetModelStates" type="ModelConditionBitFlags" />
+				<xs:attribute name="RequiredTargetObjectStatus" type="ObjectStatusBitFlags" />
+				<xs:attribute name="DisallowedTargetObjectStatus" type="ObjectStatusBitFlags" />
+				<xs:attribute name="MaxCastRange" type="SageReal" default="1000000" />
+				<xs:attribute name="MinCastRange" type="SageReal" />
+				<xs:attribute name="ForbiddenObjectRange" type="SageReal" />
+				<!-- <xs:attribute name="RequiresOwnedObjectsCount" type="SageUnsignedInt" /> -->
+				<xs:attribute name="EvaEventToPlayOnSuccess" type="EvaEventRef" default="" />  <!-- played for owner when special power is successfully finished -->
+				<xs:attribute name="EvaEventToPlayWhenSelectingTarget" type="EvaEventRef" default=""/>
+				<xs:attribute name="EvaEventToPlayOnInitiateOwner" type="EvaEventRef" default="" /> <!-- Played for owner when power is activated -->
+				<xs:attribute name="EvaEventToPlayOnInitiateAlly" type="EvaEventRef" default="" />		<!-- Played for allies when power is activated -->
+				<xs:attribute name="EvaEventToPlayOnInitiateEnemy" type="EvaEventRef" default="" />		<!-- Played for enemies when power is activated -->
+				<xs:attribute name="NameOfVoiceNameToUseAsInitiateIntendToDoVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsInitiateIntendToDoAfterMoveVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsInitiateIntendToDoWhileUnderAttackVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsInitiateIntendToDoAfterMoveWhileUnderAttackVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsEnterStateInitiateIntendToDoVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsEnterStateInitiateIntendToDoAfterMoveVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsEnterStateInitiateIntendToDoWhileUnderAttackVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsEnterStateInitiateIntendToDoAfterMoveWhileUnderAttackVoice" type="StringHash" use="optional" />
+				<xs:attribute name="RestrictionType" type="SpecialPowerRestrictionType" default="UNRESTRICTED" />
+				<!-- Positive value deposits, negative value withdraws -->
+				<xs:attribute name="Money" type="SageInt" default="0"/>
+				<xs:attribute name="WaypointModeTerminal" type="SageBool" default="true" />
+				<xs:attribute name="TimerImage" type="ImageRef" />
+				<xs:attribute name="ReachableTargetsCircleDisplayRadius" type="SageReal"/>
+				<xs:attribute name="RequiredStoredResourceAmount" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="ThreatRequired" type="SageUnsignedInt" default="0"/>
+				<xs:attribute name="ObjectFilterRef" type="ObjectFilterAssetRef" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

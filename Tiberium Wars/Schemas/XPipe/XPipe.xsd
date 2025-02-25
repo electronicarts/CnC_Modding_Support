@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+  <!-- Includes -->
+  <xs:include schemaLocation="../includes/DamageDef.xsd" />
+  <!-- Special attributes:
+        "Name" - will determine how xml objects should be represented in the tool
+        "ID"   - will uniquely identify xml objects for persistent selection 
+        -->
+  <!-- A sage object -->
+  <xs:complexType name="XPipeObject">
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="ID" type="xs:unsignedInt" default="0" />
+    <xs:attribute name="PositionX" type="xs:float" />
+    <xs:attribute name="PositionY" type="xs:float" />
+    <xs:attribute name="Health" type="xs:float" />
+    <xs:attribute name="UnitAIStateName" type="xs:string" />
+    <xs:attribute name="UnitAIGoalObjectID" type="xs:unsignedInt" default="0" />
+  </xs:complexType>
+  <xs:complexType name="XPipeTeamObject">
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="ID" type="xs:unsignedInt" default="0" />
+  </xs:complexType>
+  <xs:complexType name="XPipeTeam">
+    <xs:sequence>
+      <xs:element name="Objects" type="XPipeTeamObject" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="MiddleManager" type="XPipeAIMiddleManager" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="ID" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="XPipeAIComponent">
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="Enabled" type="xs:boolean" default="0" />
+  </xs:complexType>
+  <xs:simpleType name="ProductionState">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="PENDING" />
+      <xs:enumeration value="BUILDING" />
+      <xs:enumeration value="QUEUE_DONE" />
+      <xs:enumeration value="DONE" />
+      <xs:enumeration value="FAILED" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="XPipeAIBuildable">
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="Priority" type="xs:unsignedInt" />
+    <xs:attribute name="ProductionState" type="ProductionState" />
+  </xs:complexType>
+  <xs:complexType name="XPipeAIStates">
+	  <xs:attribute name="Name" type="xs:string"/>
+	  <xs:attribute name="Weight" type="xs:float"/>
+  </xs:complexType>
+  <xs:simpleType name="XPipeAITargetTypes">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ENEMY_STRUCTURE" />
+      <xs:enumeration value="DEFENSIVE" />
+      <xs:enumeration value="OPPORTUNITY" />
+      <xs:enumeration value="EXPANSION" />
+      <xs:enumeration value="TARGETLESS" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="XPipeAITarget">
+    <xs:attribute name="Name" type="xs:string"/>
+    <xs:attribute name="TargetType" type="XPipeAITargetTypes"/>
+    <xs:attribute name="NumTactics" type="xs:unsignedInt"/>
+    <xs:attribute name="EnemyThreat" type="xs:float"/>
+    <xs:attribute name="FrameSet" type="xs:unsignedInt"/>
+  </xs:complexType>
+  <xs:complexType name="XPipeSkirmishAIState">
+    <xs:sequence>
+      <xs:element name="Components" type="XPipeAIComponent" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="BuildQueue" type="XPipeAIBuildable" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="States" type="XPipeAIStates" minOccurs="1" maxOccurs="unbounded" />
+      <xs:element name="Targets" type="XPipeAITarget" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="XPipeMiddleManagerTargeting">
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="TargetName" type="xs:string" />
+    <xs:attribute name="TimeOnTarget" type="xs:float" />
+  </xs:complexType>
+  <xs:complexType name="XPipeAIMiddleManager">
+    <xs:sequence>
+      <xs:element name="CombatDirections" type="XPipeMiddleManagerTargeting" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="XPipePlayerConquerMetrics">
+    <xs:sequence>
+    </xs:sequence>
+		<xs:attribute name="Dummy" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="XPipePlayer">
+    <xs:sequence>
+      <xs:element name="Teams" type="XPipeTeam" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="ScriptTeams" type="XPipeTeam" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="SkirmishAI" type="XPipeSkirmishAIState" minOccurs="0" maxOccurs="1" />
+      <xs:element name="PlayerConquerMetrics" type="XPipePlayerConquerMetrics" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="ID" type="xs:unsignedInt" default="0" />
+    <xs:attribute name="Side" type="xs:string" />
+  </xs:complexType>
+  <!-- Events -->
+  <xs:complexType name="XPipeEvent" xas:isPolymorphic="true">
+    <xs:sequence />
+  </xs:complexType>
+  <xs:complexType name="XPipeGlobalEventObjectDamaged">
+    <xs:complexContent>
+      <xs:extension base="XPipeEvent">
+        <xs:attribute name="VictimID" type="xs:unsignedInt" />
+        <xs:attribute name="SourceID" type="xs:unsignedInt" />
+        <xs:attribute name="DamageAmount" type="xs:float" />
+        <xs:attribute name="DamageType" type="DamageType" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="XPipeGlobalEventObjectCreated">
+    <xs:complexContent>
+      <xs:extension base="XPipeEvent">
+        <xs:attribute name="ObjectID" type="xs:unsignedInt" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="XPipeGlobalEventObjectDestroyed">
+    <xs:complexContent>
+      <xs:extension base="XPipeEvent">
+        <xs:attribute name="ObjectID" type="xs:unsignedInt" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="XPipeEventList">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="GlobalEventObjectDamaged" type="XPipeGlobalEventObjectDamaged" />
+      <xs:element name="GlobalEventObjectCreated" type="XPipeGlobalEventObjectCreated" />
+      <xs:element name="GlobalEventObjectDestroyed" type="XPipeGlobalEventObjectDestroyed" />
+    </xs:choice>
+  </xs:complexType>
+  <!-- One logic frame full of data sent from the game -->
+  <xs:complexType name="XPipeLogicFrame">
+    <xs:sequence>
+      <xs:element name="Objects" type="XPipeObject" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="Players" type="XPipePlayer" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="Events" type="XPipeEventList" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="Frame" type="xs:unsignedInt" default="0" />
+  </xs:complexType>
+  <!-- Static game session data -->
+  <xs:complexType name="XPipeWeaponTurretTemplate">
+    <xs:sequence>
+      <xs:element name="WeaponTemplates" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="XPipeThingTemplate">
+    <xs:sequence>
+      <xs:element name="WeaponTurrets" type="XPipeWeaponTurretTemplate" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="ArmorTemplates" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="MaxHealth" type="xs:float" />
+    <xs:attribute name="Speed" type="xs:float" />
+    <xs:attribute name="BuildCost" type="xs:float" />
+    <xs:attribute name="BuildTime" type="xs:float" />
+    <xs:attribute name="CanAttack" type="xs:boolean" default="false" />
+    <xs:attribute name="IsImmortal" type="xs:boolean" default="false" />
+  </xs:complexType>
+  <xs:complexType name="XPipeWeaponNugget" xas:isPolymorphic="true">
+    <xs:sequence />
+  </xs:complexType>
+  <xs:complexType name="XPipeWeaponNuggetDamage">
+    <xs:complexContent>
+      <xs:extension base="XPipeWeaponNugget">
+        <xs:attribute name="DamageAmount" type="xs:float" />
+        <xs:attribute name="DamageType" type="DamageType" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="XPipeWeaponNuggetProjectile">
+    <xs:complexContent>
+      <xs:extension base="XPipeWeaponNugget">
+        <xs:attribute name="WarheadWeaponTemplate" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="XPipeWeaponNuggetList">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="DamageNugget" type="XPipeWeaponNuggetDamage" />
+      <xs:element name="ProjectileNugget" type="XPipeWeaponNuggetProjectile" />
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="XPipeWeaponTemplate">
+    <xs:sequence>
+      <xs:element name="Nuggets" type="XPipeWeaponNuggetList" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="AverageTimePerShot" type="xs:float" />
+  </xs:complexType>
+  <xs:complexType name="XPipeThingTemplateConquerMetrics">
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="ThingTemplateA" type="xs:string" />
+    <xs:attribute name="ThingTemplateB" type="xs:string" />
+    <xs:attribute name="DPSA" type="xs:float" />
+    <xs:attribute name="DPSB" type="xs:float" />
+    <xs:attribute name="TTKA" type="xs:float" />
+    <xs:attribute name="TTKB" type="xs:float" />
+  </xs:complexType>
+  <xs:complexType name="XPipeGameTemplateConquerMetrics">
+    <xs:sequence>
+      <xs:element name="ThingTemplateConquerMetrics" type="XPipeThingTemplateConquerMetrics" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="XPipeGameTemplateData">
+    <xs:sequence>
+      <xs:element name="ThingTemplates" type="XPipeThingTemplate" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="WeaponTemplates" type="XPipeWeaponTemplate" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="GameTemplateConquerMetrics" type="XPipeGameTemplateConquerMetrics" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="XPipeGameSessionHeader">
+    <xs:sequence>
+      <xs:element name="GameTemplateData" type="XPipeGameTemplateData" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="XPipeGameSession">
+    <xs:sequence>
+      <xs:element name="GameSessionHeader" type="XPipeGameSessionHeader" minOccurs="1" maxOccurs="1" />
+      <xs:element name="LogicFrames" type="XPipeLogicFrame" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

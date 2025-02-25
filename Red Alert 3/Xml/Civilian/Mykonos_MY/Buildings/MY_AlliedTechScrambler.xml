@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+		<Include type="all"	source="ART:MY_AlliedTechScrambler.W3X" />
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="instance" source="DATA:Civilian/Mykonos_MY/Props/MY_AlliedTechScrambler_Collapse.xml" />
+		
+	</Includes>
+	<GameObject
+		id="MY_AlliedTechScrambler"
+		SelectPortrait="Portrait_AlliedTechScrambler"
+		ButtonImage="Button_AlliedTechScrambler"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		EditorName="MY_AlliedTechScrambler"	
+		KindOf="+RADAR_SCRAMBLER +AUTO_ACQUIRABLE_BY_AI" 
+    	EditorSorting="STRUCTURE"
+		Browser="REGION Mykonos_MY STRUCTURE"
+		TypeDescription="TYPE:AlliedTechScrambler"
+		Description="DESC:AlliedTechScrambler"
+		HealthBoxHeightOffset="100">
+		<DisplayName xai:joinAction="Replace">NAME:AlliedTechScrambler</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18 BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="MY_AlliedTechScrambler" />
+          <ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="Allied_Scrambler_Elec"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="Allied_Scrambler_Light"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="Allied_Scrambler_Elec"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="FXBone03"
+						FXParticleSystemTemplate="Allied_Scrambler_Elec"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="MY_AlliedTechScrambler"
+						AnimationMode="LOOP"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				
+				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="FX_BuildingDebrisExplosion"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Small" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="MY_AlliedTechScrambler_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>	
+			
+			<!-- civ buildings should have a CreateObjectDie to make a collapse version. -->
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>				
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_MEDIUM"
+				/>
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "30.0"
+				MinorRadius = "30.0"
+				Height = "40.0"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+
+	<ObjectCreationList
+		id="MY_AlliedTechScrambler_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>MY_AlliedTechScrambler_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>	
+</AssetDeclaration>

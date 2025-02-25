@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GSM_ConquerVehicle_SKN.W3X" />
+		<Include
+			type="all"
+			source="ART:GSM_ConquerVehicle_SKL.W3X" />
+		<Include
+			type="all"
+			source="ART:GSM_ConquerVehicle_DPLY.W3X" />
+		<Include
+			type="all"
+			source="ART:GSM_ConquerVehicle_AIDA.W3X" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GDIConquerVehicleDeployed"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_GDIConquerVehicleDeployed"
+		ButtonImage="Portrait_GDIConquerVehicleDeployed"
+		Side="GDI"
+		KindOf="+AUTO_ACQUIRABLE_BY_AI +OBJECTIVE_STRUCTURE"
+		RadarPriority="NOT_ON_RADAR"
+		EditorSorting="STRUCTURE"
+		Description="Desc:GDIConquerVehicleDeployed"
+		TypeDescription="Type:GDIConquerVehicleDeployed">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace">Name:GDIConquerVehicleDeployed</DisplayName>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GSM_ConquerVehicle_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_IDLE">
+					<Animation
+						AnimationName="GSM_ConquerVehicle_AIDA"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == null then
+							CurDrawableSetTransitionAnimState("TRANS_Deploying")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_Deploying">
+					<Animation
+						AnimationName="GSM_ConquerVehicle_DPLY"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplode" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_GDIConquerVehicleDeployed">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="250.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "35.0"
+				 MinorRadius = "12.0"
+				 Height = "22.0"
+				 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-28.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<ClientBehaviors>
+      <AnimationSoundClientBehavior id="ModuleTag_ASCB">
+            <Sound Sound="GDI_ConquerVehicleA_AnimationDPLY1" Animation="GSM_ConquerVehicle_DPLY" Frame="1" />            
+            <Sound Sound="GDI_ConquerVehicleA_AnimationDPLY2MS" Animation="GSM_ConquerVehicle_DPLY" Frame="36" />        
+            <Sound Sound="GDI_ConquerVehicleA_AnimationDPLY3" Animation="GSM_ConquerVehicle_DPLY" Frame="74" />                    
+            <Sound Sound="GDI_ConquerVehicleA_AnimationDPLY4" Animation="GSM_ConquerVehicle_DPLY" Frame="108" />                    
+            <Sound Sound="GDI_ConquerVehicleA_AnimationDPLY5" Animation="GSM_ConquerVehicle_DPLY" Frame="135" />                    
+            <Sound Sound="GDI_ConquerVehicleA_AnimationDPLY6" Animation="GSM_ConquerVehicle_DPLY" Frame="181" />                    
+            <Sound Sound="GDI_ConquerVehicleA_AnimationDPLY7" Animation="GSM_ConquerVehicle_DPLY" Frame="216" />                    
+            <Sound Sound="GDI_ConquerVehicleA_AnimationDPLY8" Animation="GSM_ConquerVehicle_DPLY" Frame="226" />                                           
+			<!-- <Sound Sound="GDI_ConquerVehicleA_AnimationDPLY9" Animation="GSM_ConquerVehicle_DPLY" Frame="262" /> NO!  Looping sound!  -->
+      </AnimationSoundClientBehavior>    
+			</ClientBehaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+	<EvaEventArray>
+     	 <EvaEntry EvaEvent="ControlNodeUnderAttack" EvaType="damagedOwner" />
+    </EvaEventArray>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="700" />
+	</GameObject>
+	
+	<ObjectCreationList
+		id="OCL_GDIConquerVehicleDeployed">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIConquerVehicle_Collapse</ObjectTemplate>
+					<ObjectTemplate>GDIDebrisSmall_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<ObjectOffset x="-30.0" y="0.0" z="5.0" />
+					<SubModules>
+						<CreateObject/>
+						<SetLifetime
+							MinLifetime="1.0s"
+							MaxLifetime="3.0s"/>
+						<FlingObject
+							MinForceMagnitude="2.0"
+							MaxForceMagnitude="7.0"
+							MinForcePitch="90d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+</AssetDeclaration>

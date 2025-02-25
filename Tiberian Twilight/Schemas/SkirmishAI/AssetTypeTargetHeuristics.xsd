@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+		xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+		xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="../Includes/AIBaseType.xsd"/>
+	<xs:include schemaLocation="../Includes/PlayerRelation.xsd"/>
+	<xs:include schemaLocation="AIBaseSelectionCriteria.xsd"/>
+	<xs:include schemaLocation="../Includes/ObjectFilter.xsd"/>
+	<xs:include schemaLocation="../Includes/MissionObjectiveCategory.xsd"/>
+	<xs:include schemaLocation="../Includes/PlayerType.xsd"/>
+
+	<!-- Targeting Heuristic definitions, also for the states -->
+	<xs:simpleType name="TargetingHeuristicType">
+		<xs:restriction base="xs:string">
+
+			<xs:enumeration value="EnemyStructure"/>
+			<xs:enumeration value="FriendlyStructure"/>
+			<xs:enumeration value="EnemyUnit" />
+			<xs:enumeration value="FriendlyUnit" />
+
+			<xs:enumeration value="UnderAttackBy" />
+
+			<xs:enumeration value="EnemyUnitCloseToShore"/>
+			<xs:enumeration value="EnemyStructureCloseToShore"/>
+
+			<xs:enumeration value="NeutralGarrison"/>
+			<xs:enumeration value="EnemyGarrison"/>
+
+			<xs:enumeration value="Expansion"/>
+			<xs:enumeration value="TechBuilding"/>
+			<xs:enumeration value="Bridge"/>
+			<xs:enumeration value="Beacon"/>
+			<xs:enumeration value="Crate"/>
+			<xs:enumeration value="Help"/>
+			<xs:enumeration value="Husk"/>
+			<xs:enumeration value="Tiberium"/>
+
+			<xs:enumeration value="Point"/>
+			<xs:enumeration value="CenterOfMap"/>
+			<xs:enumeration value="UnpackBuildingPlacement" />
+
+			<xs:enumeration value="DefenseClassTarget" />
+			<xs:enumeration value="NamedObject"/>
+			<xs:enumeration value="Waypoint"/>
+			<xs:enumeration value="Team"/>
+			
+			<!-- C&C4 specific: Keep Offense & Support crawlers near the front lines -->
+			<xs:enumeration value="MaintainBehindFrontLines"/>
+			<xs:enumeration value="UnattachedPlayerBeacon"/>		<!-- An unattached player placed objective beacon -->
+
+			<xs:enumeration value="FriendlyAITeam"/>
+			<xs:enumeration value="FriendlyHumanUnits"/>
+ 
+			<xs:enumeration value="TargetFriendlyBase"/>
+			
+			<!-- Gamemode specific heuristics -->
+			<xs:enumeration value="ResourceStructure"/>
+			<xs:enumeration value="GoalStructure"/>
+			<xs:enumeration value="MonumentShieldGenerator"/>
+			<xs:enumeration value="EnemyMonument"/>
+			<xs:enumeration value="OwnMonument"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!--Target Sort Types-->
+	<xs:simpleType name="AITargetSortType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Distance"/>
+			<xs:enumeration value="ThreatToGround"/>
+			<xs:enumeration value="ThreatToAir"/>
+			<xs:enumeration value="ThreatToWater"/>
+			<xs:enumeration value="Random"/>
+			<xs:enumeration value="ClosestToEnemy"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="AITargetLocationType" >
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Water" />
+			<xs:enumeration value="Land" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="AITargetLocationBitFlags">
+		<xs:list itemType="AITargetLocationType"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="BuildingPlacementDistance">
+		<xs:sequence />
+		<xs:attribute name="Distance" type="SageReal" use="required" />
+	</xs:complexType>
+
+	<xs:simpleType name="HuskInfoFlags" >
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AUTOHEALING_ALLIES_FORBIDDEN" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="HuskInfoBitFlags">
+		<xs:list itemType="HuskInfoFlags"></xs:list>
+	</xs:simpleType>
+	<xs:complexType name="HuskInfo">
+		<xs:sequence />
+		<xs:attribute name="Flags" type="HuskInfoBitFlags" default="" />
+	</xs:complexType>
+
+  <xs:simpleType name="TiberiumCrystalFlags">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TIBERIUM_CRYSTAL"/>
+      <xs:enumeration value="TIBERIUM_SPAWN_POINT"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="TiberiumCrystalInfoFlags">
+    <xs:list itemType="TiberiumCrystalFlags"/>
+  </xs:simpleType>
+
+	<xs:complexType name="DistanceObjectFilter">
+		<xs:sequence>
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="Radius" type="SageReal" use="required" />
+	</xs:complexType>
+	
+	<xs:simpleType name="FriendlyTeamCoordination">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BestTeam"/>
+			<xs:enumeration value="NotCoordinated"/>
+			<xs:enumeration value="PreferCoordinated"/>
+			<xs:enumeration value="RequireCoordinated"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="FriendlyAITeamHeuristicData">
+		<xs:sequence>
+			<xs:element name="FriendlyAITeamToFind" type="AIStateDefinitionWeakRef" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="PlayerRelationsToCheck" type="PlayerRelationFlags" default="ALLIES SAME_PLAYER" />
+		<xs:attribute name="CoordinationPreference" type="FriendlyTeamCoordination" default="BestTeam" />
+	</xs:complexType>				
+				
+	<!-- There is currently no easy way to search for groups of human controlled units without 
+				doing a partition check to find all units then radius searches around them to find concentrations of them.  
+				This merely defines the filter to find them and the sampling rate (so we don't do filter checks around EVERY unit)
+				And the radius to search around them to consider them "in the group".  These are relatively tweaky values and the
+				best thing to do is to probably toss them in data so they can easily be tweaked until they work. -->
+	<xs:complexType name="FriendlyHumanUnitsHeuristicData">
+		<xs:sequence>
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="SamplingRate" type="SageInt" use="required" />
+		<xs:attribute name="SamplingRadius" type="SageReal" use="required" />
+		<xs:attribute name="ObjectSearchPoolROS" type="RegisteredObjectSetId" use="required" />		<!-- This limits the number of units that are processed in the Player object iteration -->
+	</xs:complexType>
+	
+	<!-- If a point is within the given distance of an object of the given type,
+			 reject it or otherwise avoid it.  -->
+	<xs:complexType name="AIAvoidanceRecord">
+		<xs:sequence>
+			<!-- Filter the objects you want to avoid-->
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>	 
+		<!-- How far we want to keep from the objects -->
+		<xs:attribute name="AvoidDistance" type="SageReal" use="required" />
+
+		<!-- The RegisteredObjectSet of things we want to avoid -->
+		<xs:attribute name="AvoidROS" type="RegisteredObjectSetId" use="required" />
+		
+		<!-- This field applies to point-based targeting heuristics only:
+			   Slightly odd: If this is defined, and the first-calculated point falls within the 
+			   this distance of an avoidance object, then we randomly calculate points around the
+				 AvoidDistance circle when deciding where to go. Otherwise, we just draw a vector
+				 from the avoidance object to the first-calculated point and on out to the correct
+				 radius; e.g. we try to move the target as little as possible if its further away
+				 that this distance. -->
+		<xs:attribute name="RandomBounceDistance" type="SageReal" default="0.0" />
+
+	</xs:complexType>
+
+	<xs:complexType name="AITargetingHeuristic" xas:runtimeWrapper ="::AITargetHeuristic" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<!-- Used by Garrison, EnemyGarrison, Expansion, Point, UnpackBuildingPlacement, and TargetBase -->
+					<xs:element name="BaseSelection" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1" /> 
+
+					<!-- Used only by UnpackBuildingPlacement. Each one specifies a different distance to search at -->
+					<xs:element name="BuildingPlacementDistance" type="BuildingPlacementDistance" minOccurs="0" maxOccurs="unbounded" xas:sortBy="Distance"/>
+
+					<!-- Used only by Husk -->
+					<xs:element name="HuskInfo" type="HuskInfo" minOccurs="0" maxOccurs="1"/>
+
+					<!-- Used to require a target to be within a certain radius of an object which passes the object filter -->
+					<xs:element name="MaxDistanceFilter" type="DistanceObjectFilter" minOccurs="0" maxOccurs="1" />
+					
+					<!-- For MaintainBehindFrontLines: This is the "home" which we use to determine which way is 
+							 "behind" the front lines. -->
+					<xs:element name="CentralBaseCriteria" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1" />
+
+					<!-- List of objects we should avoid targetting close to.
+							 For object-based target heuristics, we just skip any
+							 targets which are too close to the given objects. For some point-based target heuristics 
+							 (Point, DefenseClassTarget, MaintainBehindFrontLines), just moves the target point a 
+							 little further away from the avoidance object.-->
+					<xs:element name="AvoidTarget" type="AIAvoidanceRecord" minOccurs="0" maxOccurs="unbounded" />
+
+					<xs:element name="FriendlyAITeamData" type="FriendlyAITeamHeuristicData" minOccurs="0" maxOccurs="1" />			<!-- only for use with AITargetHeuristicFriendlyAITeam -->
+					<xs:element name="FriendlyHumanUnitsData" type="FriendlyHumanUnitsHeuristicData" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				
+				<xs:attribute name="HeuristicType" type="TargetingHeuristicType" use="required"/>
+				<xs:attribute name="SortType" type="AITargetSortType" use="optional" default="Distance"/>
+				
+				<!-- Object is true is it has all flags in "Must Include All" and either a vital flag, or no forbidden flags -->
+				<xs:attribute name="VitalKindOf" type="KindOfBitFlags"/>
+				<xs:attribute name="ForbiddenKindOf" type="KindOfBitFlags"/>
+				<xs:attribute name="VitalObjectStatus" type="ObjectStatusBitFlags"/>
+				<xs:attribute name="ForbiddenObjectStatus" type="ObjectStatusBitFlags"/>
+				<xs:attribute name="Destroyed" type="xs:boolean" default="false"/>
+				
+				<!-- HighestPriorityEnemyPlayersOnly: For heuristics which target enemy stuff: If false, search secondary enemies if the primary enemies have nothing that matches.
+				If true, use the old method where only the highest priority enemy(ies) were considered -->
+				<xs:attribute name="HighestPriorityEnemyPlayersOnly" type="SageBool" default="true" /> 
+				<xs:attribute name="ThreatFinderRange" type="xs:float" use="optional"/>
+				<xs:attribute name="SearchRange" type="xs:float" default="1500.0"/>
+				<xs:attribute name="Beacon" type="AIBeaconType" use="optional"/>
+				<xs:attribute name="Name" type="xs:string" use="optional"/>
+				<xs:attribute name="Location" type="AITargetLocationBitFlags" default="Water Land"/>
+				
+				<!-- The target must be at least this far from the nearest enemy. -->
+				<xs:attribute name="MinDistanceFromEnemy" type="SageReal" default="0.0" />
+				<xs:attribute name="Relationship" type="PlayerRelationFlags" use="optional" />
+				
+				<!-- Used to only allow the AI to use the object or position for 1 target at a time -->
+				<xs:attribute name="RequireUniqueTarget" type="xs:boolean" default="false" />
+				
+				<!-- Only select a target which has been under attack in the last n seconds. For stupid-internal-code reasons, this is an int not a SageTime. -->
+				<xs:attribute name="UnderAttackInLastNSeconds" type="SageInt" use="optional" />
+
+				<!-- For MaintainBehindFrontLines: How far behind our front lines do we want to be? -->
+				<xs:attribute name="DistanceBehindFrontLines" type="SageReal" default="100.0" />
+
+				<!-- For MaintainBehindFrontLines: How far away from the enemy do we insist on being? -->
+				<xs:attribute name="DistanceAwayFromEnemy" type="SageReal" default="100.0" />
+
+				<!-- For MaintainBehindFrontLines: How far off the line from our home base to our forward team
+						 can we be and still be "on the line"? (When we're "on the line", we're more careful about 
+						 moving back along that line if there are enemies in the way) -->
+				<xs:attribute name="RadiusOfPathToHome" type="SageReal" default="100.0" />
+
+				<!-- For MaintainBehindFrontLines: If we can't find a team to follow around, what type of 
+						 objects should we head towards? -->
+				<xs:attribute name="BackupTargetROS" type="RegisteredObjectSetId" use="optional" />
+
+				<!-- Only for ...CloseToShore -->
+				<xs:attribute name="MaxDistanceToShore" type="SageReal" default="1000.0" />
+				
+				<!-- Only for UnpackBuildingPlacement: don't choose points within this distance of one of our conyard's natural rally points.
+				This is so that we don't box ourselves in by planting a bunch of eggs near the conyard entrance and then find that
+				we can't unfurl any new buildings at all. -->
+				<xs:attribute name="MinDistanceFromConyardEntrance" type="SageReal" default="0.0" />
+				
+				<!-- Only for UnpackBuildingPlacement: Ignore MinDistanceFromConyardEntrance for this long after the AI starts up. We really want
+				the first Power Plant in the build order to unpack ASAP, and a single power plant near the conyard isn't going to cause us
+				problems. -->
+				<xs:attribute name="IgnoreMinDistanceFromConyardEntranceForTime" type="Time" default="0s" />
+
+				<!-- Allow ai to 'no longer see'/forget a target that is in the shroud -->
+				<xs:attribute name="ShroudRespect" type="xs:boolean" default="false"/>
+				<xs:attribute name="ShroudRememberTime" type="Time" default="0s" />
+
+				<!-- The maximum number of other AI allowed to have this same target.  If this percentage is exceeded, then this target will not 
+				be considered as a valid option. -->
+				<xs:attribute name="MaxPercentOfOtherAIAllowed" type="Percentage" default="100%" />
+
+				<xs:attribute name="BeaconTypeAttached" type="MissionObjectiveCategory" default="Invalid" />
+				<xs:attribute name="PlayerOwningBeaconType" type="PlayerTypeFlags" default="HUMAN COMPUTER" />
+				<xs:attribute name="PlayerOwningBeaconRelationship" type="PlayerRelationFlags" default="ALLIES" />
+
+				<xs:attribute name="TiberiumCrystalType" type="TiberiumCrystalFlags" default="TIBERIUM_CRYSTAL"/>
+				<!-- Used to determine the minimum amount of time an object must have existed before it is a valid target -->
+				<xs:attribute name="TargetMinimumAge" type="Time" default="0s" />
+
+				<xs:attribute name="SmallestGroupOfUnitsToTarget" type="SageInt" default="1" />		<!-- Only used for heuristics that target multiple objects (AITargetHeuristicFriendlyAITeam) -->
+				<xs:attribute name="MaxDistanceToTarget" type="SageReal" default="100000.0" />		<!-- default this to something impossibly large for now -->
+				
+				<!-- if true, the target heuristic will run after the state has assembled the team -->
+				<xs:attribute name="FindBestTargetWhenReadyToRun" type="xs:boolean" default="false" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

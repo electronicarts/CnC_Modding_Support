@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="AssetTypeAIMicroManagerStates.xsd"/>
+	<xs:include schemaLocation="AssetTypeAISpecialPower.xsd"/>
+	<xs:include schemaLocation="AIBaseSelectionCriteria.xsd" />
+	<xs:include schemaLocation="../Includes/PlayerClassType.xsd"/>
+
+	<xs:complexType name="TargetBiasInfo">
+		<xs:attribute name="UnitName" type="GameObjectWeakRef" use="required"/>
+		<xs:attribute name="HealthMultiplier" type="xs:float" default="1.0"/>
+		<xs:attribute name="DamageMultiplier" type="xs:float" default="1.0"/>
+		<xs:attribute name="HealthOverride" type="xs:float" default="100.0"/>
+		<xs:attribute name="DamageOverride" type="xs:float" default="100.0"/>
+	</xs:complexType>
+
+	<xs:complexType name="SpecificSpecialPowerDelayInfo">
+		<xs:attribute name="PowerType" type="AISpecialPowerHeuristic" use="required"/>
+		<xs:attribute name="TogglePowerSubType" type="ToggleStatusAiHint" default="TOGGLE_NO_HINT"/>
+		<xs:attribute name="MinimumDelay" type="Time" default="0s"/>
+		<xs:attribute name="MaximumDelay" type="Time" default="0s"/>
+	</xs:complexType>
+
+	<xs:simpleType name="HealInfoOptions">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NO_STACKING_HEALS" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="HealInfoOptionBitFlags">
+		<xs:list itemType="HealInfoOptions" />
+	</xs:simpleType>
+	
+	<xs:complexType name="HealInfo">
+		<!-- If the wounded unit is closer than MinRange the weight is 1.0 -->
+		<!-- If the wounded unit is farther than MaxRange the weight is 0.0 -->
+		<!-- If the wounded unit is within these two ranges then the weight is interpolated -->
+		<xs:attribute name="ScoreDistanceMinRange" type="SageReal" default="100.0" />
+		<xs:attribute name="ScoreDistanceMaxRange" type="SageReal" default="300.0" />
+
+		<!-- corresponding values for Idle -->
+		<xs:attribute name="ScoreDistanceMinRangeIdle" type="SageReal" default="150.0" />
+		<xs:attribute name="ScoreDistanceMaxRangeIdle" type="SageReal" default="350.0" />
+		
+		<!-- skirmish AI value weight. Anything above this value is 1.0. Anything below is scaled. -->
+		<xs:attribute name="ScoreSkirmishAIValueMax" type="SageUnsignedInt" default="500" />
+
+		<!-- only consider teammates above this health percentage if there are no teammates with
+			  health below this percentage -->
+		<xs:attribute name="HealStartMinimumHealthPriorityThreshold" type="Percentage" default="50%" />
+		<!-- Statuses to reject units for potential heal (uses anyIntersectionWith) -->
+		<xs:attribute name="StatusToRejectUnitForHeal" type="ObjectStatusBitFlags" default="BURROWING" />
+		
+		<!-- delay before we can retarget. This is ignored if the healee is fully restored -->
+		<xs:attribute name="HealRetargetDelay" type="Time" default="8s" />
+
+		<xs:attribute name="Options" type="HealInfoOptionBitFlags" default="NO_STACKING_HEALS" />
+	</xs:complexType>
+
+	<xs:complexType name="HijackInfo">
+		<xs:attribute name="MinHealthPercent" type="Percentage" default="25%"/>
+		<xs:attribute name="MinTargetValue" type="SageReal" default="100.0"/>
+	 </xs:complexType>
+
+	<xs:complexType name="CrateCollectionInfo">
+		 <!-- Initial score for our crate scoring algorithm-->
+		<xs:attribute name="UnitScoreStartingValue" type="SageReal" default="6.0" />
+		<!-- Distance score is (DistanceScoreFactor - unitToCrateDistance) / DistanceScoreDivisor -->
+		<xs:attribute name="DistanceScoreFactor" type="SageReal" default="300.0" />
+		<xs:attribute name="DistanceScoreDivisor" type="SageReal" default="50.0" />
+		<!-- Penalty applied to score of units which the micromanager thinks shouldn't switch targets -->
+		<xs:attribute name="ShouldAvoidSwitchingPenalty" type="SageReal" default="6.0" />
+		<!-- Class type to check to determine if we can pick up upgrade crates -->
+		<xs:attribute name="UpgradeCrateRequiredClass" type="PlayerClassTypeBitFlags" default="HEAVY" />
+		<!-- Statuses to reject units for potential crate pickup (uses testForAny) -->
+		<xs:attribute name="RejectUnitForUpgradeCratePickupByStatus" type="ObjectStatusBitFlags" default="HAS_CRATE_UPGRADE" />
+		<!-- Distance at which objects should stop when near a crate they aren't collecting -->
+		<xs:attribute name="CrateAvoidanceDistance" type="SageReal" default="100.0" />
+		<!-- Delay between when a crate is created, and when the micromanager will start trying to pick it up -->
+		<xs:attribute name="CratePickupDelay" type="Time" default="3s" />
+		<!-- Determines if a stop order should be sent after we send the entire team to collect crates -->
+		<xs:attribute name="StopUponCratePickup" type="SageBool" default="true" />
+		<!-- Maximum distance to try to pick up a crate if the micromanager is in any state other than idle -->
+		<xs:attribute name="MaximumNonIdleDistance" type="SageReal" default="250.0" />
+	</xs:complexType>
+
+	<xs:complexType name="InitialJoinInfo">
+		<!-- Used if you don't want anything on the team to use the initial join state -->
+		<xs:attribute name="DisableInitialJoin" type="SageBool" default="false" />
+		<!-- minimum distance from the team average pos a unit needs to be to start an initial join-->
+		<xs:attribute name="DistanceThreshold" type="SageReal" default="600.0" />
+		<!-- the team center moving by this amount triggers a new move on units already being gathered -->
+		<xs:attribute name="TeamCenterDistanceDiffThreshold" type="SageReal" default="80.0" />
+	</xs:complexType>
+
+	<xs:complexType name="ScuttleUnitTimeToDieRange">
+		<xs:complexContent>
+			<xs:extension base="TimeRange">
+				<xs:sequence>
+					<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />				
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	 </xs:complexType>
+
+	<xs:complexType name="ScuttleUnitInfo">
+		<xs:sequence>
+			<xs:element name="ScuttleUnitIfTimeToDieInRange" type="ScuttleUnitTimeToDieRange" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:pipelineOnly="true" />
+		<!-- This determines the health percentage at which a unit is valid for scuttle when not in combat -->
+		<xs:attribute name="ScuttleUnitHealth_Idle" type="Percentage" use="optional" />
+		<!-- This determines the health percentage at which a unit is valid for scuttle when in combat -->
+		<xs:attribute name="ScuttleUnitHealth_Combat" type="Percentage" use="optional" />
+		<!-- We only scuttle units once every so often, to give humans more of a chance 
+				     to kill them on easier difficulties -->
+		<xs:attribute name="ScuttleUnitsTimeBetweenChecks" type="Time" default="1s" />
+	</xs:complexType>
+	
+	<xs:complexType name="AIMicroManagerData" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+
+				<xs:sequence>
+					<xs:element name="TargetBias" type="TargetBiasInfo" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="SpecificSpecialPowerDelay" type="SpecificSpecialPowerDelayInfo" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="RetreatBaseCriteria" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="IgnoreTargets" type="ObjectFilter" minOccurs="0" maxOccurs="1"/>
+					<!-- Min and Max are one to guarantee one is there, if you change this you will break code -->
+					<xs:element name="CrateCollectionInfo" type="CrateCollectionInfo" minOccurs="1" maxOccurs="1" />
+					<xs:element name="HealInfo" type="HealInfo" minOccurs="1" maxOccurs="1" />
+					<xs:element name="HijackInfo" type="HijackInfo" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="InitialJoinInfo" type="InitialJoinInfo" minOccurs="1" maxOccurs="1" />
+					<xs:element name="ScuttleUnitInfo" type="ScuttleUnitInfo" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+
+				<xs:attribute name="UpdateTime" type="Time" default="1s"/>
+
+				<!-- If the team's center point has not moved more than this distance in this long, the team as a whole
+						 should be considered idle and given its orders again (assuming the team is not obviously busy e.g. in
+						 combat.)
+								This really belongs in the Tactic, not the Micromanager, but for coding reasons it is easier 
+						 to put in here. @todo - fix that? -->
+				<xs:attribute name="MaxTeamIdleTime" type="Time" default="30s"/>
+				<xs:attribute name="MaxTeamIdleDistanceChange" type="xs:float" default="50.0"/>
+
+				<!-- If a unit has not moved more than this distance in this long, the unit is considered idle, even
+						if it thinks it is doing something. Again, as much a tactic thing as a micromanager thing. -->
+				<xs:attribute name="MaxUnitIdleTime" type="Time" default="10s"/>
+				<xs:attribute name="MaxUnitIdleDistanceChange" type="xs:float" default="50.0"/>
+
+				<xs:attribute name="EngageHostileTargets" type="xs:boolean" default="true"/>
+				<xs:attribute name="EngagePassiveTargets" type="xs:boolean" default="true"/>
+				<xs:attribute name="EngageTacticalTarget" type="xs:boolean" default="true"/>
+
+				<xs:attribute name="PassiveTargetSearchDistance" type="xs:float" default="400.0"/>
+				<xs:attribute name="EnemySearchDistanceVisionMultiplier" type="xs:float" default="1.25"/>
+				<xs:attribute name="MinTimeToKeepTempVisionRangeBonus" type="Time" default="10s"/>
+
+				<!-- Used to force units to stick to their current target.  This allows us to reduce the AI's responsiveness at lower
+						difficulties and give the player a chance to counter the AI's current target choices. -->
+				<xs:attribute name="TimeToKeepTargetMin" type="Time" default="0s"/>
+				<xs:attribute name="TimeToKeepTargetMax" type="Time" default="0s"/>
+
+				<!-- Used to adjust the amount that the MM likes going after enemy healers vs enemy combat units.
+				     SMALLER values make the MM MORE likely to target enemy healers. -->
+				<xs:attribute name="EnemyHealerValueFudgeFactor" type="xs:float" default="1.0" />
+											
+											
+				<!-- Used to randomly make errors in the MicroManager's target choosing.  This value is increased to
+						lower difficulty. -->
+				<xs:attribute name="RandomTargetScoreModifier" type="xs:float" default="0.0"/>
+
+				<xs:attribute name="CleanupPowerAdvantage" type="xs:float" default="4.0"/>
+
+				<xs:attribute name="UseGatherState" type="xs:boolean" default="true"/>
+				<xs:attribute name="GatherTempVisionRangeBonus" type="xs:float" default="1.5"/>
+
+				<xs:attribute name="RetreatPowerAdvantage" type="xs:float" default="0.25"/>
+				<xs:attribute name="RetreatMinDistanceFromBase" type="xs:float" default="900.0"/>
+				<xs:attribute name="RetreatMinDistanceToFallback" type="xs:float" default="500.0"/>
+				<xs:attribute name="RetreatSpeedBuffer" type="xs:float" use="optional"/>
+				<xs:attribute name="RetreatTempVisionRangeBonus" type="xs:float" default="1.5"/>
+
+				<!-- Distance current retreat target (crawler) can move before we update our move orders -->
+				<xs:attribute name="RetreatBaseCanMoveDistance" type="xs:float" default="100.0"/>
+
+				<xs:attribute name="MaxDistanceFromTeamToIncludeInArmy" type="xs:float" default="600.0"/>
+
+				<xs:attribute name="AlphaStrikeTargetHealthPct" type="xs:float" default="0.5"/>
+				<xs:attribute name="AlphaStrikeTargetTimeToKill" type="xs:float" default="4.0"/>
+				<xs:attribute name="AlphaStrikeEngineerDistanceFromStructure" type="xs:float" default="200.0"/>
+
+				<xs:attribute name="SiegeWeaponBuffer" type="xs:float" default="1.15"/>
+				<xs:attribute name="CanUseSiegeState" type="xs:boolean" default="true"/>
+
+				<xs:attribute name="Crush" type="xs:boolean" default="true"/>
+				<xs:attribute name="CrushPreference" type="xs:float" default="1.0"/>
+
+				<xs:attribute name="EnterGarrisons" type="xs:boolean" default="true"/>
+				<xs:attribute name="EnterGarrisonableStructureDistance" type="xs:float" default="150.0"/>
+
+				<xs:attribute name="ClearGarrisons" type="xs:boolean" default="true"/>
+
+				<xs:attribute name="PullbackInjured" type="xs:boolean" default="true"/>
+				<xs:attribute name="PullbackInjuredHealthPct" type="xs:float" default="0.2"/>
+
+				<xs:attribute name="ReverseMove" type="xs:boolean" default="true"/>
+				<xs:attribute name="DodgeThreats" type="xs:boolean" default="true"/>
+				<xs:attribute name="DodgeThreatsReactionTimeMin" type="Time" default="0s"/>
+				<xs:attribute name="DodgeThreatsReactionTimeMax" type="Time" default="0s"/>
+
+				<xs:attribute name="UseSpecialPowers" type="xs:boolean" default="true"/>
+				<xs:attribute name="SpecialPowerDelayMinimum" type="Time" default="0s"/>
+				<xs:attribute name="SpecialPowerDelayMaximum" type="Time" default="0s"/>
+
+				<xs:attribute name="EnterBaseDefenses" type="SageBool" default="true" />
+				<xs:attribute name="EnterBaseDefensesWhenIdle" type="SageBool" default="false" />
+
+				<!-- IsHarvesterManager: Enables special "Harvester" logic, in particular telling harvesters to go back to harvesting
+						 when not under attack -->
+				<xs:attribute name="IsHarvesterManager" type="SageBool" default="false" />
+
+				<xs:attribute name="MinDistanceFromBaseToIgnoreTargets" type="xs:float" default="0.0" />
+
+				<xs:attribute name="MaxSecondaryDamageFraction" type="SageReal" default="1.25" />
+
+
+				<xs:attribute name="FractionBlockedToDestroyWalls" type="xs:float" default="0.5"/>
+
+				<xs:attribute name="KiteAttack" type="SageBool" default="true" />
+
+				<!-- Used to determine the radius in which the unit will check for a valid move location
+						 Formula used is MovementSpeed * ClipReloadTime * KiteMovementFudgeFactor -->
+				<xs:attribute name="KiteMovementFudgeFactor" type="SageReal" default="0.1" />
+				
+				<xs:attribute name="UseReveseMoveForKiteAttacks" type="SageBool" default="true" />
+
+				<!-- Used to determine whether a micromanager should consider picking up crates in any of the
+						 states which allow it -->
+				<xs:attribute name="CanCollectCrates" type="SageBool" default="true" />
+
+				<!-- Used to determine whether a micromanager should consider healing in any of the states which allow it -->
+				<xs:attribute name="CanHeal" type="SageBool" default="true" />
+
+				<!-- a flag of all the special power heuristics that can be run **EVEN IF UseSpecialPowers IS FALSE** -->
+				<xs:attribute name="OverrideSpecialPowersAllowed" type="AISpecialPowerHeuristicBitFlags" default="" />
+
+				<!-- a flag of all the toggle hints that can be run by this micro manager despite UseSpecialPowers="false".
+				     Only checked if "OverrideToggleHintsAllowed" includes TOGGLE -->
+				<xs:attribute name="OverrideToggleHintsAllowed" type="ToggleStatusAiHintBitFlags" default="" />
+
+				<!-- a flag of all the special power heuristics that can't be run by this micromanager -->
+				<xs:attribute name="SpecialPowersForbidden" type="AISpecialPowerHeuristicBitFlags" default="" />
+				
+				<!-- a flag of all the toggle hints that can't be run by this micro manager. Only checked if 
+					"SpecialPowersForbidden" includes TOGGLE -->
+				<xs:attribute name="ToggleHintsForbidden" type="ToggleStatusAiHintBitFlags" default="" />
+				
+				<!-- a flag of the special power heuristics that are allowed to run if a unit is in the unit task
+						controlled by tactic.  Will not override UseSpecialPowers="false", or OverrideSpecialPowersAllowed,
+						so if either of them mean a heuristic is invalid before it makes it to here, this will not change that -->
+				<xs:attribute name="TacticControlledSpecialPowersAllowed" type="AISpecialPowerHeuristicBitFlags" default="" />
+				
+				<!-- Used to determine whether or not the micromanager should use enhanced AOE targeting
+						If false, uses standard unit target choosing behavior instead. -->
+				<xs:attribute name="CanUseEnhancedAOETargeting" type="SageBool" default="true" />
+
+				<!-- This describes how useful the allies in the area are to this Micromanager when computing the power advantage in an area.
+						  If this is set to 75% then only 75% of their attack and damage absorption is taken into consideration when deciding who will win-->
+				<xs:attribute name="AlliesCombatEffectiveness" type="Percentage" default="90%" />
+				
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

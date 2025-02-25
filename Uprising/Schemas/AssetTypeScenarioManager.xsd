@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+  
+	<xs:include schemaLocation="SkirmishAI/AIDifficulties.xsd"/>
+
+	<xs:complexType name="ScenarioEnemy">
+		<xs:attribute name="Faction" type="PlayerTemplateRef" />
+		<xs:attribute name="Personality" type="AIPersonalityDefinitionRef" />
+		<xs:attribute name="Portrait" type="ImageRef" />
+		<xs:attribute name="Difficulty" type="AIDifficulty" />
+		<xs:attribute name="Team" type="SageUnsignedInt"/>
+		<xs:attribute name="StartPosition" type="SageUnsignedInt" />
+		<xs:attribute name="Color" type="MultiplayerColorWeakRef" />
+	</xs:complexType>
+
+	<xs:complexType name="ScenarioTemplate" xas:typeGroup="Xml">
+		<xs:sequence>
+			<xs:element name="Enemy" type="ScenarioEnemy" minOccurs="1" maxOccurs="5" />
+			<xs:element name="ScenarioUnlock" type="ScenarioTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:refType="ScenarioTemplate"/>
+		<xs:attribute name="UiName" type="xs:string" />
+		<xs:attribute name="Title" type="xs:string" />
+		<xs:attribute name="ShortTitle" type="xs:string" />
+		<xs:attribute name="Description" type="xs:string" />
+		<xs:attribute name="IsStartingScenario" type="SageBool" default="false" />
+		<xs:attribute name="IsCriticalPath" type="SageBool" default="false" />
+		<xs:attribute name="MapName" type="xs:string" />
+		<xs:attribute name="UseRandomCrates" type="SageBool" default="false" />
+		<xs:attribute name="PlayerStartPosition" type="SageUnsignedInt" />
+		<xs:attribute name="PlayerTeam" type="SageUnsignedInt" default="1"/>
+		<xs:attribute name="PlayerColor" type="MultiplayerColorWeakRef" default="ColorGold"/>
+		<xs:attribute name="ParTime" type="Time" default="0s" />
+		<xs:attribute name="ParTimeScoreBonus" type="SageUnsignedInt" />
+		<xs:attribute name="DifficultyScoreBonus" type="SageUnsignedInt" />
+		<xs:attribute name="MaxEfficiencyScoreMultiplier" type="SageReal" default="3.0" />
+		<xs:attribute name="UnitUnlock" type="GameObjectWeakRef" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="UnlockableUnit">
+		<xs:attribute name="Faction" type="PlayerTemplateRef" />
+		<xs:attribute name="Name" type="GameObjectWeakRef" />
+	</xs:complexType>
+	
+	<xs:complexType name="ScenarioManagerData" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="ScenarioTemplate" type="ScenarioTemplate" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="UnlockableUnit" type="UnlockableUnit" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="IntroMovie" type="xs:string" />
+				<xs:attribute name="CriticalPathCompletionMovie" type="xs:string" />
+				<xs:attribute name="FullCompletionMovie" type="xs:string" />
+				<xs:attribute name="MaxRedAlertDeposit" type="SageInt" default="50000" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

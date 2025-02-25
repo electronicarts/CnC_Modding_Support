@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include type="all" source="ART:AUOutPost.w3x" />
+		<Include type="all"	source="ART:AUOutPost_FX.w3x" />
+		<Include type="all"	source="ART:AUHarvester_Unpack.w3x" />
+		<Include type="all"	source="ART:AUOutPost_Platform.w3x" />
+		<Include type="all"	source="ART:AUOutPost_Platform_BLD.w3x" />
+		<Include type="all"	source="ART:AUOutPost_UPGRADE.w3x" />
+			
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<Defines>
+		<Define name="ALLIED_OUTPOST_LOCAL_UNPACK_TIME" value="30s" />
+	</Defines>	
+	<GameObject
+		id="AlliedOutpost"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_AlliedOutpost"
+		ButtonImage="Button_AlliedOutpost"
+		Side="Allies"
+		EditorSorting="STRUCTURE"
+		BuildTime="30"
+		CommandSet="AlliedOutpostCommandSet"
+		KindOf="+ACTIVATE_AFTER_UNPACK +OUTPOST +IGNORE_FOR_VICTORY"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="AlliedOutpost"
+		Description="DESC:AlliedOutpost"
+		TypeDescription="Type:AlliedOutpost">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:AlliedOutpost</DisplayName>
+		<GameDependency>
+			<RequiredObject>AlliedConstructionYard</RequiredObject>
+		</GameDependency>			
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="500"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="AlliedOutpostArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AUOutPost" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="AUHarvester_Unpack" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="AUOutPost"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING"
+					StateName="STATE_StartUnpak">
+					<Animation
+						AnimationName="AUHarvester_Unpack"
+						AnimationMode="MATCH_UNPACKING"
+						AnimationBlendTime="0"  />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+<!-- DRAW UPGRADE -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_UPGRADE"
+				ExtraPublicBone="FX_BONE_UPGRADE_DISH">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AUOutPost_UPGRADE" />
+				</ModelConditionState>
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+          <Model
+						Name="" />
+        </ModelConditionState>
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="" />
+				</ModelConditionState>	
+			</ScriptedModelDraw>
+						
+			<!-- DRAW PLATFORM -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AUOutPost_Platform" />
+				</ModelConditionState>
+
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FROZEN">
+          <Model
+						Name="AUOutPost_Platform" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedCryoFrozenMistBuildingSmall"
+						FollowBone="true"/>          
+          <Material
+					  ShaderName="ObjectsFrozen.fx"
+					  TechniqueName="Default">
+            <Constants>
+              <Texture Name="DiffuseTexture">
+                <Value>ABPlatform</Value>
+              </Texture>
+              <Texture Name="NormalMap">
+                <Value>ABPlatform_NRM</Value>
+              </Texture>
+              <Texture Name="SpecMap">
+                <Value>ABPlatform_SPM</Value>
+              </Texture>
+              <Float Name="EnvMult">
+                <Value>1.000000</Value>
+              </Float>
+              <Bool Name="AlphaTestEnable">
+                <Value>false</Value>
+              </Bool>
+            </Constants>
+          </Material>
+        </ModelConditionState>        
+        
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING">
+					<Model
+						Name="AUOutPost_Platform_BLD" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABPowerPlantWakeSplash"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="STRUCTURE_UNPACKING OVER_WATER">
+					<Animation
+						AnimationName="AUOutPost_Platform_BLD"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupFlashes"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupSparksSeed"
+						FollowBone="true" />          
+					</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+						CurDrawableHideSubObjectPermanently("Bib")
+					</Script>
+				</AnimationState>
+			</ScriptedModelDraw>
+				
+<!--  DRAW PARTICLES -->	
+	
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AUOutPost_FX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="AUOutPost_FX" />
+					<ParticleSysBone 
+						BoneName="FX_bone01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_bone01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="AUOutPost_FX" />
+					<ParticleSysBone 
+						BoneName="FX_bone01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_bone01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_bone02" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_bone02"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>						
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_SmallBuildingDieExplosion" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_SmallBuildingDieExplosion" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="ABOutpost_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="OVER_WATER" />
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieOnWater"
+				CreationList="ABOutpostPlatform_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="OVER_WATER" />
+			</CreateObjectDie>			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>	
+			
+			<TechUpgrade
+				id="ModuleTag_TechUpgrade_Tech3"
+				Radius="390.0"
+				DistanceType="RECTANGULAR">
+				<TriggeredBy>Upgrade_AlliedTech3</TriggeredBy>
+				<ObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES" >
+					<IncludeThing>AlliedAirfield</IncludeThing>
+					<IncludeThing>AlliedBarracks</IncludeThing>
+					<IncludeThing>AlliedNavalYard</IncludeThing>
+					<IncludeThing>AlliedWarFactory</IncludeThing>
+				</ObjectFilter>
+			</TechUpgrade>
+			<TechUpgrade
+				id="ModuleTag_TechUpgrade_Tech2"
+				Radius="390.0"
+				DistanceType="RECTANGULAR">
+				<TriggeredBy>Upgrade_AlliedTech2</TriggeredBy>
+				<ObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES" >
+					<IncludeThing>AlliedAirfield</IncludeThing>
+					<IncludeThing>AlliedBarracks</IncludeThing>
+					<IncludeThing>AlliedNavalYard</IncludeThing>
+					<IncludeThing>AlliedWarFactory</IncludeThing>
+				</ObjectFilter>
+			</TechUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_Upgrade_Tech2">
+				<TriggeredBy>Upgrade_AlliedTech2</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Upgrade_02"
+					HideSubObjects="Upgrade_01 Upgrade_03"
+					Upgrade="Upgrade_AlliedTech2">
+					<CustomAnimAndDuration AnimState="USER_2"/>
+				</Nugget>
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_Upgrade_Tech3">
+				<TriggeredBy>Upgrade_AlliedTech3</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Upgrade_03"
+					HideSubObjects="Upgrade_01 Upgrade_02"
+					Upgrade="Upgrade_AlliedTech3">
+					<CustomAnimAndDuration	AnimState="USER_3"/>
+				</Nugget>
+			</SubObjectsUpgrade>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackCompleteSound=""
+				UnpackTime="=$ALLIED_OUTPOST_LOCAL_UNPACK_TIME" />
+			<ProductionUpdate
+				id="ModuleTag_UpgradeProductionUpdate"
+				Type="UPGRADE"
+				MaxQueueEntries="1" />
+			<CommandSetUpgrade
+				id="ModuleTag_CommandSetUpgrade"
+				CommandSet="AlliedOutpostCommandSetTech2">
+				<TriggeredBy>Upgrade_AlliedTech2</TriggeredBy>
+			</CommandSetUpgrade>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="AlliedBarracksFunctions" />			
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericAlliedBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericAlliedBuildingSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainVision.xml" />				
+			<xi:include
+				href="DATA:Includes/InfiltratorContainRadarFreeze.xml" />				
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIForLua"
+				StateMachine="StructureAIStateMachine" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="2000.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_StructureConstructionAudio">
+				<ModelConditionSound Sound="ALL_Outpost_Deploy" RequiredFlags="STRUCTURE_UNPACKING" ExcludedFlags="OVER_WATER"/>
+				<ModelConditionSound Sound="ALL_Outpost_DeployWaterMS" RequiredFlags="STRUCTURE_UNPACKING OVER_WATER"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<!--
+			<AnimationSoundClientBehavior
+				id="AnimationSoundCB" >
+				<Sound
+					Sound="GDI_Surveyor_Unpack1"
+					Animation="GUSUVUPAK_UPK1"
+					Frame="5" />
+				<Sound
+					Sound="GDI_Surveyor_Unpack2"
+					Animation="GUSUVUPAK_UPK1"
+					Frame="52" />
+				<Sound
+					Sound="GDI_Surveyor_Unpack3"
+					Animation="GUSUVUPAK_UPK1"
+					Frame="59" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore1"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="2" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore2"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="26" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore3"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="35" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore4"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="48" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore5"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="71" />
+			</AnimationSoundClientBehavior>		
+			-->
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<PlacementShape
+				Type= "BOX"
+				MajorRadius = "30.0"
+				MinorRadius = "30.0"
+				Height = "5.0" />
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "6.79338"
+				MinorRadius = "4.30892"
+				Height = "26.8247"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "21.9637"
+					y = "3.76694"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "22.8"
+				MinorRadius = "14.7"
+				Height = "15.7"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "3.60325"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "4.27983"
+				MinorRadius = "3.14551"
+				Height = "41.6936"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "1.54112"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "15"
+				MinorRadius = "5"
+				Height = "10" >
+				<Offset
+					x = "0.0"
+					y = "20.0"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "15"
+				MinorRadius = "5"
+				Height = "10" >
+				<Offset
+					x = "0.0"
+					y = "-20.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="AudioEvent:ALL_Outpost_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+<!--
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="750" />
+		<ProjectedBuildabilityInfo
+			Radius="390"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

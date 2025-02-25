@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:FXPointDefenseShield.w3x" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="JapanPointDefenseDrone"
+		Side="Japan"
+		EditorSorting="SYSTEM"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="NO_COLLIDE SUMMONED VEHICLE NOT_AUTOACQUIRABLE UNATTACKABLE"
+		EditorName="JapanPointDefenseDrone">
+		<DisplayName>JapanPointDefenseDrone</DisplayName>
+		<ArmorSet
+			Armor="JapanPointDefenseDroneArmor" />
+		<LocomotorSet
+			Locomotor="JapanPointDefenseDroneLocomotor"
+			Condition="NORMAL"
+			Speed="200.0" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				ExtraPublicBone="FX_Bone_01 FX_Bone_02 FX_Bone_03"
+				NoRotate="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXPointDefenseShield" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="FXPointDefenseShield" />
+					<ParticleSysBone
+						BoneName="FX_Bone_03"
+						FXParticleSystemTemplate="VehicleDamageSmoke"
+						FollowBone="true"/>						
+					<ParticleSysBone
+						BoneName="FX_Bone_02"
+						FXParticleSystemTemplate="VehicleDamageSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="FX_Bone_01"
+						FXParticleSystemTemplate="VehicleDamageSmoke"
+						FollowBone="true"/>													
+				</ModelConditionState>					
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="FXPointDefenseShield" />
+					<ParticleSysBone
+						BoneName="FX_Bone_01"
+						FXParticleSystemTemplate="VehicleDamageSmoke"
+						FollowBone="true"/>						
+				</ModelConditionState>				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="FXPointDefenseShield"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+				
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Flags="DIE_WHEN_PARENT_DIES_FROM_NOT_ME STICK_TO_PARENT TELEPORT INSTANT_TELEPORT_ON_PARENT_TELEPORT ABSORB_ALL_DAMAGE LEECH_DAMAGE_FROM_PARENT DIE_WHEN_DETACH_ALWAYS DEFECT_WHEN_PARENT_DEFECTS"
+				CloseEnoughRange="1.0"
+				DamageTypesToNotLeech="CRUSH UNRESISTABLE"
+				DeathTypesToNotLeech="DETONATED"
+				ParentStatus="POINT_DEFENSE_DRONE_ATTACHED">
+				<ModifierToLeechFromParent>AttributeMod_TargetPainted</ModifierToLeechFromParent>
+				<ModifierToLeechFromParent>AttributeMod_TargetPainted_HighTechnology</ModifierToLeechFromParent>
+			</AttachUpdate>
+
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="119s"
+				MaxLifetime="119s" />
+			
+			<CreateObjectDie
+				id="ModuleTag_AirDeath"
+				CreationList="JUPointDefenseShield_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"/>
+			</CreateObjectDie>
+			
+			<DestroyDie
+				id="ModuleTag_DieDestroy">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<Physics
+				id="ModuleTag_Physics" />
+
+			<SecondaryDamageTracker
+				id="ModuleTag_SecondaryDamageTracker"
+				UpdateDuration="1s"
+				DissipateAmount="25"
+				MaxDamageClampScaler="=$MAX_SECONDARY_DAMAGE_SCALER">
+				<Color R="1.0" G="1.0" B="1.75"/>
+				<EffectInfo
+					Fraction="1.0"
+					Options="DIE_ON_ENTER" />
+				<ObjectStatusValidation
+					ForbiddenStatus="UNDER_IRON_CURTAIN" />
+			</SecondaryDamageTracker>	
+				
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				StateMachine="UnitAIStateMachine" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="200" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="10.0"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="JAP_PointDefenseDronesMS" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="NONE" />
+		<VisionInfo
+			VisionRange="10"
+			ShroudClearingRange="10" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrushableLevel="0" />
+	</GameObject>
+</AssetDeclaration>

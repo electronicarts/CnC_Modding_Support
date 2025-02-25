@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes></Includes>
+
+	<ObjectFilterAsset id="BeaconDefenseObjectFilter">
+		<Filter
+			Rule="ALL"
+			StatusBitFlagsExclude="REALLYDAMAGED"/>
+	</ObjectFilterAsset>
+	
+<!-- All states are TCI beacon or AI indicator reaction states -->
+
+	<AIStrategicStateDefinition
+			id="BeaconDefense"
+			MaxTargets="1"
+			TargetHeuristicReevaluationInterval="PERIODICALLY"
+			TargetHeuristicReevaluationTime="5s">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="TCIDefendStructureHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="TCIDefendUnitHeuristic" Priority="10"/>
+		<Tactic id="BeaconDefense"
+			Tactic="StaticDefense"
+			Distance="500"
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="3"
+				MaxCommandPoints="35"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				IncludeKindOf="CAN_ATTACK"
+				Priority="COOP" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true" SortByDistance="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="DefenseMicroManager"
+					MaximumRange="600"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="1200" />
+				<MaximumDistanceFromTarget MaxDistanceToTarget="1600" TargetObjectFilter="BeaconDefenseObjectFilter"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="BeaconDefense_Medium"
+		inheritFrom="BeaconDefense">
+		<Tactic
+			id="BeaconDefense"
+			Tactic="StaticDefense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="DefenseMicroManager_Medium"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="BeaconDefense_Easy"
+		inheritFrom="BeaconDefense">
+		<Tactic
+			id="BeaconDefense"
+			Tactic="StaticDefense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="DefenseMicroManager_Easy"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="IndicatorDefense"
+		MaxTargets="1"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="5s">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="CaptureIndicatorHeuristic" Priority="20"/>
+		<Tactic id="BeaconDefense"
+			Tactic="StaticDefense"
+			Distance="500"
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="3"
+				MaxCommandPoints="35"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				IncludeKindOf="CAN_ATTACK"
+				Priority="HIGH" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true" SortByDistance="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="DefenseMicroManager"
+					MaximumRange="600"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="1500" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="IndicatorDefense_Medium"
+		inheritFrom="IndicatorDefense">
+		<Tactic
+			id="BeaconDefense"
+			Tactic="StaticDefense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="DefenseMicroManager_Medium"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="IndicatorDefense_Easy"
+		inheritFrom="IndicatorDefense">
+		<Tactic
+			id="BeaconDefense"
+			Tactic="StaticDefense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="DefenseMicroManager_Easy"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="BeaconAttack"
+		MaxTargets="1"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="5s">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="TCIAttackStructureHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="TCIAttackUnitHeuristic" Priority="15"/>
+		<TargetHeuristic TargetHeuristic="TCIAttackGroundHeuristic" Priority="10"/>
+		<Tactic id="BeaconAttack" 
+			Tactic="SimpleAttack" 
+			Distance="300" 
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="3"
+				MaxCommandPoints="35"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				IncludeKindOf="CAN_ATTACK"
+				Priority="COOP" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true" SortByDistance="false">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FocusedSuicideRunMicroManager"
+					MaximumRange="600"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="1200" />
+				<MaximumDistanceFromTarget MaxDistanceToTarget="1600" TargetObjectFilter="BeaconAttackObjectFilter"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="BeaconAttack_Medium"
+		inheritFrom="BeaconAttack">
+		<Tactic 
+			id="BeaconAttack"
+			Tactic="SimpleAttack" >
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FocusedSuicideRunMicroManager_Medium"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="BeaconAttack_Easy"
+		inheritFrom="BeaconAttack">
+		<Tactic 
+			id="BeaconAttack"
+			Tactic="SimpleAttack" >
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FocusedSuicideRunMicroManager_Easy"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<ObjectFilterAsset id="BeaconAttackObjectFilter">
+		<Filter
+			Rule="ANY"
+			StatusBitFlags="DAMAGED REALLYDAMAGED"/>
+	</ObjectFilterAsset>
+
+	<AIStrategicStateDefinition
+		id="BeaconCapture"
+		MaxTargets="1"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="5s">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="TCIAttackGoalHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="TCICaptureGoalHeuristic" Priority="15"/>
+		<TargetHeuristic TargetHeuristic="TCICaptureTechHeuristic" Priority="10"/>
+		<TargetHeuristic TargetHeuristic="TCIEnemyTechHeuristic" Priority="5"/>
+		<Tactic id="BeaconCapture"
+			Tactic="ProximityCapture"
+			Distance="500"
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="3"
+				MaxCommandPoints="35"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				IncludeKindOf="CAN_ATTACK"
+				Priority="COOP" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true" SortByDistance="false">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FearlessMicroManager"
+					MaximumRange="600"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="1500" />
+				<MaximumDistanceFromTarget MaxDistanceToTarget="2000" TargetObjectFilter="BeaconCaptureObjectFilter"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="BeaconCapture_Medium"
+		inheritFrom="BeaconCapture">
+		<Tactic
+			id="BeaconCapture"
+			Tactic="ProximityCapture" >
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FearlessMicroManager_Medium"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="BeaconCapture_Easy"
+		inheritFrom="BeaconCapture">
+		<Tactic
+			id="BeaconCapture"
+			Tactic="ProximityCapture" >
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FearlessMicroManager_Easy"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<ObjectFilterAsset id="BeaconCaptureObjectFilter">
+		<Filter
+			Rule="NONE"
+			Include="GOAL_STRUCTURE"/>
+	</ObjectFilterAsset>
+	
+</AssetDeclaration>

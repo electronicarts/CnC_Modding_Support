@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NUHospitalTechStructure.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+		<Include
+			type="instance"
+			source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include
+			type="instance"
+			source="DATA:Neutral/Props/HospitalTechStructure_Collapse.xml" />
+		<Include type="all" source="ART:ABBarracks_particles.w3x" />
+	</Includes>
+	<GameObject
+		id="HospitalTechStructure"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_Neutral_Hospital"
+		ButtonImage="Button_Neutral_Hospital"
+		ProductionQueueType="MAIN_STRUCTURE"
+		EditorName="HospitalTechStructure"
+		Description="DESC:HospitalTechBuilding"
+		TypeDescription="TYPE:TechStructure"
+		HealthBoxHeightOffset="30">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:HospitalTechBuilding</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="=$TECH_STRUCTURE_EFFECTIVE_COST"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="AlliedBarracksArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BoneFlag01 BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18	BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20 BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUHospitalTechStructure" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NUHospitalTechStructure" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<xi:include
+				href="DATA:Includes/TechBuildingFlagDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonFlagDraws/child::*)" />			
+		</Draws>
+		<Behaviors>
+				<!-- This Passive Area Effect Behaviour is what gives the Tech Structure its Unit healing ability -->
+				<Physics
+				id="ModuleTag_Physics"/>
+      
+      <!-- passive healing for infantry (including garrisoned) -->
+			<PassiveAreaEffectBehavior
+				id="ModuleTag_PassiveAreaEffect"
+				EffectRadius="-1"
+				NonStackable="true"
+				AffectUnderAttack="true"
+        AffectContained="true"
+				HealingPercentPerSecond="2%" >
+				<AllowFilter
+					Rule="ANY"
+					Include="INFANTRY"
+					Relationship="ALLIES" />
+        <ContainerFilter
+          Rule="ANY"
+          Include="VEHICLE STRUCTURE"
+          Relationship="ALLIES"
+          StatusBitFlags="CONTAINER_OCCUPIED" />
+			</PassiveAreaEffectBehavior>     
+			
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions"/>
+			
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_MediumBuildingDieExplosion" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NUHospitalTechStructure_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3000.0"
+				InitialHealth="3000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				 Type= "BOX"
+				 MajorRadius = "56.3968"
+				 MinorRadius = "67.2692"
+				 Height = "69.3372"
+				 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-5.00883"
+					y = "-0.526596"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				 Type= "BOX"
+				 MajorRadius = "20.8347"
+				 MinorRadius = "40.8306"
+				 Height = "69.3372"
+				 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-76.1697"
+					y = "-29.6881"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry EvaEvent="HospitalCaptured" AudioType="voiceDefectingTowards" />
+			<AudioEntry Sound="TEC_Hospital_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+		<ProjectedBuildabilityInfo
+			Radius="0.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+	<ObjectCreationList
+		id="NUHospitalTechStructure_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>NUHospitalTechStructure_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+</AssetDeclaration>

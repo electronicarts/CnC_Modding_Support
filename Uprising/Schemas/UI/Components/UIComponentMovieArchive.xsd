@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns="uri:ea.com:eala:asset" 
+	xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema"
+	targetNamespace="uri:ea.com:eala:asset"
+	elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="../../Includes/UIBaseComponent.xsd"/>
+	
+	<xs:simpleType name="ScenarioMovieUnlockRequirement"
+					xas:targetNamespace=""
+					xas:enumItemPrefix="SMUR_"
+					xas:useEnumPrefix="false">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="None" />
+			<xs:enumeration value="CriticalPath" />
+			<xs:enumeration value="All" />
+			<xs:enumeration value="AllUnderPar" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!--
+		GeneralArchiveMovie entries represent videos which are always unlocked and not associated with a game mode.
+		The other movie-types extend this.
+			Movie - Name of the video asset.  See VideoSequences.xml for valid videos.
+			PreviewImage - screenshot which will be shown on the video archive screen when this movie is selected
+			DisplayName - String token for the string which will be used to identify the movie on the video archive screen
+			Description - String token for the description which will be displayed when this movie is selected on the video archive screen
+			Icon - Small image displayed next to the DisplayName
+	-->
+	<xs:complexType name="GeneralArchiveMovie" xas:isPolymorphic="true">
+			<xs:attribute name="Movie" type="xs:string" use="required"/>
+			<xs:attribute name="PreviewImage" type="OnDemandImageRef"/>
+			<xs:attribute name="DisplayName" type="xs:string" use="required"/>
+			<xs:attribute name="Description" type="xs:string" use="required"/>
+			<xs:attribute name="Icon" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<!-- 
+		ScenarioMovie entries represent videos associated with the  skirmish scenario (aka Commander's Challenge) mode.
+			UnlockRequirement - Determines what level of scenario-mode completeness unlocks the movie
+	-->
+	<xs:complexType name="ScenarioArchiveMovie">
+		<xs:complexContent>
+			<xs:extension base="GeneralArchiveMovie">
+				<xs:attribute name="UnlockRequirement" type="ScenarioMovieUnlockRequirement" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>	
+	
+	
+	<!--
+		CampaignMovie entries represent videos unlocked by playing the campaign game mode.
+			Faction - The campaign which this movie is associated with
+			ProgressLock - The index of the mission which must be completed to unlock this movie.  Using 0 will force the movie to always be unlocked.
+	-->
+	<xs:complexType name="CampaignArchiveMovie">
+		<xs:complexContent>
+			<xs:extension base="GeneralArchiveMovie">
+				<xs:attribute name="Faction" type="FactionType" use="required"/>
+				<xs:attribute name="ProgressLock" type="SageInt" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	
+	<xs:complexType name="UIComponentMovieArchive" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="UIBaseComponent">
+				<xs:sequence>
+					<xs:element name="GeneralMovie" type="GeneralArchiveMovie" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="ScenarioMovie" type="ScenarioArchiveMovie" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="CampaignMovie" type="CampaignArchiveMovie" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

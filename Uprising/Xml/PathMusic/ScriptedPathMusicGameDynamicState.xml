@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- This file contains PathMusic Dynamic State Sets which are specially designed to work with 
+	campaigns.  They are usually truncated verions of the Standard Full State Set.  They allow 
+	a certain degree of dynamic music detection, but will still keep the music within a certain
+	"feel" for the circumstances of the campaign.  It relies on certain portions of the Standard
+	Full set. -->
+
+
+
+	
+	
+	
+	<!-- ______________________________________________________________________________________________ -->
+
+
+
+
+	<!--	******************************************************************************
+					TOTAL STATE SET 
+				******************************************************************************	-->
+	<PathMusicGameDynamicStateSet id="CombatOnly_Full" Category="SCRIPTED">
+		<State>CombatOnly_GeneralCombat</State>
+		<State>CombatOnly_DisadvantageCombat</State>
+		<State>CombatOnly_EvenCombat</State>
+	</PathMusicGameDynamicStateSet>
+
+
+	<!--	******************************************************************************
+					STATES 
+				******************************************************************************	-->
+	<PathMusicGameDynamicState id="CombatOnly_GeneralCombat" EnterEvent="Combat">
+		<Transition>CombatOnly_GeneralCombat_to_CombatOnly_DisadvantageCombat</Transition>
+	</PathMusicGameDynamicState>
+
+	<PathMusicGameDynamicState id="CombatOnly_DisadvantageCombat" EnterEvent="SetAdvantageEnemy">
+		<Transition>CombatOnly_DisadvantageCombat_to_CombatOnly_EvenCombat</Transition>
+	</PathMusicGameDynamicState>
+
+	<PathMusicGameDynamicState id="CombatOnly_EvenCombat" EnterEvent="ResetAdvantage">
+		<Transition>CombatOnly_EvenCombat_to_CombatOnly_DisadvantageCombat</Transition>
+	</PathMusicGameDynamicState>
+
+
+	<!--	******************************************************************************
+					TRANSITIONS
+				******************************************************************************	-->
+	<PathMusicGameDynamicTransition id="CombatOnly_GeneralCombat_to_CombatOnly_DisadvantageCombat"
+																	DestinationState="CombatOnly_DisadvantageCombat">
+		<Condition>CombatOnly_GeneralCombat_to_CombatOnly_DisadvantageCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="CombatOnly_DisadvantageCombat_to_CombatOnly_EvenCombat"
+																	DestinationState="CombatOnly_EvenCombat">
+		<Condition>CombatOnly_DisadvantageCombat_to_CombatOnly_EvenCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="CombatOnly_EvenCombat_to_CombatOnly_DisadvantageCombat"
+																	DestinationState="CombatOnly_DisadvantageCombat">
+		<Condition>CombatOnly_EvenCombat_to_CombatOnly_DisadvantageCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+
+	<!--	******************************************************************************
+					CONDITIONS : General-Reuseable 
+				******************************************************************************	-->
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="CombatOnly_GeneralCombatCurrentlyActive"
+		TrackedState="CombatOnly_GeneralCombat" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="CombatOnly_GeneralCombatEnteredMomentAgo"
+		TrackedState="CombatOnly_GeneralCombat"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="CombatOnly_DisadvantageCombatEnteredMomentAgo"
+		TrackedState="CombatOnly_DisadvantageCombat"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="CombatOnly_EvenCombatEnteredMomentAgo"
+	 TrackedState="CombatOnly_EvenCombat"
+	 TrackedStateChange="ENTER"
+	 TimeSinceLastActive="20s"
+	 TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+
+	<!--	******************************************************************************
+					CONDITIONS : Transition-Specific Combinations 
+				******************************************************************************	-->
+	<MusicScriptConditionNugget_And id="CombatOnly_GeneralCombat_to_CombatOnly_DisadvantageCombat_Allowed" >
+		<Condition>CombatOnly_GeneralCombatCurrentlyActive</Condition>
+		<Condition>CombatOnly_GeneralCombatEnteredMomentAgo</Condition>
+		<Condition>EnemyWinningBattleModerate</Condition>
+		<Condition>EnemyScoredKillsMedium</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="CombatOnly_DisadvantageCombat_to_CombatOnly_EvenCombat_Allowed" >
+		<Condition>CombatOnly_DisadvantageCombatEnteredMomentAgo</Condition>
+		<Condition>PlayerWinningBattleModerate</Condition>
+		<Condition>PlayerScoredKillsMedium</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="CombatOnly_EvenCombat_to_CombatOnly_DisadvantageCombat_Allowed" >
+		<Condition>CombatOnly_EvenCombatEnteredMomentAgo</Condition>
+		<Condition>EnemyWinningBattleModerate</Condition>
+		<Condition>EnemyScoredKillsMedium</Condition>
+	</MusicScriptConditionNugget_And>
+
+	
+	
+<!-- ________________________________________________________________________________________________________-->
+
+	
+	
+	
+	<!--	******************************************************************************
+					TOTAL STATE SET 
+				******************************************************************************	-->
+	<PathMusicGameDynamicStateSet id="CombatOnly_NoLeadIn" Category="SCRIPTED">
+		<State>CombatOnly_NoLeadIn_GeneralCombat</State>
+		<State>CombatOnly_DisadvantageCombat</State>
+		<State>CombatOnly_EvenCombat</State>
+	</PathMusicGameDynamicStateSet>
+
+	<!--	******************************************************************************
+					STATES 
+				******************************************************************************	-->
+	<PathMusicGameDynamicState id="CombatOnly_NoLeadIn_GeneralCombat" >
+		<Transition>CombatOnly_NoLeadIn_GeneralCombat_to_CombatOnly_DisadvantageCombat</Transition>
+	</PathMusicGameDynamicState>
+
+	<!--	******************************************************************************
+					TRANSITIONS
+				******************************************************************************	-->
+	<PathMusicGameDynamicTransition id="CombatOnly_NoLeadIn_GeneralCombat_to_CombatOnly_DisadvantageCombat"
+																	DestinationState="CombatOnly_DisadvantageCombat">
+		<Condition>CombatOnly_NoLeadIn_GeneralCombat_to_CombatOnly_DisadvantageCombat_Allowed</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<!--	******************************************************************************
+					CONDITIONS : General-Reuseable 
+				******************************************************************************	-->
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="CombatOnly_NoLeadIn_GeneralCombatCurrentlyActive"
+		TrackedState="CombatOnly_NoLeadIn_GeneralCombat" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="CombatOnly_NoLeadIn_GeneralCombatEnteredMomentAgo"
+		TrackedState="CombatOnly_NoLeadIn_GeneralCombat"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<!--	******************************************************************************
+					CONDITIONS : Transition-Specific Combinations 
+				******************************************************************************	-->
+	<MusicScriptConditionNugget_And id="CombatOnly_NoLeadIn_GeneralCombat_to_CombatOnly_DisadvantageCombat_Allowed" >
+		<Condition>CombatOnly_NoLeadIn_GeneralCombatCurrentlyActive</Condition>
+		<Condition>CombatOnly_NoLeadIn_GeneralCombatEnteredMomentAgo</Condition>
+		<Condition>EnemyWinningBattleModerate</Condition>
+		<Condition>EnemyScoredKillsMedium</Condition>
+	</MusicScriptConditionNugget_And>
+
+	
+	
+	<!-- ________________________________________________________________________________________________________-->
+
+
+
+	<!--	******************************************************************************
+					TOTAL STATE SET 
+				******************************************************************************	-->
+	<PathMusicGameDynamicStateSet id="Standard_NoLeadIn" Category="SCRIPTED">
+		<State>NoLeadIn_BaseBuilding</State>
+		<State>ThreatLevel1</State>
+		<State>ThreatLevel1_1</State>
+		<State>GeneralCombat</State>
+		<State>DisadvantageCombat</State>
+		<State>EvenCombat</State>
+		<State>AdvantageCombat</State>
+	</PathMusicGameDynamicStateSet>
+
+	
+	<!--	******************************************************************************
+					STATES 
+				******************************************************************************	-->
+	<PathMusicGameDynamicState id="NoLeadIn_BaseBuilding">
+		<Transition>NoLeadIn_BaseBuilding_to_ThreatLevel1</Transition>
+		<Transition>NoLeadIn_BaseBuilding_to_GeneralCombat</Transition>
+	</PathMusicGameDynamicState>
+
+
+	<!--	******************************************************************************
+					TRANSITIONS
+				******************************************************************************	-->
+	<PathMusicGameDynamicTransition id="NoLeadIn_BaseBuilding_to_ThreatLevel1" DestinationState="ThreatLevel1">
+		<Condition>SkirmishSmall</Condition>
+	</PathMusicGameDynamicTransition>
+
+	<PathMusicGameDynamicTransition id="NoLeadIn_BaseBuilding_to_GeneralCombat" DestinationState="GeneralCombat">
+		<Condition>SkirmishMediumOnScreen</Condition>
+	</PathMusicGameDynamicTransition>
+
+
+	
+	<!-- ________________________________________________________________________________________________________-->
+
+
+	
+
+	<!--	******************************************************************************
+					TOTAL STATE SET 
+				******************************************************************************	-->
+	<PathMusicGameDynamicStateSet id="ThreatAndCombat_NoLeadIn" Category="SCRIPTED">
+		<State>NoLeadIn_ThreatLevel1</State>
+		<State>ThreatLevel1_1</State>
+		<State>GeneralCombat</State>
+		<State>DisadvantageCombat</State>
+		<State>EvenCombat</State>
+		<State>AdvantageCombat</State>
+	</PathMusicGameDynamicStateSet>
+
+
+	<!--	******************************************************************************
+					STATES 
+				******************************************************************************	-->
+	<PathMusicGameDynamicState id="NoLeadIn_ThreatLevel1">
+		<Transition>NoLeadIn_ThreatLevel1_to_GeneralCombat</Transition>
+	</PathMusicGameDynamicState>
+
+
+	<!--	******************************************************************************
+					TRANSITIONS
+				******************************************************************************	-->
+	
+	<!-- Note that unlike the Standard ThreatLevel_1_to_GeneralCombat Transition, we are not requiring that you
+	 have been in the ThreatLevel_1 State for x seconds.  It is assumed that since this is "NoLeadIn", you have 
+	 already been listening to the music for a while and can transition out at any time. -->
+	<PathMusicGameDynamicTransition id="NoLeadIn_ThreatLevel1_to_GeneralCombat" DestinationState="GeneralCombat">
+		<Condition>SkirmishMediumOnScreen</Condition>
+	</PathMusicGameDynamicTransition>
+
+</AssetDeclaration>

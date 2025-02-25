@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:NBDrpZn.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnA_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnA_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnD2_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnD2_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnD3_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnD3_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnDoor_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnDoor_OPN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnDoor_CLS.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnX_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnX_D3.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnX_OPN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDrpZnX_CLS.w3x" />
+		<Include
+			type="all"
+			source="ART:NBEmpty_ABLD.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_DropZoneD.xml" />
+		<Include
+			type="all"
+			source="ART:FXInvisBone.w3x" />
+		<Include
+			type="all"	
+			source="ART:Decal_Rig_CO.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="NODDropZone"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_NODWarFactory"
+		ButtonImage="Portrait_NODWarFactory"
+		Side="NOD"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="2000"
+		BuildTime="20"
+		EnergyProduction="-5"
+		CommandSet="NODDropZoneCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_FACTORY AUTO_RALLYPOINT FS_WAR_FACTORY NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="NODDropZone"
+		Description="Desc:NODDropZone"
+		TypeDescription="Type:NODDropZone">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODDropZone</DisplayName>
+		<GameDependency>
+			<RequiredObject>NODPowerPlant</RequiredObject>
+			<RequiredObject>NODRefinery</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="NODDropZoneArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="FRONT" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBDrpZn" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBDrpZnA_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBDrpZnD2_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBDrpZnD2_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NBDrpZnD3_SN" />
+				</ModelConditionState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBDrpZnA_AN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Large"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="NBDrpZnD2_AN"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<!-- REALLY DAMAGED ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBDrpZnD2_AN"
+						AnimationMode="MANUAL" />
+					<Script>
+					Prev = CurDrawablePrevAnimationState();
+					if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_DamagedToReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_DamagedToReallyDamaged")
+					end
+				</Script>
+				</AnimationState>
+				<!-- DYING ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="NBDrpZnD3_AN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Des_Large"
+						FollowBone="false" />
+				</AnimationState>
+				<!-- Transitions -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_DamagedToReallyDamaged">
+					<Animation
+						AnimationName="NBDrpZnD2_AN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<!-- DRAW DOOR01 -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Door"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBDrpZnDoor_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBDrpZnDoor_SKN" />
+					<Texture
+						Original="NB_DropZone"
+						New="NB_DropZoneD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBDrpZnDoor_SKN" />
+					<Texture
+						Original="NB_DropZone"
+						New="NB_DropZoneD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NBDrpZnDoor_SKN" />
+					<Texture
+						Original="NB_DropZone"
+						New="NB_DropZoneD" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBDrpZnDoor_CLS"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBEmpty_ABLD"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_WAITING_OPEN"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="NBDrpZnDoor_CLS"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_OPENING"
+					StateName="STATE_Open">
+					<Animation
+						AnimationName="NBDrpZnDoor_OPN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_CLOSING"
+					StateName="STATE_Closed">
+					<Animation
+						AnimationName="NBDrpZnDoor_CLS"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+<!-- DRAW GAG ANIMATION -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Gag"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBDrpZnX_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBDrpZnX_SKN" />
+					<Texture
+						Original="NB_DropZone"
+						New="NB_DropZoneD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBDrpZnX_SKN" />
+					<Texture
+						Original="NB_DropZone"
+						New="NB_DropZoneD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NBDrpZnX_D3" />
+					<Texture
+						Original="NB_DropZone"
+						New="NB_DropZoneD" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Closed"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBDrpZnX_CLS"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Open" then CurDrawableSetTransitionAnimState("TRANS_OpenToClosed") end;
+					</Script>
+				</AnimationState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBEmpty_ABLD"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="NBDrpZnX_D3"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACTIVELY_CONSTRUCTING"
+					StateName="STATE_Open"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBDrpZnX_OPN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Closed" then CurDrawableSetTransitionAnimState("TRANS_ClosedToOpen") end;
+					</Script>
+				</AnimationState>
+				<!-- TRANSITIONS -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					StateName="TRANS_ClosedToOpen">
+					<Animation
+						AnimationName="NBDrpZnX_OPN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_OpenToClosed">
+					<Animation
+						AnimationName="NBDrpZnX_CLS"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<!-- draw a decal when this thing is selected -->
+			<!-- This is duplicated in several files. Please do a search and update those too -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Selected_Repair_Decal"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$REPAIR_DRONE_HOME_DECAL_SIZE"
+						SizeY="=$REPAIR_DRONE_HOME_DECAL_SIZE"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Rig_CO" 
+					/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				GiveNoXP="true"
+				Type="VEHICLE"
+				NumDoorAnimations="1"
+				DoorOpeningTime="2.0s"
+				DoorWaitOpenTime="2.0s"
+				DoorCloseTime="2.0s" />
+			<QueueProductionExitUpdate
+				id="ModuleTag_07"
+				ExitDelay="1">
+				<UnitCreatePoint
+					x="23.0"
+					y="0.0" />
+				<NaturalRallyPoint
+					x="132.0"
+					y="0.0" />
+			</QueueProductionExitUpdate>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+			</FXListBehavior>
+			<SpawnBehavior
+				id="ModuleTag_SpawnRepairDrones"
+				SpawnNumberData="3"
+				InitialBurst="3"
+				SpawnReplaceDelayData="10s"
+				SpawnedRequireSpawner="true"
+				KillSpawnsOnCaptured="true"
+				SpawnInsideBuilding="true"
+				KillSpawnsOnDisabled="true">
+				<Die
+					DeathTypes="ALL" />
+				<SpawnTemplate>NODRepairDrone</SpawnTemplate>
+			</SpawnBehavior>
+			<AssignSlavesTargetObjectSpecialPower
+				id="ModuleTag_SpecialPowerRepairVehicle"
+				SpecialPowerTemplate="SpecialPower_TargetedRepairVehicle" />
+			<StructureUnpackUpdate
+				UnpackTime="1.5s" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericNODBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericNODBuildingSuicide.xml" />
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="Generic" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"></AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="10000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="38.0"
+				Height="8.0">
+				<Offset
+					x="23.5"
+					y="0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="23.0"
+				Height="8.0">
+				<Offset
+					x="-45.5"
+					y="0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="22.5"
+				MinorRadius="24.0"
+				Height="8.0">
+				<Offset
+					x="-21"
+					y="2"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="4.0"
+				Height="30.0">
+				<Offset
+					x="-12.5"
+					y="26.5"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="4.0"
+				Height="30.0">
+				<Offset
+					x="-12.5"
+					y="-26.5"
+					z="0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="53"
+					y="-28.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="53"
+					y="28.0"
+					z="8" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-63"
+					y="25"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-63"
+					y="-25"
+					z="8" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="53"
+					y="-28.0"
+					z="8" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="53"
+					y="28.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-63"
+					y="25"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="53"
+					y="-28.0"
+					z="8" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_DropZoneSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="250"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

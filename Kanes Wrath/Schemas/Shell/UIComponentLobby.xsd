@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns="uri:ea.com:eala:asset" 
+	xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema"
+	targetNamespace="uri:ea.com:eala:asset"
+	elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+		
+	<xs:include schemaLocation="../Includes/UIBaseComponent.xsd"/>
+	
+	<!-- Type definitions for things used by UIComponentLobby -->
+	<xs:include schemaLocation="MultiplayerCommonUIData.xsd"/>
+
+	<xs:simpleType name="SlotStateType"
+		xas:useEnumPrefix="true"
+		xas:enumItemPrefix="SLOT_STATE_"
+		xas:targetNamespace="Sage::UIJoypad::DynamicUI">
+		<xs:restriction base="xs:string">
+			<!-- These states need to correspond to the slot states defined in code in GameInfo.h -->
+			<xs:enumeration value="OPEN"    />
+			<xs:enumeration value="CLOSED"  />
+			<xs:enumeration value="PRIVATE" />
+			<xs:enumeration value="AI"      />
+			<xs:enumeration value="PLAYER"  />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="SlotState">
+		<xs:attribute name="Label"					type="xs:string" />
+		<xs:attribute name="Value"					type="SlotStateType"/>
+		<xs:attribute name="AvailableInRanked"		type="SageBool"	default="true"/>
+		<xs:attribute name="AvailableInModerated"	type="SageBool"	default="true"/>
+	</xs:complexType>
+	
+	<xs:simpleType name="AIDifficultyValue"
+		xas:useEnumPrefix="true"
+		xas:enumItemPrefix="AI_"
+		xas:targetNamespace="Sage::UIJoypad::DynamicUI">
+		<xs:restriction base="xs:string">
+			<!-- These states need to correspond to the slot states defined in code in GameInfo.h -->
+			<xs:enumeration value="EASY" />
+			<xs:enumeration value="MEDIUM" />
+			<xs:enumeration value="HARD" />
+			<xs:enumeration value="BRUTAL" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="AIDifficultySetting">
+		<xs:attribute name="Label" type="xs:string" />
+		<xs:attribute name="Value" type="AIDifficultyValue"/>
+	</xs:complexType>
+
+	<xs:complexType name="AIHandicapSetting">
+		<xs:attribute name="Label" type="xs:string" />
+		<xs:attribute name="Value" type="SageInt"/>
+		<xs:attribute name="Default" type="SageBool" default="false"/>
+	</xs:complexType>
+
+	
+	<xs:complexType name="TeamSetting">
+		<xs:attribute name="Label" type="xs:string" />
+		<xs:attribute name="Value" type="SageInt"/>
+	</xs:complexType>
+	
+	<xs:complexType name="GameTimeSetting">
+		<xs:attribute name="Label" type="xs:string" />
+		<xs:attribute name="Value" type="SageInt"/>
+		<xs:attribute name="Default" type="SageBool" default="false"/>
+		<xs:attribute name="MinGameTimeValue" type="SageInt" default="0"/>
+	</xs:complexType>
+
+	<xs:complexType name="GameResourcesSetting">
+		<xs:attribute name="Value" type="SageInt"/>
+		<xs:attribute name="Default" type="SageBool" default="false"/>
+	</xs:complexType>
+
+	<xs:complexType name="GamePointsSetting">
+		<xs:attribute name="Value" type="SageInt"/>
+		<xs:attribute name="Default" type="SageBool" default="false"/>
+	</xs:complexType>
+
+	<xs:complexType name="GameFlagsSetting">
+		<xs:attribute name="Value" type="SageInt"/>
+		<xs:attribute name="Default" type="SageBool" default="false"/>
+	</xs:complexType>
+
+	<xs:simpleType name="TiberiumInfestationValue"
+		xas:useEnumPrefix="true"
+		xas:enumItemPrefix="AI_"
+		xas:targetNamespace="Sage::UIJoypad::DynamicUI">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LOW"     />
+			<xs:enumeration value="MEDIUM"  />
+			<xs:enumeration value="HEAVY"   />
+			<xs:enumeration value="BRUTAL"  />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="GameTiberiumInfestationSetting">
+		<xs:attribute name="Label" type="xs:string" />
+		<xs:attribute name="Value" type="TiberiumInfestationValue"/>
+		<xs:attribute name="Default" type="SageBool" default="false"/>
+	</xs:complexType>
+
+	<xs:complexType name="GameOpsPointsSetting">
+		<xs:attribute name="Value" type="SageInt"/>
+		<xs:attribute name="Default" type="SageBool" default="false"/>
+	</xs:complexType>
+
+	<xs:complexType name="GameTiberiumSupplySetting">
+		<xs:attribute name="Value" type="SageInt"/>
+		<xs:attribute name="Default" type="SageBool" default="false"/>
+	</xs:complexType>
+
+	<xs:complexType name="GameCoreObjectivesSetting">
+		<xs:attribute name="Value" type="SageInt"/>
+		<xs:attribute name="Default" type="SageBool" default="false"/>
+	</xs:complexType>
+
+
+	<!-- Structure for MP lobby exclusive options.  -->
+	<xs:complexType name="MultiplayerLobbyData">
+		<xs:sequence>
+			<xs:element name="LobbyTitleLabelSpec"	type="xs:string"	minOccurs="1" maxOccurs="1"/>
+			<xs:element name="UnmoderatedLobbyTitleTemplateSpec"	type="xs:string"	minOccurs="1" maxOccurs="1"/>
+			<xs:element name="ModeratedLobbyTitleTemplateSpec"		type="xs:string"	minOccurs="1" maxOccurs="1"/>
+			<xs:element name="PlayerNameLabelSpec"	type="xs:string"	minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SlotLabelSpec" 		type="xs:string"	minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SlotState" 			type="SlotState"	minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!-- Structure for Skirmish lobby exclusive options.  -->
+	<xs:complexType name="SkirmishLobbyData">
+		<xs:sequence>
+			<xs:element name="LoadMusic"		type="xs:string"	minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SlotLabelSpec" 	type="xs:string"	minOccurs="1" maxOccurs="1"/>
+			<xs:element name="SlotState" 		type="SlotState"	minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<!-- Definition of the UI Component -->
+	<xs:complexType name="UIComponentLobby">
+		<xs:complexContent>
+			<xs:extension base="UIBaseComponent">
+				<xs:sequence>
+
+					<!-- Label for the localized string for 'Random'.  Didn't want to hardcode this in the lobby. -->
+					<xs:element name="RandomStringLabel"		type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					
+					<!-- Label spec's are used to set the contents of Apt strings.  Better to put it here than hard code it. -->
+					<xs:element name="FactionLabelSpec" 		type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="AIPersonalityLabelSpec"	type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="AIDifficultyLabelSpec"	type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="AIHandicapLabelSpec"	    type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="TeamLabelSpec"			type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="MapListSpec"				type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="GameplayTypeSpec"			type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="GameTimeLimitSpec"		type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="GameResourcesSpec"		type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="HillTimeSpec"				type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="CapturePointsSpec"		type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="BarrierTimeSpec"			type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="CaptureFlagsSpec"			type="xs:string"	minOccurs="1" maxOccurs="1"/>
+
+					<xs:element name="TiberiumInfestationSpec"	type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="OpsPointsSpec"		    type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="TiberiumSupplySpec"		type="xs:string"	minOccurs="1" maxOccurs="1"/>
+					<xs:element name="CoreObjectivesSpec"	    type="xs:string"	minOccurs="1" maxOccurs="1"/>
+
+
+					<!-- These setting lists are used to populate the lobby UI with options the player can choose from.  -->
+					<xs:element name="FactionValue"		type="AssetId"				minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="AIDifficulty"		type="AIDifficultySetting"	minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="AIHandicap"	    type="AIHandicapSetting"	minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="Team"				type="TeamSetting" 			minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="GameType" 		type="GameplayTypeSetting"	minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="GameTime"			type="GameTimeSetting" 		minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="GameResources"	type="GameResourcesSetting" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="HillTime"			type="GameTimeSetting" 		minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="BarrierTime"		type="GameTimeSetting"		minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="CapturePoints"	type="GamePointsSetting" 	minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="CaptureFlags"		type="GameFlagsSetting" 	minOccurs="0" maxOccurs="unbounded"/>
+
+					<xs:element name="TiberiumInfestation"  type="GameTiberiumInfestationSetting"	minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="OpsPoints"		    type="GameOpsPointsSetting"	            minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="TiberiumSupply"		type="GameTiberiumSupplySetting" 	    minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="CoreObjectives"	    type="GameCoreObjectivesSetting"	    minOccurs="0" maxOccurs="unbounded"/>
+
+
+					<!-- MP lobby exclusive data.  -->
+					<xs:element name="MultiplayerLobbySettings" type="MultiplayerLobbyData" minOccurs="1" maxOccurs="1"/>
+					
+					<!-- Skirmish lobby exclusive data.  -->
+					<xs:element name="SkirmishLobbySettings" type="SkirmishLobbyData" minOccurs="1" maxOccurs="1"/>
+
+					<!-- MetaGame lobby exclusive data.  -->
+					<xs:element name="MetaGameLobbySettings" type="SkirmishLobbyData" minOccurs="1" maxOccurs="1"/>
+
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+</xs:schema>

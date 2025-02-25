@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="ScatterEffectOptionsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="RANDOM_SCATTER_IN_3D" />
+			<xs:enumeration value="ATTACK_GROUND_IF_NO_MORE_TARGETS" />
+			<xs:enumeration value="NO_DUPLICATE_TARGETS" />
+			<xs:enumeration value="STOP_SCATTER_IF_NO_TARGET_OBJECTS_HIT" />
+			<xs:enumeration value="FIRE_WEAPON_ON_INITIAL_TARGET" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ScatterEffectOptionsBitFlags">
+		<xs:list itemType="ScatterEffectOptionsType"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="ScatterDetail">
+		<xs:sequence>
+				<!-- Defines whether this ScatterDetail is applicable or not -->
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="ScatterAmount" type="SageInt" default="0" />
+		<xs:attribute name="PercentDamage" type="Percentage" default="100%" />
+		<xs:attribute name="ScatterDistance" type="SageReal" default="0" />
+		<xs:attribute name="NodeOCL" type="ObjectCreationListRef"/>		<!-- This designates which Node to draw so that the laser draw can be changed accordingly -->
+	</xs:complexType>
+
+	<xs:complexType name="ScatterGroup">
+		<xs:sequence>
+			<xs:element name="ScatterInfo" type="ScatterDetail" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="ScatterDelay" type="Time" default="0s" />
+	</xs:complexType>
+	
+	<xs:simpleType name="TargetDistanceSortType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="RANDOM" />
+			<xs:enumeration value="NEAR_FIRST" />
+			<xs:enumeration value="FAR_FIRST" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="TargetSelectionInfo">
+		<xs:sequence>
+			<!-- These filters define the prioritization of targets that are attacked when the scattered -->
+			<xs:element name="ObjectPriorityFilter" type="ObjectFilter" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="DistanceSorting" type="TargetDistanceSortType" default="NEAR_FIRST"/>
+		<xs:attribute name="id" type="Poid" xas:pipelineOnly="true" />
+	</xs:complexType>
+
+	<!-- This system defines the Manager that defines total effect of the scatter -->
+	<xs:complexType name="WeaponScatterEffectUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="TargetSelection" type="TargetSelectionInfo"/>
+					<xs:element name="ScatterSettings" type="ScatterGroup" minOccurs="1" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="WeaponTemplate" type="WeaponRef" use="optional" />
+				<xs:attribute name="WeaponTemplateToFireAtSource" type="WeaponRef" use="optional" />
+				<xs:attribute name="Options" type="ScatterEffectOptionsBitFlags" default="" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

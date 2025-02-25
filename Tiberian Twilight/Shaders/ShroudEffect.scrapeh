@@ -1,0 +1,116 @@
+///////////////////////////////////////////////////////////////////////////////
+// ©2009 Electronic Arts Inc
+//
+// First pass on the new shroud look for the visual break effort
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_SHROUD_FX_SCRAPEH
+#define SCRAPE_SCRIPT_SHROUD_FX_SCRAPEH
+
+var shader ShroudFXShader ShroudEffect.fx
+
+// Texture declarations
+var texture ShroudRawTexture fromscope Terrain Shroud.RawTexture
+
+// $todo (WSK) 2009/03/05 - pull this out to common area when we merge ingame-test.scrape and ingame.scrape
+#if defined(EA_PLATFORM_WINDOWS) || defined(EA_PLATFORM_XENON)
+
+#define SET_RENDER_TARGET(target, texturename) settarget target texturename
+
+#else // EA_PLATFORM_PS3
+
+#define SET_RENDER_TARGET(target, texturename) settarget target texturename texturename
+
+proc setFrameRenderTarget
+	SET_RENDER_TARGET(0, FrameRenderTarget)
+endproc
+proc setFrameDepthBuffer
+	setdepth FrameBufferDepth
+endproc
+
+#endif
+
+// $end todo
+
+#if defined(EA_PLATFORM_WINDOWS)
+
+var texture ShroudBlurTexture $Terrain.Shroud.TextureSize.x $Terrain.Shroud.TextureSize.y A8R8G8B8
+var texture ShroudBlurRenderTarget $Terrain.Shroud.TextureSize.x $Terrain.Shroud.TextureSize.y A8R8G8B8
+
+#elif defined(EA_PLATFORM_XENON)
+
+var texture ShroudBlurTexture $Terrain.Shroud.TextureSize.x $Terrain.Shroud.TextureSize.y A8R8G8B8
+var surface ShroudBlurRenderTarget edram $Terrain.Shroud.TextureSize.x $Terrain.Shroud.TextureSize.y A8R8G8B8
+
+#else // EA_PLATFORM_PS3
+
+var texture ShroudBlurTexture $Terrain.Shroud.TextureSize.x $Terrain.Shroud.TextureSize.y A8R8G8B8_TILED
+var texture ShroudBlurRenderTarget $Terrain.Shroud.TextureSize.x $Terrain.Shroud.TextureSize.y A8R8G8B8_TILED
+
+#endif
+
+// $todo (MD) - Need to remove all calculating of shroud data in the shaders. Workaround is to force the Shroud texture to white
+var texture White white
+
+proc updateShroudTexture
+    beginevent UpdateBlurShroud
+
+        setdepth NULL
+
+        settexture PostEffect Bloom.SourceTexture ShroudRawTexture
+        settosize PostEffect Bloom.SourceTextureSize ShroudRawTexture
+
+        SET_RENDER_TARGET(0, ShroudBlurRenderTarget)
+
+        setshader PostEffectBloomShader BlurGaussian11x11U
+        renderquad
+
+#if defined(EA_PLATFORM_XENON)
+        resolve ShroudBlurTexture
+        settexture PostEffect Bloom.SourceTexture ShroudBlurTexture
+        settosize PostEffect Bloom.SourceTextureSize ShroudBlurTexture
+#else // #if defined(EA_PLATFORM_XENON)
+        SET_RENDER_TARGET(0, ShroudBlurTexture)
+        settexture PostEffect Bloom.SourceTexture ShroudBlurRenderTarget
+        settosize PostEffect Bloom.SourceTextureSize ShroudBlurRenderTarget
+#endif // #if defined(EA_PLATFORM_XENON)
+
+        setshader PostEffectBloomShader BlurGaussian11x11V
+        renderquad
+
+#if defined(EA_PLATFORM_XENON)
+        resolve ShroudBlurTexture
+#endif // #if defined(EA_PLATFORM_XENON)
+
+		//// $todo (MD) - Need to remove all calculating of shroud data in the shaders. Workaround is to force the Shroud texture to white
+#if defined(EA_PLATFORM_XENON) || defined(EA_PLATFORM_WINDOWS)
+        settexture Terrain Shroud.Texture White
+#else // #if defined(EA_PLATFORM_XENON) || defined(EA_PLATFORM_WINDOWS)
+        // PS3 doesn't have the White texture so temporarily set it back, we would sorta get the double-darkening, but it should be fixed when we removed
+        //  all the shroud() lookup in all the shaders.
+        settexture Terrain Shroud.Texture ShroudBlurTexture
+#endif // #if defined(EA_PLATFORM_XENON) || defined(EA_PLATFORM_WINDOWS)
+        settexture Terrain Shroud.BlurTexture ShroudBlurTexture
+
+        // restore the frame buffer targets
+        callproc setFrameRenderTarget
+        callproc setFrameDepthBuffer
+
+    endevent UpdateBlurShroud
+endproc
+
+proc useRawShroudTexture
+    settexture Terrain Shroud.Texture ShroudRawTexture
+endproc
+
+proc renderShroudEffect
+	if WW3D IsShroudPostEffectEnabled
+		//// Now sample this texture and render it out to the Framebuffer
+		setshader ShroudFXShader ShroudFinalTechnique
+		renderquad
+	endif
+endproc
+
+
+
+
+#endif // SCRAPE_SCRIPT_SHROUD_FX_SCRAPEH

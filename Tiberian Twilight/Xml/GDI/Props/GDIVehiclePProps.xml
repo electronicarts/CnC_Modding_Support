@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- The default tank projectile -->
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+
+		<!-- ART -->
+		<Include type="all" source="ART:FXSonicProjectile.w3x" />
+		<Include type="all" source="ART:FXTankShellHeroic.w3x" />
+	</Includes>
+	
+	<GameObject
+		id="GDIVehiclePSonicShell"
+		inheritFrom="baseunattackableprojectile" 
+		Side="GDI"
+		EditorName="GDIVehiclePSonicShell">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXSonicProjectile" />
+					<ParticleSysBone
+						BoneName="FXWeapon"
+						FXParticleSystemTemplate="GDISonicSmall_Trail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXWeapon"
+						FXParticleSystemTemplate="GDISonicMed_TrailDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXWeapon"
+						FXParticleSystemTemplate="GDISonicMed_TrailLight"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<ProjectileUpdate
+				id="ModuleTag_ProjectileUpdate"
+				StateMachine="StraightLineProjectile"
+				MinTargetDistance="5">
+				<Movement>
+					<MoveInStraightLine
+						MuzzleVelocity="40.0" />
+					</Movement>
+			</ProjectileUpdate>
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTerrainCollision"
+					FX="FX_GDISonicDOT_Hit"/>
+			</FXListBehavior>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="GDIVehiclePSonicShellUpgraded"
+		inheritFrom="GDIVehiclePSonicShell"
+		EditorName="GDIVehiclePSonicShellUpgraded">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				xai:joinAction="Replace">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXSonicProjectile" />
+					<ParticleSysBone
+						BoneName="FXWeapon"
+						FXParticleSystemTemplate="GDISonicMed_TrailVet"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXWeapon"
+						FXParticleSystemTemplate="GDISonicMed_TrailDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXWeapon"
+						FXParticleSystemTemplate="GDISonicMed_TrailLightVet"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+	</GameObject>
+
+
+	<GameObject
+		id="GDIVehiclePSonicCharge"
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE NO_COLLIDE INERT PASS_EXPERIENCE_TO_PRODUCER GRANT_PLAYER_THREAT"
+		EditorName="GDIVehiclePSonicCharge">
+		<DisplayName>GDIVehiclePSonicCharge</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+			DodgeSafetyDistance="200.0">
+			<DodgeWithUnits
+			  Rule="ALL"
+			  StatusBitFlagsExclude="AIRBORNE_TARGET">
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<AttachUpdate
+				id="ModuleTag_AttachUpdate"
+				Flags="TELEPORT STICK_TO_PARENT DIE_WHEN_DETACH_ALWAYS DIE_WHEN_PARENT_HAS_FORBIDDEN_STATUS DETACH_WHEN_MULTIPLE_ARE_ATTACHED"
+				ParentStatus=""
+				ParentStatusAttached=""
+				Range="25"
+				ParentStatusToCopy="AIRBORNE_TARGET"
+				ForbiddenParentStatusDieDeathType="EXTRA_1">
+				<ObjectFilter
+					Rule="ANY"
+					Include="VEHICLE STRUCTURE INFANTRY"
+					Exclude="ENCLOSURE"
+					Relationship="ENEMIES ALLIES NEUTRAL"
+					StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+			</AttachUpdate>
+
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDISonicBlast_Medium_Hit" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDI_Shockwave_VehP_SonicBlastExplosion_AudioOnly" />
+			</FXListBehavior>
+			
+			<!-- charge duration -->
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				DeathType="SUICIDED"
+				MinLifetime="2.0s"
+				MaxLifetime="2.0s" />
+
+			<!-- charge DOT -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="GDIVehiclePSonicChargeAttached" />
+			</FireWeaponUpdate>
+
+			<!-- charge explosion -->
+			<FireWeaponWhenDead
+				id="ModuleTag_FireWeaponWhenDead"
+				InitiallyActive="true"
+				DeathWeapon="GDIVehiclePSonicChargeExplosion"
+				AllowProducerAsSource="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FireBonusWeaponWhenExploded"
+				InitiallyActive="true"
+				DeathWeapon="GDIVehiclePSonicChargeBonusExplosion"
+				AllowProducerAsSource="true">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</FireWeaponWhenDead>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="1.0"
+				Height="5.0">
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_Shockwave_VehP_SonicBlastImpactSizzle" AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+
+	<GameObject
+		id="GDIVehiclePSonicChargeUpgraded"
+		inheritFrom="GDIVehiclePSonicCharge">
+		<DisplayName>GDIVehiclePSonicChargeUpgraded</DisplayName>
+		<Behaviors>
+			<!-- charge duration -->
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				DeathType="SUICIDED" 
+				MinLifetime="2.0s"
+				MaxLifetime="2.0s" />
+
+			<!-- charge DOT -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="GDIVehiclePSonicChargeAttachedUpgraded" />
+			</FireWeaponUpdate>
+
+			<!-- charge explosion -->
+			<FireWeaponWhenDead
+				id="ModuleTag_FireWeaponWhenDead"
+				InitiallyActive="true"
+				DeathWeapon="GDIVehiclePSonicChargeExplosionUpgraded">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FireBonusWeaponWhenExploded"
+				InitiallyActive="true"
+				DeathWeapon="GDIVehiclePSonicChargeBonusExplosion"
+				AllowProducerAsSource="true">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</FireWeaponWhenDead>
+		</Behaviors>	
+	</GameObject>	
+	
+</AssetDeclaration>

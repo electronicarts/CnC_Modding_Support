@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+
+	<xs:simpleType name="JetAIUpdateOptions">
+		<xs:restriction base="xs:string">
+			<!-- all takeoffs and landings last a fixed amount of time -->
+			<xs:enumeration value="TIMED_TAKEOFFS_AND_LANDINGS" />
+			<xs:enumeration value="TAKEOFF_ON_CREATION" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="JetAIUpdateBitFlags">
+		<xs:list itemType="JetAIUpdateOptions"></xs:list>
+	</xs:simpleType>
+			
+	<xs:simpleType name="OutOfAmmoWeaponCheckOptions">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NEVER" /> <!-- never auto return-to-base -->
+			<xs:enumeration value="ANY_WEAPON" /> <!-- return when any weapon is empty -->
+			<xs:enumeration value="ALL_WEAPONS" /> <!-- only return when all weapons are out of ammo -->
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="FlyByRearmingUpgradeData">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="GrantUpgrade" type="UpgradeTemplateWeakRef" use="required"/>
+		<xs:attribute name="TriggeredBy" type="UpgradeTemplateWeakRef" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="FlyByRearmingData">
+		<xs:sequence>
+			<xs:element name="UpgradeInfo" type="FlyByRearmingUpgradeData" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<!-- dist at which we start our descent (incoming) or end our ascent (outgoing) -->
+		<xs:attribute name="IncomingDistance" type="SageReal" default="300"/>
+		<xs:attribute name="OutgoingDistance" type="SageReal" default="300"/>
+		<!-- IncomingDistanceBuffer: extra space at the incoming point to allow turning aircraft to line up straight -->
+		<xs:attribute name="IncomingDistanceBuffer" type="SageReal" default="50"/>
+		<!-- HoldTimeBuffer is an additional fixed period both before and after the main HoldTime,
+		to allow the doors to open fully. otherwise they'll clip through -->
+		<xs:attribute name="HoldTimeBuffer" type="Time" default="1s" />
+		<xs:attribute name="HealPercentPerSecond" type="Percentage" default="5%" />
+	</xs:complexType>
+
+	<xs:complexType name="JetAIUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="AIUpdateModuleData">
+				<xs:sequence>
+					<xs:element name="FlyByRearmingInfo" type="FlyByRearmingData" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="OutOfAmmoDamagePerSecond" type="Percentage" default="0" />
+				<xs:attribute name="OutOfAmmoDamageDelay" type="Time" />
+				<xs:attribute name="NeedsRunway" type="SageBool" default="false" />
+				<xs:attribute name="ReturnToBaseWhenVictimDead" type="SageBool" default="false" />
+				<xs:attribute name="KeepsParkingSpaceWhenAirborne" type="SageBool" default="false" />
+				<xs:attribute name="ParkingOffset" type="SageReal" default="0.0" />
+				<xs:attribute name="CirclesForAttack" type="SageBool" default="false" />
+				<xs:attribute name="UseForOutOfAmmoCheck" type="WeaponRef" />
+				<xs:attribute name="OutOfAmmoEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="ReturnToBaseWeaponAmmoCheck" type="OutOfAmmoWeaponCheckOptions" default="ALL_WEAPONS" />
+				<xs:attribute name="TimedTakeOffOrLandingDuration" type="Time" default="0.75s" />
+				<xs:attribute name="Options" type="JetAIUpdateBitFlags" default="TIMED_TAKEOFFS_AND_LANDINGS" />
+		      </xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

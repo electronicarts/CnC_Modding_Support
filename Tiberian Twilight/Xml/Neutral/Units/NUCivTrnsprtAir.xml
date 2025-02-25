@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:NUCivTrnsprtAir_SKN.w3x" />
+		<Include type="all" source="ART:NUCivTrnsprtAir_SKL.w3x" />
+		<Include type="all" source="ART:NUCivTrnsprtAir_LNDA.w3x" />
+		<Include type="all" source="ART:NUCivTrnsprtAir_MOVA.w3x" />
+		<Include type="all" source="ART:NUCivTrnsprtAir_TKFA.w3x" />
+		<Include type="all" source="ART:NUCivTrnsprtAir_TKFB.w3x" />
+		<Include type="all" source="ART:NUCivTrnsprtAir_DMG.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseAircraft.xml" />
+	</Includes>
+	<GameObject
+		id="CivilianTransportAir"
+		inheritFrom="BaseAircraft"
+		SubGroupPriority="298"
+		SelectPortrait="Portrait_Neutral_CivTransport_Air"
+		ButtonImage="Btn_Neutral_CivTransport_Air"
+		Side="Neutral"
+		TransportSlotCount="1"
+		BuildTime="120"
+		CommandSet="NODMCVCommandSet"
+		KindOf="+FS_FACTORY -CAN_BE_FAVORITE_UNIT +NOT_AUTOACQUIRABLE"
+		EditorName="NeutralCivilainTransportAir">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="2500"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NeutralCivilianTransport</DisplayName>
+		<ArmorSet
+			Armor="MediumAirArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			Locomotor="NeutralTransportAirLocomotor"
+			Condition="NORMAL"
+			Speed="80.0" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FXThrusters01 FXThrusters02 FXVTOL01 FXVTOL02">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUCivTrnsprtAir_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NUCivTrnsprtAir_SKN" />
+					<Texture
+						Original="NUCivTrnsprtAir"
+						New="NUCivTrnsprtAir_DMG" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUCivTrnsprtAir_SKN" />
+					<Texture
+						Original="NUCivTrnsprtAir"
+						New="NUCivTrnsprtAir_DMG" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="NUCivTrnsprtAir_TKFA"
+						AnimationBlendTime="10"
+						AnimationMode="MANUAL"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIMBING"
+					StateName="STATE_TakingOff">
+					<Animation
+						AnimationName="NUCivTrnsprtAir_TKFB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="10"/>
+					<ParticleSysBone
+						BoneName="FXThrusters01"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXThrusters01"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXThrusters02"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXThrusters02"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL01"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL01"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL02"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL02"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="GDIHoverDust_LargeGrounded"
+						FollowBone="true" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_Idle" then
+						CurDrawableSetTransitionAnimState("TRANS_PreparingForTakeOff")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="LANDING">
+					<Animation
+						AnimationName="NUCivTrnsprtAir_LNDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+					<ParticleSysBone
+						BoneName="FXThrusters01"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXThrusters01"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXThrusters02"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXThrusters02"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL01"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL01"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL02"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL02"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="NUCivTrnsprtAir_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<!-- PFX ATTACHED TO FXThrusters01 AND FXThrusters02 ARE TO BE TAKEN OUT AND PLACED ON ACCELERATE ANIMS WHEN THEY'RE MADE. (Aram) -->
+					<ParticleSysBone
+						BoneName="FXThrusters01"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXThrusters01"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXThrusters02"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXThrusters02"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL01"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL01"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL02"
+						FXParticleSystemTemplate="CivAirTransport_EngineDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXVTOL02"
+						FXParticleSystemTemplate="CivAirTransport_EngineFlame"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="CivAirTransport_HoverDust"
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_PreparingForTakeOff">
+					<Animation
+						AnimationName="NUCivTrnsprtAir_TKFA"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_NeutralTransportAirDebris">
+				<DieMuxData DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplode" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly"/>  <!-- please add another FXList for visuals please, thanks! -->
+			</FXListBehavior>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				StateMachine="JetAIStateMachine"
+				AutoAcquireEnemiesWhenIdle="YES">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="600.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_TakeOff">
+				<ModelConditionSound Sound="NEU_CivilianTransportAir_Lift" RequiredFlags="TAKING_OFF" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MoveStart">
+				<ModelConditionSound Sound="NEU_CivilianTransportAir_MoveMS" RequiredFlags="MOVING" ExcludedFlags="TAKING_OFF CLIMBING DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<!-- <ModelConditionAudioLoopClientBehavior id="ModuleTag_Landing">
+				<ModelConditionSound Sound="NEU_CivilianTransportAir_Land" RequiredFlags="DESCENDING" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior> -->
+		</ClientBehaviors>
+		<Geometry>
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "35.0"
+				 MinorRadius = "22.0"
+				 Height = "26.0"
+				 ContactPointGeneration = "VEHICLE" >
+				<Offset
+					x = "-5.44859"
+					y = "-1.70633"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NEU_CivilianTransportGround_SoundSelect" AudioType="voiceSelect"/>
+			<!-- <AudioEntry Sound="NEU_CivilianTransportGround_SoundSelect" AudioType="voiceMove"/>
+			<AudioEntry Sound="NEU_CivilianTransportGround_SoundSelect" AudioType="voiceAttack"/> -->
+		</AudioArrayVoice>
+		<!-- <AudioArraySound>
+			<AudioEntry Sound="NEU_CivilianTransportAir_MoveStart" AudioType="soundMoveStart" /> plays when he's climbing too!
+		</AudioArraySound> -->
+		<!-- <AudioArraySound>
+			<AudioEntry Sound="NEU_CivilianTransportAir_MoveLoop" AudioType="soundMoveLoop"/>
+		</AudioArraySound> -->
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+		<CrusherInfo
+			CrusherLevel="2"
+			CrushableLevel="2" />
+	</GameObject>
+
+	<LocomotorTemplate
+		id="NeutralTransportAirLocomotor"
+		Surfaces="AIR"
+		TurnTimeSeconds="0.5s"
+		TurnTimeDamagedSeconds="4.0s"
+		AccelerationSeconds="3.0s"
+		TakeOffAndLandingSpeed="5.0"
+		TakeOffAndLandingSlowDownDelta="4.0"
+		TakeOffAndLandingSlowDownTime="3.0s"
+		Lift="100%"
+		LiftDamaged="95%"
+		BrakingSeconds="0.4s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="40.0"
+		MinTurnSpeed="0%"
+		PreferredHeight="100"
+		PreferredAttackHeight="100"
+		AllowMotiveForceWhileAirborne="true"
+		BehaviorZ="SURFACE_RELATIVE_HEIGHT"
+		Appearance="HOVER"
+
+		PitchStiffness="0.5"
+		RollStiffness="0.1"
+		PitchDamping="0.9"
+		RollDamping="0.9"
+
+		Apply2DFrictionWhenAirborne="true"
+		AirborneTargetingHeight="30"
+		LocomotorWorksWhenDead="true"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		IgnoreMinSurfaceElevation="true"
+		CanReverseMove="false"/>
+	
+
+	<ObjectCreationList
+		id="OCL_NeutralTransportAirDebris">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset x="-1.67" y="-3.44" z="12.48" />
+					<SubModules>
+						<CreateObject/>
+						<SetLifetime
+							MinLifetime="1.0s"
+							MaxLifetime="3.0s"/>
+						<FlingObject
+							MinForceMagnitude="2.0"
+							MaxForceMagnitude="7.0"
+							MinForcePitch="90d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+</AssetDeclaration>

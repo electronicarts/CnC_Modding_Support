@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+
+		<Include
+			type="all"
+			source="ART:FX_GUSuSonic_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:FX_GUSuSonic_SKL.w3x" />
+		<Include
+			type="all"
+			source="ART:FX_GUSuSonic_STRA.w3x" />	
+		<Include
+			type="all"
+			source="ART:FXInvisBone.w3x" />			
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="GDISuperSonicAirAttack"
+		inheritFrom="BaseVehicle"
+		KindOf="PRELOAD CAN_CAST_REFLECTIONS CAN_ATTACK SCORE AIRCRAFT VEHICLE SUMMONED IGNORES_SELECT_ALL NO_COLLIDE"
+		UnitCategory="AIRCRAFT"
+		WeaponCategory="MISSILE"		
+		>
+		<ArmorSet
+			Armor="GDIFirehawkArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			Locomotor="OrcaLocomotor"
+			Condition="NORMAL"
+			Speed="1500.0" />		
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FX_GUSuSonic_SKN" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GUSuSonic" />
+					<WeaponLaunchBone
+						WeaponSlotID="2"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GUSuSonic" />
+					<WeaponLaunchBone
+						WeaponSlotID="3"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GUSuSonic" />
+					<WeaponLaunchBone
+						WeaponSlotID="4"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GUSuSonic" />
+					<WeaponLaunchBone
+						WeaponSlotID="3"
+						WeaponSlotType="SECONDARY_WEAPON"
+						BoneName="GUSuSonic" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="FX_GUSuSonic_STRA"
+						AnimationMode="ONCE" />					
+				</AnimationState>				
+			</ScriptedModelDraw>	
+			<ScriptedModelDraw
+				id="ModuleTag_FX"
+				OkToChangeModelColor="true"
+				AttachToBoneInAnotherModule="FXContrailBone01 "
+				ExtraPublicBone="FXContrailBone01 ">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="invisbone01"
+						FXParticleSystemTemplate="FireHawkConTrail"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>	
+			<ScriptedModelDraw
+				id="ModuleTag_FX2"
+				OkToChangeModelColor="true"
+				AttachToBoneInAnotherModule="FXContrailBone02 "
+				ExtraPublicBone="FXContrailBone02 ">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="invisbone01"
+						FXParticleSystemTemplate="FireHawkConTrail"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_FX3"
+				OkToChangeModelColor="true"
+				AttachToBoneInAnotherModule="GUSuSonic"
+				ExtraPublicBone="GUSuSonic">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="invisbone01"
+						FXParticleSystemTemplate="SonicAirAttackTrail01"
+						FollowBone="true" />						
+					<ParticleSysBone
+						BoneName="invisbone01"						
+						FXParticleSystemTemplate="SonicAirAttackDistort01"						
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>			
+		</Draws>
+		<Behaviors>			
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate">
+				<FireWeaponNugget
+					WeaponName="GDISupersonicAirWeapon"
+					FireDelay="0.6s"
+					FireInterval="0.2s"
+					OneShot="true"
+				/>
+			</FireWeaponUpdate>		
+			<LifetimeUpdate
+				id="ModuleTag_Lifetime"
+				DeathType="SUICIDED"
+				MinLifetime="1.7s"
+				MaxLifetime="1.7s" />	
+			<Physics
+				id="ModuleTag_Physics" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0s"
+				SinkRate="0.5"
+				DestructionDelay="0.1s">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="TOPPLED" />
+			</SlowDeath>				
+					
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_JetAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES">
+				<UnitAITargetChooserData
+					SympathyRange="100.0" />
+				<LockonInfo />
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="999999" />
+		</Body>
+			<!-- used to blanket out EVA events inherited from BaseObjects/BaseVehicle.xml -->
+		<EvaEvents
+			EvaEventDieOwner="EmptyEva"
+			EvaEventProductionStarted="EmptyEva" 
+			EvaEventDamagedOwner="EmptyEva" 	
+			EvaEventDamagedFromShroudedSourceOwner="EmptyEva"
+			EvaEventDamagedByFireOwner="EmptyEva"  
+			EvaEventAmbushed="EmptyEva" 
+			EvaEventSecondDamageFarFromFirstScanRange="600"    
+			EvaEventSecondDamageFarFromFirstTimeoutMS="31000"
+			EvaEnemyObjectSightedEvent="EmptyEva" 
+			EvaEventDetectedEnemy="EmptyEva"
+			EvaEventAvailableForProduction="EmptyEva"
+			EvaEventBuildOnHold="EmptyEva"
+			EvaEventBuildCancelled="EmptyEva" 
+			EvaEventPromotedOwner="EmptyEva" />
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="18.0"
+				Height="7.0"></Shape>
+		</Geometry>		
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="450" />		
+	</GameObject>
+</AssetDeclaration>

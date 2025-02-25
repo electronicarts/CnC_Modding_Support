@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" 
+									xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+									xmlns:xi="http://www.w3.org/2001/XInclude"
+									xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:GDI/Units/GDISniperSquad.xml" />
+	</Includes>
+	<GameObject
+		id="GDISniperSquadSPBombingRun"
+		inheritFrom="GDISniperSquad"
+		CommandSet="GDISniperSquadSPBombingRunCommandSet"
+		EditorName="GDISniperSquadSPBombingRun"
+		>
+		<EquivalentTo>GDISniperSquad</EquivalentTo>
+		<Behaviors>
+			
+
+			<!-- Trigger for Call Airstrike. This power makes the squad move to within casting range and triggers the actual OCl power -->
+			<SpecialPower
+				id="ModuleTag_CallAirstrikeSpecialPowerDispatch"
+				SpecialPowerTemplate="SpecialPowerCallAirstrikeSPWashington"
+				UpdateModuleStartsAttack="true"
+			/>
+
+			<!-- Update for the trigger. This makes the unit move to within range -->
+			<ActivateModuleSpecialPower
+				id="ModuleTag_CallAirstrikeSpecialPowerUpdate"
+				SpecialPowerTemplate="SpecialPowerCallAirstrikeSPWashington"
+				StartAbilityRange="500">
+				<SpecialPowerModules ModuleId="ModuleTag_OCLSpecialPowerCallAirstrike" TriggerAtTargetPosition="true" />
+			</ActivateModuleSpecialPower>
+
+			<!-- Actual work for Call Airstrike is done by this power and update-->
+			<OCLSpecialPower
+				id="ModuleTag_OCLSpecialPowerCallAirstrike"
+				SpecialPowerTemplate="SpecialPowerDummyTriggered1"
+				UpdateModuleStartsAttack="true"
+				OCL="OCL_GDISniperAirstrikeSPBombingRun"
+				CreateLocation="CREATE_AT_EDGE_NEAR_TARGET_AND_MOVE_TO_LOCATION" 
+			/>
+			<OCLMonitorSpecialAbilityUpdate
+				id="ModuleTag_OCLMonitorSpecialAbilityUpdateCallAirstrike"
+				SpecialPowerTemplate="SpecialPowerDummyTriggered1"
+				UnpackTime="2s"
+				PreparationTime="1s"
+				PreTriggerUnstealthTime="9999s"
+				Options="LOSE_STEALTH_ON_TRIGGER"
+			/>
+			
+		</Behaviors>
+		<AI>
+			<HordeAIUpdate
+				id="ModuleTag_HordeAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES ATTACK_BUILDINGS"
+				MaxCowerTime="5.0s"
+				MinCowerTime="3.0s"
+				CanAttackWhileContained="true">
+				<UnitAITargetChooserData />
+			</HordeAIUpdate>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				MaxHealth="1.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="15.0"
+				MinorRadius="15.0"
+				Height="20.0"></Shape>
+		</Geometry>
+		<!--
+		<AudioArraySound>
+			<AudioEntry
+				Sound="AudioEvent:GDI_Sniper_GroupSmall_MoveLoop"
+				AudioType="soundMoveLoop" />
+		</AudioArraySound>
+-->
+		<VisionInfo
+			VisionRange="550"
+			ShroudClearingRange="600"
+			MaxVisionBonusPercent="300"
+			VisionBonusTestRadius="200"
+			VisionBonusPercentPerFoot="1" />
+		<CrusherInfo
+			UseCrushAttack="false"
+			CrushableLevel="0"
+			CrusherLevel="0" />
+	</GameObject>
+</AssetDeclaration>
+<!--
+
+Object GDISniperSquad
+
+	ThreatBreakdown GDISniperHorde_DetailedThreat
+		AIKindOf = ARCHER
+	End
+	
+End
+
+
+-->

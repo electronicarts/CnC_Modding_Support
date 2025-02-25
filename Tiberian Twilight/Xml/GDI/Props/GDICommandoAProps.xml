@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:GDIRocketMedium.w3x" />
+		<Include type="all" source="ART:FXSatchelCharge.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseObject.xml" />
+
+	</Includes>
+
+	<GameObject
+		id="GDICommandoAMissileProjectile"
+		Side="GDI"
+		inheritFrom="BaseTargetableProjectile" 
+		EditorName="GDICommandoAMissileProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GDIRocketMedium" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_Trail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_TrailThin"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_GDI_CommandoA_RocketImpactExplosion_AudioOnly" /> <!-- audio only, please add visual to another Event, thanks! -->
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="0"
+				FirstHeightMax="20"
+				SecondHeightMin="20"
+				SecondHeightMax="20"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				GroundHitFX="FX_GDIRocketMediumMiss"
+				MaxDistanceReachedFX="FX_GDIRocketMediumMiss"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH"
+				SidewaysDrift="50"
+				FlightPathAdjustDistPerSecond="100.0"
+				MaxDistanceToTravel="600.0"
+				/>
+		</Behaviors>
+	</GameObject>
+
+	<!-- providing a different ground hit effect for the Missile Storm version of the rocket -->
+	<GameObject
+		id="GDICommandoAMissileProjectileMissileStorm"
+		inheritFrom="GDICommandoAMissileProjectile"
+		EditorName="GDICommandoAMissileProjectileMissileStorm">
+		<Behaviors>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				GroundHitFX="FX_GDIMissileStormMiss"/>
+		</Behaviors>
+	</GameObject>
+
+
+	<!-- C4 Satchel Charge assets -->
+
+	<GameObject
+		id="GDICommandoASatchelChargeProjectile"
+		Side="GDI"
+		inheritFrom="BaseTargetableProjectile"
+		EditorName="GDICommandoASatchelChargeProjectile">
+		<Draws>
+			   
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXSatchelCharge" />					
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_TrailThin"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_GDI_CommmandoA_SatchelChargeImpact_AudioOnly" />
+				<!-- audio only, please add visual to another Event, thanks! -->
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="50"
+				FirstHeightMax="100"
+				SecondHeightMin="50"
+				SecondHeightMax="100"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				GroundHitFX=""
+				MaxDistanceReachedFX=""
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH"
+				FlightPathAdjustDistPerSecond="50.0"
+				MaxDistanceToTravel="600.0"
+				/>
+		</Behaviors>
+	</GameObject>
+	
+	<GameObject
+		id="GDICommandoASatchelChargeObject"
+		inheritFrom="BaseObject"
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		KindOf="NOT_AUTOACQUIRABLE NO_COLLIDE DO_NOT_CLASSIFY PASS_EXPERIENCE_TO_PRODUCER"
+		EditorName="GDICommandoASatchelChargeObject(DONOTPLACE)">
+		<Behaviors>
+				  
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="4.0s"
+				MaxLifetime="4.0s"
+				CountdownSound="GDI_CommmandoA_SatchelChargeBeep" 
+				CountdownCompleteSound="GDI_CommmandoA_SatchelChargeBeepFinal"
+				NumberOfCountdownSoundPlays="2" 
+				TimeBeforeDeathThatCountdownCompletes="960ms" 
+				TimeBetweenCountdownSounds="1s"/>			
+
+			<FireWeaponWhenDead
+				id="ModuleTag_FireWeaponWhenDead_SatchelCharge"
+				DeathWeapon="GDICommandoSatchelChargeDeathWeapon"
+				InitiallyActive="true"
+				FireAtGround="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Range="10.0"
+				Flags="TELEPORT STICK_TO_PARENT USE_GEOMETRY DIE_WHEN_DETACH_ALWAYS DETACH_WHEN_NO_PARENT">
+			</AttachUpdate>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+	</GameObject>
+
+	<ObjectCreationList
+		id="OCL_CreateGDICommandoASatchelChargeObject">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="GDICommandoASatchelChargeObject"/>
+				<AttachToTarget/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+</AssetDeclaration>

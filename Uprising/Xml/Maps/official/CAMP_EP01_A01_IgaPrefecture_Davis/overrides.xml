@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags/>
+	<Includes>
+    <Include type="all" source="DATA:EP1/Includes/CampaignOverrides_EP1.xml" />
+
+    <Include type="instance" source="DATA:Civilian/Tokyo_Harbor_TH/Buildings/TH_JapanOldMilitaryTrainingSchool.xml"/>
+
+		<Include type="instance" source="DATA:Japan/Units/JapanLightTransportVehicle.xml"/>
+		<Include type="instance" source="DATA:Japan/Units/JapanAntiVehicleVehicleTech1.xml"/>
+
+		<Include type="instance" source="DATA:Japan/Structures/JapanBarracks.xml"/>
+		<Include type="instance" source="DATA:Japan/Structures/JapanWarfactory.xml"/>
+		<Include type="instance" source="DATA:Japan/Structures/JapanNavalYard.xml"/>
+
+		<Include type="instance" source="DATA:Allied/Units/AlliedMCV.xml"/>
+		<Include type="all" source="DATA:EP1/Includes/CampaignOverrides_EP1.xml"/>
+    <Include type="instance" source="DATA:Civilian/Buildings/MI_Bridge_01.xml"/>
+    <Include type="instance" source="DATA:Civilian/Tokyo_Harbor_TH/Buildings/TH_EmperorFlagpoleStatue.xml"/>
+
+    <Include type="instance" source="DATA:GlobalData/SpecialpowerTemplates.xml"/>
+  
+  </Includes>
+
+  <SpecialPowerTemplate
+		id="SpecialPower_JapanLightTransportVehicleDisguise"
+    inheritFrom="SpecialPower_JapanLightTransportVehicleDisguise" 
+    xai:joinAction="Replace" 
+		TargetType="OBJECT"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceDisguise"
+		Flags="NEEDS_OBJECT_FILTER DO_NOT_REACQUIRE_TARGET CAN_NOT_BE_SCRAMBLED"
+		WaypointModeTerminal="false" >
+    <ObjectFilter
+			Rule="ANY"
+			Include="VEHICLE"
+      Exclude="AIRCRAFT">
+      <ExcludeThing>JapanMechaKing</ExcludeThing>
+    </ObjectFilter>
+  </SpecialPowerTemplate>
+
+	<GameObject
+		id="TH_JapanOldMilitaryTrainingSchool"
+		inheritFrom="TH_JapanOldMilitaryTrainingSchool"
+    KindOf="-FS_FACTORY -AUTO_RALLYPOINT -FS_BARRACKS -FS_WAR_FACTORY +NOT_SELLABLE"
+    CommandSet="EmptyCommandSet">
+		<Behaviors>
+			<EngineerContain xmlns="uri:ea.com:eala:asset"
+				id="ModuleTag_EngineerContain"
+				NameOfVoiceToUseForFriendlyEnter="VoiceEngineerRepair"
+				NameOfVoiceToUseForHostileEnter="VoiceCaptureBuilding"
+				EvaEventForRepair="BuildingRepaired"
+				EvaEventForCapture="EnemyBuildingCaptured"
+				FXForRepair="FX_Building_Repaired"
+				FXForCapture="FX_Building_Captured"
+				FXForCaptureAndReplace="FX_Building_Captured"
+				ImmediatelyEnabled="true">
+				<CanEnterFilter Rule="NONE">
+					<IncludeThing>SovietEngineer</IncludeThing>
+					<IncludeThing>JapanEngineer</IncludeThing>
+					<IncludeThing>AlliedEngineer</IncludeThing>
+				</CanEnterFilter>
+			</EngineerContain>
+
+			<ProductionUpdate id="ModuleTag_ProductionUpdate" xai:joinAction="Remove"/>
+			<ProductionUpdate id="ModuleTag_ProductionUpdate2" xai:joinAction="Remove"/>
+			<QueueProductionExitUpdate id="ModuleTag_ExitUpdate" xai:joinAction="Remove"/>
+			<SubObjectsUpgrade id="ModuleTag_SubObjectsUpgrade" xai:joinAction="Remove"/>
+			<SubObjectsUpgrade id="ModuleTag_SubObjectsUpgrade2" xai:joinAction="Remove"/>
+		</Behaviors>
+	</GameObject>
+
+  <GameObject
+    id="TH_EmperorFlagpoleStatue"
+    inheritFrom="TH_EmperorFlagpoleStatue">
+    <Behaviors>
+      <EngineerContain id="ModuleTag_EngineerContain" xai:joinAction="Remove"/>
+      <RepairUpdate id="ModuleTag_RepairUpdate" xai:joinAction="Remove"/>
+    </Behaviors>
+  </GameObject>
+
+
+
+  <UpgradeTemplate
+		id="Upgrade_EP01_A01_ShinzoEscape"
+		Type="OBJECT"	/>
+
+	<AttributeModifier
+		id="AttributeModifier_Upgrade_EP01_A01_ShinzoEscape"
+		Category="NONE">
+		<Modifier Type="HEALTH_MULT" Value="325" />
+    <Modifier Type="SPEED" Value="110"/>
+    <Modifier Type="ARMOR" Value="10"/>
+	</AttributeModifier>
+
+	<GameObject
+		id="JapanLightTransportVehicle"
+		inheritFrom="JapanLightTransportVehicle">
+		<Behaviors>
+			<AttributeModifierUpgrade
+				id="ModuleTag_Upgrade_ShinzoEscape"
+				AttributeModifier="AttributeModifier_Upgrade_EP01_A01_ShinzoEscape">
+				<TriggeredBy>Upgrade_EP01_A01_ShinzoEscape</TriggeredBy>
+			</AttributeModifierUpgrade>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="JapanAntiVehicleVehicleTech1"
+		inheritFrom="JapanAntiVehicleVehicleTech1">
+		<Behaviors>
+			<AttributeModifierUpgrade
+				id="ModuleTag_Upgrade_ShinzoEscape"
+				AttributeModifier="AttributeModifier_Upgrade_EP01_A01_ShinzoEscape">
+				<TriggeredBy>Upgrade_EP01_A01_ShinzoEscape</TriggeredBy>
+			</AttributeModifierUpgrade>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="AlliedMCV"
+		inheritFrom="AlliedMCV">
+		<EvaEventArray>
+			<EvaEntry EvaEvent="CriticalUnitUnderAttack" EvaType="damagedAlly" />
+		</EvaEventArray>
+	</GameObject>
+
+	<AttributeModifier
+		id="AttributeModifier_Hard"
+		Category="NONE"
+		Duration="0s">
+		<Modifier Type="RECHARGE_TIME" Value="85%"/>
+	</AttributeModifier>
+	<AttributeModifier
+		id="AttributeModifier_Easy"
+		Category="NONE"
+		Duration="0s">
+		<Modifier Type="RECHARGE_TIME" Value="150%"/>
+	</AttributeModifier>
+
+	<GameObject
+		id="JapanBarracks"
+		inheritFrom="JapanBarracks">
+		<Behaviors>
+			<AttributeModifierUpgrade
+				id="ModuleTag_Upgrade_Easy"
+				AttributeModifier="AttributeModifier_Easy">
+				<TriggeredBy>Upgrade_EasyAISinglePlayer</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<AttributeModifierUpgrade
+				id="ModuleTag_Upgrade_Hard"
+				AttributeModifier="AttributeModifier_Hard">
+				<TriggeredBy>Upgrade_HardAISinglePlayer</TriggeredBy>
+			</AttributeModifierUpgrade>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="JapanWarfactory"
+		inheritFrom="JapanWarfactory">
+		<Behaviors>
+			<AttributeModifierUpgrade
+				id="ModuleTag_Upgrade_Easy"
+				AttributeModifier="AttributeModifier_Easy">
+				<TriggeredBy>Upgrade_EasyAISinglePlayer</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<AttributeModifierUpgrade
+				id="ModuleTag_Upgrade_Hard"
+				AttributeModifier="AttributeModifier_Hard">
+				<TriggeredBy>Upgrade_HardAISinglePlayer</TriggeredBy>
+			</AttributeModifierUpgrade>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="JapanNavalYard"
+		inheritFrom="JapanNavalYard">
+		<Behaviors>
+			<AttributeModifierUpgrade
+				id="ModuleTag_Upgrade_Easy"
+				AttributeModifier="AttributeModifier_Easy">
+				<TriggeredBy>Upgrade_EasyAISinglePlayer</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<AttributeModifierUpgrade
+				id="ModuleTag_Upgrade_Hard"
+				AttributeModifier="AttributeModifier_Hard">
+				<TriggeredBy>Upgrade_HardAISinglePlayer</TriggeredBy>
+			</AttributeModifierUpgrade>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="MI_Bridge_Center"
+    inheritFrom="MI_Bridge_Center">
+		<Body>
+			<ManagedActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="10000.0" />
+		</Body>
+  </GameObject>
+
+	<GameObject
+			id="MI_Bridge_GateHouse"
+			inheritFrom="MI_Bridge_GateHouse">
+		<Body>
+			<ManagedImmortalBody
+				id="ModuleTag_Body"
+				MaxHealth="10000.0" />
+		</Body>
+	</GameObject>
+	
+	<GameObject
+			id="MI_Bridge_End"
+			inheritFrom="MI_Bridge_End">
+		<Body>
+			<ManagedImmortalBody
+				id="ModuleTag_Body"
+				MaxHealth="10000.0" />
+		</Body>
+	</GameObject>
+	
+	<GameObject
+			id="MI_Bridge_End2"
+			inheritFrom="MI_Bridge_End2">
+		<Body>
+			<ManagedImmortalBody
+				id="ModuleTag_Body"
+				MaxHealth="10000.0" />
+		</Body>
+	</GameObject>
+	
+	 
+	<!-- Radar Image Information -->
+
+	<Texture id="A01_IgaPrefecture_Art_Yellow" File="CAMP_EP01_A01_IgaPrefecture_Davis_Art_yellow.TGA"  GenerateMipMaps="false" AllowAutomaticResize="false"/> 
+	<Texture id="A01_IgaPrefecture_Art_Blue" File="CAMP_EP01_A01_IgaPrefecture_Davis_Art_blue.TGA"  GenerateMipMaps="false" AllowAutomaticResize="false"/>
+	<Texture id="A01_IgaPrefecture_Art_Green" File="CAMP_EP01_A01_IgaPrefecture_Davis_Art_green.TGA"  GenerateMipMaps="false" AllowAutomaticResize="false"/>
+
+
+	<RadarTerrainImage
+		id="YellowBorderTerrain"
+		MapBorder="Yellow" 
+		Texture="A01_IgaPrefecture_Art_Yellow">
+		<ImageSize x="512" y="512"/>
+		<ImagePosition x="0" y="0"/>
+		<TextureSize x="512" y="512"/>
+	</RadarTerrainImage>
+
+
+	<RadarTerrainImage
+		id="BlueBorderTerrain"
+		MapBorder="Blue" 
+		Texture="A01_IgaPrefecture_Art_Blue">
+		<ImageSize x="512" y="512"/>
+		<ImagePosition x="0" y="0"/>
+		<TextureSize x="512" y="512"/>
+	</RadarTerrainImage>
+
+	<RadarTerrainImage
+		id="GreenBorderTerrain"
+		MapBorder="Green" 
+		Texture="A01_IgaPrefecture_Art_Green">
+		<ImageSize x="512" y="512"/>
+		<ImagePosition x="0" y="0"/>
+		<TextureSize x="512" y="512"/>
+	</RadarTerrainImage>
+      
+</AssetDeclaration>

@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Art Includes -->
+		<Include type="all" source="ART:NUL_AircraftN_SKN.w3x" />
+		<Include type="all" source="ART:NUL_AircraftN_DMG.xml" />
+		<Include type="all" source="ART:NUL_AircraftN_AIDD.w3x" />
+		
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		
+	</Includes>
+	<Defines>
+		<Define
+			name="NODAIRCRAFTN_DAMAGE_BONE_NAMES"
+			value="	BONE_CONTACT_POINT_01 
+							BONE_CONTACT_POINT_02 
+							BONE_CONTACT_POINT_03 
+							BONE_CONTACT_POINT_04
+							BONE_CONTACT_POINT_05 
+							BONE_CONTACT_POINT_06
+							BONE_CONTACT_POINT_07 
+							BONE_CONTACT_POINT_08 
+							BONE_CONTACT_POINT_09"/>
+
+	</Defines>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		GAME OBJECTS												-->
+	<!-- //////////////////////////////////////	-->
+
+	<!--    /////////////////////////////////////   -->
+	<!--		The Collapsing ship which falls					-->
+	<!--		from the sky when the unit is killed		-->
+	<GameObject
+		id="NODAircraftN_Dying"
+		EditorName="NODAircraftN_Dying"
+		Description="Desc:NODAircraftN_Dying"
+		Side="NOD"
+		KindOf="=$BASE_DYING_AIRCRAFT_KINDOF">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				ExtraPublicBone="=$NODAIRCRAFTN_DAMAGE_BONE_NAMES"
+				OkToChangeModelColor="true" >
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUL_AircraftN_SKN" />
+					<Texture
+						Original="NUL_AircraftN"
+						New="NUL_AircraftN_DMG" />
+					<ParticleSysBone
+						BoneName="NAN_LFThruster"
+						FXParticleSystemTemplate="orcadamagefire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAN_LFThruster"
+						FXParticleSystemTemplate="orcadamagesmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NUL_AircraftN_AIDD"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.2"
+						AnimationSpeedFactorMax="0.2" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<Physics
+				id="ModuleTag_Physics"
+				TumbleRandomly="true"
+				MaxXRotationVelocity="25"
+				MaxYRotationVelocity="5"
+				MaxZRotationVelocity="0"
+				KillWhenRestingOnGround="true"/>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleLRG_Death" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Aircraft_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+			<FireWeaponWhenDead
+				id="ModuleTag_DeathWeapon"
+				DeathWeapon="NODDyingAircraft_DeathWeapon_Large"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODAircraftNFunctions"/>
+
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_NODAircraftNWeaponUpgrade</TriggeredBy>
+				<Nugget
+					ShowSubObjects="UPgrade"
+					HideSubObjects="SmallGuns"
+					Upgrade="Upgrade_NODAircraftNWeaponUpgrade"
+          SkipFlashOnCreate="true"/>
+			</SubObjectsUpgrade>
+
+			<!-- Needed to copy damage from the original object during a swap -->
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="200.0"
+					FX="FX_GDIVehicleL_Damage"/>
+			</BuildingDestructionBehavior>
+			
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="Tag_PropBody"/>
+		</Body>
+
+		<xi:include	href="DATA:NOD/Includes/NODAircraftNGeometry.xml" />
+
+		<VisionInfo
+			VisionRange="600"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+	<!--		The Manager for the bounce laser that		-->
+		<!--		the NOD Aircraft N gets when upgraded		-->
+	<GameObject
+		id="NODAircraftNBounceLaserNodeManager_Base"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="1s"
+				MaxLifetime="1s" />
+
+			<!-- This manages the complete Scattering effect of a weapon -->
+			<WeaponScatterEffectUpdate
+					 id="Base_ScatterEffect"
+					 WeaponTemplate="NODAircraftNBounceLaserNode_Weapon"
+					 Options="ATTACK_GROUND_IF_NO_MORE_TARGETS NO_DUPLICATE_TARGETS STOP_SCATTER_IF_NO_TARGET_OBJECTS_HIT">
+				<!-- Define the prioritization of the targets to scatter to -->
+				<TargetSelection
+					id="Tag_TargetSelectionFilters">
+					<ObjectPriorityFilter
+						 Rule="ANY"
+						 Relationship="ENEMIES"
+						 Include="INFANTRY"
+						 Exclude="DO_NOT_CLASSIFY" />
+
+					<ObjectPriorityFilter
+						 Rule="ALL"
+						 Relationship="ENEMIES"
+						 Exclude="DO_NOT_CLASSIFY"/>
+				</TargetSelection>
+
+				<!-- Define the specifics for each scatter of the weapon -->
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="150"
+						PercentDamage="100%"
+						NodeOCL="OCL_NODAircraftNBounceLaserNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="140"
+						PercentDamage="85%"
+						NodeOCL="OCL_NODAircraftNBounceLaserNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="130"
+						PercentDamage="70%"
+						NodeOCL="OCL_NODAircraftNBounceLaserNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="120"
+						PercentDamage="55%"
+						NodeOCL="OCL_NODAircraftNBounceLaserNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="110"
+						PercentDamage="40%"
+						NodeOCL="OCL_NODAircraftNBounceLaserNode" />
+				</ScatterSettings>
+
+			</WeaponScatterEffectUpdate>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+	
+	<!-- /////////////////////////////// -->
+	<!-- The Ground only scatter version -->
+	<GameObject
+		id="NODAircraftNBounceLaserNodeManager_Ground"
+		inheritFrom="NODAircraftNBounceLaserNodeManager_Base">
+		<Behaviors>
+			<!-- This manages the complete Scattering effect of a weapon -->
+			<WeaponScatterEffectUpdate
+					 id="Base_ScatterEffect">
+				<!-- Define the prioritization of the targets to scatter to -->
+				<TargetSelection
+						id="Tag_TargetSelectionFilters"
+						xai:joinAction="Replace">
+					<ObjectPriorityFilter
+						 Rule="ALL"
+						 Relationship="ENEMIES"
+						 Include="INFANTRY" 
+						 Exclude="AIRCRAFT UNATTACKABLE NOT_AUTOACQUIRABLE"
+						 StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+					
+					<ObjectPriorityFilter
+						 Rule="ALL"
+						 Relationship="ENEMIES"
+						 Exclude="AIRCRAFT UNATTACKABLE NOT_AUTOACQUIRABLE"
+						 StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+
+					<ObjectPriorityFilter
+						 Rule="ALL"
+						 Relationship="NEUTRAL"
+						 Exclude="AIRCRAFT UNATTACKABLE NOT_AUTOACQUIRABLE"
+						 StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+				</TargetSelection>
+			</WeaponScatterEffectUpdate>
+		</Behaviors>
+	</GameObject>
+
+	<!-- //////////////////////////// -->
+	<!-- The Air only scatter version -->
+	<GameObject
+		id="NODAircraftNBounceLaserNodeManager_Air"
+		inheritFrom="NODAircraftNBounceLaserNodeManager_Base">
+		<Behaviors>
+			<!-- This manages the complete Scattering effect of a weapon -->
+			<WeaponScatterEffectUpdate
+					 id="Base_ScatterEffect">
+				<!-- Define the prioritization of the targets to scatter to -->
+				<TargetSelection
+						id="Tag_TargetSelectionFilters"
+						xai:joinAction="Replace">
+					<ObjectPriorityFilter
+						 Rule="ANY"
+						 Relationship="ENEMIES"
+						 Include="AIRCRAFT VEHICLE"
+						 Exclude="UNATTACKABLE NOT_AUTOACQUIRABLE"
+						 StatusBitFlags="AIRBORNE_TARGET"/>
+				</TargetSelection>
+			</WeaponScatterEffectUpdate>
+		</Behaviors>
+	</GameObject>
+
+
+		<!--		The Nodes that are used by the Manager	-->
+		<!--		to draw the lasers that bounce from			-->
+		<!--		target to target												-->
+		<GameObject
+			id="NODAircraftNBounceLaserNode_Laser"
+			KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="20"
+				LightMin="10"
+				LightMax="20"
+				WeaponSlotID="1"
+				LaserStateID="1">
+
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+						<Float Name="ColorEmissive">
+							<Value>4.000000</Value>
+							<Value>4.000000</Value>
+							<Value>4.000000</Value>
+						</Float>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<LaserScatterUpdate
+				id="ModuleTag_LaserScatterUpdate"
+				LaserLifetime="0.75s" />
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+
+
+	<!-- //////////////////////////////////////	-->
+	<!--		WEAPONS															-->
+	<!-- //////////////////////////////////////	-->
+	<WeaponTemplate
+		id="NODAircraftNDeathWeapon"
+		AttackRange="100.0"
+		WeaponSpeed="1250"
+		ClipSize="1"
+		AutoReloadsClip="AUTO"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_ENEMY_BUILDINGS"
+		RequiredAntiMask="ANTI_GROUND">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<Nuggets>
+			<DamageNugget
+				Damage="200.0"
+				Radius="100.0"
+				DamageTaperOff="0"
+				DamageType="BLAST"
+				DamageFXType="NOD_MISSILE"
+				DeathType="EXPLODED">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODAircraftNBounceLaserNode_Weapon"
+		inheritFrom="BaseLaserWeapon"
+		AttackRange="125.0"
+		CanFireWhileMoving="true"
+		AcceptableAimDelta="180d">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="2.0s"
+			MaxSeconds="2.0s" />
+		<Nuggets>
+			<LineDamageNugget
+				Damage="30.0"
+				DamageType="LASER"
+				DamageFXType="GDI_RAILGUN"
+				DeathType="LASERED"
+				LineWidth="5.0"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter" />
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<!-- //////////////////////////////////////	-->
+	<!--		OBJECT CREATION LISTS								-->
+	<!-- //////////////////////////////////////	-->
+	<ObjectCreationList
+		id="OCL_NODAircraftNBounceLaserNode">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODAircraftNBounceLaserNode_Laser"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+</AssetDeclaration>

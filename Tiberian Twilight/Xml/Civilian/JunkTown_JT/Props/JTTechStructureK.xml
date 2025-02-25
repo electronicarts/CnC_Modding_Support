@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	
+	<!--
+		'USER_1' through 'USER_5' are set by script
+	-->
+	<Includes>
+		<Include
+			type="all"
+			source="ART:JTTechStructureK.w3x" />
+		<Include
+			type="all"
+			source="ART:JTTechStructureK_DMG.xml" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+	</Includes>
+	<GameObject
+		id="JTTechStructureK"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_Neutral_JT_TechStr_K_GDI"
+		Side="Neutral"
+		KindOf="ALWAYS_VISIBLE STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH TIBERIUM_BASED TEAMCOLOR_ONLY"
+		EditorName="JTTechStructureK"
+		Browser="REGION Junktown_JT MISC_MAN_MADE">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:JTTechStructureK</DisplayName>
+		<ArmorSet
+			Armor="TechStructureArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JTTechStructureK" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="JTTechStructureK" />
+					<Texture
+						Original="JTTechStructureK"
+						New="JTTechStructureK_DMG" />
+				</ModelConditionState>
+
+				<!-- Fifth level of charge -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_5">
+					<Model
+						Name="JTTechStructureK" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="SelfDestruct_Steam05"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="SelfDestruct_Steam05B"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="SelfDestruct_Steam05C"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<!-- Fourth level of charge -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4">
+					<Model
+						Name="JTTechStructureK" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="SelfDestruct_Steam04"
+						FollowBone="true" />					
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="SelfDestruct_Steam05B"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<!-- Third level of charge -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_3">
+					<Model
+						Name="JTTechStructureK" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="SelfDestruct_Steam03"
+						FollowBone="true" />
+				</ModelConditionState>				
+				
+				<!-- Second level of charge -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2">
+					<Model
+						Name="JTTechStructureK" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="SelfDestruct_Steam02"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<!-- First level of charge -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="JTTechStructureK" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="SelfDestruct_Steam01"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+			</ScriptedModelDraw>
+			
+			
+		</Draws>
+
+        <Behaviors>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="JTTechStructureK_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GarStructure_Explode" />
+				<Event 
+					Index="onDeath" 
+					FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+            <CaptureContain
+                id="ModuleTag_CaptureStructure"
+                Flags="DESTROY_RIDER"
+                CanEnterFilter="ObjectFilter_CaptureStructure_Nod_2_5"
+                OnCaptureNameOfVoiceToUse="VoiceCaptureBuilding"
+                OnCaptureEvaEvent="EnemyBuildingCaptured"
+                OnCaptureFX="FX_Building_Captured"
+                IgnoreDisabledBitsForContainer="EMP"
+                CaptureLockoutDelay="5s"
+                EntryDelay="1s">
+                <ContainerStatusValidation
+                    ForbiddenStatus="SOLD" />
+            </CaptureContain>
+        </Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="8000.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Steam1Loop">
+				<ModelConditionSound Sound="NOD25_SelfDestructSteam1Loop" RequiredFlags="USER_1" ExcludedFlags="USER_2 USER_3 USER_4 USER_5 RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Steam2Loop">
+				<ModelConditionSound Sound="NOD25_SelfDestructSteam2Loop" RequiredFlags="USER_2" ExcludedFlags="USER_3 USER_4 USER_5 RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Steam3Loop">
+				<ModelConditionSound Sound="NOD25_SelfDestructSteam3Loop" RequiredFlags="USER_3" ExcludedFlags="USER_4 USER_5 RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Steam4Loop">
+				<ModelConditionSound Sound="NOD25_SelfDestructSteam4Loop" RequiredFlags="USER_4" ExcludedFlags="USER_5 RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Steam5Loop">
+				<ModelConditionSound Sound="NOD25_SelfDestructSteam5Loop" RequiredFlags="USER_5" ExcludedFlags=" RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Steam4Start">
+				<ModelConditionSound Sound="NOD25_SelfDestructSteam4Start" RequiredFlags="USER_4" ExcludedFlags="USER_5 RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Steam5Start">
+				<ModelConditionSound Sound="NOD25_SelfDestructSteam5Start" RequiredFlags="USER_5" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+        <Geometry
+            IsSmall="false">
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "32.8548"
+				 MinorRadius = "33.489"
+				 Height = "53.0783"
+				 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.0763969"
+					y = "-0.351238"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+    </GameObject>
+
+	<!-- OCL -->
+	<ObjectCreationList
+		id="JTTechStructureK_Die_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+</AssetDeclaration>

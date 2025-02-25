@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<!-- Nod Gideon's Crawler -->
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NODGIDEONSCRAWLER_STASISFIELD_RADIUS" value="100.0"/>
+	</Defines>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		Custom Armor					-->
+	<!-- //////////////////////////////////////	-->
+	
+	<ArmorTemplate
+		id="NODGideonsCrawlerArmor"
+		Default="100"
+		SideDamageScalar="125"
+		RearDamageScalar="150">
+		<TooltipHint ArmorType="CRAWLER" />
+		<Armor
+			Damage="CANNON">
+			<DamageSetting
+				Lethality="ALL_LETHALITIES"
+				Percent="75" />
+		</Armor>
+		<Armor
+			Damage="GUN">
+			<DamageSetting
+				Lethality="ALL_LETHALITIES"
+				Percent="75" />
+		</Armor>
+		<Armor
+			Damage="LASER">
+			<DamageSetting
+				Lethality="ALL_LETHALITIES"
+				Percent="75" />
+		</Armor>
+		<Armor
+			Damage="ROCKET">
+			<DamageSetting
+				Lethality="ALL_LETHALITIES"
+				Percent="75" />
+		</Armor>
+		<Armor
+			Damage="BLAST">
+			<DamageSetting
+				Lethality="ALL_LETHALITIES"
+				Percent="75" />
+		</Armor>
+	</ArmorTemplate>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		Upgrades and Modifiers			-->
+	<!-- //////////////////////////////////////	-->
+
+	<AttributeModifier
+		id="AttributeModifier_NODGideonsCrawlerEnhancedRepair"
+		Category="NONE"
+		ModelConditionsSet="USER_9">
+		<Modifier Type="AUTO_HEAL" Value="400%" />
+		<Modifier Type="AUTO_HEAL_RADIUS" Value="125%" />
+	</AttributeModifier>
+
+	<!-- Used to turn on/off Gideon's shield -->
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_NODGideonsCrawlerShield" />
+
+	<!-- Used to turn on/off Gideon's weapon -->
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_NODGideonsCrawlerWeapon" />
+
+	<!-- //////////////////////////////////////	-->
+	<!--		Stasis Field Assets				-->
+	<!-- //////////////////////////////////////	-->
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_NODGideonsCrawlerStasisFieldAbility"
+		Options="NEED_TARGET_POS">
+		<SpecialPower>SpecialPower_NODGideonsCrawler_StatisField</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<SpecialPowerWeapon
+				Weapon="NODGideonsCrawlerStasisFieldWeapon"
+				TotalValueGreaterThan="300"
+				AoeAttackPowerType="DISABLING_ATTACK"
+				AoeAttackPowerLocationPreference="PREFER_MAXIMUM_DAMAGE"/>
+			<AISpecialPowerInfo	Heuristic="AOE_ATTACK">
+			</AISpecialPowerInfo>
+		</AISpecialPower>
+	</LogicCommand>
+	
+	<ObjectFilterAsset
+		 id="NODGideonsCrawlerStasisFieldAbilitySpecialPowerObjectFilter">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES"
+			Exclude="DEBRIS"/>
+	</ObjectFilterAsset>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NODGideonsCrawler_StatisField"
+		ReloadTime="60s"
+		TargetType="LOCATION"
+		RadiusCursorRadius="25"
+		MaxCastRange="200.0">
+	</SpecialPowerTemplate>
+
+	<!-- NOTE: Weapon range is set by the Special power template -->
+	<WeaponTemplate
+		id="NODGideonsCrawlerStasisFieldWeapon"
+		AttackRange="200.0"
+		WeaponSpeed="99999"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		FireFX="FX_NODSpecialPowerCast"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		RadiusDamageAffects="ENEMIES"
+		CanFireWhileMoving="true">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<AttributeModifierNugget
+				AttributeModifierName="Modifier_NODAircraftNStasisField"
+				Radius="=$NODGIDEONSCRAWLER_STASISFIELD_RADIUS"/>
+			<ParalyzeNugget
+				Radius="=$NODGIDEONSCRAWLER_STASISFIELD_RADIUS"
+				DurationSeconds="20.0s"
+				ParalyzeType="STASIS_FIELD"
+				FXListVictim="FX_NODStasisHit"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+
+	<!-- //////////////////////////////////////	-->
+	<!--		Flux Blaster Assets				-->
+	<!-- //////////////////////////////////////	-->
+
+	<WeaponTemplate
+		id="NODGideonsCrawlerWeaponBase"
+		inheritFrom="BaseLaserWeapon"
+		AttackRange="=$NOD_DEFENSE_CRAWLER_LASER_ATTACK_RANGE"
+		CanFireWhileMoving="true"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		AcceptableAimDelta="180d"
+		ReAcquireDetailType="PER_CLIP"
+		FiringLoopSound="NOD_Medusa_AirO_LaserBeamWeaponFireLoop"
+		FireFX="FX_NODFluxBlaster_Fire">
+		<FiringDuration
+			MinSeconds="=$EPSILON_SECONDS"
+			MaxSeconds="=$EPSILON_SECONDS" />
+		<Nuggets>
+			<LineDamageNugget
+				Damage="1.5"
+				DamageType="BLAST"
+				FXListVictim="FX_NODFluxBlaster_Hit"
+				DeathType="LASERED"
+				LineWidth="10.0"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODGideonsCrawlerWeapon1"
+		inheritFrom="NODGideonsCrawlerWeaponBase">
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="=$EPSILON_SECONDS"
+				LaserId="1"
+				HitGroundFX="FX_NODFluxBlaster_Hit" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODGideonsCrawlerWeapon2"
+		inheritFrom="NODGideonsCrawlerWeaponBase">
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="=$EPSILON_SECONDS"
+				LaserId="2"
+				HitGroundFX="FX_NODFluxBlaster_Hit" />
+			<!-- AOE damage and debuff only needed on one weapon -->
+			<DamageNugget
+				Damage="1.5"
+				Radius="25.0"
+				DamageType="BLAST"
+				FXListVictim="FX_NODFluxBlaster_Hit" 
+				DeathType="NORMAL" />
+			<AttributeModifierNugget
+				Radius="50.0"
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifier_NODGideonsCrawlerDebuff" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<AttributeModifier
+		id="AttributeModifier_NODGideonsCrawlerDebuff"
+		Category="NONE"
+		Duration="2.0s">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:NODGideonsCrawler" />
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-50%"/>
+		<Modifier Type="SPEED" Value="50%" />
+	</AttributeModifier>	
+
+</AssetDeclaration>

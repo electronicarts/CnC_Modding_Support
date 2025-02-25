@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="ART:ShadowI.xml" />
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+		
+
+	</Includes>
+	<GameObject
+		id="BaseInfantry"		
+		inheritFrom="BaseObject"
+		EvaEventSecondDamageFarFromFirstScanRange="600"
+		EvaEventSecondDamageFarFromFirstTimeoutMS="31000"
+		ProductionQueueType="INFANTRY" 
+		TransportSlotCount="1"
+		ReinvisibilityDelay="7s"
+		KindOf="INFANTRY SELECTABLE CAN_ATTACK CAN_CAST_REFLECTIONS PATH_THROUGH_INFANTRY ALLOW_PROP_INFANTRY_COLLISION SCORE CAN_BE_FAVORITE_UNIT CONTROL_GROUP_ALLOWABLE">
+		<SkirmishAIInformation
+			MethodOfRemoving="RECYCLE_MSG"/>
+		<Behaviors>
+			<AttributeModifierPoolUpdate 
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<SquishCollide
+				id ="DefaultSquishCollide"/>
+			<CrushDie
+				id="ModuleTAg_CrushDie">
+				<DieMuxData
+					DeathTypes="CRUSHED" />
+			</CrushDie>
+			<FXListBehavior
+				id="SquishedFXPlayer">
+				<DieMuxData
+					DeathTypes="CRUSHED" />
+				<Event
+					Index="onDeath"
+					FX="FX_InfantrySquished" />
+			</FXListBehavior>
+			<Physics id="ModuleTag_Physics" />
+			<xi:include	href="DATA:Includes/GenericRecycleLifetimeUpdate.xml" />
+			<HealEffectManager
+				id="ModuleTag_HealEffectManager"
+				UpdateRate="0.25s" />
+			<AutoHealBehavior
+				id="Upgrade_HeroicHeal"
+				InitiallyActive="false"
+				HealOnlyIfNotInCombat="false"
+				HealOnlyIfNotUnderAttack="false"
+				StartHealingDelay="1s"
+				HealingAmount="1"
+				HealingDelay=".5s"
+				HealAlwaysActive="true">
+				<ObjectStatusValidation
+					ForbiddenStatus="DISABLED_FOR_RECYCLE" />
+				<TriggeredBy>Upgrade_Veterancy_HEROIC</TriggeredBy>
+			</AutoHealBehavior>
+			<RunOffMapBehavior
+				id="ModuleTag_RunOffMapBehavior"				
+				RequiresSpecificTrigger="true" 
+				RunOffMapWaypointName="RunOffMap"
+			/>
+
+			<LevelUpUpgrade
+				id="ModuleTag_LevelUpUpgrade_Veteran"
+				LevelCap="4"
+				LevelsToGain="1">
+				<TriggeredBy>Upgrade_ProductionVeterancy_VETERAN</TriggeredBy>
+			</LevelUpUpgrade>
+			<LevelUpUpgrade
+				id="ModuleTag_LevelUpUpgrade_Elite"
+				LevelCap="4"
+				LevelsToGain="2">
+				<TriggeredBy>Upgrade_ProductionVeterancy_ELITE</TriggeredBy>
+			</LevelUpUpgrade>
+			<LevelUpUpgrade
+				id="ModuleTag_LevelUpUpgrade_Heroic"
+				LevelCap="4"
+				LevelsToGain="3">
+				<TriggeredBy>Upgrade_ProductionVeterancy_HEROIC</TriggeredBy>
+			</LevelUpUpgrade>
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="Generic"
+			/>
+			<!-- This allows the AI to remember that a unit is guarding a target, and not keep throwing
+				   units towards that target unless it has enough forces to overcome said guard -->
+			<SkirmishAIGuardTrackingBehavior
+				id="ModuleTag_SkirmishAIGuardTrackingBehavior"
+			/>
+			<StatusBitsUpgrade
+				id="SetCrateUpgradeStatus" 
+				StatusToSet="HAS_CRATE_UPGRADE">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+			</StatusBitsUpgrade>
+		
+			<!-- provides support for units guarding this unit -->
+			<xi:include	href="DATA:Includes/GenericGuardManagerUpdate.xml" />
+
+			<!-- A necessity for the Reflection in the Active Body -->
+			<xi:include	href="DATA:Includes/GenericRefractionBehavior.xml" />
+
+			<xi:include href="DATA:Includes/FXListBehaviorCrateVeterancy.xml" />
+		
+			<xi:include	href="DATA:Includes/GenericDropOffUpgradeCrystalBehavior.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ModuleList/child::*)"/>
+
+			<xi:include	href="DATA:Includes/GenericDesperationBoostModules.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ModuleList/child::*)"/>
+
+		</Behaviors>
+
+		<ClientBehaviors>
+				<!-- DECOMMISSION -->
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_RecycledSounds">
+				<Override RequiredFlags="RECYCLED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="" AudioType="voiceSelect"/>
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+				<!-- CLIFF JUMPING -->
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_CliffJumpBegin">
+				<ModelConditionSound Sound="CliffJump_InfantryBegin" RequiredFlags="CLIFF_TRANSITION_STARTUP"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_CliffJumpEnd">
+				<ModelConditionSound Sound="CliffJump_InfantryEnd" RequiredFlags="CLIFF_TRANSITION_LAND"/>
+			</ModelConditionAudioLoopClientBehavior>
+				<!-- PARALYZED BUT INVULNERABLE -->
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_CrystallineShieldDisablesSelect">
+				<Override RequiredFlags="INVULNERABLE PARALYZED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="" AudioType="voiceSelect"/>
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+
+		<Body>
+			<ActiveBody
+				id="DefaultBody"/>
+		</Body>
+
+		<EvaEventArray>
+			<EvaEntry EvaEvent="UnitLost" EvaType="dieOwner" />
+			<EvaEntry EvaEvent="UnitConstructionStarted" EvaType="productionStarted" />
+			<EvaEntry EvaEvent="UnitUnderAttack" EvaType="damagedOwner" />
+			<EvaEntry EvaEvent="UnitUnderAttackFromShroudedUnit" EvaType="damagedFromShroudedSourceOwner" />
+			<EvaEntry EvaEvent="GenericUnitBeingBurned" EvaType="damagedByFireOwner" />
+			<EvaEntry EvaEvent="UnitAmbushed" EvaType="ambushed" />
+			<EvaEntry EvaEvent="GenericEnemyUnitSighted" EvaType="enemyObjectSighted" />
+			<EvaEntry EvaEvent="EnemyStealthUnitDiscovered" EvaType="detectedEnemy" />
+			<EvaEntry EvaEvent="NewConstructionOptions" EvaType="availableForProduction" />
+			<EvaEntry EvaEvent="BuildOnHold" EvaType="buildOnHold" />
+			<EvaEntry EvaEvent="BuildCancelled" EvaType="buildCancelled" />
+			<EvaEntry EvaEvent="UnitPromoted" EvaType="promotedOwner" />
+		</EvaEventArray>
+
+		<!-- EvaEventSecondDamageFarFromFirstOwner="UnitUnderAttackAgain"  -->
+		<CrusherInfo
+			CrusherLevel="0"
+			CrushableLevel="0" />
+	</GameObject>
+
+</AssetDeclaration>

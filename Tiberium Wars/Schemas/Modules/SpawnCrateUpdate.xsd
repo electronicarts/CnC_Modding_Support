@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="SpawnCrateUpdateFlagsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="DELETE_EXPIRED_CRATES" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="SpawnCrateUpdateFlagsBitFlags">
+		<xs:list itemType="SpawnCrateUpdateFlagsType"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="SpawnCrateUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="CrateList" type="GameObjectRef" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="BlockingUnits" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="MaxCrates" type="SageUnsignedInt" default="20" />
+				<xs:attribute name="CreateFrequency" type="Time" default="30s" />
+				<xs:attribute name="CrateLifetime" type="Time" default="120s" />
+				<!-- MapExclusionMargin is the amount we shrink the map by to prevent crates from spawning near the map edge -->
+				<xs:attribute name="MapExclusionMargin" type="SageReal" default="50.0" />
+				<xs:attribute name="BlockingUnitRange" type="SageReal" default="30.0" />
+				<xs:attribute name="BlockingStartPositionRange" type="SageReal" default="300.0" />
+				<xs:attribute name="Flags" type="SpawnCrateUpdateFlagsBitFlags" default="DELETE_EXPIRED_CRATES" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

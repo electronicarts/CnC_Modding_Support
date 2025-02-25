@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- Right now this is mostly a copy of the Tiberium Spike.  
+		Please update this list when various components are updated for RA3.
+		- Art/DrawModules; Geometry; Audio-->
+	<Includes>
+		<Include
+			type="all"
+			source="ART:SA_GameStop.w3x" />
+		<Include
+			type="all"
+			source="ART:SA_GameStop_02.xml" />
+		<Include
+			type="all"
+			source="ART:SA_GameStop_NRM_02.xml" />
+		<Include
+			type="all"
+			source="ART:SA_GameStop_SPM_02.xml" />
+
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:Neutral_Platform.w3x" />	
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="instance" source="DATA:Civilian/SANTA_MONICA_SA/Props/SA_EBGames_Collapse.xml" />
+		<Include type="all" source="ART:ABBarracks_particles.w3x" />
+
+	</Includes>
+	<GameObject
+		id="SA_EBGames"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_Neutral_SA_EBGames"
+		ButtonImage="Button_Neutral_SA_EBGames"
+		CommandSet="GenericRepairSelfCommandSet"
+		KindOf="+SUPPLY_SOURCE"
+		EditorName="SA_EBGames"
+		HealthBoxHeightOffset="55"
+		Description="Desc:SA_EBGames"
+		TypeDescription="TYPE:TechStructure">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SA_EBGames</DisplayName>
+		<ArmorSet
+			Armor="TechStructureArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18	BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20 BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SA_GameStop" />
+					<Texture
+						Original="SA_GameStop"
+						New="SA_GameStop_02" />						
+					<Texture
+						Original="SA_GameStop_NRM"
+						New="SA_GameStop_NRM_02" />						
+					<Texture
+						Original="SA_GameStop_SPM"
+						New="SA_GameStop_SPM_02" />						
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName=""
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />					
+				</AnimationState>
+<!--				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="SA_EBGames" />
+				</ModelConditionState>-->
+			</ScriptedModelDraw>
+			
+		</Draws>
+		<Behaviors>
+			<AutoDepositUpdate
+				id="ModuleTag_AutoDeposit"
+				DepositInterval="1s"
+				GiveNoXP="true"
+				Flags="ACTIVE_WHEN_REPAIRING">
+				<InitialCaptureBonus	Account="=$ACCOUNT_ORE" Amount="1000" />
+				<Deposit			Account="=$ACCOUNT_ORE" Amount="10"/>
+			</AutoDepositUpdate>
+			<xi:include
+				href="../../../Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="../../../Includes/GenericBuildingRepair.xml" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions" />
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="YU_HotelDebris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Large" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SA_EBGames_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+<Shape 
+     Type= "BOX"
+     MajorRadius = "88.768"
+     MinorRadius = "72.8523"
+     Height = "50.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "-18.2468"
+        y = "-1.14606"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "20.5054"
+     MinorRadius = "18.7936"
+     Height = "50.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "86.2248"
+        y = "-48.8176"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "54.2781"
+     MinorRadius = "53.4961"
+     Height = "50.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "-71.0549"
+        y = "125.62"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "28.2246"
+     MinorRadius = "83.5384"
+     Height = "50.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "94.6908"
+        y = "52.5402"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "13.3152"
+     MinorRadius = "6.92547"
+     Height = "40.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "-115.52"
+        y = "21.2005"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "13.3152"
+     MinorRadius = "6.92547"
+     Height = "40.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "-134.527"
+        y = "92.6481"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "13.3152"
+     MinorRadius = "6.92546"
+     Height = "40.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "-134.803"
+        y = "163.726"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "13.3152"
+     MinorRadius = "6.92546"
+     Height = "40.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "134.407"
+        y = "127.367"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "13.3152"
+     MinorRadius = "6.92547"
+     Height = "40.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "134.398"
+        y = "-15.1759"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "6.5"
+     MinorRadius = "13.0"
+     Height = "40.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "68.5685"
+        y = "-76.8404"
+        z = "0.0" />
+</Shape>
+
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry EvaEvent="OilDerrickCaptured" AudioType="voiceDefectingTowards" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="TEC_OilDerrick_AmbientLoop" AudioType="soundAmbient" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+		<VisionInfo
+				VisionRange="100"
+				ShroudClearingRange="200" />
+		<ProjectedBuildabilityInfo
+				Radius="0.0"
+				BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+<ObjectCreationList
+		id="SA_EBGames_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>SA_EBGames_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+</AssetDeclaration>

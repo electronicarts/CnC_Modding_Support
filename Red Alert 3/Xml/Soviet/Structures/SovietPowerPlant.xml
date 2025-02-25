@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include
+			type="all"
+			source="ART:SBPowerPlant_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:SBPowerPlant_BLD.w3x" />
+		<Include
+			type="all"
+			source="ART:SBPowerPlant_IDLA.w3x" />
+		<Include
+			type="all"
+			source="ART:SBPowerPlant_Scaffold.w3x" />
+		<Include
+			type="all"
+			source="ART:SBPowerPlant_particles.w3x" />
+		<Include
+			type="all"
+			source="ART:SBPowerPlant_Platform_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:SBPowerPlant_Platform_BLD.w3x" />
+		<Include
+			type="all"
+			source="ART:SBPowerPlant_Platform_PAK.w3x" />	
+		<Include
+			type="all"
+			source="ART:SBPowerPlant_FX.w3x" />						
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseSovietStructure.xml" />
+	</Includes>
+	<Defines>
+		<Define name="SOVIET_POWERPLANT_LOCAL_UNPACK_TIME" value="10s" />
+	</Defines>
+	<GameObject
+		id="SovietPowerPlant"
+		inheritFrom="BaseSovietStructure"
+		ButtonImage="Button_SovietPowerPlant_small"
+		SelectPortrait="Portrait_SovietPowerPlant_big"
+		Side="Soviet"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		
+		BuildTime="0.0"
+		EnergyProduction="100"
+		EnergyBonus="10"
+		CommandSet="SovietPowerPlantCommandSet"
+		KindOf="+FS_POWER +SKIRMISH_AI_CAN_BUILD_DURING_EMERGENCY_NO_INCOME"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="315d"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="SovietPowerPlant"
+		Description="Desc:SovietPowerPlant"
+		TypeDescription="Type:SovietPowerPlant">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SovietPowerPlant</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="800"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietPowerPlantArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="SPREAD">
+      <ConstructionBaseSelectionCriteria
+        ExcludedBaseTypes="NO_BUILD_RADIUS CAPTURED"/>
+    </SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBPowerPlant_SKN" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="SovietPowerGlow"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="SovietPowerSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+		
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="SBPowerPlant_SKN" />
+					<Texture
+						Original="SBBuilding_Holes"
+						New="SBBuilding_FP" />						
+					<Texture
+						Original="SBBuilding_Filler"
+						New="SBBuilding_FP" />
+				</ModelConditionState>				
+				<!-- BUILDING -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING JUST_BUILT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="SBPowerPlant_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="SBPowerPlant_IDLA"
+						AnimationMode="LOOP"/>					
+				</AnimationState>				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBPowerPlant_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="SBPowerPlant_BLD"
+						AnimationMode="MATCH_UNPACKING"
+						AnimationBlendTime="0" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Med"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Lights"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Flash"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+<!-- DRAW PLATFORM -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBPowerPlant_Platform_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_IdleOnLand"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBPowerPlant_Platform_PAK"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />	
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_BuildingOnWater" and Prev ~= "STATE_IdleOnLand" then CurDrawableSetTransitionAnimState("TRANS_toIdle")	end;
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Wall")
+					</Script>
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING OVER_WATER"
+					Flags="START_FRAME_FIRST"
+					StateName="STATE_BuildingOnWater">
+					<Animation
+						AnimationName="SBPowerPlant_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABAirBaseWakeSplash"
+						FollowBone="true" />          
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupFlashes"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupSparksSeed"
+						FollowBone="true" />          							
+					<Script>
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Wall")
+					</Script>										
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING"
+					Flags="START_FRAME_FIRST"
+					StateName="STATE_BuildingOnLand">
+					<Animation
+						AnimationName="SBPowerPlant_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+					<Script>
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Wall")
+					</Script>										
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD OVER_WATER"
+					Flags="START_FRAME_LAST" >
+					<Animation
+						AnimationName="SBPowerPlant_Platform_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"
+						AnimationBlendTime="0"  />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABAirBaseWakeSplash"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST" >
+					<Animation
+						AnimationName="SBPowerPlant_Platform_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"
+						AnimationBlendTime="0"  />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER"
+					StateName="STATE_IdleOnWater"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBPowerPlant_Platform_PAK"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />						
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_BuildingOnWater" and Prev ~= "STATE_IdleOnLand" then CurDrawableSetTransitionAnimState("TRANS_toIdle")	end;
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Wall")
+					</Script>
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_toIdle">
+					<Animation
+						AnimationName="SBPowerPlant_Platform_PAK"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>										
+			</ScriptedModelDraw>
+
+<!-- DRAW SCAFFOLD -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Scaffold"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="SBPowerPlant_Scaffold" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="SBPowerPlant_Scaffold" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBPowerPlant_Scaffold"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>					
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="SBPowerPlant_Scaffold"
+						AnimationMode="MATCH_UNPACKING"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+						
+<!-- DRAW PARTICLES -->
+
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBPowerPlant_FX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="SBPowerPlant_FX" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="SBPowerPlant_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="BuildingDamageFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageFire02"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageSmoke"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="SBPowerPlant_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="BuildingDamageFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageFire02"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageSmoke"
+						FollowBone="true"/>
+						<ParticleSysBone 
+						BoneName="FX_BONE02" 
+						FXParticleSystemTemplate="BuildingDamageFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02"
+ 						FXParticleSystemTemplate="BuildingDamageFire02"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02"
+ 						FXParticleSystemTemplate="BuildingDamageSmoke"
+						FollowBone="true"/>
+				</ModelConditionState>	
+			</ScriptedModelDraw>	
+			
+		
+	
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestructionMain"
+				AssociatedModule="ModuleTag_Draw"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="SovietPowerPlant_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestructionScaffold"
+				AssociatedModule="ModuleTag_Draw_Scaffold">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL"/>
+				<Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieOnLand"
+				CreationList="SBPowerPlant_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"
+					ExemptStatus="OVER_WATER" />
+			</CreateObjectDie>
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieOnWater"
+				CreationList="SBPowerPlantPlatform_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"
+					RequiredStatus="OVER_WATER" />
+			</CreateObjectDie>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+			</DestroyDie>		
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior02"
+				NightWindowObject="LIGHT_02" />
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				GiveNoXP="true" />
+			<PowerUpgrade
+				id="ModuleTag_Turbines">
+				<TriggeredBy>Upgrade_PowerPlantTurbine</TriggeredBy>
+			</PowerUpgrade>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="=$SOVIET_POWERPLANT_LOCAL_UNPACK_TIME" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericSovietBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericSovietBuildingSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainEnergy.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIForLua"
+				StateMachine="StructureAIStateMachine" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type= "BOX"
+				MajorRadius = "30.0"
+				MinorRadius = "30.0"
+				Height = "5.0" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "CYLINDER"
+				MajorRadius = "20.0"
+				Height = "50.0"
+				ContactPointGeneration = "INFANTRY" />
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="SOV_Reactor_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="SOV_Reactor_AmbientLoop" AudioType="soundAmbient" />
+<!--
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="300" />
+		<ProjectedBuildabilityInfo
+			Radius="180"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,686 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<!-- This is the Standard PathMusic Dynamic State Set.  It features the full range of Transitions that
+	might occur throughout the course of a game.  It is designed to take care of all the music changes by
+	itself, without needing lots of specifically scripted events.  Usually this is used in Multiplayer
+	maps, but in some cases it may be used on Campaign maps as well.  -->
+	
+	 
+	
+	<!--	******************************************************************************
+					TOTAL STATE SET 
+				******************************************************************************	--> 
+	<PathMusicGameDynamicStateSet id="PM_Standard_Full" Category="STANDARD">	
+		<State>PM_Explore</State>
+		<State>PM_NearEnemyUnits</State>
+		<State>PM_FirstFight</State>
+		<State>PM_SmallFight</State>
+	    <State>PM_SmallEnemyCrawlerDestroyed</State>
+	    <State>PM_SmallPlayerCrawlerDestroyed</State>
+		<State>PM_BigFight</State>
+	    <State>PM_BigEnemyCrawlerDestroyed</State>
+	    <State>PM_BigPlayerCrawlerDestroyed</State>
+		<State>PM_FightFinished</State>
+		<State>PM_LikelyToWin</State>
+	</PathMusicGameDynamicStateSet>
+
+	
+	<!--	******************************************************************************
+					STATES 
+				******************************************************************************	-->
+	
+	<!-- Explore : The initial State before anything has happened yet. -->
+	<AudioGameDynamicState id="PM_Explore" PathMusicEnterEvent="Explore">
+		<Transition>PM_Explore_to_PM_NearEnemyUnits</Transition>
+		<Transition>PM_Explore_to_PM_FirstFight</Transition>
+	</AudioGameDynamicState>
+
+	<!-- NearEnemyUnits : When you are getting close to the action but have not begun it -->
+	<AudioGameDynamicState id="PM_NearEnemyUnits" PathMusicEnterEvent="NearEnemyUnits">
+		<Transition>PM_NearEnemyUnits_to_PM_FirstFight</Transition>
+	</AudioGameDynamicState>
+
+	<!-- FirstFight : The first time shots are fired -->
+	<AudioGameDynamicState id="PM_FirstFight" PathMusicEnterEvent="FirstFight">
+		<Transition>PM_FirstFight_to_PM_SmallEnemyCrawlerDestroyed</Transition>
+		<Transition>PM_FirstFight_to_PM_SmallPlayerCrawlerDestroyed</Transition>
+		<Transition>PM_FirstFight_to_PM_BigFight</Transition>
+		<Transition>PM_FirstFight_to_PM_FightFinished</Transition>
+	</AudioGameDynamicState>
+
+	<!-- SmallFight : A small skirmish -->
+	<AudioGameDynamicState id="PM_SmallFight" PathMusicEnterEvent="SmallFight">
+		<Transition>PM_SmallFight_to_PM_SmallEnemyCrawlerDestroyed</Transition>
+		<Transition>PM_SmallFight_to_PM_SmallPlayerCrawlerDestroyed</Transition>
+		<Transition>PM_SmallFight_to_PM_BigFight</Transition>
+		<Transition>PM_SmallFight_to_PM_FightFinished</Transition>
+		<Transition>PM_SmallFight_to_PM_LikelyToWin</Transition>
+	</AudioGameDynamicState>
+
+	<!-- SmallEnemyCrawlerDestroyed : When you kill an enemy crawler during a small skirmish -->
+	<AudioGameDynamicState id="PM_SmallEnemyCrawlerDestroyed" PathMusicEnterEvent="SmallEnemyCrawlerDestroyed">
+		<Transition>PM_SmallEnemyCrawlerDestroyed_to_PM_SmallFight</Transition>
+	</AudioGameDynamicState>
+
+	<!-- SmallPlayerCrawlerDestroyed : When the enemy kills your crawler during a small skirmish -->
+	<AudioGameDynamicState id="PM_SmallPlayerCrawlerDestroyed" PathMusicEnterEvent="SmallPlayerCrawlerDestroyed">
+		<Transition>PM_SmallPlayerCrawlerDestroyed_to_PM_SmallFight</Transition>
+	</AudioGameDynamicState>
+
+	<!-- BigFight : A big battle -->
+	<AudioGameDynamicState id="PM_BigFight" PathMusicEnterEvent="BigFight">
+		<Transition>PM_BigFight_to_PM_BigEnemyCrawlerDestroyed</Transition>
+		<Transition>PM_BigFight_to_PM_BigPlayerCrawlerDestroyed</Transition>
+		<Transition>PM_BigFight_to_PM_FightFinished</Transition>
+		<Transition>PM_BigFight_to_PM_SmallFight</Transition>
+		<Transition>PM_BigFight_to_PM_LikelyToWin</Transition>
+	</AudioGameDynamicState>
+
+	<!-- BigEnemyCrawlerDestroyed : When you kill an enemy crawler during a big battle -->
+	<AudioGameDynamicState id="PM_BigEnemyCrawlerDestroyed" PathMusicEnterEvent="BigEnemyCrawlerDestroyed">
+		<Transition>PM_BigEnemyCrawlerDestroyed_to_PM_BigFight</Transition>
+	</AudioGameDynamicState>
+
+	<!-- BigPlayerCrawlerDestroyed : When the enemy kills your crawler during a big battle -->
+	<AudioGameDynamicState id="PM_BigPlayerCrawlerDestroyed" PathMusicEnterEvent="BigPlayerCrawlerDestroyed">
+		<Transition>PM_BigPlayerCrawlerDestroyed_to_PM_BigFight</Transition>
+	</AudioGameDynamicState>
+
+	<!-- FightFinished : When the combat has ended -->
+	<AudioGameDynamicState id="PM_FightFinished" PathMusicEnterEvent="FightFinished">
+		<Transition>PM_FightFinished_to_PM_SmallFight</Transition>
+		<Transition>PM_FightFinished_to_PM_BigFight</Transition>
+		<Transition>PM_FightFinished_to_PM_LikelyToWin</Transition>
+	</AudioGameDynamicState>
+
+	<!-- LikelyToWin : When the player is close to MP win -->
+	<AudioGameDynamicState id="PM_LikelyToWin" PathMusicEnterEvent="Triumphal">
+		<Transition>PM_LikelyToWin_to_PM_SmallFight</Transition>
+	</AudioGameDynamicState>
+
+
+	<!--	******************************************************************************
+					TRANSITIONS
+				******************************************************************************	-->
+	<!-- Explore -->
+	<AudioGameDynamicTransition id="PM_Explore_to_PM_NearEnemyUnits" DestinationState="PM_NearEnemyUnits">
+		<Condition>ManyEnemyUnits_NearPlayerUnits</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_Explore_to_PM_FirstFight" DestinationState="PM_FirstFight">
+		<Condition>AnyEngagement_UnitsOnly</Condition>
+	</AudioGameDynamicTransition>
+
+
+	<!-- NearEnemyUnits -->
+	<AudioGameDynamicTransition id="PM_NearEnemyUnits_to_PM_FirstFight" DestinationState="PM_FirstFight">
+		<Condition>AnyEngagement_UnitsOnly</Condition>
+	</AudioGameDynamicTransition>
+
+
+	<!-- FirstFight -->
+	<AudioGameDynamicTransition id="PM_FirstFight_to_PM_SmallEnemyCrawlerDestroyed" DestinationState="PM_SmallEnemyCrawlerDestroyed">
+		<Condition>PM_FirstFight_to_PM_SmallEnemyCrawlerDestroyed_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_FirstFight_to_PM_SmallPlayerCrawlerDestroyed" DestinationState="PM_SmallPlayerCrawlerDestroyed">
+		<Condition>PM_FirstFight_to_PM_SmallPlayerCrawlerDestroyed_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_FirstFight_to_PM_BigFight" DestinationState="PM_BigFight">
+		<Condition>PM_FirstFight_to_PM_BigFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_FirstFight_to_PM_FightFinished" DestinationState="PM_FightFinished">
+		<Condition>PM_FirstFight_to_PM_FightFinished_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<!-- SmallFight -->
+	<AudioGameDynamicTransition id="PM_SmallFight_to_PM_SmallEnemyCrawlerDestroyed" DestinationState="PM_SmallEnemyCrawlerDestroyed">
+		<Condition>PM_SmallFight_to_PM_SmallEnemyCrawlerDestroyed_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_SmallFight_to_PM_SmallPlayerCrawlerDestroyed" DestinationState="PM_SmallPlayerCrawlerDestroyed">
+		<Condition>PM_SmallFight_to_PM_SmallPlayerCrawlerDestroyed_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_SmallFight_to_PM_BigFight" DestinationState="PM_BigFight">
+		<Condition>PM_SmallFight_to_PM_BigFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_SmallFight_to_PM_FightFinished" DestinationState="PM_FightFinished">
+		<Condition>PM_SmallFight_to_PM_FightFinished_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_SmallFight_to_PM_LikelyToWin" DestinationState="PM_LikelyToWin">
+		<Condition>PM_SmallFight_to_PM_LikelyToWin_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<!-- SmallEnemyCrawlerDestroyed -->
+	<AudioGameDynamicTransition id="PM_SmallEnemyCrawlerDestroyed_to_PM_SmallFight" DestinationState="PM_SmallFight">
+		<Condition>PM_SmallEnemyCrawlerDestroyed_to_PM_SmallFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+
+  <!-- SmallPlayerCrawlerDestroyed -->
+  <AudioGameDynamicTransition id="PM_SmallPlayerCrawlerDestroyed_to_PM_SmallFight" DestinationState="PM_SmallFight">
+    <Condition>PM_SmallPlayerCrawlerDestroyed_to_PM_SmallFight_Allowed</Condition>
+  </AudioGameDynamicTransition>
+
+
+	<!-- BigFight -->
+	<AudioGameDynamicTransition id="PM_BigFight_to_PM_BigEnemyCrawlerDestroyed" DestinationState="PM_BigEnemyCrawlerDestroyed">
+		<Condition>PM_BigFight_to_PM_BigEnemyCrawlerDestroyed_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_BigFight_to_PM_BigPlayerCrawlerDestroyed" DestinationState="PM_BigPlayerCrawlerDestroyed">
+		<Condition>PM_BigFight_to_PM_BigPlayerCrawlerDestroyed_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_BigFight_to_PM_SmallFight" DestinationState="PM_SmallFight">
+		<Condition>PM_BigFight_to_PM_SmallFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_BigFight_to_PM_FightFinished" DestinationState="PM_FightFinished">
+		<Condition>PM_BigFight_to_PM_FightFinished_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_BigFight_to_PM_LikelyToWin" DestinationState="PM_LikelyToWin">
+		<Condition>PM_BigFight_to_PM_LikelyToWin_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<!-- BigEnemyCrawlerDestroyed -->
+	<AudioGameDynamicTransition id="PM_BigEnemyCrawlerDestroyed_to_PM_BigFight" DestinationState="PM_BigFight">
+		<Condition>PM_BigEnemyCrawlerDestroyed_to_PM_BigFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+
+	<!-- BigPlayerCrawlerDestroyed -->
+	<AudioGameDynamicTransition id="PM_BigPlayerCrawlerDestroyed_to_PM_BigFight" DestinationState="PM_BigFight">
+		<Condition>PM_BigPlayerCrawlerDestroyed_to_PM_BigFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+
+	<!-- FightFinished -->
+	<AudioGameDynamicTransition id="PM_FightFinished_to_PM_SmallFight" DestinationState="PM_SmallFight">
+		<Condition>PM_FightFinished_to_PM_SmallFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_FightFinished_to_PM_BigFight" DestinationState="PM_BigFight">
+		<Condition>PM_FightFinished_to_PM_BigFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_FightFinished_to_PM_LikelyToWin" DestinationState="PM_LikelyToWin">
+		<Condition>PM_FightFinished_to_PM_LikelyToWin_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<!-- LikelyToWin : When the player is close to winning -->
+
+	<AudioGameDynamicTransition id="PM_LikelyToWin_to_PM_SmallFight" DestinationState="PM_SmallFight">
+		<Condition>PM_LikelyToWin_to_PM_SmallFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<!--	******************************************************************************
+					CONDITIONS : General-Reuseable 
+				******************************************************************************	-->
+	<MusicScriptConditionNugget_Not id="PlayerNotLikelyToWin" >
+		<Condition>PlayerLikelyToWin</Condition>
+	</MusicScriptConditionNugget_Not>
+
+	<MusicScriptConditionNugget_Not id="NoEngagement" >
+		<Condition>AnyEngagement</Condition>
+	</MusicScriptConditionNugget_Not>
+
+	<MusicScriptConditionNugget_Or id="AnyEngagement" >
+		<Condition>PlayerUnitsEngagedSmall</Condition>
+		<Condition>EnemyUnitsEngagedSmall</Condition>
+	 </MusicScriptConditionNugget_Or>
+	
+	<MusicScriptConditionNugget_Or id="AnyEngagement_UnitsOnly" >
+		<Condition>PlayerUnitsEngagedSmall_UnitsOnly</Condition>
+		<Condition>EnemyUnitsEngagedSmall_UnitsOnly</Condition>
+	</MusicScriptConditionNugget_Or>
+
+
+	<MusicScriptConditionNugget_EngagementCount id="PlayerUnitsEngagedSmall"
+		Count="1"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="false"
+		CountOnlyEngagementsByTheLocalPlayer="true"
+		RequiredScreenStatus="ON_OR_OFF_SCREEN"
+		TimeBetweenConditionChecks="1s"
+		TargetFilter="PM_Filter_CombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_EngagementCount id="PlayerUnitsEngagedSmall_UnitsOnly"
+		Count="1"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="false"
+		CountOnlyEngagementsByTheLocalPlayer="true"
+		RequiredScreenStatus="ON_OR_OFF_SCREEN"
+		TimeBetweenConditionChecks="1s"
+		TargetFilter="PM_Filter_CombatTargets_UnitsOnly">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_EngagementCount id="EnemyUnitsEngagedSmall"
+		Count="1"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="true"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_OR_OFF_SCREEN"
+		TimeBetweenConditionChecks="1s"
+		TargetFilter="PM_Filter_CombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+	
+	<MusicScriptConditionNugget_EngagementCount id="EnemyUnitsEngagedSmall_UnitsOnly"
+		Count="1"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="true"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_OR_OFF_SCREEN"
+		TimeBetweenConditionChecks="1s"
+		TargetFilter="PM_Filter_CombatTargets_UnitsOnly">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_Not id="Not_EnemyUnitsEngagedMedium">
+		<Condition>EnemyUnitsEngagedMedium</Condition>
+	</MusicScriptConditionNugget_Not>
+
+	<MusicScriptConditionNugget_EngagementCount id="EnemyUnitsEngagedMedium"
+		Count="3"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="true"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_OR_OFF_SCREEN"
+		TimeBetweenConditionChecks="1s"
+		TargetFilter="PM_Filter_CombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_EngagementCount id="EnemyUnitsEngagedLarge"
+		Count="6"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="true"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_OR_OFF_SCREEN"
+		TimeBetweenConditionChecks="1s"
+		TargetFilter="PM_Filter_CombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_LikelyToWin id="PlayerLikelyToWin"
+		PointThreshold="200"
+		RatioOfPointDiff="30"
+		TimeBetweenConditionChecks="1s">
+	</MusicScriptConditionNugget_LikelyToWin>
+
+	<MusicScriptConditionNugget_ObjectTypesInProximity id="FewEnemyUnits_NextToPlayerUnits"
+		TypeAFilter="PM_Filter_PlayerUnits"
+		TypeACount="1"
+		TypeBFilter="PM_Filter_EnemyUnits"
+		TypeBCount="3"
+		Distance="400.0"
+		TimeBetweenConditionChecks="0.6s">
+	</MusicScriptConditionNugget_ObjectTypesInProximity>
+
+	<MusicScriptConditionNugget_ObjectTypesInProximity id="ManyEnemyUnits_NearPlayerUnits"
+		TypeAFilter="PM_Filter_PlayerUnits"
+		TypeACount="1"
+		TypeBFilter="PM_Filter_EnemyUnits"
+		TypeBCount="6"
+		Distance="600.0"
+		TimeBetweenConditionChecks="0.6s">
+	</MusicScriptConditionNugget_ObjectTypesInProximity>
+
+
+	<MusicScriptConditionNugget_ScoredKillCount id="PlayerOrAlliesKilled_EnemyCrawler"
+		Count="1"
+		Time="3s"
+		KillCountMask="COUNT_ONLY_KILLS_BY_LOCALPLAYER_AND_ALLIES"
+		Filter="PM_Filter_EnemyCrawlers">
+	</MusicScriptConditionNugget_ScoredKillCount>
+
+	<MusicScriptConditionNugget_ScoredKillCount id="EnemyKilled_PlayerCrawler"
+		Count="1"
+		Time="3s"
+		KillCountMask="COUNT_ONLY_KILLS_AGAINST_LOCALPLAYER"
+		Filter="PM_Filter_Crawlers">
+	</MusicScriptConditionNugget_ScoredKillCount>
+
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_FirstFight_EnteredMomentAgo"
+		TrackedState="PM_FirstFight"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_SmallFight_EnteredMomentAgo"
+		TrackedState="PM_SmallFight"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_SmallFight_EnteredSecondsAgo"
+		TrackedState="PM_SmallFight"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="5s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_SmallEnemyCrawlerDestroyed_EnteredMomentAgo"
+		TrackedState="PM_SmallEnemyCrawlerDestroyed"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_SmallPlayerCrawlerDestroyed_EnteredSecondsAgo"
+		TrackedState="PM_SmallPlayerCrawlerDestroyed"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="5s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_BigFight_EnteredMomentAgo"
+		TrackedState="PM_BigFight"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_BigFight_EnteredSecondsAgo"
+		TrackedState="PM_BigFight"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="5s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_BigEnemyCrawlerDestroyed_EnteredMomentAgo"
+		TrackedState="PM_BigEnemyCrawlerDestroyed"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_BigPlayerCrawlerDestroyed_EnteredSecondsAgo"
+		TrackedState="PM_BigPlayerCrawlerDestroyed"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="5s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_FightFinished_EnteredMomentAgo"
+		TrackedState="PM_FightFinished"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_FightFinished_EnteredSecondsAgo"
+		TrackedState="PM_FightFinished"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="5s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_LikelyToWin_EnteredMomentAgo"
+		TrackedState="PM_LikelyToWin"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_FirstFight_CurrentlyActive"
+		TrackedState="PM_FirstFight" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_SmallFight_CurrentlyActive"
+		TrackedState="PM_SmallFight" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_SmallEnemyCrawlerDestroyed_CurrentlyActive"
+		TrackedState="PM_SmallEnemyCrawlerDestroyed" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_SmallPlayerCrawlerDestroyed_CurrentlyActive"
+		TrackedState="PM_SmallPlayerCrawlerDestroyed" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_BigFight_CurrentlyActive"
+		TrackedState="PM_BigFight" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_BigEnemyCrawlerDestroyed_CurrentlyActive"
+		TrackedState="PM_BigEnemyCrawlerDestroyed" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_BigPlayerCrawlerDestroyed_CurrentlyActive"
+		TrackedState="PM_BigPlayerCrawlerDestroyed" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_FightFinished_CurrentlyActive"
+		TrackedState="PM_FightFinished" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_LikelyToWin_CurrentlyActive"
+		TrackedState="PM_LikelyToWin" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+
+	<!--	******************************************************************************
+					CONDITIONS : Transition-Specific Combinations 
+				******************************************************************************	-->
+	<!-- FirstFight -->
+	<MusicScriptConditionNugget_And id="PM_FirstFight_to_PM_SmallEnemyCrawlerDestroyed_Allowed" >
+		<Condition>PM_FirstFight_CurrentlyActive</Condition>
+		<Condition>PlayerOrAlliesKilled_EnemyCrawler</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_FirstFight_to_PM_SmallPlayerCrawlerDestroyed_Allowed" >
+		<Condition>PM_FirstFight_CurrentlyActive</Condition>
+		<Condition>EnemyKilled_PlayerCrawler</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_FirstFight_to_PM_BigFight_Allowed" >
+		<Condition>PM_FirstFight_EnteredMomentAgo</Condition>
+		<Condition>PM_FirstFight_CurrentlyActive</Condition>
+		<Condition>EnemyUnitsEngagedLarge</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_FirstFight_to_PM_FightFinished_Allowed" >
+		<Condition>PM_FirstFight_EnteredMomentAgo</Condition>
+		<Condition>PM_FirstFight_CurrentlyActive</Condition>
+		<Condition>NoEngagement</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<!-- SmallFight -->
+	<MusicScriptConditionNugget_And id="PM_SmallFight_to_PM_SmallEnemyCrawlerDestroyed_Allowed" >
+		<Condition>PM_SmallFight_CurrentlyActive</Condition>
+		<Condition>PlayerOrAlliesKilled_EnemyCrawler</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_SmallFight_to_PM_SmallPlayerCrawlerDestroyed_Allowed" >
+		<Condition>PM_SmallFight_CurrentlyActive</Condition>
+		<Condition>EnemyKilled_PlayerCrawler</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_SmallFight_to_PM_BigFight_Allowed" >
+		<Condition>PM_SmallFight_EnteredMomentAgo</Condition>
+		<Condition>PM_SmallFight_CurrentlyActive</Condition>
+		<Condition>EnemyUnitsEngagedLarge</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_SmallFight_to_PM_FightFinished_Allowed" >
+		<Condition>PM_SmallFight_EnteredMomentAgo</Condition>
+		<Condition>PM_SmallFight_CurrentlyActive</Condition>
+		<Condition>NoEngagement</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_SmallFight_to_PM_LikelyToWin_Allowed" >
+		<Condition>PlayerLikelyToWin</Condition>
+		<Condition>PM_SmallFight_EnteredSecondsAgo</Condition>
+		<Condition>PM_SmallFight_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<!-- SmallEnemyCrawlerDesetroyed -->
+	<MusicScriptConditionNugget_And id="PM_SmallEnemyCrawlerDestroyed_to_PM_SmallFight_Allowed" >
+		<Condition>PM_SmallEnemyCrawlerDestroyed_EnteredMomentAgo</Condition>
+		<Condition>PM_SmallEnemyCrawlerDestroyed_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<!-- SmallPlayerCrawlerDestroyed -->
+	<MusicScriptConditionNugget_And id="PM_SmallPlayerCrawlerDestroyed_to_PM_SmallFight_Allowed" >
+		<Condition>PM_SmallPlayerCrawlerDestroyed_EnteredSecondsAgo</Condition>
+		<Condition>PM_SmallPlayerCrawlerDestroyed_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<!-- BigFight -->
+	<MusicScriptConditionNugget_And id="PM_BigFight_to_PM_BigEnemyCrawlerDestroyed_Allowed" >
+		<Condition>PM_BigFight_CurrentlyActive</Condition>
+		<Condition>PlayerOrAlliesKilled_EnemyCrawler</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_BigFight_to_PM_BigPlayerCrawlerDestroyed_Allowed" >
+		<Condition>PM_BigFight_CurrentlyActive</Condition>
+		<Condition>EnemyKilled_PlayerCrawler</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_BigFight_to_PM_SmallFight_Allowed" >
+		<Condition>PM_BigFight_EnteredMomentAgo</Condition>
+		<Condition>PM_BigFight_CurrentlyActive</Condition>
+		<Condition>Not_EnemyUnitsEngagedMedium</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_BigFight_to_PM_FightFinished_Allowed" >
+		<Condition>PM_BigFight_EnteredMomentAgo</Condition>
+		<Condition>PM_BigFight_CurrentlyActive</Condition>
+		<Condition>NoEngagement</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_BigFight_to_PM_LikelyToWin_Allowed" >
+		<Condition>PlayerLikelyToWin</Condition>
+		<Condition>PM_BigFight_EnteredSecondsAgo</Condition>
+		<Condition>PM_BigFight_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<!-- BigEnemyCrawlerDestroyed -->
+	<MusicScriptConditionNugget_And id="PM_BigEnemyCrawlerDestroyed_to_PM_BigFight_Allowed" >
+		<Condition>PM_BigEnemyCrawlerDestroyed_EnteredMomentAgo</Condition>
+		<Condition>PM_BigEnemyCrawlerDestroyed_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<!-- BigPlayerCrawlerDestroyed -->
+	<MusicScriptConditionNugget_And id="PM_BigPlayerCrawlerDestroyed_to_PM_BigFight_Allowed" >
+		<Condition>PM_BigPlayerCrawlerDestroyed_EnteredSecondsAgo</Condition>
+		<Condition>PM_BigPlayerCrawlerDestroyed_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<!-- FightFinished -->
+	<MusicScriptConditionNugget_And id="PM_FightFinished_to_PM_SmallFight_Allowed" >
+		<Condition>PM_FightFinished_EnteredMomentAgo</Condition>
+		<Condition>PM_FightFinished_CurrentlyActive</Condition>
+		<Condition>FewEnemyUnits_NextToPlayerUnits</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_FightFinished_to_PM_BigFight_Allowed" >
+		<Condition>PM_FightFinished_EnteredMomentAgo</Condition>
+		<Condition>PM_FightFinished_CurrentlyActive</Condition>
+		<Condition>EnemyUnitsEngagedLarge</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_FightFinished_to_PM_LikelyToWin_Allowed" >
+		<Condition>PlayerLikelyToWin</Condition>
+		<Condition>PM_FightFinished_EnteredSecondsAgo</Condition>
+		<Condition>PM_FightFinished_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<!-- LikelyToWin -->
+
+	<MusicScriptConditionNugget_And id="PM_LikelyToWin_to_PM_SmallFight_Allowed" >
+		<Condition>PlayerNotLikelyToWin</Condition>
+		<Condition>PM_LikelyToWin_EnteredMomentAgo</Condition>
+		<Condition>PM_LikelyToWin_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<!--	******************************************************************************
+					EXTRA DATA : Stuff that isn't specific to AudioGameDynamic State 
+				******************************************************************************	-->
+	<ObjectFilterAsset id="PathMusicGameDynamicImportantStructures">
+		<Filter 
+			 Rule="ANY" 
+			 Include="STRUCTURE"
+			 Exclude="FS_BASE_DEFENSE DEFENSIVE_WALL WALL_UPGRADE WALL_PIECE WALL_HUB WALL_SEGMENT SCALEABLE_WALL WALL_GATE SUMMONED">
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="PathMusicGameDynamicActiveStructures">
+		<Filter
+			 Rule="ANY"
+			 Include="STRUCTURE"
+			 Exclude="DEFENSIVE_WALL WALL_UPGRADE WALL_PIECE WALL_HUB WALL_SEGMENT SCALEABLE_WALL WALL_GATE SUMMONED">
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="PM_Filter_CombatTargets">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES">
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="PM_Filter_CombatTargets_UnitsOnly">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES"
+			Exclude="STRUCTURE GOAL_STRUCTURE" >
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="PathMusicGameDynamicSuperWeaponTargets">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES">
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="PM_Filter_PlayerUnits">
+		<Filter
+			Rule="ALL"
+			Relationship="SAME_PLAYER"
+			Exclude="PROJECTILE STRUCTURE UNATTACKABLE SIMPLE_OBJECT_PROP"
+			StatusBitFlagsExclude="RUBBLE">
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="PM_Filter_EnemyUnits">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES"
+			Exclude="PROJECTILE STRUCTURE UNATTACKABLE SIMPLE_OBJECT_PROP"
+			StatusBitFlagsExclude="RUBBLE">
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="PM_Filter_Crawlers">
+		<Filter
+			Rule="ANY"
+			Include="CRAWLER">
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="PM_Filter_EnemyCrawlers">
+		<Filter
+			Rule="ANY"
+			Relationship="ENEMIES" 
+			Include="CRAWLER">
+		</Filter>
+	</ObjectFilterAsset>
+	
+</AssetDeclaration>

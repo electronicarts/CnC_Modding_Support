@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Tags></Tags>
+  <Includes></Includes>
+
+  <!-- Command Tactical Behavior -->
+
+  <AIStrategicStateDefinition
+    id="CommandAssault_Gather_Land"
+    MaxTargets="2"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <BeaconExistsHeuristic Exists="true" Type="Assault"/>
+      <!-- Pulse the state off so the target heuristic can update the target if neccesary -->
+      <IntervalHeuristic IntervalTime="1s" ActiveTime="15s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="FriendlyLandStructureHeuristic"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="175" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="14"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="HIGH" AlwaysRecruit="true" SortByDistance="true"
+                    MicroManager="DefenseMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="CommandAssault_Gather_Water"
+    MaxTargets="2"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <BeaconExistsHeuristic Exists="true" Type="Assault"/>
+      <!-- Pulse the state off so the target heuristic can update the target if neccesary -->
+      <IntervalHeuristic IntervalTime="1s" ActiveTime="15s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="FriendlyWaterStructureHeuristic"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="175" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="14"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+                    Priority="HIGH" AlwaysRecruit="true" SortByDistance="true"
+                    MicroManager="DefenseMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="CommandAssault_Land"
+    MaxTargets="2"
+		ExecutionBeginFeedbackKey="PlanAttackBeaconPlaced"
+		ExecutionCanceledFeedbackKey="OrderCanceled"
+		ExecutionCompleteFeedbackKey="PlanAttackOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <BeaconExistsHeuristic Exists="true" Type="Assault"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BeaconAssaultHeuristic_Land"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="6" MinPowerAdvantage="0.5"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="COOP" AlwaysRecruit="false"
+                    MicroManager="BeaconAssaultMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="CommandAssault_Water"
+    MaxTargets="2"
+		ExecutionBeginFeedbackKey="PlanAttackBeaconPlaced"
+		ExecutionCanceledFeedbackKey="OrderCanceled"
+		ExecutionCompleteFeedbackKey="PlanAttackOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+	  <Heuristic>
+      <BeaconExistsHeuristic Exists="true" Type="Assault"/>
+    </Heuristic>
+	  <TargetHeuristic TargetHeuristic="BeaconAssaultHeuristic_Water"/>
+	  <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+		  <TeamTemplate MinUnits="6" MinPowerAdvantage="0.5"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+						        IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+						        Priority="COOP" AlwaysRecruit="false"
+                  MicroManager="BeaconAssaultMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+	  </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="CommandAssault_FighterAircraft"
+    MaxTargets="1"
+		ExecutionBeginFeedbackKey="PlanAttackBeaconPlaced"
+		ExecutionCanceledFeedbackKey="OrderCanceled"
+		ExecutionCompleteFeedbackKey="PlanAttackOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <BeaconExistsHeuristic Exists="true" Type="Assault"/>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="NONE" >
+          <IncludeThing>AlliedFighterAircraft</IncludeThing>
+          <IncludeThing>SovietFighterAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BeaconAssaultHeuristic_Land"/>
+    <TargetHeuristic TargetHeuristic="BeaconAssaultHeuristic_Water"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MinPowerAdvantage="0.5"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK FIGHTER_AIRCRAFT" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="COOP" AlwaysRecruit="true"
+                    MicroManager="BeaconAssaultMicroManager">
+        <ObjectFilter Rule="NONE">
+          <IncludeThing>AlliedFighterAircraft</IncludeThing>
+          <IncludeThing>SovietFighterAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="CommandAssault_BomberAircraft"
+    MaxTargets="3"
+		ExecutionBeginFeedbackKey="PlanAttackBeaconPlaced"
+    ExecutionCanceledFeedbackKey="OrderCanceled"
+		ExecutionCompleteFeedbackKey="PlanAttackOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <BeaconExistsHeuristic Exists="true" Type="Assault"/>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="NONE" >
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+          <IncludeThing>AlliedBomberAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BeaconAssaultHeuristic_Land"/>
+    <TargetHeuristic TargetHeuristic="BeaconAssaultHeuristic_Water"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+		  <TeamTemplate MinUnits="1" MaxUnits="4" MinPowerAdvantage="0.5"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+						        Priority="COOP" AlwaysRecruit="true"
+                  MicroManager="VindicatorMicroManager">
+        <ObjectFilter Rule="NONE">
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+          <IncludeThing>AlliedBomberAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+	  </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="CommandHold_Land"
+    MaxTargets="3"
+		ExecutionBeginFeedbackKey="TakePositionBeaconPlaced"
+		ExecutionCanceledFeedbackKey="OrderCanceled"
+		ExecutionCompleteFeedbackKey="TakePositionOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BeaconHoldPositionHeuristic_Land"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="250" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="COOP" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true"
+                    MicroManager="BeaconHoldMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="CommandHold_Water"
+    MaxTargets="3"
+		ExecutionBeginFeedbackKey="TakePositionBeaconPlaced"
+		ExecutionCanceledFeedbackKey="OrderCanceled"
+		ExecutionCompleteFeedbackKey="TakePositionOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BeaconHoldPositionHeuristic_Water"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="250" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+						        Priority="COOP" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true"
+						        MicroManager="BeaconHoldMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="Command_StrikeTarget_Land"
+    MaxTargets="3"
+		ExecutionBeginFeedbackKey="StrikeTargetBeaconPlaced"
+		ExecutionCanceledFeedbackKey="OrderCanceled"
+		ExecutionCompleteFeedbackKey="StrikeTargetOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BeaconHoldObjectHeuristic_Land"/>
+    <Tactic id="Defense" Tactic="SimpleAttack" Distance="250" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="COOP" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true"
+                    MicroManager="BeaconStrikeTargetMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="Command_StrikeTarget_Water"
+    MaxTargets="3"
+		ExecutionBeginFeedbackKey="StrikeTargetBeaconPlaced"
+		ExecutionCanceledFeedbackKey="OrderCanceled"
+		ExecutionCompleteFeedbackKey="StrikeTargetOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BeaconHoldObjectHeuristic_Water"/>
+    <Tactic id="Defense" Tactic="SimpleAttack" Distance="250" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+						        Priority="COOP" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true"
+						        MicroManager="BeaconStrikeTargetMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="CommandHold_FighterAircraft"
+    MaxTargets="1"
+		ExecutionBeginFeedbackKey="TakePositionBeaconPlaced"
+		ExecutionCanceledFeedbackKey="OrderCanceled"
+		ExecutionCompleteFeedbackKey="TakePositionOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="NONE" >
+          <IncludeThing>AlliedFighterAircraft</IncludeThing>
+          <IncludeThing>SovietFighterAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BeaconHoldPositionHeuristic_Land"/>
+    <TargetHeuristic TargetHeuristic="BeaconHoldPositionHeuristic_Water"/>
+    <TargetHeuristic TargetHeuristic="BeaconHoldObjectHeuristic_Land"/>
+    <TargetHeuristic TargetHeuristic="BeaconHoldObjectHeuristic_Water"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="175" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="COOP" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true"
+                    MicroManager="BeaconHoldMicroManager">
+        <ObjectFilter Rule="NONE">
+          <IncludeThing>AlliedFighterAircraft</IncludeThing>
+          <IncludeThing>SovietFighterAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="CommandHold_BomberAircraft"
+    MaxTargets="3"
+    ExecutionBeginFeedbackKey="TakePositionBeaconPlaced"
+    ExecutionCanceledFeedbackKey="OrderCanceled"
+    ExecutionCompleteFeedbackKey="TakePositionOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+         PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="NONE" >
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+          <IncludeThing>AlliedBomberAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BeaconHoldPositionHeuristic_Land"/>
+    <TargetHeuristic TargetHeuristic="BeaconHoldPositionHeuristic_Water"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" Distance="200" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="4"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+						        Priority="COOP" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true"
+						        MicroManager="FearlessVindicatorMicroManager">
+        <ObjectFilter Rule="NONE">
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+          <IncludeThing>AlliedBomberAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="Command_StrikeTarget_BomberAircraft"
+    MaxTargets="3"
+    ExecutionBeginFeedbackKey="StrikeTargetBeaconPlaced"
+    ExecutionCanceledFeedbackKey="OrderCanceled"
+    ExecutionCompleteFeedbackKey="StrikeTargetOrderComplete"
+    CannotAttackTargetReaction="Ignore">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+         PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="NONE" >
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+          <IncludeThing>AlliedBomberAircraft</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BeaconHoldObjectHeuristic_Land"/>
+    <TargetHeuristic TargetHeuristic="BeaconHoldObjectHeuristic_Water"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" Distance="250" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="4"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+						        Priority="COOP" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true"
+						        MicroManager="FearlessBomberAircraftMicroManager">
+        <ObjectFilter Rule="NONE">
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+          <IncludeThing>AlliedBomberAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+</AssetDeclaration>

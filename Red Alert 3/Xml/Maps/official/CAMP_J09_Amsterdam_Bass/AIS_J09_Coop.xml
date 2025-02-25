@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+  		<Include type="instance" source="DATA:SkirmishAI\States\JapanBaseStates.xml" />  		
+  </Includes>
+
+  <AIStrategicStateDefinition
+    id="AIState_J09_InitialAttack"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="0s" EndTime="60s" CountFrom="MAP_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestOwnWaterSiegeUnitHeuristic" Priority="30"/>
+    <Tactic id="Attack" Tactic="StaticDefense" EndBehavior="DISBAND" Distance="300" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="true" SortByDistance="true"
+                    MicroManager="FearlessDefenseMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- Main Attack -->
+  
+  <AIStrategicStateDefinition
+    id="AIState_J09_WaterAttack"
+    MaxTargets="1">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+      <ObjectOfTypeExistsHeuristic
+        PassIfExists="true">
+        <ObjectFilter
+					Relationship="SAME_PLAYER"
+					Rule="ANY" >
+          <IncludeThing>JapanAntiStructureShip</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristic" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="CloseToShoreStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="BombardmentShipRangeToShoreStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="5" MaxUnits="15"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    AllowedLocomotorTypes="WATER"
+                    Priority="STANDARD" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="true" SortByDistance="true"
+                    MicroManager="BombardmentShipMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>JapanAntiAirVehicleTech1</ExcludeThing>
+          <ExcludeThing>JapanAntiInfantryVehicle</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J09_LandAttack"
+    MaxTargets="2">
+    <Heuristic>
+      <TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="30"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="12" MaxUnits="20" MinPowerAdvantage="0.5"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="StandardMicroManager">
+          <CreateUnits UnitName="JapanAntiInfantryVehicle" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+<!--Hotspots -->
+
+  <AIStrategicStateDefinition
+    id="AIState_J09_JapanCoCommander_DefendMCV"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="FLAG_N - Hotspots - 1 - MCV Moving?"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J09_CoOp_MCV" Priority="50"/>
+    <Tactic id="Attack" Tactic="StaticDefense" EndBehavior="DISBAND" Distance="200" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="6"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS AIR"
+                    Priority="HOTSPOT" AlwaysRecruit="true"
+                    MicroManager="FearlessDefenseMicroManager" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+ 
+   <AIStrategicStateDefinition
+    id="AIState_J09_JapanCoCommander_AttackAirBase"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="FLAG_N_HotSpot - 2 - Active"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J09_AirBase" Priority="50"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="2" MaxUnits="16"
+                    IncludeKindOf="CAN_ATTACK STRUCTURE"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS LAND AIR"
+                    Priority="HOTSPOT" AlwaysRecruit="false"
+                    MicroManager="FearlessFocusedMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J09_JapanCoCommander_AttackParticleCannons"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="FLAG_N_HotSpot - 3 - Active"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J09_ParticleCannonA" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J09_ParticleCannonB" Priority="40"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="2" MaxUnits="16"
+                    IncludeKindOf="CAN_ATTACK STRUCTURE"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS WATER AIR"
+                    Priority="HOTSPOT" AlwaysRecruit="false"
+                    MicroManager="FearlessFocusedMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+ 
+   <AIStrategicStateDefinition
+    id="AIState_J09_JapanCoCommander_AttackMainBase"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="FLAG_N_HotSpot - 4 - Active"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J09_AlliedMainBase" Priority="40"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="2" MaxUnits="16"
+                    IncludeKindOf="CAN_ATTACK STRUCTURE"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS LAND AIR"
+                    Priority="HOTSPOT" AlwaysRecruit="false"
+                    MicroManager="FearlessFocusedMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J09_JapanCoCommander_AttackSovietBase"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="FLAG_N_HotSpot - 5 - Active"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J09_SovietBase" Priority="60"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="2" MaxUnits="16"
+                    IncludeKindOf="CAN_ATTACK STRUCTURE"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS LAND AIR"
+                    Priority="HOTSPOT" AlwaysRecruit="false"
+                    MicroManager="FearlessFocusedMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_J09_Coop_TechBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Upgrade="Upgrade_JapanBarracksTech2" Heuristic="UPGRADE_TECH" MinTime="240s" ForceTime="240s"/>
+    <BuildEntry Upgrade="Upgrade_JapanBarracksTech3" Heuristic="UPGRADE_TECH" MinTime="600s" ForceTime="600s"/>
+    <BuildEntry Upgrade="Upgrade_JapanWarFactoryTech2" Heuristic="UPGRADE_TECH" MinTime="60s" ForceTime="60s"/>
+    <BuildEntry Upgrade="Upgrade_JapanWarFactoryTech3" Heuristic="UPGRADE_TECH" MinTime="600s" ForceTime="600s"/>
+    <BuildEntry Upgrade="Upgrade_JapanNavalYardTech2" Heuristic="UPGRADE_TECH" MinTime="240s" ForceTime="240s"/>
+    <BuildEntry Upgrade="Upgrade_JapanNavalYardTech3" Heuristic="UPGRADE_TECH" MinTime="600s" ForceTime="600s"/>
+    <BuildEntry Build="JapanTechStructureEgg" Heuristic="TECH" MinTime="480s" ForceTime="480s"/>
+    <!-- Nanoswarm Hive power not implemented so don't build it =(
+    <BuildEntry Build="JapanSuperWeaponEgg" Heuristic="TECH" MinTime="360s"/>
+    -->
+    <BuildEntry Build="JapanSuperWeaponAdvancedEgg" Heuristic="TECH" MinTime="720s" ForceTime="720s"/>
+  </AIBuildStateDefinition>
+  
+</AssetDeclaration>
+
+

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="all"	source="ART:AUDrone.w3x" />
+		<Include type="all"	source="ART:AUDrone_02.xml" />				
+<!--		<Include type="all"	source="ART:AUDrone_02_D.xml" />		-->
+		<Include type="instance" source="DATA:BaseObjects/BaseObject.xml" />
+	</Includes>
+	<GameObject
+		id="AlliedAttackDrone_Leeched"
+		inheritFrom="BaseObject"
+		Side="Allies"
+		EditorSorting="SYSTEM"
+		KindOf="CAN_CAST_REFLECTIONS CAN_ATTACK SCORE AIRCRAFT VEHICLE PASS_EXPERIENCE_TO_PRODUCER NO_COLLIDE SKIP_IDLE_WHEN_CAPTURED LINE_OF_SIGHT_IGNORES_BUILDINGS"
+		RadarPriority="UNIT"
+		ProductionQueueType="VEHICLE"
+		UnitCategory="VEHICLE"
+		WeaponCategory="CANNON"
+		EditorName="AlliedAttackDrone_Leeched"
+		Description="Desc:AlliedAttackDrone">
+		<DisplayName xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:AlliedAttackDrone</DisplayName>
+		
+		<ArmorSet
+			Armor="AlliedDroneArmor"
+			DamageFX="AircraftDamageFX" />
+
+		<LocomotorSet
+			Locomotor="AlliedAttackDrone_Leeched_Locomotor"
+			Condition="NORMAL"
+			Speed="150.0" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AUDrone" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="AUBomb" />
+					<ParticleSysBone
+						BoneName="FX_JetGlow"
+						FXParticleSystemTemplate="AlliedJetTrail"
+						FollowBone="true"
+						PersistID="1"
+						FXAction="SPAWN" />
+					<ParticleSysBone
+						BoneName="FX_JetGlow"
+						FXParticleSystemTemplate="AlliedJetTrailGlow"
+						FollowBone="true"
+						PersistID="2"
+						FXAction="SPAWN" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="AUDrone" />
+					<Texture
+						Original="AUDrone"
+						New="AUDrone_D" />
+					<ParticleSysBone
+						BoneName="FX_JetGlow"
+						FXParticleSystemTemplate="AlliedJetTrail"
+						FollowBone="true"
+						PersistID="1"
+						FXAction="SPAWN" />
+					<ParticleSysBone
+						BoneName="FX_JetGlow"
+						FXParticleSystemTemplate="AlliedJetTrailGlow"
+						FollowBone="true"
+						PersistID="2"
+						FXAction="SPAWN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Script>
+						CurDrawableHideSubObjectPermanently( "AUBomb" )
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RELOADING_A">
+					<Script>
+						CurDrawableShowSubObjectPermanently( "AUBomb" )
+					</Script>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="AlliedAttackDrone_Leeched_Missle" />					
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="AUDrone_Dying_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_ALL_JetFighter_Die" />
+			</FXListBehavior>
+
+			<Physics
+				id="ModuleTag_Physics" />
+
+			<SlavedUpdate
+				id="ModuleTag_SlavedUpdate"
+				LeashRange="300"
+				AttackRange="300"
+				DieOnMastersDeath="true"
+				UseSlaverAsControlForEvaObjectSightedEvents="false" />
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="Generic" />
+		</Behaviors>		
+		<AI>		
+			<JetAIUpdate
+				id="ModuleTag_JetAI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				CirclesForAttack="true"
+				StateMachine="JetAIStateMachine"
+				DefaultLocomotorSet="NORMAL">
+				<UnitAITargetChooserData />
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="200.0"/>
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_LandLaunch">
+				<ModelConditionSound Sound="ALL_JetFighter_Land" RequiredFlags="LANDING" />
+				<ModelConditionSound Sound="ALL_JetFighter_Launch" RequiredFlags="TAKING_OFF" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="5.0"
+				Height="5.0"/>
+		</Geometry>
+		<AudioArraySound>
+			<!-- <AudioEntry Sound="SOV_Apocalypse_MoveStart" AudioType="soundMoveStart" /> -->
+			<AudioEntry Sound="ALL_JetFighter_moveByLoop" AudioType="soundMoveLoop" />
+		</AudioArraySound>
+
+			<EvaEventArray>
+				<EvaEntry EvaEvent="" EvaType="dieOwner" />
+				<EvaEntry EvaEvent="" EvaType="damagedOwner" />
+				<EvaEntry EvaEvent="" EvaType="damagedAlly" />
+			</EvaEventArray>
+
+		<VisionInfo
+			VisionRange="200"
+			ShroudClearingRange="200" />
+	</GameObject>
+</AssetDeclaration>

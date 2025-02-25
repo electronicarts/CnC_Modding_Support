@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:balance="uri:ea.com:eala:balance" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="WeaponChoiceCriteria">
+		<xs:restriction base="xs:string">
+			<!-- choose the weapon that will do the most damage -->
+			<xs:enumeration value="PREFER_MOST_DAMAGE" />
+			<!-- choose the weapon with the longest range (that will do nonzero damage) -->
+			<xs:enumeration value="PREFER_LONGEST_RANGE" />
+			<!-- choose the weapon that has a grab nugget, or failing that, the one with the most damage -->
+			<xs:enumeration value="PREFER_GRAB_OVER_DAMAGE" />
+			<!-- choose the weapon that results in having to move the least to get in range (ie, longest range weapon when far away, melee weapon when close) -->
+			<xs:enumeration value="PREFER_LEAST_MOVEMENT" />
+			<!-- choose a weapon randomly from all weapons in the set that can currently be used -->
+			<xs:enumeration value="SELECT_AT_RANDOM" />
+			<!-- use default weapon choice critera set in the WeaponSet -->
+			<xs:enumeration value="USE_WEAPONSET_DEFAULT_CRITERIA" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="WeaponSlot_WeaponData">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Ordering" type="WeaponSlotType" />
+		<xs:attribute name="Template" balance:field="Template" balance:category="Template" type="WeaponRef" />
+		<xs:attribute name="Upgrade" type="UpgradeTemplateRef" />
+		<xs:attribute name="ObjectStatus" type="ObjectStatusBitFlags" default=""/>
+		<xs:attribute name="ForbiddenObjectStatus" type="ObjectStatusBitFlags" default=""/>
+  
+		<xs:attribute name="IsPlayerUpgradePermanent" type="SageBool" default="false" />
+
+    <!-- Tells the SkirmishAI to always count this weapon's damage in the template calculation regardless of any upgrades or object status requirements -->
+    <xs:attribute name="ConquerMetricsAlwaysCount" type="SageBool" default="false" />
+	</xs:complexType>
+
+	<xs:simpleType name="WeaponSlotInterleavedStyleType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INTERLEAVE_FIRST_AVAILABLE" />
+			<xs:enumeration value="INTERLEAVE_RANDOM" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="WeaponSlot_Hardpoint" xas:isPolymorphic="true">
+		<xs:sequence>
+			<xs:element name="Weapon" balance:category="Weapon" type="WeaponSlot_WeaponData" minOccurs="0" maxOccurs="unbounded" xas:sortBy="Ordering"/> <!-- WeaponSlot expects this to be sorted -->
+		</xs:sequence>
+		<xs:attribute name="ID" type="SageUnsignedInt" />
+		<xs:attribute name="AllowInterleavedFiring" type="SageBool" default="false" />
+		<xs:attribute name="InterleavedStyle" type="WeaponSlotInterleavedStyleType" default="INTERLEAVE_RANDOM" />
+		<xs:attribute name="WeaponChoiceCriteria" type="WeaponChoiceCriteria" default="PREFER_MOST_DAMAGE" />
+		<xs:attribute name="AutoChooseWeapon" type="SageBool" default="true" />
+	</xs:complexType>
+	
+	<xs:complexType name="WeaponSlot_Turret">
+		<xs:complexContent>
+			<xs:extension base="WeaponSlot_Hardpoint">
+				<xs:sequence>
+					<xs:element name="TurretSettings" balance:category="TurretSettings" type="TurretAIData" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="WeaponSlot_HierarchicalTurret">
+		<xs:complexContent>
+			<xs:extension base="WeaponSlot_Turret">
+				<xs:sequence>
+				</xs:sequence>
+				<xs:attribute name="ParentID" type="SageUnsignedInt" default="0" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="WeaponSlot_Contained">
+		<xs:complexContent>
+			<xs:extension base="WeaponSlot_Hardpoint">
+				<xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="WeaponSetUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element balance:category="WeaponSlot" name="WeaponSlotHardpoint" type="WeaponSlot_Hardpoint" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element balance:category="WeaponSlot" name="WeaponSlotTurret" type="WeaponSlot_Turret" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element balance:category="WeaponSlot" name="WeaponSlotHierarchicalTurret" type="WeaponSlot_HierarchicalTurret" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element balance:category="WeaponSlot" name="WeaponSlotContained" type="WeaponSlot_Contained" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<!-- model conditions set by included CaptureStructureBehavior.xml -->
+	<!-- USER 1: Captured by anyone -->
+	<Tags></Tags>
+	<!-- Mutant Hovel / Tech Structure G  -->
+	<Includes>
+		<Include type="all" source="ART:TSL_StructureG_SKN.w3x" />
+		<Include type="all" source="ART:TSL_StructureG_SKL.w3x" />
+		<Include type="all" source="ART:TSL_StructureG_AIDA.w3x" />
+		<Include type="all" source="ART:TSL_StructureG_AIDB.w3x" />
+		<Include type="all" source="ART:TSL_StructureG_CPTR.w3x" />
+		<Include type="all" source="ART:TSL_StructureG_DMG.xml" />
+
+		<!-- Door Art Files -->
+		<Include type="all" source="ART:TSL_StructureG_DOOR_SKN.w3x" />
+		<Include type="all" source="ART:TSL_StructureG_DOOR_SKL.w3x" />
+		<Include type="all" source="ART:TSL_StructureG_DOOR_CLSD.w3x" />
+		<Include type="all" source="ART:TSL_StructureG_DOOR_CPTR.w3x" />
+		<Include type="all" source="ART:TSL_StructureG_DOOR_OPEN.w3x" />
+		<Include type="all" source="ART:FXTracerNOD.xml" />
+		<Include type="instance" source="DATA:GlobalData/upgrade.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseTechStructure.xml" />
+
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+
+	</Includes>
+	<GameObject
+		id="TechStructureG"
+		inheritFrom="BaseTechStructure"
+		SubGroupPriority="397"
+		SelectPortrait="Portrait_Neutral_TSL_Structure_G"
+		ButtonImage="Portrait_NODShredderTurret"
+		Side="Neutral"
+		ParticipationValue="=$NEUTRALTECHSTRUCTUREG_PARTICIPATION_VALUE"
+		HealthBoxHeightOffset="90" 
+		BuildTime="1.0"
+		EnergyProduction="0"
+		CommandSet="TechStructureGCommandSet"
+		KindOf="+FS_BASE_DEFENSE +POWERED +AUTO_ACQUIRABLE_BY_AI +CAN_SEE_THROUGH_STRUCTURE +ALLIES_CAN_USE_ABILITIES +NO_HEALTH_BAR"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="MUTANT_Struct_Factory(Mutant Hovel)"
+		EditorSorting="STRUCTURE" 
+		WeaponCategory="NONE"
+		Description="Desc:TechStructureG"
+		TypeDescription="Type:TechStructureG">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechStructureG</DisplayName>
+		<ArmorSet
+			Armor="StructureArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="16.0"
+				MaxRecoilDistance="10.0"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				ExtraPublicBone="FXDamage01 FXDamage02 Origin"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TSL_StructureG_SKN" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="Smoke_Mutant_Hovel"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="Steam_Mutant_Hovel"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="TSL_StructureG_SKN" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="TSL_StructureG_SKN" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="TSL_StructureG_CPTR"
+						AnimationMode="MANUAL"/>
+				</AnimationState>
+				<!-- when captured -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="State_Idle" 
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="TSL_StructureG_AIDA"
+						AnimationMode="ONCE"/>
+					<Animation
+						AnimationName="TSL_StructureG_AIDB"
+						AnimationMode="ONCE"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "Transition_MainToCaptured" and Prev ~="State_Idle" then
+						CurDrawableSetTransitionAnimState("Transition_MainToCaptured")
+						end
+					</Script>
+				</AnimationState>
+
+				<!---Transitions-->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_MainToCaptured">
+					<Animation
+						AnimationName="TSL_StructureG_CPTR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+			<ScriptedModelDraw
+				id="ModuleTag_Door"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="Origin"
+				AttachToBoneInAnotherModule="Origin"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TSL_StructureG_DOOR_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="TSL_StructureG_DOOR_CLSD"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_OPENING"
+					StateName="STATE_DoorOpening">
+					<Animation
+						AnimationName="TSL_StructureG_DOOR_OPEN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_CLOSING"
+					StateName="STATE_DoorClosing">
+					<Animation
+						AnimationName="TSL_StructureG_DOOR_CLSD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<xi:include href="DATA:Includes/CaptureStructureFeedbackDraw.xml" />
+
+		</Draws>
+		<Behaviors>
+
+			<!-- allows object to be captured -->
+			<xi:include	href="DATA:Includes/CaptureStructureBehavior.xml" />
+
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_NONE" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_NONE" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_NONE" />
+				<Event
+					Index="onDeath"
+					FX="FX_NONE" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<DieMuxData
+					DeathTypes="SUICIDED" />
+			</SlowDeath>
+			
+			<QueueProductionExitUpdate
+				id="ModuleTag_QueueProduction"
+				FlipExitCoordinatesAsVehicle="true"
+				MaximumUnitSize="6">
+				<UnitCreatePoint
+					x="-3.0"
+					y="0.0"
+					z="0.0" />
+				<NaturalRallyPoint
+					x="140.0"
+					y="0.0"
+					z="0.0" />
+				<DoorInfo
+					OpeningDuration="2.5s"
+					ClosingDuration="0.5s"/>
+			</QueueProductionExitUpdate>
+
+			<OCLSpecialPower
+				id="ModuleTag_BuildMediumMelee"
+				SpecialPowerTemplate="SpecialPower_BuildMediumMelee"
+				OCL="OCL_BuildMediumMelee"
+				CreateLocation="CREATE_AT_LOCATION"
+				Options="USE_PRODUCTION_EXIT DEFECT_TO_ISSUING_PLAYER"
+			/>
+
+			<OCLSpecialPower
+				id="ModuleTag_BuildLightBlast"
+				SpecialPowerTemplate="SpecialPower_BuildLightBlast"
+				OCL="OCL_BuildLightBlast"
+				CreateLocation="CREATE_AT_LOCATION"
+				Options="USE_PRODUCTION_EXIT DEFECT_TO_ISSUING_PLAYER"
+			/>
+
+			<OCLSpecialPower
+				id="ModuleTag_BuildHeavyMG"
+				SpecialPowerTemplate="SpecialPower_BuildHeavyMG"
+				OCL="OCL_BuildHeavyMG"
+				CreateLocation="CREATE_AT_LOCATION"
+				Options="USE_PRODUCTION_EXIT DEFECT_TO_ISSUING_PLAYER"
+			/>
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="AIUpdate"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				InitialHealth="1.0"
+				MaxHealth="1000.0"/>
+		</Body>
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_AnimationSound">
+				<Sound Sound="NEU_MutantHovel_StrG_AnimationHookLowersIntoPit" RequiredMC="USER_1" Animation="TSL_StructureG_AIDB" Frame="55"/>
+				<Sound Sound="NEU_MutantHovel_StrG_AnimationHookRaise" RequiredMC="USER_1" Animation="TSL_StructureG_AIDB" Frame="105"/>
+				<Sound Sound="NEU_MutantHovel_StrG_AnimationBigArmExtend" RequiredMC="USER_1" Animation="TSL_StructureG_AIDB" Frame="185"/>
+				<Sound Sound="NEU_MutantHovel_StrG_AnimationHookSetsCrateDown" RequiredMC="USER_1" Animation="TSL_StructureG_AIDB" Frame="242"/>
+				<Sound Sound="NEU_MutantHovel_StrG_AnimationHookRaise" RequiredMC="USER_1" Animation="TSL_StructureG_AIDB" Frame="277"/>
+				<Sound Sound="NEU_MutantHovel_StrG_AnimationBigArmRetract" RequiredMC="USER_1" Animation="TSL_StructureG_AIDB" Frame="304"/>
+				<Sound Sound="NEU_MutantHovel_StrG_AnimationCrateSuckedAway" RequiredMC="USER_1" Animation="TSL_StructureG_AIDB" Frame="330"/>
+				<Sound Sound="NEU_MutantHovel_StrG_AnimationBigArmUp" RequiredMC="USER_1" Animation="TSL_StructureG_CPTR" Frame="0"/>
+				<Sound Sound="NEU_MutantHovel_StrG_AnimationPlatformRotate" RequiredMC="USER_1" Animation="TSL_StructureG_CPTR" Frame="10"/>
+				<Sound Sound="NEU_MutantHovel_StrG_AnimationBigArmRotate" RequiredMC="USER_1" Animation="TSL_StructureG_CPTR" Frame="26"/>
+				<Sound Sound="NEU_MutantHovel_StrG_AnimationSmallArmDown" RequiredMC="USER_1" Animation="TSL_StructureG_CPTR" Frame="55"/>
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		<Geometry>
+			<PlacementShape
+				Type="BOX"
+				MajorRadius="45.0"
+				MinorRadius="45.0"
+				Height="42.0" >
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="0.0" />
+			</PlacementShape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="45.0"
+				Height="42.0"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="0.0" />				
+			</Shape>			
+		</Geometry>
+
+		<ClientBehaviors>
+		<!-- old way
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Captured">
+				<ModelConditionSound Sound="Captured_TechBuilding" RequiredFlags="USER_1" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior> -->
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_AmbientLoopOnCapture">
+				<ModelConditionSound Sound="NEU_MutantHovel_StrG_AmbientLoop" RequiredFlags="USER_1" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="NEU_MutantHovel_StrG_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<!-- <AudioArraySound>
+			<AudioEntry Sound="Fire1_StructureLarge_LoopMS" AudioType="soundAmbientReallyDamaged" />
+		</AudioArraySound> -->
+		<VisionInfo
+			VisionRange="500"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+	<LogicCommandSet
+		id="TechStructureGCommandSet">
+		<Cmd>Command_TechStructureGBuildMediumMelee</Cmd>
+		<Cmd>Command_TechStructureGBuildLightBlast</Cmd>
+		<Cmd>Command_TechStructureGBuildHeavyMG</Cmd>
+	</LogicCommandSet>
+
+	<!-- Build Medium Melee Infantry -->
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_TechStructureGBuildMediumMelee">
+			<SpecialPower>SpecialPower_BuildMediumMelee</SpecialPower>
+	</LogicCommand>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_BuildMediumMelee"
+		ReloadTime="6.0s"
+		TargetType="NONE"
+		Flags="RESET_ALL_MODULE_RECHARGE_WHEN_TRIGGERED"
+	/>
+
+	<ObjectCreationList
+		id="OCL_BuildMediumMelee">
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CheckForMaxInstances/>
+				<RespectCommandPoints/>
+				<!-- this is required so the new obj gets a high enough path priority to push allies out of the way -->
+				<!-- It's normally set by ProductionUpdate -->
+				<SetStatus Status="IS_MOVING_TO_RALLY_POINT"/>
+				<CreateObject
+					ObjectTemplate="NeutralInfantryB"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- Build Light Blast Infantry -->
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_TechStructureGBuildLightBlast">
+		<SpecialPower>SpecialPower_BuildLightBlast</SpecialPower>
+	</LogicCommand>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_BuildLightBlast"
+		ReloadTime="3.0s"
+		TargetType="NONE"
+		Flags="RESET_ALL_MODULE_RECHARGE_WHEN_TRIGGERED"
+	/>
+
+	<ObjectCreationList
+		id="OCL_BuildLightBlast">
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CheckForMaxInstances/>
+				<RespectCommandPoints/>
+				<!-- this is required so the new obj gets a high enough path priority to push allies out of the way -->
+				<!-- It's normally set by ProductionUpdate -->
+				<SetStatus Status="IS_MOVING_TO_RALLY_POINT"/>
+				<CreateObject
+					ObjectTemplate="NeutralInfantryA"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- Build Heavy MG Vehicle-->
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_TechStructureGBuildHeavyMG">
+		<SpecialPower>SpecialPower_BuildHeavyMG</SpecialPower>
+	</LogicCommand>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_BuildHeavyMG"
+		ReloadTime="10.0s"
+		TargetType="NONE"
+		Flags="RESET_ALL_MODULE_RECHARGE_WHEN_TRIGGERED"
+	/>
+
+	<ObjectCreationList
+		id="OCL_BuildHeavyMG">
+		<OCLModule>
+			<Modules>
+				<AlignToTerrain/>
+				<CheckForMaxInstances/>
+				<RespectCommandPoints/>
+				<!-- this is required so the new obj gets a high enough path priority to push allies out of the way -->
+				<!-- It's normally set by ProductionUpdate -->
+				<SetStatus Status="IS_MOVING_TO_RALLY_POINT"/>
+				<CreateObject
+					ObjectTemplate="NeutralVehicleA"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+</AssetDeclaration>

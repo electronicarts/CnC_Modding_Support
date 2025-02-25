@@ -1,0 +1,55 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// Scrape script for PostFX
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_POSTFX_SCRAPEH
+#define SCRAPE_SCRIPT_POSTFX_SCRAPEH
+
+//
+// PostEffects
+//
+var texture PostEffectFrameBufferTexture $PostEffect.FrameBufferSize.x $PostEffect.FrameBufferSize.y $WW3D.FrameRenderTargetTextureFormat
+
+#define HDR_RESOLVE_EXPONENT -3
+
+#if defined(EA_PLATFORM_XENON)
+	#define XENON_RESOLVE(targetTexture) resolve targetTexture
+	#define XENON_RESOLVE_HDR(targetTexture) resolve targetTexture 0 0 HDR_RESOLVE_EXPONENT
+#else
+	#define XENON_RESOLVE(targetTexture)
+	#define XENON_RESOLVE_HDR(targetTexture)
+#endif
+
+// Utility function to copy the frame buffer to the PostEffectFrameBufferTexture
+proc copyFrameBufferToTexture
+	#if defined(EA_PLATFORM_XENON)
+		XENON_RESOLVE_HDR(PostEffectFrameBufferTexture)
+	#else
+		if WW3D IsUsingFrameRenderTarget
+			stretchrect FrameRenderTarget PostEffectFrameBufferTexture
+		else
+			stretchrect FrameBuffer PostEffectFrameBufferTexture
+		endif
+	#endif
+endproc
+
+#include "PostFX_LookupTable.scrapeh"
+#include "PostFX_Distortion.scrapeh"
+#include "PostFX_Bloom.scrapeh"
+
+proc renderPostEffects
+    beginevent RenderPostEffects
+
+
+#if defined(EA_PLATFORM_XENON)
+		setgpr 16 112
+    	callproc endMSAATiling
+#endif
+	    callproc PostEffectDistortion
+	    callproc PostEffectBloom
+	    callproc PostEffectLookupTable
+    endevent RenderPostEffects
+endproc
+
+#endif // SCRAPE_SCRIPT_POSTFX_SCRAPEH

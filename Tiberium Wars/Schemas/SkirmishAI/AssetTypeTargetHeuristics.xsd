@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+  <!-- Targeting Heuristic definitions, also for the states -->
+  <xs:simpleType name="TargetingHeuristicType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="BaseDefense"/>
+      <xs:enumeration value="EnemyStructure"/>
+      <xs:enumeration value="FriendlyStructure"/>
+      <xs:enumeration value="EnemyUnit" />
+      <xs:enumeration value="FriendlyUnit" />
+      <xs:enumeration value="Expansion"/>
+      <xs:enumeration value="Prioritized" />
+      <xs:enumeration value="TechBuilding"/>
+      <xs:enumeration value="Bridge"/>
+      <xs:enumeration value="NeutralGarrison"/>
+      <xs:enumeration value="AntiGarrison"/>
+      <xs:enumeration value="Beacon"/>
+      <xs:enumeration value="Crate"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--Target Sort Types-->
+  <xs:simpleType name="AITargetSortType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Distance"/>
+      <xs:enumeration value="ThreatToGround"/>
+      <xs:enumeration value="ThreatToAir"/>
+      <xs:enumeration value="Random"/>
+    </xs:restriction>
+  </xs:simpleType>  
+  <xs:complexType name="AITargetingHeuristic" xas:runtimeWrapper ="::AITargetHeuristic">
+    <xs:complexContent>
+      <xs:extension base="BaseAssetType">
+        <xs:sequence>
+          <!-- Not used by all targeting heuristics. -->
+          <xs:element name="PrioritizedKindOf" type="KindOfBitFlags" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="HeuristicType" type="TargetingHeuristicType" use="required"/>
+        <xs:attribute name="ReturnTargetType" type="AITargetType" use="required"/>
+        <xs:attribute name="SortType" type="AITargetSortType" use="optional" default="Distance"/>
+        <!-- Object is true is it has all flags in "Must Include All" and either a vital flag, or no forbidden flags -->
+        <xs:attribute name="VitalKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="ForbiddenKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="Destroyed" type="xs:boolean" default="false"/>
+        <xs:attribute name="ThreatFinderRange" type="xs:float" use="optional"/>
+        <xs:attribute name="SearchRange" type="xs:float" default="1500.0"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

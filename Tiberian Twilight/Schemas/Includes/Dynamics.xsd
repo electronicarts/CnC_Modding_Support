@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	
+  <xs:simpleType name="DynamicsDrawPriority">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="REMOVABLE">
+        <xs:annotation>
+			<xs:documentation>
+				The dynamics object is of low priority in the dynamics world.  It can be removed to
+				free up space for more important dynamics objects.
+	  		</xs:documentation> 
+  		</xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="REMOVE_ONLY_IF_NEEDED">
+        <xs:annotation>
+			<xs:documentation>
+				The dynamics object should be drawn if at all possible.  Remove it only if
+				absolutely necessary.
+	  		</xs:documentation> 
+  		</xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="MUST_BE_DRAWN">
+        <xs:annotation>
+			<xs:documentation>
+				The object is of high priority and must be drawn.  All lower priority dynamics
+				objects should be removed from the dynamics world before clearing these.
+	  		</xs:documentation> 
+  		</xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DynamicsMotionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TRACKED">
+        <xs:annotation>
+		  	<xs:documentation>The object's position in the game world is propagated to the physics
+			  world; no physical simulation is performed.
+	  		</xs:documentation> 
+  		</xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="SIMULATED">
+        <xs:annotation>
+		  	<xs:documentation>The object is simulated in the physics world, with the results affecting
+			  the object in the game world.
+	  		</xs:documentation> 
+  		</xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="STATIC">
+        <xs:annotation>
+		 	<xs:documentation>The object does not move, either from the game or from the
+			  physics
+	  		</xs:documentation> 
+  		</xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DynamicsCollisionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NONINTERCOLLIDING">
+        <xs:annotation>
+          <xs:documentation>The object collides only with omnicollidables.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="INTERCOLLIDING">
+        <xs:annotation>
+		  <xs:documentation>The object collides with omnicollidables, and with intercollidables in
+			  the same island.
+		  </xs:documentation> 
+	  	</xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="OMNICOLLIDING">
+        <xs:annotation>
+          <xs:documentation>
+			The object collides with everything except noncollidables and other omnicollidables.
+			Omnicollidable objects may not be simulated. The ground is considered to be an
+			omnicollidable.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="NONCOLLIDING">
+        <xs:annotation>
+          <xs:documentation>
+            The object collides with nothing, not even the ground.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="IntuitiveCollisionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="COLLIDES_WITH_GROUND_ONLY">
+        <xs:annotation>
+			<xs:documentation>
+				The dynamics object collides only with the ground: neither with vehicles nor other
+				dynamic objects.  
+			</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="COLLIDES_WITH_GROUND_AND_VEHICLES">
+        <xs:annotation>
+			<xs:documentation>
+				The dynamics object collides with vehicles and the ground, but not with other
+				dynamics objects.  
+			</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="COLLIDES_WITH_EVERYTHING">
+        <xs:annotation>
+		  <xs:documentation>
+				The dynamics object collides with everything: the ground, vehicles,
+			  	other dynamics objects, etc.
+		  </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="DynamicsShapeType" abstract="true">
+    <xs:all>
+      <xs:element name="Translation" type="Vector3" minOccurs="0" maxOccurs="1" />
+      <xs:element name="Rotation" type="Quaternion" minOccurs="0" maxOccurs="1" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="DynamicsSphereShapeType">
+    <xs:complexContent>
+      <xs:extension base="DynamicsShapeType">
+        <xs:attribute name="Radius" type="SageReal" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DynamicsCapsuleShapeType">
+    <xs:complexContent>
+      <xs:extension base="DynamicsShapeType">
+        <xs:attribute name="Radius" type="SageReal">
+          <xs:annotation>
+            <xs:documentation>
+              The radius of the body of the capsule and of the end caps.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="HalfLength" type="SageReal">
+          <xs:annotation>
+            <xs:documentation>
+              The half-length from the center of the capsule to the beginning of the cap.
+              The total length of the capsule is 2*HalfLength + 2*Radius.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DynamicsBoxShapeType">
+    <xs:complexContent>
+      <xs:extension base="DynamicsShapeType">
+        <xs:attribute name="HalfSizeX" type="SageReal" />
+        <xs:attribute name="HalfSizeY" type="SageReal" />
+        <xs:attribute name="HalfSizeZ" type="SageReal" />
+        <xs:attribute name="EdgeRadius" type="SageReal" default="0">
+          <xs:annotation>
+            <xs:documentation>
+			  The optional "fatness" of the box. If specified, an extra cushion with this width is
+			  added around all sides of the box.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DynamicsCylinderShapeType">
+    <xs:complexContent>
+      <xs:extension base="DynamicsShapeType">
+        <xs:attribute name="Radius" type="SageReal" />
+        <xs:attribute name="HalfLength" type="SageReal" />
+        <xs:attribute name="EdgeRadius" type="SageReal" default="0">
+          <xs:annotation>
+            <xs:documentation>
+			  The optional "fatness" of the box. If specified, an extra cushion with this width is
+			  added around all sides of the box.  
+		  	</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="DynamicsTriangleShapeType">
+    <xs:complexContent>
+      <xs:extension base="DynamicsShapeType">
+        <xs:attribute name="X1" type="SageReal" />
+        <xs:attribute name="Y1" type="SageReal" />
+        <xs:attribute name="Z1" type="SageReal" />
+        <xs:attribute name="X2" type="SageReal" />
+        <xs:attribute name="Y2" type="SageReal" />
+        <xs:attribute name="Z2" type="SageReal" />
+        <xs:attribute name="X3" type="SageReal" />
+        <xs:attribute name="Y3" type="SageReal" />
+        <xs:attribute name="Z3" type="SageReal" />
+        <xs:attribute name="EdgeRadius" type="SageReal" default="0">
+          <xs:annotation>
+            <xs:documentation>
+			  The optional "fatness" of the triangle. If specified, an extra cushion with this width
+			  is added around all sides of the box.  
+		  	</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+	<xs:simpleType name="DynamicsContactTag">
+		<xs:annotation>
+			<xs:documentation>
+				Specifies a tag to be used to identify the object for purposes of sound generation.
+				When a contact occurs, the two objects' contact tags are available to be read.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="GROUND">
+				<xs:annotation>
+					<xs:documentation>
+						The contact tag automatically used by the ground.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="WATER" />
+			<xs:enumeration value="VEHICLE" />
+			<xs:enumeration value="PROP" />
+			<xs:enumeration value="WALL" />
+			<xs:enumeration value="TREE" />
+			<xs:enumeration value="DEBRIS" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="DynamicsVolumeType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Sphere" type="DynamicsSphereShapeType" />
+      <xs:element name="Capsule" type="DynamicsCapsuleShapeType" />
+      <xs:element name="Box" type="DynamicsBoxShapeType" />
+      <xs:element name="Cylinder" type="DynamicsCylinderShapeType" />
+      <xs:element name="Triangle" type="DynamicsTriangleShapeType" />
+    </xs:choice>
+    <xs:attribute name="Mass" type="SageReal" default="0">
+      <xs:annotation>
+        <xs:documentation>
+		  The mass of the volume. Precision is not necessary, but with intercolliding objects
+		  relative masses become important.  
+	  	</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Bounciness" type="Percentage" default="30%">
+      <xs:annotation>
+        <xs:documentation>
+		  The coefficient of restitution for the object. Higher percentages cause the object to lose
+		  less energy during a collision.  
+	  	</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Spinniness" type="SageReal" default="2.0">
+      <xs:annotation>
+        <xs:documentation>
+		  A magnitude of extra angular momentum to be randomly added to objects during flinging.
+		  This is in addition to the base angular momentum generated by the fling itself.
+	  	</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="StaticFriction" type="SageReal" default="0.6">
+      <xs:annotation>
+        <xs:documentation>
+		  The coefficient of static friction. Higher values will cause objects which are in resting
+		  contact to resist sliding.  
+	  	</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="KineticFriction" type="SageReal" default="0.5">
+      <xs:annotation>
+        <xs:documentation>
+		  The coefficient of kinetic friction. Higher values will slow down objects which are
+		  sliding relative to each other.  
+	  	</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="AngularDrag" type="SageReal" default="0.1">
+      <xs:annotation>
+        <xs:documentation>
+          The coefficient of angular drag. This can be used to resist rolling.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="LinearDrag" type="SageReal" default="0.1">
+      <xs:annotation>
+        <xs:documentation>
+		  The coefficient of linear drag. This can be used to resist large ballistic trajectories.
+		  Large values will look very unrealistic.  
+	  	</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ReportContacts" type="SageBool" default="false">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies that contacts involving this object, as either body, should be reported.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ContactTag" type="DynamicsContactTag" default="NONE" />
+  </xs:complexType>
+
+  <xs:complexType name="DynamicsLifetime">
+    <xs:annotation>
+      <xs:documentation>
+		Allows an object's dynamic motion to be sapped and eventually removed after the initial
+		creation.  This can decrease computation time, as well as minimizing unrealistic behavior
+		caused by extended sliding contact.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="Delay" type="Time" default="0s">
+      <xs:annotation>
+        <xs:documentation>
+          The delay, starting with the object's creation, before any motion sapping begins.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="FadeTime" type="Time">
+      <xs:annotation>
+        <xs:documentation>
+		  The period of time, after the delay, over which the object's motion is sapped. Due to
+		  mathematic approximation, objects may come to rest well before this time has elapsed.
+		  Setting this too low will cause unrealistic sapping.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+</xs:schema>

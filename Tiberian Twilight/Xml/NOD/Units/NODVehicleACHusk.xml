@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- NOD Heavy Cannon T3 / Avatar - Husk -->
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseHusk.xml" />
+		
+		<Include
+			type="all"
+			source="ART:NUL_VehicleAC_SKN.W3X" />
+		<Include
+			type="all"
+			source="ART:NUL_VehicleAC_DIEA.W3X" />
+		<Include type="all" source="ART:NUL_VehicleAC_DMG.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NODVEHICLEAC_HUSK_NONBUILD_RADIUS" value="70.0" />
+	</Defines>
+	<GameObject
+		id="NODVehicleACHusk"
+		inheritFrom="BaseHusk"
+		HealthBoxHeightOffset="30"
+		SelectPortrait="Portrait_NOD_Vehicle_AC_tech1_Husk"
+		ButtonImage="Btn_NOD_Vehicle_AC_tech1_Husk"
+		Side="NOD"
+		EditorName="NOD_O3_Heavy_Cannon_Husk(Avatar)"
+		EditorSorting="UNIT"
+		Description="Desc:NODVehicleACHusk">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODVehicleACHusk</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="B_UArmL AC_UGLcannon02 AC_Rcannon01">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUL_VehicleAC_DIEA" />
+					<Texture
+						Original="NUL_VehicleAC"
+						New="NUL_VehicleAC_DMG" />
+					<ParticleSysBone
+						BoneName="AC_Lcannon02"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="AC_Rcannon01"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="AC_Rcannon01"
+						FXParticleSystemTemplate="NODDamagedFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NUL_VehicleAC_DIEA"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="0" />
+					<FXEvent
+						Frame="100"
+						FireWhenSkipped="true"
+						Effect="FX_NODDamageSmoke"
+						Bone="AC_UGLcannon02" />
+					<FXEvent
+						Frame="100"
+						FireWhenSkipped="true"
+						Effect="FX_NODDamageSmoke"
+						Bone="AC_Rcannon01" />				
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2">
+					<Animation
+						AnimationName="NUL_VehicleAC_DIEA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<FXEvent
+						Frame="100"
+						FireWhenSkipped="true"
+						Effect="FX_NODDamageSmoke"
+						Bone="AC_UGLcannon02" />
+					<FXEvent
+						Frame="100"
+						FireWhenSkipped="true"
+						Effect="FX_NODDamageSmoke"
+						Bone="AC_Rcannon01" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Large_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleLRG_Death" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+      <!-- This will hide the upgraded model -->
+      <LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODVehicleACHuskFunctions"/>
+
+      <!-- This will unhide the upgraded model -->
+      <SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+        <Nugget
+					ShowSubObjects="NUL_VehicleAC_upgrade"
+					Upgrade="Upgrade_Crate_Level1"
+          FadeTime="0.0s"
+          SkipFlashOnCreate="true"
+          UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+          FlashTime="1.5s"/>
+        <TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+      </SubObjectsUpgrade>
+
+      <!-- Override base capture functionality with revive specific OCL -->
+			<CaptureContain
+				id="ModuleTag_CaptureHusk"
+				OnCaptureOCL="NODVehicleACHuskReplace"
+				/>
+
+			<CreateObjectOnHealed
+				id="ModuleTag_CreateObjectOnHealed"
+				CreationList="NODVehicleACHuskReplace"/>
+
+			<AutoHealBehavior
+				id="ModuleTag_BackupSystemsHeal"
+				HealingAmount="=$MECH_HUSK_HEAL_PER_SECOND"/>
+
+			<ProjectedBuildabilityOverrideBehavior
+				id="ModuleTag_BuildabilityOverride" >
+				<Override
+					id="ProjectedBuildability_OverrideBlock">
+					<ProjectedBuildabilityInfo
+						id="ProjectedBuildability_Blocked"
+						Radius="=$NODVEHICLEAC_HUSK_NONBUILD_RADIUS" />
+				</Override>
+			</ProjectedBuildabilityOverrideBehavior>
+			
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$MECH_HUSK_HEALTH" />
+		</Body>
+		<Geometry>
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "72.1851"
+				 MinorRadius = "45.018"
+				 Height = "19.1403"
+				 ContactPointGeneration = "VEHICLE" >
+				<Offset
+					x = "53.6604"
+					y = "-1.41555"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="NOD_Avatar_VehAC_DieAnimation1" Animation="NUL_VEHICLEAC_DIEA" ExcludedMC="RECYCLED" Frame="5"/>
+				<Sound Sound="NOD_Avatar_VehAC_DieAnimation2" Animation="NUL_VEHICLEAC_DIEA" ExcludedMC="RECYCLED" Frame="106"/>	
+				<Sound Sound="NOD_Avatar_VehAC_BodyfallMS" Animation="NUL_VEHICLEAC_DIEA" ExcludedMC="RECYCLED" Frame="117"/> 
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_AvatarHusk_VehACHusk_Select" AudioType="voiceSelect"/>
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbientDamaged"/>
+			<AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbientReallyDamaged"/>
+		</AudioArraySound>
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<ProjectedBuildabilityInfo
+			id="ProjectedBuildability_DisplayOnly"
+			Radius="=$NODVEHICLEAC_HUSK_NONBUILD_RADIUS" />
+	</GameObject>
+
+	<ObjectCreationList
+		id="NodVehicleACHuskReplace">
+		<OCLModule>
+			<Modules>
+				<ClearRemovables/>
+				<ParentRelativePreOrient />
+				<SetTimedModelCondition
+					ModelCondition="USER_5"
+					Duration="2.5s"/>
+				<CreateObject
+					ObjectTemplate="NodVehicleAC"
+					DisableScoring="true"/>
+				<CopyParentExperience/>
+				<CopyParentLayer/>
+				<CopyParentUpgrades/>
+				<SetBusyState
+					Duration="2.5s"
+					DisableWhileBusy="true"/>
+				<SetHealthToParentPercent/>
+				<SetStatus
+					Status="NO_EXPERIENCE_LEVEL_ON_CREATTION"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+
+</AssetDeclaration>

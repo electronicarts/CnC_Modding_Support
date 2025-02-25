@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Tags></Tags>
+
+  <Includes>
+    <Include type="instance" source="BasePersonality.xml" />
+  </Includes>
+  
+  <AIPersonalityDefinition
+		id="CoopBasePersonality"
+    PersonalityType="CoopBasePersonality"
+    inheritFrom="BasePersonality"
+    AssaultBeaconRadius="250.0"
+    HoldObjectBeaconRadius="250.0"
+    HoldPositionBeaconRadius="250.0"
+    EmergencyManagerHandleNoIncomeAtDifficulty="EASY MEDIUM HARD BRUTAL"
+    EmergencyManagerHandleNoConyardAtDifficulty="EASY MEDIUM HARD BRUTAL"
+    EmergencyManagerHandleUnderAttackAtDifficulty="EASY MEDIUM HARD BRUTAL"
+		SkirmishTimeTillGreeting="1.5s"
+    CoopPersonality="true"
+		>
+
+    <ResourceMultiplierCheat Percentage="100%" Difficulty="EASY"/>
+    <ResourceMultiplierCheat Percentage="200%" Difficulty="BRUTAL"/>
+
+		<BudgetState id="CoopBudget" State="CoopBudget" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+    <BudgetState id="DefenseBudget" State="DefenseBudget" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+    <BudgetState id="HeavyDefenseBudget" State="HeavyDefenseBudget" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+    <!-- Command Behavior -->
+
+    <StrategicState id="CommandAssault_Gather_Land" State="CommandAssault_Gather_Land" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+    <StrategicState id="CommandAssault_Gather_Water" State="CommandAssault_Gather_Water" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+    <StrategicState id="CommandAssault_Land" State="CommandAssault_Land" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+    <StrategicState id="CommandAssault_Water" State="CommandAssault_Water" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<StrategicState id="CommandAssault_FighterAircraft" State="CommandAssault_FighterAircraft" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+    <StrategicState id="CommandAssault_BomberAircraft" State="CommandAssault_BomberAircraft" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+		<StrategicState id="CommandHold_Land" State="CommandHold_Land" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<StrategicState id="CommandHold_Water" State="CommandHold_Water" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+    <StrategicState id="CommandHold_BomberAircraft" State="CommandHold_BomberAircraft" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+    <StrategicState id="CommandHold_FighterAircraft" State="CommandHold_FighterAircraft" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+    <StrategicState id="Command_StrikeTarget_Land" State="Command_StrikeTarget_Land" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+    <StrategicState id="Command_StrikeTarget_Water" State="Command_StrikeTarget_Water" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+    <StrategicState id="Command_StrikeTarget_BomberAircraft" State="Command_StrikeTarget_BomberAircraft" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+    <!-- Miscellaneous Behaviors -->
+    
+    <StrategicState id="CaptureLandHusks" State="CaptureLandHusks" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+    <StrategicState id="AttachedBurstDroneRemoval" State="AttachedBurstDroneRemoval" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+    <!-- StrategicDirective Feedback-->
+	  
+    <!-- Assault Feedback -->
+	  <StrategicDirectiveFeedback
+			StrategicDirective="Assault"
+			Event="Begin" 
+			FeedbackKey="PlanAttackBeaconPlaced"/>
+	  <StrategicDirectiveFeedback
+			StrategicDirective="Assault"
+			Event="Complete"
+			FeedbackKey="PlanAttackOrderComplete"/>
+	  <StrategicDirectiveFeedback
+			StrategicDirective="Assault"
+			Event="Cancel"
+			FeedbackKey="OrderCanceled"/>
+	  
+    <!-- TakePosition Feedback -->
+	  <StrategicDirectiveFeedback
+	    StrategicDirective="HoldPosition"
+	    Event="Begin"
+	    FeedbackKey="TakePositionBeaconPlaced"/>
+	  <StrategicDirectiveFeedback
+			StrategicDirective="HoldPosition"
+			Event="Complete"
+			FeedbackKey="TakePositionOrderComplete"/>
+	  <StrategicDirectiveFeedback
+			StrategicDirective="HoldPosition"
+			Event="Cancel"
+			FeedbackKey="OrderCanceled"/>
+	  
+    <!-- StrikeTarget Feedback -->
+	  <StrategicDirectiveFeedback
+			StrategicDirective="HoldObject"
+			Event="Begin"
+			FeedbackKey="StrikeTargetBeaconPlaced"/>
+	  <StrategicDirectiveFeedback
+		   StrategicDirective="HoldObject"
+		   Event="Complete"
+		   FeedbackKey="StrikeTargetOrderComplete"/>
+	  <StrategicDirectiveFeedback
+		   StrategicDirective="HoldObject"
+		   Event="Cancel"
+		   FeedbackKey="OrderCanceled"/>
+	  
+    <!-- There is no Feedback for Normal -->
+	  
+		<!-- Feedback for Skirmish / MP Game Events -->
+		<!-- For now, this is mostly just a way of translating enum values into StringHashs. Doesn't really 
+			   add much but makes the code easier. :-P -->
+		<SkirmishGameEventFeedback
+				Event="StartGame"
+				FeedbackKey="StartGame" />
+		<SkirmishGameEventFeedback
+				Event="InTrouble"
+				FeedbackKey="InTrouble" />
+		<SkirmishGameEventFeedback
+				Event="FirstSeen"
+				FeedbackKey="FirstSeen" />
+		<SkirmishGameEventFeedback
+				Event="DefeatedLocalPlayer"
+				FeedbackKey="DefeatedLocalPlayer" />
+		<SkirmishGameEventFeedback
+				Event="DefeatedByLocalPlayer"
+				FeedbackKey="DefeatedByLocalPlayer" />
+		<SkirmishGameEventFeedback
+				Event="Lost"
+				FeedbackKey="Lost" />
+		
+		<!-- Control when the InTrouble event is triggered -->
+		<InTroubleSkirmishFeedbackControl
+			OnlyIfLocalPlayerIs="ALLIES"
+			TimeoutAfterPlaying="600s"
+		  TimeBetweenScans="5s"
+		  TimeThatConditionsMustBeMet="10s"
+		  NumberOfObjectsRecentlyLost="3"
+		  TimeForNumberOfObjectLost="120s"
+			ObjectLostFilter="SkirmishAIInTroubleObjectList_ImportantStrctures" 
+		  MinPowerAdvantageEnemiesInMyBaseVsAllMyUnits="1.2" />
+
+<!--
+	moved to specific Commander xml's
+
+	<FeedbackEntry
+		FeedbackKey="PlanAttackBeaconPlaced"
+		EvaEvent="AlliedCoopGilesPlanAttack"
+		FeedbackTo="ALLIES"/>
+	<FeedbackEntry
+		FeedbackKey="PlanAttackOrderComplete"
+		EvaEvent="AlliedCoopGilesPlanAttackDone"
+		FeedbackTo="ALLIES"/>
+	<FeedbackEntry
+		FeedbackKey="TakePositionBeaconPlaced"
+		EvaEvent="AlliedCoopGilesTakePos"
+		FeedbackTo="ALLIES"/>
+	<FeedbackEntry
+		FeedbackKey="TakePositionOrderComplete"
+		EvaEvent="AlliedCoopGilesTakePosDone"
+		FeedbackTo="ALLIES"/>
+	<FeedbackEntry
+		FeedbackKey="StrikeTargetBeaconPlaced"
+		EvaEvent="AlliedCoopGilesStrikeThis"
+		FeedbackTo="ALLIES"/>
+	<FeedbackEntry
+		FeedbackKey="StrikeTargetOrderComplete"
+		EvaEvent="AlliedCoopGilesStrikeThisDone"
+		FeedbackTo="ALLIES"/>
+	<FeedbackEntry
+		FeedbackKey="OrderCanceled"
+		EvaEvent="AlliedCoopGilesAutoPilot"
+		FeedbackTo="ALLIES"/>
+-->
+
+<!--
+
+	OLD ENTRIES for X-Slice demo
+		
+	<FeedbackEntry
+				FeedbackKey="AssaultBeaconPlaced"
+				EvaEvent="AlliedCoopAssaultBeaconPlaced"
+				Text="AlliedCoopAssaultBeaconPlaced"
+				FeedbackTo="ALLIES"/>
+    <FeedbackEntry
+				FeedbackKey="DefendBeaconPlaced"
+				EvaEvent="AlliedCoopDefendBeaconPlaced"
+				Text="AlliedCoopDefendBeaconPlaced"
+				FeedbackTo="ALLIES"/>
+	  <FeedbackEntry
+				FeedbackKey="OrderAssaultComplete"
+				EvaEvent="AlliedCoopCompleteAssault"
+				FeedbackTo="ALLIES"/>
+	  <FeedbackEntry
+				FeedbackKey="OrderCanceled"
+				EvaEvent="AlliedCoopOrderCanceled"
+				FeedbackTo="ALLIES"/>
+	  <FeedbackEntry
+				FeedbackKey="OrderHoldComplete"
+				EvaEvent="AlliedCoopCompleteHold"
+				FeedbackTo="ALLIES"/>
+-->
+    
+  </AIPersonalityDefinition>
+
+	<!-- Used by the InTroubleSkirmishFeedbackControl block above. These are the objects we look at when 
+	     deciding if we are losing too many structures too fast - basically, we only count important structures -->
+	<ObjectFilterAsset id="SkirmishAIInTroubleObjectList_ImportantStrctures">
+		<Filter 
+			 Rule="ANY" 
+			 Include="STRUCTURE"
+			 Exclude="FS_BASE_DEFENSE DEFENSIVE_WALL WALL_UPGRADE WALL_PIECE WALL_HUB WALL_SEGMENT SCALEABLE_WALL WALL_GATE SUMMONED GARRISON NEUTRAL_TECH">
+		</Filter>
+	</ObjectFilterAsset>
+
+</AssetDeclaration>

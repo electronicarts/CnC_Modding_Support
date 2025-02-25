@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Data Includes -->
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+
+		<Include type="all"	source="ART:NUM_AircraftJ_SKN.w3x" />
+		<Include type="all"	source="ART:NUM_AircraftJ_DMG.xml" />
+		<Include type="all"	source="ART:NUM_AircraftJ_AIDD.w3x" />
+	</Includes>
+
+	<!--    /////////////////////////////////////   -->
+	<!--		The Collapsing ship which falls					-->
+	<!--		from the sky when the unit is killed		-->
+	<GameObject
+		id="NODAircraftJ_Dying"
+		EditorName="NODAircraftJ_Dying"
+		Description="Desc:NODAircraftJ_Dying"
+		Side="NOD"
+		KindOf="=$BASE_DYING_AIRCRAFT_KINDOF">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				OkToChangeModelColor="true" >
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUM_AircraftJ_SKN"/>
+					<Texture
+						Original="NUM_AircraftJ"
+						New="NUM_AircraftJ_DMG" />
+					<ParticleSysBone
+						BoneName="NAJ_Right"
+						FXParticleSystemTemplate="VenomDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAJ_Hull"
+						FXParticleSystemTemplate="VenomDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NUM_AircraftJ_AIDD"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.2"
+						AnimationSpeedFactorMax="0.2" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<Physics
+				id="ModuleTag_Physics"
+				TumbleRandomly="true"
+				MaxXRotationVelocity="40"
+				MaxYRotationVelocity="30"
+				MaxZRotationVelocity="0"
+				KillWhenRestingOnGround="true"/>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleMED_Death" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Aircraft_Small_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+			<FireWeaponWhenDead
+				id="ModuleTag_DeathWeapon"
+				DeathWeapon="NODDyingAircraft_DeathWeapon_Medium"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODAircraftJFunctions" />
+			<!-- Accuracy Boost upgrade.-->
+
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_NODAircraftJDamageBuff</TriggeredBy>
+				<Nugget
+					ShowSubObjects="NUM_AircraftJ_UPG"
+					Upgrade="Upgrade_NODAircraftJDamageBuff"
+					SkipFlashOnCreate="true"/>
+			</SubObjectsUpgrade>
+			
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="Tag_PropBody"/>
+		</Body>
+
+		<xi:include	href="DATA:NOD/Includes/NODAircraftJGeometry.xml" />
+
+		<VisionInfo
+			VisionRange="250"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

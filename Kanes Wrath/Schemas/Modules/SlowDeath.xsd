@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+  <xs:simpleType name="SlowDeathPhaseType">
+    <xs:restriction base="xs:string" >
+      <xs:enumeration value="INITIAL" />
+      <xs:enumeration value="MIDPOINT" />
+      <xs:enumeration value="FINAL" />
+      <xs:enumeration value="HIT_GROUND" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="SlowDeathBaseType">
+    <xs:attribute name="Type" type="SlowDeathPhaseType" />
+  </xs:complexType>
+
+  <xs:complexType name="SlowDeathFXListType">
+    <xs:complexContent>
+      <xs:extension base="SlowDeathBaseType">
+				<xs:sequence>
+					<xs:element name="FX" type="FXListRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SlowDeathOCLType">
+    <xs:complexContent>
+      <xs:extension base="SlowDeathBaseType">
+      <xs:sequence>
+        <xs:element name="OCL" type="ObjectCreationListRef" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SlowDeathWeaponType">
+    <xs:complexContent>
+      <xs:extension base="SlowDeathBaseType">
+      <xs:sequence>
+        <xs:element name="Weapon" type="WeaponRef" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SlowDeathSoundType">
+    <xs:complexContent>
+      <xs:extension base="SlowDeathBaseType">
+        <xs:attribute name="List" type="AudioEventInfoRefList" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SlowDeathBehaviorModuleData">
+    <xs:complexContent>
+      <xs:extension base="UpdateModuleData">
+		<xs:sequence>
+			<xs:element name="FX" type="SlowDeathFXListType" minOccurs="0" maxOccurs="4" />
+			<xs:element name="OCL" type="SlowDeathOCLType" minOccurs="0" maxOccurs="4" />
+			<xs:element name="Weapon" type="SlowDeathWeaponType" minOccurs="0" maxOccurs="4" />
+			<xs:element name="Sound" type="SlowDeathSoundType" minOccurs="0" maxOccurs="4" />
+			<xs:element name="DieMuxData" type="DieMuxDataType" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<!-- hack attribute for update/upgrade problem -->
+
+        <xs:attribute name="SinkRate" type="Velocity" default="0" />
+		<xs:attribute name="ProbabilityModifier" type="SageInt" default="10" />
+		<xs:attribute name="ModifierBonusPerOverkillPercent" type="Percentage" default="0" />
+		<xs:attribute name="SinkDelay" type="Time" default="0s" />
+		<xs:attribute name="SinkDelayVariance" type="Time" default="0s" />
+		<xs:attribute name="DestructionDelay" type="Time" default="0s" />
+		<xs:attribute name="DestructionDelayVariance" type="Time" default="0s" />
+		<xs:attribute name="DecayBeginTime" type="Time" default="0s" />
+
+        <xs:attribute name="FlingForce" type="SageReal" default="0" />
+		<xs:attribute name="FlingForceVariance" type="SageReal" default="0" />
+		<xs:attribute name="FlingPitch" type="Angle" />
+		<xs:attribute name="FlingPitchVariance" type="Angle" />
+
+		<xs:attribute name="DeathFlags" type="ModelConditionBitFlags" />
+		<xs:attribute name="ShadowWhenDead" type="SageBool" default="false" />
+
+        <xs:attribute name="Fade" type="SageBool" default="false" />
+        <xs:attribute name="FadeTime" type="Time" default="0s" />
+        <xs:attribute name="FadeDelay" type="Time" default="0s" />
+
+        <xs:attribute name="DeathTypes" type="ModelConditionBitFlags" />
+        <xs:attribute name="DeathObjectStatusBits" type="ObjectStatusBitFlags" />
+      </xs:extension>
+	</xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>

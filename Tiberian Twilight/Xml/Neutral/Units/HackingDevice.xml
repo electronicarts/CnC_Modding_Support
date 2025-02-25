@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	
+	<!-- Hacking Device -->
+	
+	<Includes>
+		<Include type="all"	source="ART:FXHealingSpotlight.xml" />
+		<Include type="all"	source="ART:FXGDIHealingBeam.xml" />
+		
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="HackingDevice"
+		Side="Neutral"
+		KindOf="CAN_ATTACK UNATTACKABLE NOT_AUTOACQUIRABLE RESIST_EMP NO_DRAW_PLAYER_NAME IGNORES_SELECT_ALL"
+		EditorName="HackingDevice"
+		EditorSorting="MISC_MAN_MADE" >
+		<DisplayName>HackingDevice</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+			<!-- This is the 'hacking' laser -->
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				LaserWidth="5"
+				WeaponSlotID="1"
+				LaserStateID="1"				
+				Texture1_UTile="1"
+				Texture1_VTile="5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="5"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30">
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDIHealingBeam</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+			
+		</Draws>
+		<Behaviors>
+
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="HackingDeviceWeapon" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			
+			<LaserState
+				id="ModuleTag_LaserState"
+				LaserId="1" />
+
+			<!-- used to attach the hacking device to one object and then fire it at the other object -->
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Range="50.0"
+				Flags="STICK_TO_PARENT USE_GEOMETRY TELEPORT SCAN_FOR_NEW_PARENT_WHEN_DETACHED FIND_BEST_PARENT">
+				<ObjectFilter
+					Rule="ALL"
+					Include="CRAWLER">
+				</ObjectFilter>				
+			</AttachUpdate>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>		
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false" />
+			</AIUpdate>
+		</AI>		
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>		
+		<Geometry 
+			IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0.8"></Shape>
+		</Geometry>
+		<VisionInfo 
+			VisionRange="0" />
+	</GameObject>
+
+	<WeaponTemplate
+		id="HackingDeviceWeapon"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_INFANTRY ANTI_AIRBORNE_VEHICLE"
+		AcceptableAimDelta="180d" 
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		AttackRange="99999.0"
+		WeaponSpeed="9999"
+		AutoReloadsClip="AUTO"
+		ReAcquireDetailType="PER_CLIP"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_BUILDINGS"
+		CanFireWhileMoving="true">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="1.0s"
+				LaserId="1"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+</AssetDeclaration>

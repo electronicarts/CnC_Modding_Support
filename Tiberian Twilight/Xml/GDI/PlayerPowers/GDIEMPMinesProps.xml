@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:FXInvisBone.w3x" />
+
+		<Include type="instance" source="DATA:GDI/Props/GDIDropPodBaseSML.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseSpecialPowerFlare.xml" />
+		<Include type="all" source="ART:TargetingDecalEMPMineDrop.xml" />
+	</Includes>
+
+	<GameObject
+		id="GDIEMPMines_DropPod"
+		inheritFrom="GDIDropPodBaseSML"
+		EditorName="GDIEMPMines_DropPod">
+		<Behaviors>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_BuildGDIEMPMines" >
+				<DieMuxData
+					DeathTypes="SUICIDED" />
+			</CreateObjectDie>
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate">
+				<FireWeaponNugget
+					WeaponName="GDIEMPMines_DropPodWeapon"
+					FireDelay="1.0s"
+					OneShot="true">
+				</FireWeaponNugget>
+			</FireWeaponUpdate>
+
+			<FXListBehavior
+				id="ModuleTag_FXList"
+					xai:joinAction="Remove">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FXListBehavior>
+
+			<FXListBehavior
+				id="ModuleTag_FXList2">
+				<Event Index="onDeath" FX="FX_GDI_Power_EMPMineDropDeployed_AudioOnly"/>
+			</FXListBehavior>
+		</Behaviors>
+		<!--
+		<AudioArraySound xai:joinAction="Remove"/>
+		-->
+	</GameObject>
+
+	<GameObject
+		id="GDIEMPMines_DropPodDecal"
+		Side="GDI"
+		EditorSorting="MISC_MAN_MADE"
+		KindOf="IMMOBILE NO_COLLIDE INERT NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY CANNOT_BE_DETECTED RESIST_EMP"
+		EditorName="GDIEMPMines_DropPodDecal">
+		<DisplayName>GDIEMPMines_DropPodDecal</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Decal"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ALPHA_DECAL_DYNAMIC"
+						SizeX="200"
+						SizeY="200"
+						OpacityStart="0"
+						OpacityFadeInTime="0.5s"
+						OpacityPeak="0.6"
+						OpacityFadeOutTime="0.5s"
+						OpacityEnd="0"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						IsRotatingWithObject="false"
+						Texture="TargetingDecalEMPMineDrop"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<SelectiveVisibilityBehavior
+				id="ModuleTag_SelectiveVisibility"
+				UpdateRate="0.5s"
+				AllowedPlayers="ALLIES" />
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="2.0s"
+				MaxLifetime="2.0s"
+				DeathType="NORMAL" />
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+	</GameObject>
+
+	<GameObject
+		id="GDIEMPMines_DropPodWarningFlare"
+		inheritFrom="BaseSpecialPowerFlare"
+		EditorName="GDIEMPMines_DropPodWarningFlare">
+		<DisplayName>GDIEMPMines_DropPodWarningFlare</DisplayName>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<Event
+					Index="onCreate"
+					FX="FX_GDIWarningFlare" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_GDIEMPMines_DropPod">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+		</Behaviors>
+	</GameObject>
+	
+	
+	<WeaponTemplate
+		id="GDIEMPMines_DropPodWeapon"
+		AttackRange="10000"
+		RequiredAntiMask="ANTI_VEHICLE ANTI_INFANTRY"
+		FireFX="FX_GDI_MineDrop" 
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<DamageNugget
+				Damage="200.0"
+				Radius="200"
+				DamageType="BLAST"
+				DeathType="DETONATED"
+				PartitionFilterTestType="CIRCLE" />
+		</Nuggets>
+	</WeaponTemplate>
+</AssetDeclaration>

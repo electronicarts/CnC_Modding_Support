@@ -1,0 +1,89 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// Scrape script for Xenon MSAA
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_MSAA_SCRAPEH
+#define SCRAPE_SCRIPT_MSAA_SCRAPEH
+
+
+// Do predicated tiling anti-aliasing
+//#define PREDICATED_TILING
+
+
+#if !defined PREDICATED_TILING
+// Non-predicated tiling MSAA.
+var shader PostEffectMSAA PostFX_MSAA.fx
+#endif
+
+
+#if defined PREDICATED_TILING
+// Rendertargets and config for 2x MSAA rendering
+var surface Msaa2xFrameBuffer edram      $WW3D.FrameBufferSize.x 640 $WW3D.FrameRenderTargetSurfaceFormat 2x
+var surface Msaa2xDepthBuffer edramdepth $WW3D.FrameBufferSize.x 640 D24FS8 2x
+var surfacegroup Msaa2xSurfaces Msaa2xFrameBuffer Msaa2xDepthBuffer
+#endif
+
+
+proc beginMSAATiling
+	if WW3D IsAntiAliasingEnabled
+#if defined PREDICATED_TILING
+		// Set targets to tiling buffers in EDRAM
+		settarget 0 Msaa2xFrameBuffer
+		setdepth Msaa2xDepthBuffer
+		clearbegintiling
+#else
+		// Only clear the color target, use the z-buffer from the 'UpdateDepthMap' pass, this is like doing a z pre-pass. Helps on rejecting pixels when
+		// rendering the terrain and objects hidden by others.
+		clearcolor
+#endif
+	else
+		clear
+	endif
+endproc
+
+
+proc endMSAATiling
+	if WW3D IsAntiAliasingEnabled
+#if defined PREDICATED_TILING
+		// Revert EDRAM targets back to non-tiled.
+		if WW3D IsHdrEnabled
+			resolveendtiling PostEffectFrameBufferTexture 0 0 HDR_RESOLVE_EXPONENT color0 // convert from float7e3 to fixed16, decreasing luminance by 2^3
+		else
+			resolveendtiling PostEffectFrameBufferTexture color0
+		endif
+
+		// Revert EDRAM targets back to non-tiled.
+		callproc setFrameRenderTarget
+		callproc setFrameDepthBuffer
+		
+		// Copy back resolved textures back into EDRAM.
+		settexture PostEffect FrameBufferTexture PostEffectFrameBufferTexture
+		setshader PostEffectBloomShader Copy
+		renderquad
+#else
+		beginevent ResolveHDRBuffer
+			// If HDR is enabled we still need to decrease the intensities for the frame buffer ranges
+			if WW3D IsHdrEnabled
+				resolve PostEffectFrameBufferTexture 0 0 HDR_RESOLVE_EXPONENT color0 // convert from float7e3 to fixed16, decreasing luminance by 2^3
+			else
+				resolve PostEffectFrameBufferTexture color0
+			endif
+		endevent ResolveHDRBuffer
+
+		beginevent UpdatePostFXMSAA
+			// Run an anti-alias pass on the framebuffer
+			settexture PostEffect FrameBufferTexture PostEffectFrameBufferTexture
+			settexture PostEffect DepthBufferTexture ZBufferTexture
+			setshader PostEffectMSAA AntiAlias
+			renderquad
+		endevent UpdatePostFXMSAA
+#endif
+	endif
+endproc
+
+
+
+
+#endif // SCRAPE_SCRIPT_MSAA_SCRAPEH
+

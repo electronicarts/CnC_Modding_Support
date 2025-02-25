@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+		<Include
+			type="all"
+			source="ART:ABCrane_SKN.w3x" />				
+		<Include
+			type="all"
+			source="ART:ABCrane_IDLA.w3x" />				
+		<Include
+			type="all"
+			source="ART:ABCrane_FX.w3x" />				
+
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="AlliedCrane"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_GDICrane"
+		ButtonImage="Portrait_GDICrane"
+		Side="Allies"
+		EditorSorting="STRUCTURE"
+		BuildTime="15"
+		CommandSet="AlliedCraneCommandSet"
+		KindOf="+CONSTRUCTION_YARD +FS_FACTORY +CRANE "
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="AlliedCrane"
+		EnergyProduction="0"
+		Description="Desc:AlliedCrane"
+		TypeDescription="Type:AlliedCrane">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:AlliedCrane</DisplayName>
+		<GameDependency>
+			<RequiredObject>AlliedConstructionYard</RequiredObject>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="1500"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SubStructureArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="CENTER" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABCrane_SKN" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE DO_NOT_PLAY_WHEN_UNPOWERED"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="ABCrane_IDLA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+						
+<!-- DRAW PARTICLES -->
+
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABCrane_FX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ABCrane_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ABCrane_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+
+				</ModelConditionState>
+			</ScriptedModelDraw>						
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestructionMain"
+				AssociatedModule="ModuleTag_Draw"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="SovietPowerPlant_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_SmallBuildingDieExplosion" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				Type="MAIN_STRUCTURE"
+				MaxQueueEntries="1" />
+			<ProductionUpdate
+				id="ModuleTag_OtherProductionUpdate"
+				Type="OTHER_STRUCTURE"
+				MaxQueueEntries="1" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<SubStructureBehavior
+					 id="ModuleTag_SubStructureBehavior" />
+
+			<TechUpgradeReceiver
+				id="ModuleTag_TechUpgradeReceiver_Tech2"
+				Radius="600.0"
+				DistanceType="RECTANGULAR">
+				<TriggeredBy>Upgrade_AlliedTech2</TriggeredBy>
+				<ObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES" >
+					<IncludeThing>AlliedConstructionYard</IncludeThing>
+				</ObjectFilter>
+			</TechUpgradeReceiver>
+			<TechUpgradeReceiver
+				id="ModuleTag_TechUpgradeReceiver_Tech3"
+				Radius="600.0"
+				DistanceType="RECTANGULAR">
+				<TriggeredBy>Upgrade_AlliedTech3</TriggeredBy>
+				<ObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES" >
+					<IncludeThing>AlliedConstructionYard</IncludeThing>
+				</ObjectFilter>
+			</TechUpgradeReceiver>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="15.0"
+				Height="25.0">
+				<Offset
+					x="0"
+					y="0"
+					z="0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="-13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="-13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="-13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="GDI_CraneSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+<!--
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="400" />
+	</GameObject>
+</AssetDeclaration>

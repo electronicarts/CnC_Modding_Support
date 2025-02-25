@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:SURepairDrone_SKN.w3x" />
+		<Include type="all"	source="ART:SURepairDrone_IDLA.w3x" />
+
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseRepairDrone.xml" />
+	</Includes>
+	<GameObject
+		id="SovietRepairDrone"
+		inheritFrom="BaseRepairDrone"
+		Side="Soviet"
+		KindOf="=$FACTORY_REPAIR_DRONE_KINDOF"
+		EditorName="SovietRepairDrone"
+		Description="Desc:SovietRepairDrone">
+		
+
+		
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SURepairDrone_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="SURepairDrone_IDLA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+	
+			</ScriptedModelDraw>
+		</Draws>
+		
+				<Behaviors>
+			<SlavedUpdate
+				id="ModuleTag_SlavedUpdate"
+				LeashRange="=$SOVIET_REPAIR_DRONE_LEASH_DISTANCE"
+				GuardMaxRange="=$SOVIET_REPAIR_DRONE_LEASH_DISTANCE"
+				GuardWanderRange="50"
+				AttackRange="0"
+				UseSlaverAsControlForEvaObjectSightedEvents="false" />
+			<PassiveAreaEffectBehavior
+				id="ModuleTag_PassiveAreaEffect"
+				EffectRadius="0"
+				HealingPointsPerSecond="20"
+				AffectAttached="true"
+				AffectUnderAttack="true"
+				NonStackable="false"
+				HealFX="FX_Repair" >
+				<AllowFilter
+					Rule="ANY"
+					Include="VEHICLE AIRCRAFT HUGE_VEHICLE"
+					Relationship="ALLIES" />
+			</PassiveAreaEffectBehavior>
+			<SlowDeath
+				id="ModuleTag_Death"
+				DestructionDelay="3s"
+				Fade="true"
+				FadeTime="3s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Range="=$SOVIET_REPAIR_DRONE_LEASH_DISTANCE"
+				CloseEnoughRange="20.0"
+				InitialAttachDelay="4.0s"
+				ParentStatus="TARGETED_FOR_REPAIR" 
+				ParentStatusAttached="UNDERGOING_REPAIR"
+				Flags="STICK_TO_PARENT DETACH_WHEN_PARENT_OUT_OF_SLAVE_RANGE PARENT_MUST_BE_FULL_HEALTH_TO_DETACH SCAN_FOR_NEW_PARENT_WHEN_DETACHED FIND_BEST_PARENT UNCONTAINED_ONLY ONE_ATTACH_PER_PARENT USE_GEOMETRY DETACH_WHEN_PARENT_HEALED"
+				>
+				<ObjectFilter
+					Rule="ANY"
+					Include="VEHICLE AIRCRAFT HUGE_VEHICLE"
+					Relationship="ALLIES" />
+			</AttachUpdate>
+			<Physics
+				id="ModuleTag_Physics" />
+		</Behaviors>
+<!--
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Soviet_RepairDrone_sparks_delayedLoop">
+				<ModelConditionSound Sound="GDI_RepairDrone_sparks_delayedLoop" RequiredFlags="ATTACHED" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+-->
+	</GameObject>
+</AssetDeclaration>

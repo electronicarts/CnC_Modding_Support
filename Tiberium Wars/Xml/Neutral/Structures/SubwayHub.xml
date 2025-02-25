@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:CBSubStn.w3x" />
+		<Include
+			type="all"
+			source="ART:CBSubStn_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:CBSubStn_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:CBSubStn_D3.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+	</Includes>
+	<GameObject
+		id="SubwayHub"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_TechBuildingSubwayHub"
+		ButtonImage="Portrait_TechBuildingSubwayHub"
+		Side="Neutral"
+		BuildTime="15"
+		BuildCost="1500"
+		EditorSorting="STRUCTURE"
+		CommandSet="EmptyCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY NOT_SELLABLE"
+		RadarPriority="STRUCTURE"
+		EditorName="SubwayHub"
+		Description="Desc:TechBuildingSubwayHub">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechBuildingSubwayHub</DisplayName>
+		<ArmorSet
+			Armor="StructureArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="CBSubStn" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="CBSubStn_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="CBSubStn_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="CBSubStn_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBSubStn_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBSubStn_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="CBSubStn_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="CBSubStn_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<CaptureBehavior
+				id="ModuleTag_CaptureBehavior" 
+				SlavedCaptureObject="SubwayNode" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"
+				AILuaEventsList="BuildingPowerFunctions">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3000.0"
+				InitialHealth="3000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="74.8206"
+				MinorRadius="29.6907"
+				Height="36.8165">
+				<Offset
+					x="7.16693"
+					y="1.15036"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="13.6577"
+				MinorRadius="68.2886"
+				Height="38.0041">
+				<Offset
+					x="-20.7423"
+					y="-3.00634"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="18.4082"
+				MinorRadius="39.7855"
+				Height="39.1917">
+				<Offset
+					x="-50.433"
+					y="10.0576"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="37.5561"
+				MinorRadius="37.5561"
+				Height="36.8165">
+				<Offset
+					x="-18.9609"
+					y="79.5338"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="37.5561"
+				MinorRadius="37.5561"
+				Height="36.8165">
+				<Offset
+					x="-18.9609"
+					y="-79.7626"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-48.6218"
+					y="-95.0544"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="77.1926"
+					y="-22.5581"
+					z="32.9842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="77.1926"
+					y="22.4942"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-48.6218"
+					y="104.946"
+					z="32.9842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-48.6218"
+					y="-95.0544"
+					z="32.9842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="77.1926"
+					y="-22.5581"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="77.1926"
+					y="22.4942"
+					z="32.9842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-48.6218"
+					y="104.946"
+					z="0.0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="SubwayHub_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+	</GameObject>
+</AssetDeclaration>

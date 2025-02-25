@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags/>
+	<Includes>
+		<Include type="instance" source="DATA:System/DynamicsSettings.xml" />
+		<Include type="all" source="DATA:EP1/Includes/FactionFlingableProps.xml" />
+		<Include type="all" source="DATA:EP1/Includes/YurikoOverrides_JapanUnits.xml" />
+		<Include type="all" source="DATA:EP1/Includes/YurikoOverrides_JapanStructures.xml" />
+		<Include type="all" source="DATA:EP1/Includes/YurikoOverrides_Audio.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml"/>
+		<Include type="instance" source="DATA:Sounds/BaseSoundEffect.xml"/>
+		<Include type="instance" source="DATA:Japan/Units/JapanAntiVehicleVehicleTech3.xml" />
+		<Include type="instance" source="DATA:EP1/Japan/Structures_Campaign/JapanYurikoBarracks.xml" />
+		<Include type="instance" source="DATA:EP1/Japan/Structures_Campaign/JapanYurikoWarFactory.xml" />
+		<Include type="instance" source="art:fxjapanlasermuzzle.xml" />
+		<Include type="all" source="ART:scmovehint_pink.w3x"/>
+		<Include type="all" source="ART:scmovehint_attack_pink.w3x"/>
+		<Include type="instance" source="DATA:UI\SettingsCommon.xml"/>
+	</Includes>
+
+	<!-- Pink Move Hint -->
+
+	<UIDecalDestinationMarker
+		  id="UIDecalDestinationMarker">
+		<DefaultRenderInfo
+					  Model="SCMoveHint_Pink">
+			<Color R="1.0" G="1.0" B="1.0"/>
+		</DefaultRenderInfo>
+		<DestinationTypeSettings
+					  DestinationType="Aggressive">
+			<RenderInfo
+							  Model="SCMoveHint_Attack_Pink">
+				<Color R="1.0" G="1.0" B="1.0"/>
+			</RenderInfo>
+		</DestinationTypeSettings>
+	</UIDecalDestinationMarker>
+
+
+	<!-- increase the allocations for yuriko missions, as they use a lot of dynamics, also add a global island for intercolliding props. -->
+	<DynamicsSettings
+		id="Settings_Dynamics"
+		MaximumContacts="2560"
+		MaximumJoints="256"
+		CreateGlobalIsland="true" />
+
+  <!-- Make the Rocket Angel Lock Down work on friendlies -->
+  <WeaponTemplate
+    id="JapanAntiVehicleInfantryTech3LockDownGun"
+    inheritFrom="JapanAntiVehicleInfantryTech3LockDownGun"
+    RadiusDamageAffects="+ALLIES"/>
+
+
+	<GameObject
+		id="JapanAntiVehicleVehicleTech3"
+		inheritFrom="JapanAntiVehicleVehicleTech3"
+		BuildTime="=$MED_BUILD_TIME">
+		<VisionInfo
+			VisionRange="=$MED_RANGE_VIS"/>
+	</GameObject>
+
+	<GameObject
+		id="JapanYurikoWarfactory" 
+		inheritFrom="JapanYurikoWarfactory">
+		<Behaviors>
+			<CreateObjectsDie
+			id="ModuleTag_CreateOccupiedDie"
+			xai:joinAction="Remove"/>
+		</Behaviors>
+	</GameObject>
+
+	<!-- Exploding Barrel Weapon Override -->
+	<WeaponTemplate
+	id="ExplodingBarrelWeapon"
+	inheritFrom="ExplodingBarrelWeapon" 
+	RadiusDamageAffects="ALLIES ENEMIES NEUTRALS">
+		<Nuggets>
+			<DamageNugget
+					id="DefaultDamageNugget"   
+					Damage="1000"
+					  Radius="100"
+					  DamageType="GRENADE"
+					  DeathType="NORMAL">
+				<SpecialObjectFilter
+						Rule="ALL"
+						Exclude="">
+					<ExcludeThing>JapanYurikoTech1</ExcludeThing>
+					<ExcludeThing>JapanYurikoTech3</ExcludeThing>
+				</SpecialObjectFilter>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Rocket Angel Saturation Overrides -->
+
+	<FXParticleSystemTemplate ParticleTexture="FXJapanLaserMuzzle" PerParticleAttachedSystem="" Priority="ALWAYS_RENDER" SystemLifetime="1" Type="GPU_PARTICLE" id="JapanLockDownHit">
+		<Lifetime High="50" Low="50"/>
+		<Size High="40" Low="20"/>
+		<BurstCount High="1.5" Low="0"/>
+		<Colors>
+			<Color Frame="2" RelativeAge="19.999998">
+				<Color b="0.847059" g="0.733333" r="0.427451"/>
+			</Color>
+			<Color Frame="3" RelativeAge="100">
+				<Color b="0" g="0" r="0"/>
+			</Color>
+			<ColorScale High="2" Low="1"/>
+		</Colors>
+		<Physics>
+			<Default/>
+		</Physics>
+		<Draw>
+			<Gpu RandTex="1" SingleRow="1" SpeedMultiplier="1"/>
+		</Draw>
+		<Volume>
+			<Sphere IsHollow="true" Radius="1"/>
+		</Volume>
+		<Velocity>
+			<Ortho>
+				<Position>
+					<x High="0" Low="0"/>
+					<y High="0" Low="0"/>
+					<z High="0" Low="0"/>
+				</Position>
+			</Ortho>
+		</Velocity>
+		<Event/>
+		<Update>
+			<Default>
+				<SizeRate High="0.2" Low="-0.2"/>
+				<SizeRateDamping High="1" Low="1"/>
+				<AngleZ High="7" Low="0"/>
+				<AngularDampingXY High="1" Low="1"/>
+			</Default>
+		</Update>
+	</FXParticleSystemTemplate>
+
+
+	<!-- BEGIN SOUND OVERRIDES -->
+	<!-- BEGIN SOUND OVERRIDES -->
+
+	<AudioEventOverridable
+	id="Tank_Land_MoveLoop"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="35"
+	VolumeShift="-5"
+	MinRange="100"
+	MaxRange="450"
+	Limit="3"
+	Control="LOOP FADE_ON_KILL"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+	<PitchShift
+	Low="-5"
+	High="5" />
+		<Sound>WTankLand_moveLpA</Sound> <Sound>WTankLand_moveLpB</Sound> <Sound>WTankLand_moveLpC</Sound> <Sound>WTankLand_moveLpD</Sound> <Sound>WTankLand_moveLpE</Sound> <Sound>WTankLand_moveLpF</Sound> <Sound>WTankLand_moveLpG</Sound> <Sound>WTankLand_moveLpH</Sound> <Sound>WTankLand_moveLpI</Sound> 
+	</AudioEventOverridable>
+
+	<AudioEventOverridable
+	id="JAP_Sentinel_GlaiveImpact"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="=$WEAPON_IMPACT - 10"
+	VolumeShift="-10"
+	MaxRange="450"
+	Limit="3"
+	Control="INTERRUPT"
+	Priority="HIGH"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+	<NonInterruptibleTime Low="0.0s" High="1.5s" />
+	<Delay Low="0" High="33" />
+	<PitchShift
+	Low="-15"
+	High="-5" />
+		<Sound>JUSenti_weapImpa1a</Sound> <Sound>JUSenti_weapImpa1b</Sound> <Sound>JUSenti_weapImpa1c</Sound> <Sound>JUSenti_weapImpa1d</Sound> <Sound>JUSenti_weapImpa1e</Sound> 
+		<Sound>JUSenti_weapImpa1f</Sound>
+	</AudioEventOverridable>
+
+	<AudioEventOverridable
+	id="JAP_Sentinel_GlaiveImpact2"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="=$WEAPON_IMPACT + 10"
+	VolumeShift="-10"
+	MaxRange="450"
+	Limit="3"
+	Control="INTERRUPT"
+	Priority="HIGH"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+	<NonInterruptibleTime Low="0.0s" High="0.8s" />
+	<PitchShift Low="-15" High="-5" />
+		<Sound>JUArche_weapImpa1a</Sound> <Sound>JUArche_weapImpa1b</Sound> <Sound>JUArche_weapImpa1c</Sound> <Sound>JUArche_weapImpa1d</Sound> <Sound>JUArche_weapImpa1e</Sound> 
+	</AudioEventOverridable>
+
+	<AudioEventOverridable
+	id="JAP_Engineer_MovStep"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="25"
+	VolumeShift="-10"
+	MaxRange="500"
+	Limit="3"
+	Priority = "LOW"
+	Control = "INTERRUPT"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+	<NonInterruptibleTime Low="0.0s" High="0.5s" />	
+	<PitchShift Low="-5" High="5" />
+	<Delay Low="0" High="33" />	
+		<!-- Y01 and Y03 -->
+		<Sound>JUEngineer_footstepA</Sound> <Sound>JUEngineer_footstepB</Sound> <Sound>JUEngineer_footstepC</Sound> <Sound>JUEngineer_footstepD</Sound> <Sound>JUEngineer_footstepE</Sound> 
+	</AudioEventOverridable>
+
+	<AudioEventOverridable id="FootstepDirt" inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume = "25"
+	VolumeShift = "-10"
+	MaxRange="500"
+	Limit = "3"
+	Priority = "LOW"
+	Control = "INTERRUPT"
+	Type = "WORLD SHROUDED EVERYONE"
+	SubmixSlider = "SOUNDFX" >
+	<NonInterruptibleTime Low="0.0s" High="0.5s" />	
+	<PitchShift Low = "-5" High = "5" />
+	<Delay Low = "0" High = "35" />
+		<!-- Y01 and Y03 -->
+		<Sound>JUImper_footstepA</Sound> <Sound>JUImper_footstepB</Sound> <Sound>JUImper_footstepC</Sound> <Sound>JUImper_footstepD</Sound> <Sound>JUImper_footstepE</Sound> 
+	</AudioEventOverridable>
+
+	<AudioEventOverridable
+	id="JAP_Tankbuster_MovStep"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="25"
+	VolumeShift="-10"
+	MaxRange="500"
+	Limit="3"
+	Priority = "LOW"
+	Control = "INTERRUPT"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+	<NonInterruptibleTime Low="0.0s" High="0.5s" />	
+	<PitchShift Low="-5" High="5" />
+	<Delay Low="0" High="33" />	
+		<!-- Y01 and Y03 -->
+		<Sound>JUTankB_footstepA</Sound> <Sound>JUTankB_footstepB</Sound> <Sound>JUTankB_footstepC</Sound> <Sound>JUTankB_footstepD</Sound> <Sound>JUTankB_footstepE</Sound> 
+	</AudioEventOverridable>
+
+	<AudioEventOverridable
+	id="JAP_NinjaArcher_MovStep"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="35"
+	VolumeShift="-10"
+	MaxRange="500"
+	Limit="3"
+	Priority = "LOW"
+	Control = "INTERRUPT"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+	<NonInterruptibleTime Low="0.0s" High="0.5s" />	
+	<PitchShift Low="-5" High="5" />
+	<Delay Low="0" High="33" />	
+		<!-- Y01 and Y03 -->
+		<Sound>JUArche_footstepA</Sound> <Sound>JUArche_footstepB</Sound> <Sound>JUArche_footstepC</Sound> <Sound>JUArche_footstepD</Sound> <Sound>JUArche_footstepE</Sound> 
+	</AudioEventOverridable>
+
+	<!-- reducing ranges on TankBuster burrow in/out sounds -->
+	<AudioEventOverridable
+	id="JAP_Tankbuster_BurrowIn1"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="35"
+	VolumeShift="-5"
+	Limit="1"
+	MaxRange="450"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+   	<Delay
+	Low="0"
+	High="35" />
+	<PitchShift
+	Low="-5"
+	High="5" />
+		<Sound>JUTankB_burrIn1a</Sound>
+	</AudioEventOverridable>
+	
+	<AudioEventOverridable
+	id="JAP_Tankbuster_BurrowIn2"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="35"
+	VolumeShift="-5"
+	Limit="1"
+	MaxRange="500"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+	<PitchShift
+	Low="-5"
+	High="5" />
+		<Sound>JUTankB_burrIn2a</Sound>
+	</AudioEventOverridable>
+
+	<AudioEventOverridable
+	id="JAP_Tankbuster_BurrowIn2Delayed"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="35"
+	VolumeShift="-5"
+	Limit="1"
+	MaxRange="500"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+	<Delay
+	Low="20"
+	High="25" />
+	<PitchShift
+	Low="-5"
+	High="5" />
+		<Sound>JUTankB_burrIn2a</Sound>
+	</AudioEventOverridable>
+	
+	<AudioEventOverridable
+	id="JAP_Tankbuster_BurrowOut"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="35"
+	VolumeShift="-5"
+	Limit="1"
+	MaxRange="500"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+	<Delay
+	Low="0"
+	High="5" />
+	<PitchShift
+	Low="-5"
+	High="5" />
+		<Sound>JUTankB_burrOuta</Sound>
+	</AudioEventOverridable>
+	
+	<AudioEventOverridable
+	id="JAP_Tankbuster_BurrowOut2"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="35"
+	VolumeShift="-5"
+	Limit="1"
+	MaxRange="500"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+	<Delay
+	Low="0"
+	High="5" />
+	<PitchShift
+	Low="-5"
+	High="5" />
+		<Sound>JUTankB_burrOut2a</Sound>
+	</AudioEventOverridable>
+
+	<AudioEventOverridable
+	id="JAP_Tankbuster_BurrowOut2Delayed"
+	inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+	Volume="35"
+	VolumeShift="-5"
+	Limit="1"
+	MaxRange="500"
+	Type="WORLD SHROUDED EVERYONE"
+	SubmixSlider="SOUNDFX">
+	<Delay
+	Low="20"
+	High="25" />
+	<PitchShift
+	Low="-5"
+	High="5" />
+		<Sound>JUTankB_burrOut2a</Sound>
+	</AudioEventOverridable>
+
+	<!-- END SOUND OVERRIDES -->
+	<!-- END SOUND OVERRIDES -->
+
+</AssetDeclaration>

@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+		<Include
+			type="all"
+			source="ART:CBEMP.w3x" />
+		<Include
+			type="all"
+			source="ART:CBEMPD2.w3x" />
+		<Include
+			type="all"
+			source="ART:CBEMPD3.w3x" />
+	</Includes>
+	<GameObject
+		id="ElectroMagneticPulseControlCenter"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_NeutralEMPCenter"
+		ButtonImage="Portrait_NeutralEMPCenter"
+		Side="Neutral"
+		EditorSorting="STRUCTURE"
+		CommandSet="EMPControlCenterCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH"
+		RadarPriority="STRUCTURE"
+		EditorName="ElectroMagneticPulseControlCenter"
+		Description="Desc:EMPControlCenter">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:EMPControlCenter</DisplayName>
+		<ArmorSet
+			Armor="TechStructureArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="CBEMP" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="CBEMPD3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="CBEMPD2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="CBEMP" />
+					<Texture
+						Original="CBEMP"
+						New="CBEMPD" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName=""
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="EMPCARD"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PACKING">
+					<Animation
+						AnimationName=""
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="EMPCARD"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBEMPD3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBEMPD2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="CBEMPD2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="CBEMPD3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<EngineerContain
+				id="ModuleTag_EngineerContain"
+				NameOfVoiceToUseForFriendlyEnter="VoiceEngineerRepair"
+				NameOfVoiceToUseForHostileEnter="VoiceCaptureBuilding"
+				EvaEventForRepair="BuildingRepaired"
+				EvaEventForCapture="EnemyBuildingCaptured"
+				FXForRepair="FX_Building_Repaired"
+				FXForCapture="FX_Building_Captured"
+				FXForCaptureAndReplace="FX_Building_Captured">
+				<CanEnterFilter
+					Rule="NONE">
+					<IncludeThing>GDIEngineer</IncludeThing>
+					<IncludeThing>NODSaboteur</IncludeThing>
+					<IncludeThing>AlienAssimilator</IncludeThing>
+				</CanEnterFilter>
+			</EngineerContain>
+			<OCLSpecialPower
+				id="ModuleTag_OCLSpecialPowerEMP"
+				SpecialPowerTemplate="SpecialPowerEMPControlCenter"
+				UpdateModuleStartsAttack="true"
+				AvailableAtStart="false"
+				OCL="OCL_EMPControlCenterDestroyCiviliansHumanelyObject"
+				CreateLocation="CREATE_AT_LOCATION"
+				TriggerFX="FX_EMP_ControlCenter_WeaponStart"
+			/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_WeaponFireSpecialAbilityUpdateEMP"
+				UnpackTime="2s"
+				PreparationTime="0.1s"
+				PackTime="2s"
+				SpecialPowerTemplate="SpecialPowerEMPControlCenter"
+				SpecialWeapon="EMPControlCenterWeapon"
+				WhichSpecialWeapon="1"
+			/>
+<!--
+				UnpackSound="EMP_WeaponTarget"
+				TriggerSound="EMP_WeaponTarget"
+-->
+			<AISpecialPowerUpdate
+				id="ModuleTag_EMPControlCenterAI"
+				CommandButtonName="Command_EMPControlCenterEMP"
+				SpecialPowerRadius="99999.0"
+				UnitKindOf="FS_POWER"
+				SpecialPowerAIType="SPECIAL_POWER_ENEMY_TYPE_KILLER_STRUCTURES" 
+			/>
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO"
+				AILuaEventsList="BuildingPowerFunctions">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="10000.0" />
+		</Body>
+		<!-- no worky -->
+		<!--
+   		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_EMP_WeaponTarget">
+				<ModelConditionSound Sound="EMP_WeaponTarget" RequiredFlags="UNPACKING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+-->
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="17.889"
+				MinorRadius="18.281"
+				Height="68.8869">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="17.9483" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="46.0929"
+				MinorRadius="47.1028"
+				Height="18.4735">
+				<Offset
+					x="-2.05226"
+					y="0.468147"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-36.5161"
+					y="-35.037"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="29.6288"
+					y="-35.0369"
+					z="13.1842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="29.6288"
+					y="31.108"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-36.5161"
+					y="31.108"
+					z="13.1842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-36.5161"
+					y="-35.0369"
+					z="13.1842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="29.6288"
+					y="-35.037"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="29.6288"
+					y="31.108"
+					z="13.1842" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-36.5161"
+					y="31.108"
+					z="0.0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="EMPControlCenter_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="0.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,1180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="PlayerSpellBook"
+		Side="Neutral"
+		EditorSorting="SYSTEM"
+		KindOf="SPELL_BOOK IMMOBILE IGNORES_SELECT_ALL INERT"
+		RadarPriority="NOT_ON_RADAR"
+		CommandSet="PlayerSpellBookCommandSet" 
+		EditorName="PlayerSpellBook">
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<!--Hack?-->
+			<RadarBehavior
+				id="ModuleTag_RadarBehavior" />
+			
+			<!-- Allied powers -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_ParticleCannon"
+				SpecialPowerTemplate="SpecialPowerParticleCannon"
+			/>
+			
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_AlliedFreeTrade"
+				SpecialPowerTemplate="SpecialPowerAlliedFreeTrade"
+				OnAvailableEvaEvent="FreeTradeUpradeAuthorized"
+			/>
+			<GiveProductionBonusSpecialPower
+				id="ModuleTag_AlliedFreeTrade"
+				SpecialPowerTemplate="SpecialPowerAlliedFreeTrade"
+				HarvesterBonus="25"
+				HarvesterBonusAllies="5">
+			</GiveProductionBonusSpecialPower>
+<!--
+			<SpecialPower
+				id="ModuleTag_SpecialPower_AlliedFreeTrade"
+				SpecialPowerTemplate="SpecialPowerAlliedFreeTrade"
+				InitiateFX="FX_ALL_FreeTradeUpgrade"
+				AttributeModifierFX="FX_ALL_FreeTradeUpgrade"
+				AntiFX="FX_ALL_FreeTradeUpgrade">
+			</SpecialPower>
+				<InitiateSound EvaEvent="FreeTradeUpradeComplete"/>
+				TriggerFX="FX_ALL_FreeTradeUpgrade" />
+no worky, trying to Trigger an EVA
+-->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_ChronosphereSelect"
+				SpecialPowerTemplate="SpecialPowerChronosphereObjectSelect"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_ChronosphereSpawn"
+				SpecialPowerTemplate="SpecialPowerChronosphereObjectSpawn"
+			/>
+
+			<!-- CHRONO SWAP -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_ChronoSwapSelect"
+				SpecialPowerTemplate="SpecialPowerChronoSwapSelect"
+			/>
+			<StoreObjectsSpecialPower
+				id="ModuleTag_ChronoSwapStoreSpecialPower"
+				SpecialPowerTemplate="SpecialPowerChronoSwapSelect"
+				TeleportLinkID="0"
+				TargetMarkerObjectRef="ChronoTargetMarker"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_ChronoSwapTeleport"
+				SpecialPowerTemplate="SpecialPowerChronoSwapTeleport"
+			/>
+			<TeleportStoredObjectsSpecialPower
+				id="ModuleTag_ChronoSwapTeleportSpecialPower"
+				SpecialPowerTemplate="SpecialPowerChronoSwapTeleport"
+				StoreObjectsLinkID="0"
+        InitiateFX="FX_ChronoSpherePlayerPower"
+			/>
+			<TeleportStoredObjectsUpdate
+				id="ModuleTag_ChronoSwapTeleportUpdate"
+				SpecialPowerTemplate="SpecialPowerChronoSwapTeleport"
+				Telefrag="SWAP"
+				TriggerFX="FX_ChronoSphereHit"
+				TargetFX="FX_ChronoSwapHit"
+				FadeInTime="0.75s"
+				DelayTime="1s"
+				ScaleFadeInTimeByDistance="250.0"
+				DisabledTypesToProcess="FROZEN USER_PARALYZED EMP HELD PARALYZED UNDERPOWERED TEMPORARILY_BUSY"
+			/>
+
+            <!-- CHRONO RIFT LEVEL1 -->
+            <PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_ChronoRiftSelectLvl1"
+				SpecialPowerTemplate="SpecialPowerChronoRiftSelectLvl1"
+			/>
+            <StoreObjectsSpecialPower
+				id="ModuleTag_ChronoRiftStoreSpecialPowerLvl1"
+				SpecialPowerTemplate="SpecialPowerChronoRiftSelectLvl1"
+				CanAffectObjectFilter="AlliedChronoRiftSpecialPowerObjectFilter"
+				Radius="100"
+				TeleportLinkID="1"				
+			/>
+            <PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_ChronoRiftTeleportLvl1"
+				SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl1"
+			/>
+            <TeleportStoredObjectsSpecialPower
+				id="ModuleTag_ChronoRiftTeleportSpecialPowerLvl1"
+				SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl1"
+				CanAffectObjectFilter="AlliedChronoRiftSpecialPowerObjectFilter"
+				StoreObjectsLinkID="1"				
+                OCL="OCL_Generic5SecondBeacon"				
+			/>
+            <TeleportStoredObjectsUpdate
+				id="ModuleTag_ChronoRiftTeleportSpecialPowerLvl1Update"
+				SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl1"
+				Telefrag="HEALTH_SUBTRACTION"				
+				TargetFX="FX_ChronoRiftHit"
+				FadeInTime="5s"
+        InitialDelayTime="5s" 
+				DelayTime="10s"
+				GetObjectsCurrentlyAtStorePosition="true"
+				Shader="ShaderOverride_ObjectsChronoRift"
+				DisabledTypesToProcess="FROZEN USER_PARALYZED EMP HELD PARALYZED UNDERPOWERED TEMPORARILY_BUSY">
+                <CollidesWithOnTeleport
+                    Rule="ANY"
+					Include="INFANTRY VEHICLE STRUCTURE VALID_TARGET_FOR_C4"
+					Exclude="ORE_NODE"/>                    
+            </TeleportStoredObjectsUpdate>
+			
+
+			<!-- CHRONO RIFT LEVEL2 -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_ChronoRiftSelectLvl2"
+				SpecialPowerTemplate="SpecialPowerChronoRiftSelectLvl2"
+			/>
+			<StoreObjectsSpecialPower
+				id="ModuleTag_ChronoRiftStoreSpecialPowerLvl2"
+				SpecialPowerTemplate="SpecialPowerChronoRiftSelectLvl2"
+				Radius="150"
+				TeleportLinkID="2"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Allied_ChronoRift_Rank2"
+				LeechRechargePercentFromSpecialPower="SpecialPowerChronoRiftSelectLvl1"
+				CanAffectObjectFilter="AlliedChronoRiftSpecialPowerObjectFilter"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_ChronoRiftTeleportLvl2"
+				SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl2"
+			/>
+			<TeleportStoredObjectsSpecialPower
+				id="ModuleTag_ChronoRiftTeleportSpecialPowerLvl2"
+				SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl2"
+				CanAffectObjectFilter="AlliedChronoRiftSpecialPowerObjectFilter"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Allied_ChronoRift_Rank2"
+				LeechRechargePercentFromSpecialPower="SpecialPowerChronoRiftTeleportLvl1"
+				StoreObjectsLinkID="2"
+				OCL="OCL_Generic5SecondBeacon"
+			/>
+			<TeleportStoredObjectsUpdate
+				id="ModuleTag_ChronoRiftTeleportSpecialPowerLvl2Update"
+				SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl2"
+				Telefrag="HEALTH_SUBTRACTION"
+				TargetFX="FX_ChronoRiftHit"
+				FadeInTime="5s"
+				InitialDelayTime="5s"
+				DelayTime="20s"
+				GetObjectsCurrentlyAtStorePosition="true"
+                Shader="ShaderOverride_ObjectsChronoRift"
+				DisabledTypesToProcess="FROZEN USER_PARALYZED EMP HELD PARALYZED UNDERPOWERED TEMPORARILY_BUSY">
+				<CollidesWithOnTeleport
+                    Rule="ANY"
+					Include="INFANTRY VEHICLE STRUCTURE VALID_TARGET_FOR_C4"
+					Exclude="ORE_NODE"/>
+			</TeleportStoredObjectsUpdate>
+
+			<!-- CHRONO RIFT LEVEL3 -->
+			<PlayerPowerManager
+                id="ModuleTag_PlayerPowerManager_ChronoRiftSelectLvl3"
+                SpecialPowerTemplate="SpecialPowerChronoRiftSelectLvl3"
+			/>
+			<StoreObjectsSpecialPower
+                id="ModuleTag_ChronoRiftStoreSpecialPowerLvl3"
+                SpecialPowerTemplate="SpecialPowerChronoRiftSelectLvl3"
+                Radius="250"
+                TeleportLinkID="3"
+                LeechRechargePercentPlayerTechTrigger="PlayerTech_Allied_ChronoRift_Rank3"
+                LeechRechargePercentFromSpecialPower="SpecialPowerChronoRiftSelectLvl2"
+				CanAffectObjectFilter="AlliedChronoRiftSpecialPowerObjectFilter"
+			/>
+			<PlayerPowerManager
+                id="ModuleTag_PlayerPowerManager_ChronoRiftTeleportLvl3"
+                SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl3"
+			/>
+			<TeleportStoredObjectsSpecialPower
+                id="ModuleTag_ChronoRiftTeleportSpecialPowerLvl3"
+                SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl3"
+				CanAffectObjectFilter="AlliedChronoRiftSpecialPowerObjectFilter"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Allied_ChronoRift_Rank3"
+				LeechRechargePercentFromSpecialPower="SpecialPowerChronoRiftTeleportLvl2"
+                StoreObjectsLinkID="3"
+				OCL="OCL_Generic5SecondBeacon"
+			/>
+            <TeleportStoredObjectsUpdate
+                id="ModuleTag_ChronoRiftTeleportSpecialPowerLvl3Update"
+                SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl3"
+                Telefrag="HEALTH_SUBTRACTION"
+                TargetFX="FX_ChronoRiftHit"
+                FadeInTime="5s"
+								InitialDelayTime="5s"
+                DelayTime="30s"
+                GetObjectsCurrentlyAtStorePosition="true"
+                Shader="ShaderOverride_ObjectsChronoRift"
+                DisabledTypesToProcess="FROZEN USER_PARALYZED EMP HELD PARALYZED UNDERPOWERED TEMPORARILY_BUSY">
+                <CollidesWithOnTeleport
+                    Rule="ANY"
+					Include="INFANTRY VEHICLE STRUCTURE VALID_TARGET_FOR_C4"
+					Exclude="ORE_NODE"/>
+            </TeleportStoredObjectsUpdate>
+
+			<!-- SURGICAL STRIKE -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_PrecisionStrike"
+				SpecialPowerTemplate="SpecialPowerPrecisionStrike"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_PrecisionStrike"
+				SpecialPowerTemplate="SpecialPowerPrecisionStrike"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_PrecisionStrike"
+				DestinationOCL="OCL_PrecisionStrikeBeacon"
+				CreateLocation="USE_SECONDARY_OBJECT_LOCATION">
+				<NearestSecondaryObjectFilter
+					Relationship="SAME_PLAYER">
+					<IncludeThing>AlliedConstructionYard</IncludeThing>
+				</NearestSecondaryObjectFilter>
+			</OCLSpecialPower>
+
+			<!-- SATELLITE SWEEP aka SURVEILLANCE SWEEP -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_SatelliteSweep"
+				SpecialPowerTemplate="SpecialPowerSatelliteSweep"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_SatelliteSweep"
+				SpecialPowerTemplate="SpecialPowerSatelliteSweep"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_SatelliteSweep"
+				CreateLocation="CREATE_AT_EDGE_ALONG_PATH_LINE"
+				CanAffectObjectFilter="GenericNoObjectSpecialPowerObjectFilter"
+			/>
+
+			<!-- HIGH TECHNOLOGY -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_HighTechnology"
+				SpecialPowerTemplate="SpecialPowerHighTechnology"
+				OnAvailableEvaEvent="HighTechnologyUpgradeAuthorized"
+			/>
+			<PlayerUpgradeSpecialPower
+				id="ModuleTag_SpecialPower_HighTechnology"
+				SpecialPowerTemplate="SpecialPowerHighTechnology"
+				AvailableAtStart="true">
+				<Upgrade>Upgrade_AlliedHighTechnology</Upgrade>
+			</PlayerUpgradeSpecialPower>
+
+			<!-- AIR POWER -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_AirPower"
+				SpecialPowerTemplate="SpecialPowerAirPower"
+				OnAvailableEvaEvent="AdvancedAeronauticsUpgradeAuthorized"
+			/>
+			<PlayerUpgradeSpecialPower
+				id="ModuleTag_SpecialPower_AirPower"
+				SpecialPowerTemplate="SpecialPowerAirPower"
+				AvailableAtStart="true">
+				<!-- <InitiateSound EvaEvent="AdvancedAeronauticsUpgradeComplete"/> no worky -->
+				<Upgrade>Upgrade_AlliedAirPower</Upgrade>
+			</PlayerUpgradeSpecialPower>
+<!-- <InitiateSound>"AdvancedAeronauticsUpgradeComplete</InitiateSound> build error THIS SYNTAX IS INCORRECT, look at Base.xsd, should be <InitiateSound EvaEvent="AdvancedAeronauticsUpgradeComplete" />-->
+<!-- EvaEventToPlayOnInitiateOwner="AdvancedAeronauticsUpgradeComplete" gives build error -->
+<!-- TriggerFX="FX_EMP_ControlCenter_WeaponStart" no worky -->
+<!-- AntiFX="FX_EMP_ControlCenter_WeaponStart" no worky -->
+<!-- AttributeModifierFX="FX_EMP_ControlCenter_WeaponStart" no worky -->
+<!-- InitiateFX="FX_EMP_ControlCenter_WeaponStart" no worky -->
+
+			<!-- TIME BOMBS -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_TimeBombLvl1"
+				SpecialPowerTemplate="SpecialPowerTimeBombLvl1"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_TimeBombLvl1"
+				SpecialPowerTemplate="SpecialPowerTimeBombLvl1"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_TimeBombLvl1Seed"
+				CreateLocation="CREATE_AT_LOCATION"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_TimeBombLvl2"
+				SpecialPowerTemplate="SpecialPowerTimeBombLvl2"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_TimeBombLvl2"
+				SpecialPowerTemplate="SpecialPowerTimeBombLvl2"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_TimeBombLvl2Seed"
+				CreateLocation="CREATE_AT_LOCATION"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Allied_TimeBomb_Rank2"
+				LeechRechargePercentFromSpecialPower="SpecialPowerTimeBombLvl1"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_TimeBombLvl3"
+				SpecialPowerTemplate="SpecialPowerTimeBombLvl3"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_TimeBombLvl3"
+				SpecialPowerTemplate="SpecialPowerTimeBombLvl3"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_TimeBombLvl3Seed"
+				CreateLocation="CREATE_AT_LOCATION"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Allied_TimeBomb_Rank3"
+				LeechRechargePercentFromSpecialPower="SpecialPowerTimeBombLvl2"
+			/>
+
+			<!-- CRYO SATELLITE -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_CryoSatelliteLvl1"
+				SpecialPowerTemplate="SpecialPowerCryoSatelliteLvl1"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_CryoSatelliteLvl1"
+				SpecialPowerTemplate="SpecialPowerCryoSatelliteLvl1"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_CryoSatelliteSpawnerLvl1"
+				CreateLocation="CREATE_AT_LOCATION"
+				TriggerFX="FX_AlliedCryoSatelliteLvl1"
+				CanAffectObjectFilter="AlliedCryoSatelliteSpecialPowerObjectFilter"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_CryoSatelliteLvl2"
+				SpecialPowerTemplate="SpecialPowerCryoSatelliteLvl2"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_CryoSatelliteLvl2"
+				SpecialPowerTemplate="SpecialPowerCryoSatelliteLvl2"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_CryoSatelliteSpawnerLvl2"
+				CreateLocation="CREATE_AT_LOCATION"
+				TriggerFX="FX_AlliedCryoSatelliteLvl2"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Allied_CryoSatellite_Rank2"
+				LeechRechargePercentFromSpecialPower="SpecialPowerCryoSatelliteLvl1"
+				CanAffectObjectFilter="AlliedCryoSatelliteSpecialPowerObjectFilter"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_CryoSatelliteLvl3"
+				SpecialPowerTemplate="SpecialPowerCryoSatelliteLvl3"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_CryoSatelliteLvl3"
+				SpecialPowerTemplate="SpecialPowerCryoSatelliteLvl3"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_CryoSatelliteSpawnerLvl3"
+				CreateLocation="CREATE_AT_LOCATION"
+				TriggerFX="FX_AlliedCryoSatelliteLvl3"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Allied_CryoSatellite_Rank3"
+				LeechRechargePercentFromSpecialPower="SpecialPowerCryoSatelliteLvl2"
+				CanAffectObjectFilter="AlliedCryoSatelliteSpecialPowerObjectFilter"
+			/>
+
+			<!-- Soviet powers -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_IronCurtain"
+				SpecialPowerTemplate="SpecialPowerIronCurtain"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_VacuumBomb"
+				SpecialPowerTemplate="SpecialPowerVacuumBomb"
+			/>
+
+			<!-- MAGNETIC SINGULARITY -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_MagneticSingularity"
+				SpecialPowerTemplate="SpecialPowerMagneticSingularity"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_MagneticSingularity"
+				SpecialPowerTemplate="SpecialPowerMagneticSingularity"
+				OCL="OCL_MagneticSingularity"
+				CreateLocation="CREATE_AT_LOCATION"
+				CanAffectObjectFilter="SovietMagneticSingularitySpecialPowerObjectFilter" />
+
+			<!-- MAGNETIC SATELLITE -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_MagneticSatelliteLvl1"
+				SpecialPowerTemplate="SpecialPowerMagneticSatelliteLvl1"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_MagneticSatellite_Rank1"
+				SpecialPowerTemplate="SpecialPowerMagneticSatelliteLvl1"
+				OCL="OCL_MagneticSatelliteSpawnerLvl1"
+				CreateLocation="CREATE_AT_LOCATION"
+				CanAffectObjectFilter="SovietMagneticSatelliteSpecialPowerObjectFilter_LVL1"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_MagneticSatelliteLvl2"
+				SpecialPowerTemplate="SpecialPowerMagneticSatelliteLvl2"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_MagneticSatellite_Rank2"
+				SpecialPowerTemplate="SpecialPowerMagneticSatelliteLvl2"
+				OCL="OCL_MagneticSatelliteSpawnerLvl2"
+				CreateLocation="CREATE_AT_LOCATION"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Soviet_MagneticSatellite_Rank_2"
+				LeechRechargePercentFromSpecialPower="SpecialPowerMagneticSatelliteLvl1"
+				CanAffectObjectFilter="SovietMagneticSatelliteSpecialPowerObjectFilter_LVL2"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_MagneticSatelliteLvl3"
+				SpecialPowerTemplate="SpecialPowerMagneticSatelliteLvl3"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_MagneticSatellite_Rank3"
+				SpecialPowerTemplate="SpecialPowerMagneticSatelliteLvl3"
+				OCL="OCL_MagneticSatelliteSpawnerLvl3"
+				CreateLocation="CREATE_AT_LOCATION"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Soviet_MagneticSatellite_Rank_3"
+				LeechRechargePercentFromSpecialPower="SpecialPowerMagneticSatelliteLvl2"
+				CanAffectObjectFilter="SovietMagneticSatelliteSpecialPowerObjectFilter_LVL3"
+			/>
+			<StoreTemplateIDBehavior
+				id="ModuleTag_MagneticSatelliteTemplateIDStore"/>
+
+			<!-- ORBITAL REFUSE -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_OrbitalRefuse_Rank1"
+				SpecialPowerTemplate="SpecialPowerOrbitalRefuse_Rank1"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_OrbitalRefuse_Rank1"
+				SpecialPowerTemplate="SpecialPowerOrbitalRefuse_Rank1"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_OrbitalRefuseSpawnerLvl1"
+				CreateLocation="CREATE_AT_LOCATION"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_OrbitalRefuse_Rank2"
+				SpecialPowerTemplate="SpecialPowerOrbitalRefuse_Rank2"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_OrbitalRefuse_Rank2"
+				SpecialPowerTemplate="SpecialPowerOrbitalRefuse_Rank2"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_OrbitalRefuseSpawnerLvl2"
+				CreateLocation="CREATE_AT_LOCATION"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Soviet_OrbitalRefuse_Rank2"
+				LeechRechargePercentFromSpecialPower="SpecialPowerOrbitalRefuse_Rank1"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_OrbitalRefuse_Rank3"
+				SpecialPowerTemplate="SpecialPowerOrbitalRefuse_Rank3"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_OrbitalRefuse_Rank3"
+				SpecialPowerTemplate="SpecialPowerOrbitalRefuse_Rank3"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_OrbitalRefuseSpawnerLvl3"
+				CreateLocation="CREATE_AT_LOCATION"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Soviet_OrbitalRefuse_Rank3"
+				LeechRechargePercentFromSpecialPower="SpecialPowerOrbitalRefuse_Rank2"
+			/>
+
+			<!-- MASS PRODUCTION -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_MassProduction"
+				SpecialPowerTemplate="SpecialPowerSovietMassProduction"
+				OnAvailableEvaEvent="MassProductionUpgradeAuthorized"
+			/>
+			<GiveProductionBonusSpecialPower
+				id="ModuleTag_SovietMassProduction"
+				SpecialPowerTemplate="SpecialPowerSovietMassProduction" 
+				BuildCostBonus="-25%"
+				BuildCostBonusAllies="-5%">
+			</GiveProductionBonusSpecialPower>
+
+			<!-- IRRADIATE TARGET aka TOXIC CORROSION -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_IrradiateTarget"
+				SpecialPowerTemplate="SpecialPower_IrradiateTarget"
+			/>
+			<SpecialPower
+				id="ModuleTag_IrradiateTargetSpecialPower"
+				SpecialPowerTemplate="SpecialPower_IrradiateTarget"
+				UpdateModuleStartsAttack="true"
+			/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_IrradiateTargetSpecialAbilityUpdate"
+				SpecialPowerTemplate="SpecialPower_IrradiateTarget"
+				SpecialWeapon="PlayerPowerIrradiateTargetWeapon"
+			/>
+			<!--no worky ActiveLoopSound="SOV_ToxicCorrosion_Launch" 
+				UnpackSound="SOV_ToxicCorrosion_Launch" 
+				TriggerSound="SOV_ToxicCorrosion_Launch" 
+				PackSound PrepSoundLoop -->
+
+			<!-- Desolator Bomb 3 Levels -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_DesolatorBomb_Level1"
+				SpecialPowerTemplate="SpecialPower_DesolatorBomb_Level1"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_SpecialPower_DesolatorBomb_Level1"
+				SpecialPowerTemplate="SpecialPower_DesolatorBomb_Level1"
+				OCL="OCL_SpecialPower_DesolatorBomb_Level1"
+				DestinationOCL="OCL_Generic5SecondBeacon"
+				CreateLocation="USE_SECONDARY_OBJECT_LOCATION"
+				CanAffectObjectFilter="GenericNoStructureSpecialPowerObjectFilter">
+				<NearestSecondaryObjectFilter
+					Relationship="SAME_PLAYER">
+					<IncludeThing>SovietConstructionYard</IncludeThing>
+				</NearestSecondaryObjectFilter>
+			</OCLSpecialPower>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_DesolatorBomb_Level2"
+				SpecialPowerTemplate="SpecialPower_DesolatorBomb_Level2"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_SpecialPower_DesolatorBomb_Level2"
+				SpecialPowerTemplate="SpecialPower_DesolatorBomb_Level2"
+				OCL="OCL_SpecialPower_DesolatorBomb_Level2"
+				DestinationOCL="OCL_Generic5SecondBeacon"
+				CreateLocation="USE_SECONDARY_OBJECT_LOCATION"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Soviet_DesolatorBomb_Rank2"
+				LeechRechargePercentFromSpecialPower="SpecialPower_DesolatorBomb_Level1"
+				CanAffectObjectFilter="GenericNoStructureSpecialPowerObjectFilter">
+				<NearestSecondaryObjectFilter
+					Relationship="SAME_PLAYER">
+					<IncludeThing>SovietConstructionYard</IncludeThing>
+				</NearestSecondaryObjectFilter>
+			</OCLSpecialPower>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_DesolatorBomb_Level3"
+				SpecialPowerTemplate="SpecialPower_DesolatorBomb_Level3"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_SpecialPower_DesolatorBomb_Level3"
+				SpecialPowerTemplate="SpecialPower_DesolatorBomb_Level3"
+				OCL="OCL_SpecialPower_DesolatorBomb_Level3"
+				DestinationOCL="OCL_Generic5SecondBeacon"
+				CreateLocation="USE_SECONDARY_OBJECT_LOCATION"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Soviet_DesolatorBomb_Rank3"
+				LeechRechargePercentFromSpecialPower="SpecialPower_DesolatorBomb_Level2"
+				CanAffectObjectFilter="GenericNoStructureSpecialPowerObjectFilter">
+				<NearestSecondaryObjectFilter
+					Relationship="SAME_PLAYER">
+					<IncludeThing>SovietConstructionYard</IncludeThing>
+				</NearestSecondaryObjectFilter>
+			</OCLSpecialPower>
+
+			<!-- production kickbacks -->
+			<!-- aka Cash Bounty -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_ProductionKickbacks"
+				SpecialPowerTemplate="SpecialPower_ProductionKickbacks"
+			/>
+			<SpecialPower
+				id="ModuleTag_ProductionKickbacks_SpecialPower"
+				SpecialPowerTemplate="SpecialPower_ProductionKickbacks"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="SovietKickbacksSpecialPowerObjectFilter"
+			/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_ProductionKickbacks_Update"
+				SpecialPowerTemplate="SpecialPower_ProductionKickbacks"
+				SpecialWeapon="PlayerPowerProductionKickbacksWeapon"
+			/>
+
+			<!-- TERROR DRONE EGGS -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_TerrorDroneEggs"
+				SpecialPowerTemplate="SpecialPowerTerrorDroneEggs"
+				OnAvailableEvaEvent="TerrorDroneSurpriseUpgradeComplete"
+			/>
+			<PlayerUpgradeSpecialPower
+				id="ModuleTag_SpecialPower_TerrorDroneEggs"
+				SpecialPowerTemplate="SpecialPowerTerrorDroneEggs"
+				AvailableAtStart="true">
+				<Upgrade>Upgrade_SovietTerrorDroneEggs</Upgrade>
+			</PlayerUpgradeSpecialPower>
+			
+			<!-- CRUSH PUPPIES PLAYER POWER -->
+				<!-- aka Grinder Treads -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_CrushPuppies"
+				SpecialPowerTemplate="SpecialPowerCrushPuppies"
+				OnAvailableEvaEvent="CrushTreadsUpgradeAuthorized"
+			/>			
+			<PlayerUpgradeSpecialPower
+				id="ModuleTag_SpecialPower_CrushPuppies"
+				SpecialPowerTemplate="SpecialPowerCrushPuppies"
+				AvailableAtStart="true">
+				<Upgrade>Upgrade_SovietCrushPuppiesPower</Upgrade>
+			</PlayerUpgradeSpecialPower>
+
+			<!-- Japan Powers -->
+			<!-- Point Defense Drones -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_PointDefenseDrones"
+				SpecialPowerTemplate="SpecialPower_PointDefenseDrones"
+			/>
+			<SpecialPower
+				id="ModuleTag_PointDefenseDrones_SpecialPower"
+				SpecialPowerTemplate="SpecialPower_PointDefenseDrones"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="JapanPointDefenseDroneSpecialPowerObjectFilter"
+				ObjectFilterDistType="CIRCLE"
+			/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_PointDefenseDrones_Update"
+				SpecialPowerTemplate="SpecialPower_PointDefenseDrones"
+				SpecialWeapon="PlayerPowerPointDefenseDronesWeapon"
+			/>
+
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_TelekineticProjectorDevice"
+				SpecialPowerTemplate="SpecialPowerTelekineticProjectorDevice"
+			/>
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_NanoSwarmHive"
+				SpecialPowerTemplate="SpecialPowerNanoSwarmHive"
+			/>
+
+			<!-- NAVAL POWER -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_NavalPower"
+				SpecialPowerTemplate="SpecialPowerJapanNavalPower"
+				OnAvailableEvaEvent="FortifiedFleetUpgradeAuthorized"
+			/>
+			<PlayerUpgradeSpecialPower
+				id="ModuleTag_SpecialPower_NavalPower"
+				SpecialPowerTemplate="SpecialPowerJapanNavalPower"
+				AvailableAtStart="true">
+				<Upgrade>Upgrade_JapanNavalPower</Upgrade>
+			</PlayerUpgradeSpecialPower>
+
+			<!-- ADVANCED MISSILE PACKS -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_JapanAdvancedMissilePacks"
+				SpecialPowerTemplate="SpecialPowerJapanAdvancedMissilePacks"
+				OnAvailableEvaEvent="AdvancedRocketPodsUpgradeAuthorized"
+			/>
+			<PlayerUpgradeSpecialPower
+				id="ModuleTag_SpecialPower_JapanAdvancedMissilePacks"
+				SpecialPowerTemplate="SpecialPowerJapanAdvancedMissilePacks"
+				AvailableAtStart="true">
+				<Upgrade>Upgrade_JapanAdvancedMissilePacks</Upgrade>
+			</PlayerUpgradeSpecialPower>
+
+			<!-- ROBOTIC ASSEMBLY -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_JapanRoboticAssembly"
+				SpecialPowerTemplate="SpecialPowerJapanRoboticAssembly"
+				OnAvailableEvaEvent="AssemblyUpgradeAuthorized"
+			/>
+			<GiveProductionBonusSpecialPower
+				id="ModuleTag_JapanRoboticAssembly"
+				SpecialPowerTemplate="SpecialPowerJapanRoboticAssembly"
+				BuildTimeBonus="-25%"
+				BuildTimeBonusAllies="-5%">
+			</GiveProductionBonusSpecialPower>
+
+			<!-- SLEEPER AMBUSH -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_JapanAmbush"
+				SpecialPowerTemplate="SpecialPowerJapanAmbush"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_Ambush"
+				SpecialPowerTemplate="SpecialPowerJapanAmbush"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_Japan_Abmbush"
+				CreateLocation="CREATE_AT_LOCATION"
+				CanAffectObjectFilter="GenericNoObjectSpecialPowerObjectFilter">
+			</OCLSpecialPower>
+
+			<!-- BALLOON ATTACK -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_JapanBalloonAttack_L1"
+				SpecialPowerTemplate="SpecialPowerJapanBalloonAttack_L1"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_BalloonAttack_L1"
+				SpecialPowerTemplate="SpecialPowerJapanBalloonAttack_L1"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_BalloonAttack_Level1"
+				CreateLocation="CREATE_AT_LOCATION"
+				CanAffectObjectFilter="BalloonBombSpecialPowerObjectFilter"
+			/>
+
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_JapanBalloonAttack_L2"
+				SpecialPowerTemplate="SpecialPowerJapanBalloonAttack_L2"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_BalloonAttack_L2"
+				SpecialPowerTemplate="SpecialPowerJapanBalloonAttack_L2"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_BalloonAttack_Level2"
+				CreateLocation="CREATE_AT_LOCATION"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Japan_BalloonAttack_Rank2"
+				LeechRechargePercentFromSpecialPower="SpecialPowerJapanBalloonAttack_L1"
+				CanAffectObjectFilter="BalloonBombSpecialPowerObjectFilter"
+			/>
+
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_JapanBalloonAttack_L3"
+				SpecialPowerTemplate="SpecialPowerJapanBalloonAttack_L3"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_BalloonAttack_L3"
+				SpecialPowerTemplate="SpecialPowerJapanBalloonAttack_L3"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_BalloonAttack_Level3"
+				CreateLocation="CREATE_AT_LOCATION"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Japan_BalloonAttack_Rank3"
+				LeechRechargePercentFromSpecialPower="SpecialPowerJapanBalloonAttack_L2"
+				CanAffectObjectFilter="BalloonBombSpecialPowerObjectFilter"
+			/>
+
+			<!-- Enhanced Kamikaze Player Power aka HONORABLE DISCHARGE -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_JapanEnhancedKamikaze"
+				SpecialPowerTemplate="SpecialPowerJapanEnhancedKamikaze"
+				OnAvailableEvaEvent="HonorableDischargeUpgardeAuthorized"
+			/>
+			<PlayerUpgradeSpecialPower
+				id="ModuleTag_SpecialPower_JapanEnhancedKamikaze"
+				SpecialPowerTemplate="SpecialPowerJapanEnhancedKamikaze"
+				AvailableAtStart="true">
+				<Upgrade>Upgrade_JapanEnhancedKamikaze</Upgrade>
+			</PlayerUpgradeSpecialPower>
+
+			<!-- EMPERORS RESOLVE aka EMPEROR'S RAGE -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_JapanEmperorsResolve_L1"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L1"
+			/>
+			<SpecialPower
+				id="ModuleTag_JapanEmperorsResolve_L1"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L1"
+				AttributeModifier="AttributeModifer_JapanEmperorsResolve_L1"
+				AttributeModifierRange="100"
+				CanAffectObjectFilter="JapanEmperorsResolveSpecialPowerObjectFilter"
+        TriggerFX="FX_EmperorSpawn">
+				<AttributeModifierAffects
+					Rule="ALL"
+					Exclude="STRUCTURE"
+					StatusBitFlagsExclude="=$EMPERORS_RAGE_TARGET_OBJSTATUS_TO_EXCLUDE"/>
+			</SpecialPower>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_JapanEmperorsResolve_L1Update"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L1"
+				SpecialWeapon="PlayerPowerJapanEmperorsResolveWeapon_L1" />
+
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_JapanEmperorsResolve_L2"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L2"
+			/>
+			<SpecialPower
+				id="ModuleTag_JapanEmperorsResolve_L2"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L2"
+				AttributeModifier="AttributeModifer_JapanEmperorsResolve_L2"
+				AttributeModifierRange="150"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Japan_EmperorsRage_Rank2"
+				LeechRechargePercentFromSpecialPower="SpecialPowerJapanEmperorsResolve_L1"
+				CanAffectObjectFilter="JapanEmperorsResolveSpecialPowerObjectFilter"
+        TriggerFX="FX_EmperorSpawn_L2">
+        <AttributeModifierAffects
+					Rule="ALL"
+					Exclude="STRUCTURE"
+					StatusBitFlagsExclude="=$EMPERORS_RAGE_TARGET_OBJSTATUS_TO_EXCLUDE"/>
+      </SpecialPower>
+      <WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_JapanEmperorsResolve_L2Update"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L2"
+				SpecialWeapon="PlayerPowerJapanEmperorsResolveWeapon_L2" />
+
+      <PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_JapanEmperorsResolve_L3"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L3"
+			/>
+      <SpecialPower
+				id="ModuleTag_JapanEmperorsResolve_L3"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L3"
+				AttributeModifier="AttributeModifer_JapanEmperorsResolve_L3"
+				AttributeModifierRange="200"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Japan_EmperorsRage_Rank3"
+				LeechRechargePercentFromSpecialPower="SpecialPowerJapanEmperorsResolve_L2"
+				CanAffectObjectFilter="JapanEmperorsResolveSpecialPowerObjectFilter"
+        TriggerFX="FX_EmperorSpawn_L3">
+				<AttributeModifierAffects
+					Rule="ALL"
+					Exclude="STRUCTURE"
+					StatusBitFlagsExclude="=$EMPERORS_RAGE_TARGET_OBJSTATUS_TO_EXCLUDE"/>
+			</SpecialPower>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_JapanEmperorsResolve_L3Update"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L3"
+				SpecialWeapon="PlayerPowerJapanEmperorsResolveWeapon_L3" />
+
+			<!-- FINAL SQUADRON -->
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_SpecialPowerFinalSquadron_L1"
+				SpecialPowerTemplate="SpecialPowerFinalSquadron_L1"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_FinalSquadronL1"
+				SpecialPowerTemplate="SpecialPowerFinalSquadron_L1"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_FinalSquadronL1"
+				DestinationOCL="OCL_JapanFinalSquadronSeed_L1"
+				CreateLocation="CREATE_AT_OFFSET_FROM_TARGET_ALONG_SECONDARY_OBJECT_VECTOR_AND_MOVE_TO_TARGET"
+				CreateLocationOffset="3000.0">
+				<NearestSecondaryObjectFilter
+					Relationship="SAME_PLAYER">
+					<IncludeThing>JapanConstructionYard</IncludeThing>
+				</NearestSecondaryObjectFilter>
+			</OCLSpecialPower>
+
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_SpecialPowerFinalSquadron_L2"
+				SpecialPowerTemplate="SpecialPowerFinalSquadron_L2"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_FinalSquadronL2"
+				SpecialPowerTemplate="SpecialPowerFinalSquadron_L2"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_FinalSquadronL2"
+				DestinationOCL="OCL_JapanFinalSquadronSeed_L2"
+				CreateLocation="CREATE_AT_OFFSET_FROM_TARGET_ALONG_SECONDARY_OBJECT_VECTOR_AND_MOVE_TO_TARGET"
+				CreateLocationOffset="3000.0"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Japan_FinalSquadron_Rank2"
+				LeechRechargePercentFromSpecialPower="SpecialPowerFinalSquadron_L1">
+				<NearestSecondaryObjectFilter
+					Relationship="SAME_PLAYER">
+					<IncludeThing>JapanConstructionYard</IncludeThing>
+				</NearestSecondaryObjectFilter>
+			</OCLSpecialPower>
+
+			<PlayerPowerManager
+				id="ModuleTag_PlayerPowerManager_SpecialPowerFinalSquadron_L3"
+				SpecialPowerTemplate="SpecialPowerFinalSquadron_L3"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_FinalSquadronL3"
+				SpecialPowerTemplate="SpecialPowerFinalSquadron_L3"
+				UpdateModuleStartsAttack="false"
+				AvailableAtStart="true"
+				OCL="OCL_FinalSquadronL3"
+				DestinationOCL="OCL_JapanFinalSquadronSeed_L3"
+				CreateLocation="CREATE_AT_OFFSET_FROM_TARGET_ALONG_SECONDARY_OBJECT_VECTOR_AND_MOVE_TO_TARGET"
+				CreateLocationOffset="3000.0"
+				LeechRechargePercentPlayerTechTrigger="PlayerTech_Japan_FinalSquadron_Rank3"
+				LeechRechargePercentFromSpecialPower="SpecialPowerFinalSquadron_L2">
+				<NearestSecondaryObjectFilter
+					Relationship="SAME_PLAYER">
+					<IncludeThing>JapanConstructionYard</IncludeThing>
+				</NearestSecondaryObjectFilter>
+			</OCLSpecialPower>
+
+			<!-- Neutral powers -->		
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO">
+			</AIUpdate>
+		</AI>
+		
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<ClientUpdates>
+				<!-- Japanese Player Power Ready EVAs  -->
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="BalloonBombsReady"
+				AnnouncementEventOwner="BalloonBombsReady"
+				SpecialPowerTemplate="SpecialPowerJapanBalloonAttack_L1"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="BalloonBombBlowtReady"
+				AnnouncementEventOwner="BalloonBombBlowtReady"
+				SpecialPowerTemplate="SpecialPowerJapanBalloonAttack_L2"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="BalloonBombBarrageReady"
+				AnnouncementEventOwner="BalloonBombBarrageReady"
+				SpecialPowerTemplate="SpecialPowerJapanBalloonAttack_L3"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="EmperorsRageReady"
+				AnnouncementEventOwner="EmperorsRageReady"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L1"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="EmperoreRevengeReady"
+				AnnouncementEventOwner="EmperoreRevengeReady"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L2"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="EmperorsRetributReady"
+				AnnouncementEventOwner="EmperorsRetributReady"
+				SpecialPowerTemplate="SpecialPowerJapanEmperorsResolve_L3"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="FinalSquadronReady"
+				AnnouncementEventOwner="FinalSquadronReady"
+				SpecialPowerTemplate="SpecialPowerFinalSquadron_L1"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="FinalSquadronXReady"
+				AnnouncementEventOwner="FinalSquadronXReady"
+				SpecialPowerTemplate="SpecialPowerFinalSquadron_L2"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="FinalSquadronOmgReady"
+				AnnouncementEventOwner="FinalSquadronOmgReady"
+				SpecialPowerTemplate="SpecialPowerFinalSquadron_L3"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="PointDefenseDronesReady"
+				AnnouncementEventOwner="PointDefenseDronesReady"
+				SpecialPowerTemplate="SpecialPower_PointDefenseDrones"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="SleeperAmbushReady"
+				AnnouncementEventOwner="SleeperAmbushReady"
+				SpecialPowerTemplate="SpecialPowerJapanAmbush"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+				<!-- **** -->
+<!--
+
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="AdvancedAeronauticsReady"
+				AnnouncementEventOwner="AdvancedAeronauticsUpgradeComplete"
+				SpecialPowerTemplate="SpecialPowerAirPower"
+			/>
+			moved to FXList played by AttributeModifier
+-->
+
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="Cryoshot1Ready"
+				AnnouncementEventOwner="CryoshotReady"
+				SpecialPowerTemplate="SpecialPowerCryoSatelliteLvl1"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="Cryoshot2Ready"
+				AnnouncementEventOwner="CryoblastReady"
+				SpecialPowerTemplate="SpecialPowerCryoSatelliteLvl2"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="Cryoshot3Ready"
+				AnnouncementEventOwner="CryogeddonReady"
+				SpecialPowerTemplate="SpecialPowerCryoSatelliteLvl3"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="ChronoRift1Ready"
+				AnnouncementEventOwner="ChronoRiftReady"
+				SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl1"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="ChronoRift2Ready"
+				AnnouncementEventOwner="ChronoChasmReady"
+				SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl2"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="ChronoRift3Ready"
+				AnnouncementEventOwner="ChronoFissureReady"
+				SpecialPowerTemplate="SpecialPowerChronoRiftTeleportLvl3"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="ChronoSwapReady"
+				AnnouncementEventOwner="ChronoSwapReady"
+				SpecialPowerTemplate="SpecialPowerChronoSwapTeleport"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="DesolatorAirstrikeReady"
+				AnnouncementEventOwner="DesolatorAirstrikeReady"
+				SpecialPowerTemplate="SpecialPower_DesolatorBomb_Level1"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="DesolatorDualAirstrikeReady"
+				AnnouncementEventOwner="DesolatorDualAirstrikeReady"
+				SpecialPowerTemplate="SpecialPower_DesolatorBomb_Level2"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="DesolatorDeltaAirstrikeReady"
+				AnnouncementEventOwner="DesolatorDeltaAirstrikeReady"
+				SpecialPowerTemplate="SpecialPower_DesolatorBomb_Level3"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="MagneticSatelliteReady"
+				AnnouncementEventOwner="MagneticSatelliteReady"
+				SpecialPowerTemplate="SpecialPowerMagneticSatelliteLvl1"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="SuperMagneticSatelliteReady"
+				AnnouncementEventOwner="SuperMagneticSatelliteReady"
+				SpecialPowerTemplate="SpecialPowerMagneticSatelliteLvl2"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="UltraMagneticSatelliteReady"
+				AnnouncementEventOwner="UltraMagneticSatelliteReady"
+				SpecialPowerTemplate="SpecialPowerMagneticSatelliteLvl3"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="MagneticSingularityReady"
+				AnnouncementEventOwner="MagneticSingularityReady"
+				SpecialPowerTemplate="SpecialPowerMagneticSingularity"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="CashBountyReady"
+				AnnouncementEventOwner="CashBountyReady"
+				SpecialPowerTemplate="SpecialPower_ProductionKickbacks"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="OrbitalDropReady"
+				AnnouncementEventOwner="OrbitalDropReady"
+				SpecialPowerTemplate="SpecialPowerOrbitalRefuse_Rank1"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="OrbitalDumpReady"
+				AnnouncementEventOwner="OrbitalDumpReady"
+				SpecialPowerTemplate="SpecialPowerOrbitalRefuse_Rank2"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="OrbitalDownpourReady"
+				AnnouncementEventOwner="OrbitalDownpourReady"
+				SpecialPowerTemplate="SpecialPowerOrbitalRefuse_Rank3"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="SurgicalStrikeReady"
+				AnnouncementEventOwner="SurgicalStrikeReady"
+				SpecialPowerTemplate="SpecialPowerPrecisionStrike"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="SurveillanceSweepReady"
+				AnnouncementEventOwner="SurveillanceSweepReady"
+				SpecialPowerTemplate="SpecialPowerSatelliteSweep"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="TimeBomb1Ready"
+				AnnouncementEventOwner="TimeBombReady"
+				SpecialPowerTemplate="SpecialPowerTimeBombLvl1"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="TimeBomb2Ready"
+				AnnouncementEventOwner="DeluxeTimeBombReady"
+				SpecialPowerTemplate="SpecialPowerTimeBombLvl2"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="TimeBomb3Ready"
+				AnnouncementEventOwner="SupremeTimeBombReady"
+				SpecialPowerTemplate="SpecialPowerTimeBombLvl3"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="ToxicCorrosionReady"
+				AnnouncementEventOwner="ToxicCorrosionReady"
+				SpecialPowerTemplate="SpecialPower_IrradiateTarget"
+				JustMonitorPercentReady="true" 
+				CheckPlayerPowerVisibility="true"
+			/>
+		</ClientUpdates>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="1.0"
+				Height="1.0"></Shape>
+		</Geometry>
+	</GameObject>
+</AssetDeclaration>

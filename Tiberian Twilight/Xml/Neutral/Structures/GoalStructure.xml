@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:TB_GoalStructure_SKN.w3x" />
+		<Include type="all"	source="ART:TB_GoalStructure_GDI.w3x" />
+		<Include type="all"	source="ART:TB_GoalStructure_NOD.w3x" />
+	
+		<Include type="instance" source="DATA:BaseObjects/BaseTechStructure.xml" />
+
+	</Includes>
+
+	<Defines>
+		<Define name="GOALSTRUCTURE_DAMAGE_BONE_NAMES" value="
+				BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 
+				BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 
+				BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 
+				BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 
+				BONE_CONTACT_POINT_17" />
+	</Defines>
+	
+	<GameObject
+		id="GoalStructure"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_GoalStr_Neutral_GDI"
+		ButtonImage="Portrait_GoalStr_Neutral_GDI"
+		Side="Neutral"
+		CommandSet="EmptyCommandSet"
+		HealthBoxHeightOffset="50"
+		KindOf="+GOAL_STRUCTURE +RESIST_REDEPLOYMENT_KILL +REGISTER_GAMEMODE_SPAWN +REVEAL_TO_ALL +CAN_HAVE_BUILDABILITY +AUTO_ACQUIRABLE_BY_AI +NO_HEALTH_BAR +RESIST_EMP"
+		EditorName="NEUTRAL_Struct_Goal(Goal Structure)"
+		EditorSorting="STRUCTURE"
+		RadarPriority="GOAL_STRUCTURE"
+		Description="Desc:GoalStructure"
+		TypeDescription="Type:GoalStructure">
+		<DisplayName>Name:GoalStructure</DisplayName>
+		<ArmorSet
+			Armor="NoArmor"
+			DamageFX="GenericStructureDamageFX"/>
+		<Draws>
+			<!-- main structure -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				AffectedByStealth="false"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TB_GoalStructure_SKN" />
+					<ParticleSysBone
+						BoneName="FXCoil_TIB"
+						FXParticleSystemTemplate="GoalStructure_Beam_TIB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GoalStructureLight"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GoalStructureLight"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CAPTURED_BY_GDI">
+					<Model
+						Name="TB_GoalStructure_SKN" />
+					<ParticleSysBone
+						BoneName="FXEnergy_GDI"
+						FXParticleSystemTemplate="GoalStructure_Beam_GDI"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GoalStructureLightGDI"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GoalStructureLightGDI"
+						FollowBone="true" />
+
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CAPTURED_BY_NOD">
+					<Model
+						Name="TB_GoalStructure_SKN" />
+					<ParticleSysBone
+						BoneName="FXEnergy_NOD"
+						FXParticleSystemTemplate="GoalStructure_Beam_NOD"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GoalStructureLightNOD"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GoalStructureLightNOD"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_IDLE">
+					<Animation
+						AnimationName="TB_GoalStructure_GDI"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= null then
+							if Prev == "State_GDI_Captured" then
+								CurDrawableSetTransitionAnimState("Transition_GDIToNeutral")
+							elseif Prev == "State_Nod_Captured" then
+								CurDrawableSetTransitionAnimState("Transition_NodToNeutral")
+							end
+						end
+					</Script>
+					<Script>
+						<!--TIB-->
+						CurDrawableShowSubObject("FXCoil_TIB")
+						CurDrawableShowSubObject("FXEnergy_TIB")
+
+						<!--GDI-->
+						CurDrawableHideSubObject("FXCoil_GDI")
+						CurDrawableHideSubObject("FXEnergy_GDI")
+
+						<!--NOD-->
+						CurDrawableHideSubObject("FXCoil_NOD")
+						CurDrawableHideSubObject("FXEnergy_NOD")
+					</Script>
+
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CAPTURED_BY_GDI"
+					StateName="State_GDI_Captured">
+					<Animation
+						AnimationName="TB_GoalStructure_GDI"
+						AnimationMode="ONCE" />
+					<Script>
+						<!--TIB-->
+						CurDrawableHideSubObject("FXCoil_TIB")
+						CurDrawableHideSubObject("FXEnergy_TIB")
+
+						<!--GDI-->
+						CurDrawableShowSubObject("FXCoil_GDI")
+						CurDrawableShowSubObject("FXEnergy_GDI")
+
+						<!--NOD-->
+						CurDrawableHideSubObject("FXCoil_NOD")
+						CurDrawableHideSubObject("FXEnergy_NOD")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CAPTURED_BY_NOD"
+					StateName="State_Nod_Captured">
+					<Animation
+						AnimationName="TB_GoalStructure_NOD"
+						AnimationMode="ONCE" />
+					<Script>
+						<!--TIB-->
+						CurDrawableHideSubObject("FXCoil_TIB")
+						CurDrawableHideSubObject("FXEnergy_TIB")
+
+						<!--GDI-->
+						CurDrawableHideSubObject("FXCoil_GDI")
+						CurDrawableHideSubObject("FXEnergy_GDI")
+
+						<!--NOD-->
+						CurDrawableShowSubObject("FXCoil_NOD")
+						CurDrawableShowSubObject("FXEnergy_NOD")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_NodToNeutral"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="TB_GoalStructure_NOD"
+						AnimationMode="ONCE_BACKWARDS"/>
+					<Script>
+						<!--TIB-->
+						CurDrawableShowSubObject("FXCoil_TIB")
+						CurDrawableShowSubObject("FXEnergy_TIB")
+
+						<!--GDI-->
+						CurDrawableHideSubObject("FXCoil_GDI")
+						CurDrawableHideSubObject("FXEnergy_GDI")
+
+						<!--NOD-->
+						CurDrawableHideSubObject("FXCoil_NOD")
+						CurDrawableHideSubObject("FXEnergy_NOD")
+
+						<!-- audio -->
+						CurDrawablePlaySound("NEU_GoalStructure_LostMS")
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_GDIToNeutral"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="TB_GoalStructure_GDI"
+						AnimationMode="ONCE_BACKWARDS"/>
+					<Script>
+						<!--TIB-->
+						CurDrawableShowSubObject("FXCoil_TIB")
+						CurDrawableShowSubObject("FXEnergy_TIB")
+
+						<!--GDI-->
+						CurDrawableHideSubObject("FXCoil_GDI")
+						CurDrawableHideSubObject("FXEnergy_GDI")
+
+						<!--NOD-->
+						CurDrawableHideSubObject("FXCoil_NOD")
+						CurDrawableHideSubObject("FXEnergy_NOD")
+
+						<!-- audio -->
+						CurDrawablePlaySound("NEU_GoalStructure_LostMS")
+					</Script>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<xi:include href="DATA:Includes/ProximityCaptureFeedbackDraw.xml" />
+			
+		</Draws>	
+		<Behaviors>
+			
+			<xi:include href="DATA:Includes/ProximityCaptureUpdate.xml" />
+			<FXListBehavior
+   				id="ModuleTag_FXList"
+   				xai:joinAction="Replace">
+				<DieMuxData
+   					DeathTypes="ALL" />
+				<Event
+   					Index="onTransitionToDamaged"
+   					FX="FX_NONE" />
+				<Event
+   					Index="onTransitionToReallyDamaged"
+   					FX="FX_NONE" />
+				<Event
+   					Index="onTransitionToRubble"
+   					FX="FX_NONE" />
+				<Event
+   					Index="onDeath"
+   					FX="FX_NONE" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIForLua"
+				StateMachine="StructureAIStateMachine"
+				AutoAcquireEnemiesWhenIdle="NO"/>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				InitialHealth="1.0"
+				MaxHealth="1500.0"/>
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="60.0"
+				MinorRadius="60.0" 
+				Height="75.0"
+				ContactPointGeneration="STRUCTURE"/>
+		</Geometry>
+		<ClientBehaviors>
+			<!-- <ModelConditionAudioLoopClientBehavior id="ModuleTag_Captured">
+				<ModelConditionSound Sound="GoalStucture_Captured" RequiredFlags="USER_1" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Captured">
+				<ModelConditionSound Sound="GoalStucture_Captured" RequiredFlags="USER_2" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior> -->
+      <AnimationSoundClientBehavior id="ModuleTag_ASCB">
+            <Sound Sound="NEU_GoalStructure_AnimationCapture1" RequiredMC="CAPTURED_BY_GDI" Animation="TB_GoalStructure_GDI" Frame="1" />
+           	<Sound Sound="NEU_GoalStructure_AnimationCapture2" RequiredMC="CAPTURED_BY_GDI" Animation="TB_GoalStructure_GDI" Frame="22" />
+           	<Sound Sound="NEU_GoalStructure_AnimationCapture3" RequiredMC="CAPTURED_BY_GDI" Animation="TB_GoalStructure_GDI" Frame="23" />
+           	<Sound Sound="NEU_GoalStructure_AnimationCapture4" RequiredMC="CAPTURED_BY_GDI" Animation="TB_GoalStructure_GDI" Frame="0" />
+           	<Sound Sound="NEU_GoalStructure_AnimationCapture5" RequiredMC="CAPTURED_BY_GDI" Animation="TB_GoalStructure_GDI" Frame="98" />
+           	<Sound Sound="NEU_GoalStructure_AnimationCapture6" RequiredMC="CAPTURED_BY_GDI" Animation="TB_GoalStructure_GDI" Frame="110" />
+
+            <Sound Sound="NEU_GoalStructure_AnimationCapture1" RequiredMC="CAPTURED_BY_NOD" Animation="TB_GoalStructure_NOD" Frame="1" />
+           	<Sound Sound="NEU_GoalStructure_AnimationCapture2" RequiredMC="CAPTURED_BY_NOD" Animation="TB_GoalStructure_NOD" Frame="22" />
+           	<Sound Sound="NEU_GoalStructure_AnimationCapture3" RequiredMC="CAPTURED_BY_NOD" Animation="TB_GoalStructure_NOD" Frame="23" />
+           	<Sound Sound="NEU_GoalStructure_AnimationCapture4" RequiredMC="CAPTURED_BY_NOD" Animation="TB_GoalStructure_NOD" Frame="0" />
+           	<Sound Sound="NEU_GoalStructure_AnimationCapture5" RequiredMC="CAPTURED_BY_NOD" Animation="TB_GoalStructure_NOD" Frame="98" />
+           	<Sound Sound="NEU_GoalStructure_AnimationCapture6" RequiredMC="CAPTURED_BY_NOD" Animation="TB_GoalStructure_NOD" Frame="110" />
+      </AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="GoalStucture_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+ 		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+			<AudioEntry Sound="GoalStucture_AmbientLoop" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<EvaEventArray>
+			<EvaEntry EvaEvent="GoalStructureLost" EvaType="defectingAwayAllies" />
+			<EvaEntry EvaEvent="GoalStructureCaptured" EvaType="defectingTowardsAllies" />
+			<EvaEntry EvaEvent="EnemyLostControlHub" EvaType="defectingAwayEnemies" />
+			<EvaEntry EvaEvent="EnemyCapturedControlHub" EvaType="defectingTowardsEnemies" />
+		</EvaEventArray>
+		<SchmevaEvents>
+			<Entry EventType="DefectingAway" LocalPlayerRelationToOwner="ALLIES SAME_PLAYER" Event="GoalStructureLost"/>
+			<Entry EventType="DefectingTowards" LocalPlayerRelationToOwner="ALLIES SAME_PLAYER" Event="GoalStructureCaptured"/>
+		</SchmevaEvents>
+		<VisionInfo
+			VisionRange="0"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

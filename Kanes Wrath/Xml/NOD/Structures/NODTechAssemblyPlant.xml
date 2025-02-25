@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NB_TechPlant.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechPlant_LF.w3x" />				
+		<Include
+			type="all"
+			source="ART:NB_TechPlantA_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechPlantA_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechPlant_D2SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechPlant_D2AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechPlant_D3SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechPlant_D3AN.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="NODTechAssemblyPlant"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_NODTechLab"
+		ButtonImage="Portrait_NODTechLab"
+		Side="NOD"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="4000"
+		BuildTime="40"
+		EnergyProduction="-15"
+		CommandSet="NODTechAssemblyPlantCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY POWERED FS_TECH_CENTER NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="NODTechAssemblyPlant"
+		Description="Desc:NODTechAssemblyPlant"
+		TypeDescription="Type:NODTechAssemblyPlant">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODTechAssemblyPlant</DisplayName>
+		<GameDependency>
+			<RequiredObject>NODOperationsCenter</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="NODTechAssemblyPlantArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<ArmorSet
+			Conditions="PLAYER_UPGRADE"
+			Armor="NODTechAssemblyPlantLaserFencingArmor"
+			DamageFX="NormalDamageFX" />			
+		<SkirmishAIInformation
+			BaseBuildingLocation="SPREAD" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechPlant" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="NB_TechPlant" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NB_TechPlantA_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NB_TechPlant_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NB_TechPlant_D2SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NB_TechPlant" />
+					<Texture
+						Original="NB_Tech"
+						New="NB_Tech_D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>		
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Script>
+						CurDrawableHideSubObject("UG_EMP")
+						CurDrawableHideSubObject("UG_Lasers")
+						CurDrawableHideSubObject("UG_SigGen")
+						CurDrawableHideSubObject("UG_DozerBlades")
+						CurDrawableHideSubObject("SUPERCHARGEDPARTICALBEAM")
+						CurDrawableHideSubObject("CHARGEDPARTICALBEAM_01")
+						CurDrawableHideSubObject("CHARGEDPARTICALBEAM_02")
+						CurDrawableHideSubObject("CHARGEDPARTICALBEAM_03")
+						CurDrawableHideSubObject("TIBCOREMISSILER02")
+						CurDrawableHideSubObject("TIBCOREMISSILER")
+					</Script>	
+				</AnimationState>		
+				<!-- BUILDUP ANIMATION -->						
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NB_TechPlantA_AN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Large"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NB_TechPlant_D3AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NB_TechPlant_D2AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NB_TechPlant_D2AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NB_TechPlant_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+	<!-- Laser fencing -->		
+			<ScriptedModelDraw
+				id="ModuleTag_DrawNodTechCenterLF"
+				OkToChangeModelColor="true"
+				UseStandardModelNames="true"
+				StaticModelLODMode="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT" >
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6 DYING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6 REALLYDAMAGED">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6 DAMAGED">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6">
+					<Model
+						Name="NB_TechPlant_LF" />
+				</ModelConditionState>
+			</ScriptedModelDraw>			
+		</Draws>
+		
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildDamaged_Medium" />
+			</FXListBehavior>
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				Type="UPGRADE" 
+				GiveNoXP="true" />
+			<ModelConditionUpgrade
+				id="ModuleTag_UpgradeLaserFencing"
+				AddConditionFlags="USER_6">
+				<TriggeredBy>Upgrade_LaserFencing</TriggeredBy>
+			</ModelConditionUpgrade>
+			
+			<xi:include
+				href="../../Includes/NodLaserFencingArmorUpgrade.xml" />		
+			<xi:include
+				href="../../Includes/NodLaserFencingStatusUpgrade.xml" />
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="../../Includes/AdvancedNODBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/AdvancedNODBuildingSuicide.xml" />
+				
+			<SubObjectsUpgrade
+				id="ModuleTag_EMPBurstSubObject"
+				ShowSubObjects="UG_EMP">
+				<TriggeredBy>Upgrade_NODEmpBurst</TriggeredBy>
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_LaserCapacitorSubObject"
+				ShowSubObjects="UG_Lasers">
+				<TriggeredBy>Upgrade_NODTechCenterLaserCapacitor</TriggeredBy>
+			</SubObjectsUpgrade>
+<!--			<SubObjectsUpgrade
+				id="ModuleTag_ChargedParticleBeamSubObject"
+				ShowSubObjects="CHARGEDPARTICALBEAM_01 CHARGEDPARTICALBEAM_02 CHARGEDPARTICALBEAM_03">
+				<TriggeredBy>Upgrade_NodTechCenterChargedParticleBeam</TriggeredBy>
+			</SubObjectsUpgrade>
+-->
+			<SubObjectsUpgrade
+				id="ModuleTag_TibCoreMissilesSubObject"
+				ShowSubObjects="TIBCOREMISSILER TIBCOREMISSILER02">
+				<TriggeredBy>Upgrade_NODTechCenterTibCoreMissiles</TriggeredBy>
+			</SubObjectsUpgrade>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+<!--
+			<SpecialPower
+				id="ModuleTag_SpecialPower_LaserFencing"
+				SpecialPowerTemplate="SpecialPower_LaserFencing"
+				UpdateModuleStartsAttack="true"
+			/>	
+-->
+			<GrantUpgradeAreaOfEffectSpecialPower
+				id="ModuleTag_CloakingField"
+				SpecialPowerTemplate="SpecialPower_LaserFencing" 
+				TriggerFX="FX_NOD_LaserFencingTriggeredByBuilding"
+				Radius="10">
+				<AcceptObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE"
+				/>
+				<UpgradeTemplate>Upgrade_CloakingFieldInvisibility</UpgradeTemplate>
+			</GrantUpgradeAreaOfEffectSpecialPower>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_WeaponFireSpecialAbilityUpdateLaserFencing"
+				SpecialPowerTemplate="SpecialPower_LaserFencing"
+				SpecialWeapon="CloakingFieldKillInfantryWeapon"
+				WhichSpecialWeapon="2"
+			/>
+			<AISpecialPowerUpdate
+				id="ModuleTag_NODTechLabLaserFencingAI"
+				CommandButtonName="Command_SpecialPowerLaserFencing"
+				AllyUnitInclude="STRUCTURE"
+				SpecialPowerRadius="100.0" 
+				SpecialPowerAIType="SPECIAL_POWER_AOE_BUFF"
+			/>	
+							
+			<OCLSpecialPower
+				id="ModuleTag_Redemption"
+				SpecialPowerTemplate="SpecialPower_Redemption"
+				TriggerFX="FX_NodCloakingField"
+				OCL="OCL_RedemptionTrigger"
+				CreateLocation="CREATE_AT_LOCATION"
+			/>			
+			<AISpecialPowerUpdate
+				id="ModuleTag_NODTechLabRedemptionAI"
+				CommandButtonName="Command_Redemption"
+				AllyUnitInclude="VEHICLE"
+				AllyUnitExclude="INFANTRY HARVESTER"
+				SpecialPowerRadius="100.0" 
+				SpecialPowerAIType="SPECIAL_POWER_AOE_BUFF"
+			/>	
+			
+					
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="AIUpdate"
+				AILuaEventsList="NODTechAssembleyPlantFunctions" />
+		</AI>
+		<Body>
+		   <ActiveBody
+		    id="ModuleTag_Body"
+		    MaxHealth="10000.0">
+		    <DamageTrigger
+		     HealthLevelBelowPercent="66"
+		     RemoveUpgrade="Upgrade_LaserFencing"/>
+		   </ActiveBody>
+  		</Body> 
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "15.0"
+				MinorRadius = "27.5"
+				Height = "10.0" >
+				<Offset
+					x = "-5.05736"
+					y = "-0.113922"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "15.0"
+				MinorRadius = "20.0"
+				Height = "20.2" >
+				<Offset
+					x = "-5.05736"
+					y = "-0.113922"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "15.0"
+				MinorRadius = "12.5"
+				Height = "28.0" >
+				<Offset
+					x = "-5.05736"
+					y = "-0.113922"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "15.9"
+				MinorRadius = "22.5"
+				Height = "3.0" >
+				<Offset
+					x = "-5.78493"
+					y = "50.0425"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "15.9"
+				MinorRadius = "15.504"
+				Height = "3.0" >
+				<Offset
+					x = "-5.78493"
+					y = "-58.002"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "15.9"
+				MinorRadius = "17.9846"
+				Height = "3.0" >
+				<Offset
+					x = "37.1259"
+					y = "2.32658"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "15.9"
+				MinorRadius = "16.1862"
+				Height = "3.0" >
+				<Offset
+					x = "-34.6559"
+					y = "-0.302448"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "10.0"
+				MinorRadius = "10.0"
+				Height = "3.0" >
+				<Offset
+					x = "-6.11428"
+					y = "-38.8741"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "10.0"
+				MinorRadius = "10.0"
+				Height = "3.0" >
+				<Offset
+					x = "17.4495"
+					y = "1.54449"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "8.0"
+				MinorRadius = "8.0"
+				Height = "3.0" >
+				<Offset
+					x = "14.266"
+					y = "53.5036"
+					z = "0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="10.0"
+					y="-38.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="10.0"
+					y="38.0"
+					z="25" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-22.0"
+					y="30.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-22.0"
+					y="-38.0"
+					z="25" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="10.0"
+					y="-38.0"
+					z="25" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="10.0"
+					y="38.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-22.0"
+					y="30.0"
+					z="25" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-22.0"
+					y="-38.0"
+					z="0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_TechAssemblyPlantSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="250"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+  <xs:include schemaLocation="../Includes/AIBeaconType.xsd"/>
+	<xs:include schemaLocation="../Includes/ObjectFilter.xsd"/>
+	<xs:include schemaLocation="AIFeedbackWorthySkirmishGameEvent.xsd"/>
+	<xs:include schemaLocation="AIStrategicDirective.xsd"/>
+  <xs:include schemaLocation="AssetTypeAIStateDefinition.xsd"/>
+	<xs:include schemaLocation="AIBaseSelectionCriteria.xsd"/>
+
+	<xs:simpleType name="AIEnemySortingType">
+		<xs:restriction base="xs:string">
+
+			<!-- Choose the closest enemy (home base to home base). If several enemies are about the same distance, give them all the same priority -->
+			<xs:enumeration value="NearestFirst_AllowTies" />
+
+			<!-- Choose the closest enemy (home base to home base). If several enemies are about the same distance, choose randomly which will have the highest priority -->
+			<xs:enumeration value="NearestFirst_BreakTies" />
+			
+			<!-- Give everyone the same priority -->
+			<xs:enumeration value="Flat" />
+
+			<!-- Choose the most powerful enemy (total value of Units & Structures), giving weakened enemies a chance to recover. If several enemies are about the same power, give them all the same priority -->
+			<xs:enumeration value="StrongestFirst_AllowTies" />
+
+			<!-- Choose the most powerful enemy (total value of Units & Structures), giving weakened enemies a chance to recover. If several enemies are about the same power, choose randomly -->
+			<xs:enumeration value="StrongestFirst_BreakTies" />
+		</xs:restriction>
+	</xs:simpleType>
+
+  <xs:complexType name="AIStrategicState">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:attribute name="State" type="AssetReference" xas:refType="AIStrategicStateDefinition" use="required"/>
+				<xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+			</xs:extension>
+		</xs:complexContent>  
+  </xs:complexType>
+  <xs:complexType name="AIBudgetState">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:attribute name="State" type="AssetReference" xas:refType="AIBudgetStateDefinition" use="required"/>
+				<xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+			</xs:extension>
+		</xs:complexContent>  
+  </xs:complexType>
+  <xs:complexType name="AIBuildState">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:attribute name="State" type="AssetReference" xas:refType="AIBuildStateDefinition" use="required"/>
+				<xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+			</xs:extension>
+		</xs:complexContent>  
+	</xs:complexType>
+  <xs:complexType name="AIBuildDelay">
+    <xs:attribute name="Delay" type="Time" default="0s"/>
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+  </xs:complexType>
+  <xs:complexType name="AIResourceMultiplierCheat">
+    <xs:attribute name="Percentage" type="Percentage" default="100%"/>
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+  </xs:complexType>
+  <xs:complexType name="AIBuildDelayRange">
+    <xs:attribute name="id" type="AssetId" xas:pipelineOnly="true"/>
+    <xs:attribute name="MinDelay" type="Time" default="0s"/>
+    <xs:attribute name="MaxDelay" type="Time" default="0s"/>
+    <xs:attribute name="MinTTKRatio" type="xs:float" default="1"/>
+    <xs:attribute name="MaxTTKRatio" type="xs:float" default="1"/>
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+  </xs:complexType>
+  <xs:simpleType name="AIUnitBuilderUnitChoiceShape">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="BEST"/>
+      <xs:enumeration value="MIDDLE"/>
+      <xs:enumeration value="WORST"/>
+      <xs:enumeration value="FLAT"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="AIUnitBuilderUnitChoiceStrategy">
+    <xs:attribute name="Shape" type="AIUnitBuilderUnitChoiceShape" default="FLAT"/>
+    <xs:attribute name="StandardDeviation" type="xs:float" default="1"/>
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+  </xs:complexType>
+  <xs:complexType name="AIUnitBuilderUnitChoiceStrategyAdaptive">
+    <xs:attribute name="MinEffectiveness" type="xs:float" default="0.5"/>
+    <xs:attribute name="MaxEffectiveness" type="xs:float" default="0.5"/>
+    <xs:attribute name="MinStandardDeviation" type="xs:float" default="0.5"/>
+    <xs:attribute name="MaxStandardDeviation" type="xs:float" default="0.5"/>
+    <xs:attribute name="MinEfficiency" type="xs:float" default="1"/>
+    <xs:attribute name="MaxEfficiency" type="xs:float" default="1"/>
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+  </xs:complexType>
+  <xs:complexType name="AIUnitBuilderEvaluationDelayRange">
+    <xs:attribute name="UseAllAvailableQueues" type="xs:boolean" default="true" />
+    <xs:attribute name="MinDelay" type="Time" default="0s" />
+    <xs:attribute name="MaxDelay" type="Time" default="0s" />
+    <xs:attribute name="MinEfficiency" type="xs:float" default="1" />
+    <xs:attribute name="MaxEfficiency" type="xs:float" default="1" />
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+  </xs:complexType>
+  <xs:complexType name="AIPersonalityDefMap">
+    <xs:attribute name="Side" type="PlayerTemplateRef" use="required"/>
+    <xs:attribute name="Personality" type="AssetReference" xas:refType="AIPersonalityDefinition" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="AIWeightedOpeningMove">
+		<xs:sequence>
+			<xs:element name="Heuristic" type="HeuristicChoice" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+    <xs:attribute name="Name" type="AssetReference" xas:refType="SkirmishOpeningMove" use="required" />
+	<xs:attribute name="Priority" type="SageUnsignedInt" default="0" />
+    <xs:attribute name="Weight" type="Percentage" default="100%" />
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+  </xs:complexType>
+  <xs:complexType name="AIStrategicDirectiveFeedbackMap">
+	<xs:attribute name="StrategicDirective" type="AIStrategicDirective" use="required"/>
+	<xs:attribute name="Event" type="AIStrategicDirectiveEvent" use="required"/>
+	<xs:attribute name="FeedbackKey" type="StringHash" use="required"/>
+  </xs:complexType>
+	<xs:complexType name="AISkirmishGameEventFeedbackMap">
+		<xs:attribute name="Event" type="AIFeedbackWorthySkirmishGameEvent" use="required"/>
+		<xs:attribute name="FeedbackKey" type="StringHash" use="required"/>
+	</xs:complexType>
+  <xs:complexType name="AIUnitCap">
+    <xs:attribute name="Cap" type="xs:int" default="100"/>
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+  </xs:complexType>
+  
+  <xs:complexType name="AISpecificUnitCap">
+    <xs:attribute name="Unit" type="GameObjectWeakRef"/>
+    <xs:attribute name="Cap" type="xs:int" default="1"/>
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+  </xs:complexType>
+
+  <xs:complexType name="AIUnitBuilderModifier">
+    <xs:attribute name="Unit" type="GameObjectWeakRef"/>
+    <xs:attribute name="OffensiveModifier" type="xs:float" default="1.0" />
+    <xs:attribute name="DefensiveModifier" type="xs:float" default="1.0" />
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+  </xs:complexType>
+
+	<xs:complexType name="AIStateFeedbackEntry">
+		<xs:attribute name="FeedbackKey" type="StringHash" use="required" />
+		<xs:attribute name="EvaEvent" type="EvaEventRef" default="" />
+		<xs:attribute name="Sound" type="AudioEventInfoRef" default="" />
+		<xs:attribute name="Text" type="xs:string" default="" />
+		<xs:attribute name="Video" type="xs:string" default="" />
+		<xs:attribute name="FeedbackTo" type="ObjectFilterRelationshipBitMask" default="ALLIES ENEMIES NEUTRAL" />
+		<xs:attribute name="Timeout" type="Time" use="optional" />
+		<xs:attribute name="OnlyPlayIfNoOtherAliveInstancesOfCommander" type="SageBool" default="false" />
+		<xs:attribute name="ConditionOnFlag" type="xs:string" use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="AIPlayerPowerChoice">
+		<xs:attribute name="PlayerPower" type="PlayerTechRef" use="optional"/>
+		<xs:attribute name="Weight" type="Percentage" default="20%"/>
+	</xs:complexType>
+
+	<xs:complexType name="AIPersonalityDefinition" xas:runtimeWrapper="::AIPersonality" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="Side" type="PlayerTemplateRef" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="PersonalityMap" type="AIPersonalityDefMap" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="UnitCap" type="AIUnitCap" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="BuildDelay" type="AIBuildDelay" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="BuildDelayRange" type="AIBuildDelayRange" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="UnitBuilderUnitChoiceStrategy" type="AIUnitBuilderUnitChoiceStrategy" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="UnitBuilderUnitChoiceStrategyAdaptive" type="AIUnitBuilderUnitChoiceStrategyAdaptive" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="UnitBuilderEvaluationDelayRange" type="AIUnitBuilderEvaluationDelayRange" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="ResourceMultiplierCheat" type="AIResourceMultiplierCheat" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="StrategicDirectiveFeedback" type="AIStrategicDirectiveFeedbackMap" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="SkirmishGameEventFeedback" type="AISkirmishGameEventFeedbackMap" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="PowerChoice" type="AIPlayerPowerChoice" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="OpeningMove" type="AIWeightedOpeningMove" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="StrategicState" type="AIStrategicState" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="BudgetState" type="AIBudgetState" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="BuildState" type="AIBuildState" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="SpecificUnitCap" type="AISpecificUnitCap" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="UnitModifier" type="AIUnitBuilderModifier" minOccurs="0" maxOccurs="unbounded" />
+					
+					<!-- This is the default for the "HomeBaseCriteria" of the AIStateTactic type -->
+					<xs:element name="DefaultTacticHomeBaseCriteria" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1" />
+					
+					<!-- Structures are treated slightly differently in the build manager. In particular, we don't queue any units
+							 or base defenses while we are trying to get together the money to queue up a structure. This filter
+							 determines what a "structure" means; with the Japanese around, it's not just KINDOF_STRUCTURE -->
+					<xs:element name="CountAsStructureForBuildPurposesFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+
+					<xs:element name="InTroubleSkirmishFeedbackControl" type="AIInTroubleSkirmishFeedbackControl" minOccurs="0" maxOccurs="1" />
+					<xs:element name="FeedbackEntry" type="AIStateFeedbackEntry" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="PersonalityType" type="AssetId" XmlEdit:Category="Design" use="required" />
+        <!-- This attribute is only needed for skirmish personalities - it is what is shown in the UI -->
+        <xs:attribute name="PersonalityUIName" type="xs:string"/>
+        <xs:attribute name="SkirmishPersonality" type="xs:boolean" default="false" />
+        <xs:attribute name="CoopPersonality" type="xs:boolean" default="false" />
+        <xs:attribute name="SecondsTillTargetsExpire" type="SageReal" default="15.0" />
+        <xs:attribute name="DesiredExcessPowerBuffer" type="SageInt" default="0" />
+        <xs:attribute name="BaseCompactness" type="xs:float" default="0.5" />
+        <xs:attribute name="DefaultThreatFindRadius" type="xs:float" default="500.0"/>
+        <xs:attribute name="UnitBuilderCostEffectivenessWeight" type="xs:float" default="1.0" />
+        <xs:attribute name="UnitBuilderMoneyVersusTimePreference" type="xs:float" default="0.5" />
+        <xs:attribute name="UnitBuilderOverallOffensivePreference" type="Percentage" default="100%" />
+        <xs:attribute name="UnitBuilderOverallDefensivePreference" type="Percentage" default="100%" />
+        <xs:attribute name="UnitBuilderEnemyTowerWeight" type="Percentage" default="100%" />
+        <xs:attribute name="UnitBuilderEnemyNearbyDistance" type="SageReal" default="800.0" />
+        <xs:attribute name="UnitBuilderEnemyNearbyMultiplier" type="SageUnsignedInt" default="4" />
+        <xs:attribute name="BuildTechEfficiencyThreshold" type="xs:float" default="0.5" />
+        <xs:attribute name="BuildTechMinPowerAdvantage" type="xs:float" default="1.1" />
+        <xs:attribute name="BuildExtraFactoryMinTime" type="Time" default="240s" />
+        <xs:attribute name="ResourceNodeSearchRadius" type="xs:float" default="500.0"/>
+        <xs:attribute name="ResourceNodeValueRemainingForExpansion" type="xs:int" default="3000" />
+		<xs:attribute name="RefineryPlacementStartDistanceDelta" type="SageReal" default="0.0" />
+		<xs:attribute name="RefineryPlacementIncreaseTickAmount" type="SageReal" default="60.0" />
+		<xs:attribute name="RefineryPlacementNumberOfIncreaseTicksBeforeGivingUp" type="SageInt" default="3" />
+		<xs:attribute name="ReactiveDefenseRadius" type="xs:float" default="1200.0" />
+        <xs:attribute name="RepairBuildingsAtDifficulty" type="AIDifficultyBitFlags" default="" />
+        <xs:attribute name="UsePlayerPowersAtDifficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL" />
+        <xs:attribute name="EmergencyManagerHandleNoPowerAtDifficulty" type="AIDifficultyBitFlags" default="" />
+        <xs:attribute name="EmergencyManagerHandleNoIncomeAtDifficulty" type="AIDifficultyBitFlags" default="" />
+        <xs:attribute name="EmergencyManagerHandleNoConyardAtDifficulty" type="AIDifficultyBitFlags" default="" />
+        <xs:attribute name="EmergencyManagerHandleUnderAttackAtDifficulty" type="AIDifficultyBitFlags" default="" />
+        <xs:attribute name="EmergencyManagerHandleConyardInDangerAtDifficulty" type="AIDifficultyBitFlags" default="" />
+        <xs:attribute name="ConyardInDangerEmergencyUnderAttackTime" type="Time" default="10s" />
+        <xs:attribute name="ConyardInDangerEmergencyHealthPercent" type="Percentage" default="50%" />
+        <xs:attribute name="ConyardInDangerEmergencyEngineerDistance" type="SageReal" default="200.0" />
+		<xs:attribute name="EnemySortingBrutalDifficulty" type="AIEnemySortingType" default="NearestFirst_BreakTies" />
+		<xs:attribute name="EnemySortingHardDifficulty" type="AIEnemySortingType" default="NearestFirst_BreakTies" />
+		<xs:attribute name="EnemySortingMediumDifficulty" type="AIEnemySortingType" default="Flat" />
+		<xs:attribute name="EnemySortingEasyDifficulty" type="AIEnemySortingType" default="StrongestFirst_AllowTies" />
+		<xs:attribute name="EnemyResortingTime" type="Time" default="15s" />
+		<xs:attribute name="CleanupRefineries" type="xs:boolean" default="false" />
+        <xs:attribute name="CanBuildInAlliedBuildRadii" type="xs:boolean" default="false" />
+        <xs:attribute name="StructureSaveChanceEasy" type="xs:float" default="0.0" />
+        <xs:attribute name="StructureSaveChanceMedium" type="xs:float" default="0.0" />
+        <xs:attribute name="StructureSaveChanceHard" type="xs:float" default="0.0" />
+		<xs:attribute name="BaseBuilderKeepUnderAttackFlagOnTime" type="Time" default="4s" />
+		<xs:attribute name="BaseBuilderUpdateUnderAttackTime" type="Time" default="200ms" />
+		<xs:attribute name="BaseBuilderUpdateEnemiesInBaseTime" type="Time" default="1s" />
+		<xs:attribute name="MinHarvesters" type="xs:unsignedInt" default="0"/>
+        <xs:attribute name="MaxStrategicTargets" type="xs:int" default="32" />
+        <xs:attribute name="AssaultBeaconRadius" type="xs:float" default="300.0" />
+        <xs:attribute name="HoldObjectBeaconRadius" type="xs:float" default="300.0" />
+        <xs:attribute name="HoldPositionBeaconRadius" type="xs:float" default="300.0" />
+				
+		<!-- Red Alert information - remove these if red alerts are removed in future games -->
+		<xs:attribute name="RedAlertPowerAdvantage" type="xs:float" default="0.5"/>
+		<xs:attribute name="RedAlertIncome" type="xs:float" default="50.0"/>
+		<xs:attribute name="RedAlertProductionBuildings" type="xs:int" default="2"/>
+		<xs:attribute name="RedAlertAttackTime" type="Time" default="15s"/>
+				
+		<!-- To be counted as a "can destroy walls" unit, you have to be able to destroy a section of 
+				 wall in less than this amount of time. If you can, we will recruit onto teams that need
+				 to reach a target which is behind walls -->
+		<xs:attribute name="MaxWallDestroyTimeToCountAsGoThroughWalls" type="Time" default="1s" />
+
+		<!-- Image reference to AI Coop Commander Portrait -->
+		<xs:attribute name="CommanderPortrait" type="ImageWeakRef" default="AI_Portrait_TEMP" />
+
+		<xs:attribute name="SkirmishTimeTillGreeting" type="Time" default="1.5s" />
+
+        <xs:attribute name="CoopMonitorUpdateTime" type="Time" default="5s" />
+        
+		</xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

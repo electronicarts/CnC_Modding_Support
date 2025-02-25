@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- Tech Structure N / Radar Dish -->
+	<Includes>
+		<Include type="all" source="ART:NB_TechStructN_SKN.w3x" />
+		<Include type="all" source="ART:NB_TechStructN_AIDA.w3x" />
+		<Include type="all" source="ART:NB_TechStructN_CPTR.w3x" />
+		
+		<Include type="instance" source="DATA:BaseObjects/BaseTechStructure.xml" />
+	</Includes>
+	<GameObject
+		id="TechStructureN"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_Neutral_TechStr_N_GDI"
+		ButtonImage="Portrait_Neutral_TechStr_N_GDI"
+		Side="Neutral"
+		CommandSet="EmptyCommandSet"
+		HealthBoxHeightOffset="50"
+		KindOf="+HAS_BUILDING_DESTRUCT_BEHAVIOR"
+		RadarPriority="STRUCTURE"
+		EditorName="NEUTRAL_Struct_Radar_Dish(TechStructureN)"
+		EditorSorting="STRUCTURE" 
+		Description="DESC:TechStructureN">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:TechStructureN</DisplayName>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="Mast BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03" 
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechStructN_SKN" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NB_TechStructN_CPTR"
+						AnimationMode="MANUAL"/>
+				</AnimationState>
+				<!-- when captured -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="NB_TechStructN_AIDA"
+						AnimationMode="LOOP"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "Transition_MainToCaptured" then
+						CurDrawableSetTransitionAnimState("Transition_MainToCaptured")
+						end
+					</Script>
+				</AnimationState>
+
+				<!---Transitions-->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_MainToCaptured">
+					<Animation
+						AnimationName="NB_TechStructN_CPTR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+				<ProceduralAnimationState
+					ConditionsYes="USER_1"
+					SourceBoneNameKey="Mast"
+					TargetBoneNameKey="Mast"
+					Rotation="ROTATE_Z INFINITE_LOOP"
+					RotationSpeed="-1d">
+				</ProceduralAnimationState>
+
+			</ScriptedModelDraw>
+			
+		</Draws>
+
+		<Behaviors>
+
+			<xi:include	href="DATA:Includes/GenericEngineerContain.xml" />
+
+			<ModelConditionUpgrade
+				id="ModuleTag_FactionUpgrade"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				AssociatedModule="ModuleTag_Draw">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="175.0"
+					FX="FX_GDIVehicleL_Damage">
+				</Item>
+			</BuildingDestructionBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Large_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIMammothExplode" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly"/>
+			</FXListBehavior>
+
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="DefaultBody"
+				MaxHealth="1500"/>
+		</Body>
+
+		<ClientBehaviors>
+			<!-- 
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Captured">
+				<ModelConditionSound Sound="NEU_RadarDish_StrN_Captured" RequiredFlags="USER_1"/>
+			</ModelConditionAudioLoopClientBehavior>
+			 -->
+			 <AnimationSoundClientBehavior id="ModuleTag_AnimationSound">
+				<Sound Sound="NEU_RadarDish_StrN_AnimationExtend" Animation="NB_TechStructN_CPTR" Frame="0"/>
+				<Sound Sound="NEU_RadarDish_StrN_AnimationTwist" Animation="NB_TechStructN_CPTR" Frame="17"/>
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+
+		<Geometry>
+			<Shape
+				Type= "CYLINDER"
+				MajorRadius = "54.9418"
+				MinorRadius = "54.9418"
+				Height = "91.0644"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_RadarDish_StrA_SelectMS" AudioType="voiceSelect" />
+		</AudioArrayVoice> 
+	</GameObject>
+
+</AssetDeclaration>

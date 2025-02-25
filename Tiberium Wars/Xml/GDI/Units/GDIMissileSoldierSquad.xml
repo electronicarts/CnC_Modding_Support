@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:SquadMarkGUMis.w3x" />
+		<Include
+			type="all"
+			source="ART:FXRocket_FP.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseSquad.xml" />
+	</Includes>
+	<GameObject
+		id="GDIMissileSoldierSquad"
+		inheritFrom="BaseSquad"
+		SelectPortrait="Portrait_GDIMissileSquad"
+		ButtonImage="Portrait_GDIMissileSquad"
+		Side="GDI"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildCost="400"
+		BuildTime="4"
+		CommandSet="GDIMissileSoldierSquadCommandSet"
+		CommandPoints="100" 
+		KindOf="SELECTABLE CAN_ATTACK ATTACK_NEEDS_LINE_OF_SIGHT INFANTRY HORDE ARMY_SUMMARY LARGE_RECTANGLE_PATHFIND PATH_THROUGH_INFANTRY CAN_CAPTURE CAN_BE_FAVORITE_UNIT SCORE"
+		IsTrainable="true"
+		FormationWidth="2"
+		FormationDepth="1"
+		ThreatLevel="0"
+		ProductionQueueType="INFANTRY"
+		UnitCategory="INFANTRY"
+		WeaponCategory="MISSILE"
+		EditorName="GDIMissileSoldierSquad"
+		Description="Desc:GDIMissileSquad"
+		TypeDescription="Type:GDIMissileSquad"
+		UnitTypeIcon="MissilemenIcon">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIMissileSquad</DisplayName>
+		<DisplayUpgrade>Upgrade_GDICompositeArmor</DisplayUpgrade>
+		<ArmorSet
+			Armor="NoArmor" />
+		<LocomotorSet
+			Locomotor="NormalRangedSquadLocomotor"
+			Condition="NORMAL"
+			Speed="55" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				DependencySharedModelFlags="EMOTION_TAUNTING EMOTION_ALERT EMOTION_MORALE_HIGH EMOTION_MORALE_LOW EMOTION_AFRAID EMOTION_COWER SELECTED  EMOTION_TERROR EMOTION_LOOK_TO_SKY">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="FXRocket_FP" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="WORLD_BUILDER">
+					<Model
+						Name="SquadMarkGUMis" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SquadMissileRangefinder" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="100" />
+			<Physics
+				id="ModuleTag_Physics"></Physics>
+			<HordeContain
+				id="ModuleTag_HordeContain"
+				FrontAngle="4.7123"
+				FlankedDelaySeconds="2.0"
+				ShowPips="false"
+				Formation="MAIN"
+				MeleeAttackLeashDistance="1"
+				Slots="2"
+				ObjectStatusOfContained=""
+				ConditionForEntry="INVALID">
+				<PassengerFilter
+					Rule="NONE"
+					Include="INFANTRY" />
+				<DieMuxData />
+				<InitialPayload
+					Name="GDIMissileSoldier"
+					Count="2" />
+				<MeleeBehavior
+					Type="AMOEBA" />
+				<RankInfo
+					RankID="1"
+					UnitType="GDIMissileSoldier">
+					<Position
+						X="0"
+						Y="-10" />
+					<Position
+						X="0"
+						Y="10" />
+				</RankInfo>
+				<RankToReleaseWhenAttacking>1</RankToReleaseWhenAttacking>
+			</HordeContain>
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				GiveNoXP="true" />
+			<ModelConditionUpgrade
+				id="ModuleTag_MissileSoldierArmorComposite"
+				Permanent="true">
+				<TriggeredBy>Upgrade_GDICompositeArmor</TriggeredBy>
+			</ModelConditionUpgrade>
+			<AimWeapon
+				id="ModuleTag_AimWeapon"
+				AimHighThreshold="0.5"/>
+			<xi:include
+				href="DATA:Includes/GDICallForTransport.xml" />
+			<xi:include
+				href="DATA:Includes/CaptureBehavior.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:Behaviors/child::*)" />
+		</Behaviors>
+		<AI>
+			<HordeAIUpdate
+				id="ModuleTag_HordeAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES ATTACK_BUILDINGS"
+				MaxCowerTime="5.0s"
+				MinCowerTime="3.0s"
+				CanAttackWhileContained="true">
+				<UnitAITargetChooserData
+					SympathyRange="100.0" />
+			</HordeAIUpdate>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				MaxHealth="1.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="10.0"
+				MinorRadius="20.0"
+				Height="13.0"></Shape>
+		</Geometry>
+		<!--
+		<AudioArraySound>
+			<AudioEntry
+				Sound="AudioEvent:GDI_MissileSoldier_GroupSmall_MoveLoop"
+				AudioType="soundMoveLoop" />
+		</AudioArraySound>
+-->
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="400"
+			MaxVisionBonusPercent="300"
+			VisionBonusTestRadius="200"
+			VisionBonusPercentPerFoot="1" />
+		<CrusherInfo
+			UseCrushAttack="false"
+			CrushableLevel="0"
+			CrusherLevel="0" />
+	</GameObject>
+</AssetDeclaration>
+<!--
+
+Object GDIMissileSoldierSquad
+
+	ThreatBreakdown GDIMissileSoldierHorde_DetailedThreat
+		AIKindOf = ARCHER
+	End
+	
+	Behavior = AISpecialPowerUpdate GDIMissileSoldierHordeCaptureBuildingAI
+		CommandButtonName = Command_CaptureBuilding
+		SpecialPowerAIType = AI_SPECIAL_POWER_CAPTURE_BUILDING
+	End
+	
+End
+
+
+
+-->

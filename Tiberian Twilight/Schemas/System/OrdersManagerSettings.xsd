@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="OrderLineType"
+							xas:targetNamespace=""
+							xas:enumItemPrefix="ORDER_LINE_"
+							xas:useEnumPrefix="false">
+		<xs:restriction base="xs:string">				 
+			<xs:enumeration value="EXECUTING" />
+			<xs:enumeration value="PENDING" />
+			<xs:enumeration value="PATROL" />
+			<xs:enumeration value="PATROLPENDING" />
+			<xs:enumeration value="TARGETMOVE" />
+			<xs:enumeration value="DEFAULT_TARGETATTACK" />
+			<xs:enumeration value="WEAK_TARGETATTACK" />
+			<xs:enumeration value="EQUAL_TARGETATTACK" />
+			<xs:enumeration value="STRONG_TARGETATTACK" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="LineSetting">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Type" type="OrderLineType" use="required" />
+		<xs:attribute name="Width" type="SageReal" default="1.5" />
+		<xs:attribute name="VOffsetRate" type="SageReal" default="0" />
+		<xs:attribute name="Texture" type="TextureRef" />
+		<xs:attribute name="TextureTileSize" type="SageReal" default="30.0" />
+		<xs:attribute name="LineFadeTime" type="Time" default="0.25s" />
+	</xs:complexType>
+
+	<xs:complexType name="OrdersManagerSettings" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseSingletonSettings">
+				<xs:sequence>
+					<!-- The maxOccurs should equal to the number of LineType -->
+					<xs:element name="Line" type="LineSetting" minOccurs="1" maxOccurs="9" />
+					
+					<xs:element name="PatrolNode" type="ShadowInfo" minOccurs="0" maxOccurs="1" />
+					<xs:element name="PatrolStart" type="ShadowInfo" minOccurs="0" maxOccurs="1" />
+					<xs:element name="PendingNode" type="ShadowInfo" minOccurs="0" maxOccurs="1" />
+					<xs:element name="PendingStart" type="ShadowInfo" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="NodeFadeTime" type="Time" default="0.25s" />
+				<xs:attribute name="FormationPreviewShader" type="ShaderOverrideRef" use="optional" />
+				<xs:attribute name="BuildPlacementShader" type="ShaderOverrideRef" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

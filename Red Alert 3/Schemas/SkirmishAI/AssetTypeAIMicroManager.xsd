@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="AssetTypeAIMicroManagerStates.xsd"/>
+	<xs:include schemaLocation="AIBaseSelectionCriteria.xsd" />
+
+	<xs:complexType name="TargetBiasInfo">
+    <xs:attribute name="UnitName" type="GameObjectWeakRef" use="required"/>
+    <xs:attribute name="HealthMultiplier" type="xs:float" default="1.0"/>
+    <xs:attribute name="DamageMultiplier" type="xs:float" default="1.0"/>
+    <xs:attribute name="HealthOverride" type="xs:float" default="100.0"/>
+    <xs:attribute name="DamageOverride" type="xs:float" default="100.0"/>
+  </xs:complexType>
+
+	<xs:complexType name="SpecificSpecialPowerDelayInfo">
+		<xs:attribute name="PowerType" type="AISpecialPowerHeuristic" use="required"/>
+		<xs:attribute name="TogglePowerSubType" type="ToggleStatusAiHint" default="TOGGLE_NO_HINT"/>
+		<xs:attribute name="MinimumDelay" type="Time" default="0s"/>
+		<xs:attribute name="MaximumDelay" type="Time" default="0s"/>
+	</xs:complexType>
+  
+  <xs:complexType name="AIMicroManagerData" xas:runtimeWrapper="::AIMicroManager" xas:typeGroup="Xml">
+	  <xs:complexContent>
+		  <xs:extension base="BaseAssetType">
+
+        <xs:sequence>
+          <xs:element name="TargetBias" type="TargetBiasInfo" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="SpecificSpecialPowerDelay" type="SpecificSpecialPowerDelayInfo" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="RetreatBaseCriteria" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="IgnoreTargets" type="ObjectFilter" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+
+        <xs:attribute name="UpdateTime" type="Time" default="1s"/>
+				
+        <!-- If the team's center point has not moved more than this distance in this long, the team as a whole
+        		 should be considered idle and given its orders again (assuming the team is not obviously busy e.g. in
+        		 combat.)
+        				This really belongs in the Tactic, not the Micromanager, but for coding reasons it is easier 
+        		 to put in here. @todo - fix that? -->
+        <xs:attribute name="MaxTeamIdleTime" type="Time" default="30s"/>
+        <xs:attribute name="MaxTeamIdleDistanceChange" type="xs:float" default="50.0"/>
+				
+        <!-- If a unit has not moved more than this distance in this long, the unit is considered idle, even
+        		 if it thinks it is doing something. Again, as much a tactic thing as a micromanager thing. -->
+        <xs:attribute name="MaxUnitIdleTime" type="Time" default="10s"/>
+        <xs:attribute name="MaxUnitIdleDistanceChange" type="xs:float" default="50.0"/>
+
+        <xs:attribute name="EngageHostileTargets" type="xs:boolean" default="true"/>
+        <xs:attribute name="EngagePassiveTargets" type="xs:boolean" default="true"/>
+        <xs:attribute name="EngageTacticalTarget" type="xs:boolean" default="true"/>
+
+        <xs:attribute name="PassiveTargetSearchDistance" type="xs:float" default="400.0"/>
+        <xs:attribute name="EnemySearchDistanceVisionMultiplier" type="xs:float" default="1.25"/>
+        <xs:attribute name="MinTimeToKeepTempVisionRangeBonus" type="Time" default="10s"/>
+
+        <!-- Used to force units to stick to their current target.  This allows us to reduce the AI's responsiveness at lower
+             difficulties and give the player a chance to counter the AI's current target choices. -->
+        <xs:attribute name="TimeToKeepTargetMin" type="Time" default="0s"/>
+        <xs:attribute name="TimeToKeepTargetMax" type="Time" default="0s"/>
+
+        <!-- Used to randomly make errors in the MicroManager's target choosing.  This value is increased to
+             lower difficulty. -->
+        <xs:attribute name="RandomTargetScoreModifier" type="xs:float" default="0.0"/>
+
+        <xs:attribute name="CleanupPowerAdvantage" type="xs:float" default="4.0"/>
+
+        <xs:attribute name="UseGatherState" type="xs:boolean" default="true"/>
+        <xs:attribute name="GatherTempVisionRangeBonus" type="xs:float" default="1.5"/>
+        
+        <xs:attribute name="RetreatPowerAdvantage" type="xs:float" default="0.25"/>
+        <xs:attribute name="RetreatMinDistanceFromBase" type="xs:float" default="900.0"/>
+        <xs:attribute name="RetreatMinDistanceToFallback" type="xs:float" default="500.0"/>
+        <xs:attribute name="RetreatSpeedBuffer" type="xs:float" default="0.75"/>
+        <xs:attribute name="RetreatTempVisionRangeBonus" type="xs:float" default="1.5"/>
+
+        <xs:attribute name="MaxDistanceFromTeamToIncludeInArmy" type="xs:float" default="600.0"/>
+        
+        <xs:attribute name="AlphaStrikeTargetHealthPct" type="xs:float" default="0.5"/>
+        <xs:attribute name="AlphaStrikeTargetTimeToKill" type="xs:float" default="4.0"/>
+        <xs:attribute name="AlphaStrikeEngineerDistanceFromStructure" type="xs:float" default="200.0"/>
+
+        <xs:attribute name="SiegeWeaponBuffer" type="xs:float" default="1.15"/>
+        <xs:attribute name="CanUseSiegeState" type="xs:boolean" default="true"/>
+
+        <xs:attribute name="Crush" type="xs:boolean" default="true"/>
+        <xs:attribute name="CrushPreference" type="xs:float" default="1.0"/>
+
+        <xs:attribute name="EnterGarrisons" type="xs:boolean" default="true"/>
+        <xs:attribute name="EnterGarrisonableStructureDistance" type="xs:float" default="150.0"/>
+
+        <xs:attribute name="ClearGarrisons" type="xs:boolean" default="true"/>
+
+        <xs:attribute name="PullbackInjured" type="xs:boolean" default="true"/>
+        <xs:attribute name="PullbackInjuredHealthPct" type="xs:float" default="0.2"/>
+
+        <xs:attribute name="ReverseMove" type="xs:boolean" default="true"/>
+        <xs:attribute name="DodgeThreats" type="xs:boolean" default="true"/>
+        <xs:attribute name="DodgeThreatsReactionTimeMin" type="Time" default="0s"/>
+        <xs:attribute name="DodgeThreatsReactionTimeMax" type="Time" default="0s"/>
+
+        <xs:attribute name="UseSpecialPowers" type="xs:boolean" default="true"/>
+        <xs:attribute name="SpecialPowerDelayMinimum" type="Time" default="0s"/>
+        <xs:attribute name="SpecialPowerDelayMaximum" type="Time" default="0s"/>
+
+        <xs:attribute name="EnterBaseDefenses" type="SageBool" default="true" />
+        <xs:attribute name="EnterBaseDefensesWhenIdle" type="SageBool" default="false" />
+
+        <!-- IsHarvesterManager: Enables special "Harvester" logic, in particular telling harvesters to go back to harvesting
+						 when not under attack -->
+        <xs:attribute name="IsHarvesterManager" type="SageBool" default="false" />
+
+        <xs:attribute name="MinDistanceFromBaseToIgnoreTargets" type="xs:float" default="0.0" />
+
+        <xs:attribute name="MaxSecondaryDamageFraction" type="SageReal" default="1.25" />
+
+        <!-- In some instances we don't want a Micro Manager to collect crates under any circumstances,
+             for example, when the MCV is trying to escape -->
+        <xs:attribute name="CanCollectCratesWhenIdle" type="xs:boolean" default="true"/>
+		
+		<xs:attribute name="FractionBlockedToDestroyWalls" type="xs:float" default="0.5"/>
+
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset:gamedata" targetNamespace="uri:ea.com:eala:asset:gamedata" elementFormDefault="qualified">
+
+	<xs:simpleType name="Bool">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="true" />
+			<xs:enumeration value="false" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="Modifier">
+		<xs:restriction base="xs:string" >
+			<xs:pattern value="[\&amp;\*]*" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="Identifier">
+		<xs:restriction base="xs:string" >
+			<xs:pattern value="[a-zA-Z_$][a-zA-Z0-9_$]*" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="IdentifierOrNothing">
+		<xs:restriction base="xs:string" >
+			<xs:pattern value="([a-zA-Z_$][a-zA-Z0-9_$]*)|" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ParamType">
+		<xs:restriction base="xs:string" >
+			<xs:pattern value="((\:\:)?([a-zA-Z_$][a-zA-Z0-9_$]*))+" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="Parameter">
+		<xs:attribute name="name" type="Identifier" />
+		<xs:attribute name="type" type="ParamType" />
+		<xs:attribute name="const" type="Bool" default="false" />
+		<xs:attribute name="modifier" type="Modifier" default="" />
+		<xs:attribute name="defaultValue" type="IdentifierOrNothing" default="" />
+	</xs:complexType>
+
+	<xs:complexType name="Function">
+		<xs:sequence>
+			<xs:element name="Parameter" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="name" type="Identifier" />
+		<xs:attribute name="return" type="ParamType" default="void" />
+		<xs:attribute name="static" type="Bool" default="false" />
+	</xs:complexType>
+	
+	<xs:element name="GameData">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Function" type="Function"  minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

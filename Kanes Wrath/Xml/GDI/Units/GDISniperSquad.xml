@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:FXSniper_FP.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseSquad.xml" />
+	</Includes>
+	<GameObject
+		id="GDISniperSquad"
+		inheritFrom="BaseSquad"
+		SelectPortrait="Portrait_GDISniperTeam"
+		ButtonImage="Portrait_GDISniperTeam"
+		Side="GDI"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildCost="1000"
+		BuildTime="10"
+		CommandSet="GDISniperSquadCommandSet"
+		CommandPoints="100"
+		KindOf="SELECTABLE CAN_ATTACK ATTACK_NEEDS_LINE_OF_SIGHT INFANTRY HORDE ARMY_SUMMARY LARGE_RECTANGLE_PATHFIND PATH_THROUGH_INFANTRY STEALTH_GARRISON CAN_CAPTURE SNIPER CAN_BE_FAVORITE_UNIT SCORE"
+		IsTrainable="true"
+		FormationWidth="2"
+		FormationDepth="1"
+		ThreatLevel="0"
+		ProductionQueueType="INFANTRY"
+		UnitCategory="INFANTRY"
+		WeaponCategory="GUN"
+		EditorName="GDISniperSquad"
+		Description="Desc:GDISniperTeam"
+		TypeDescription="Type:GDISniperTeam"
+		UnitTypeIcon="SniperIcon">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDISniperTeam</DisplayName>
+		<GameDependency>
+			<RequiredObject>GDIMedicalBay</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="NoArmor" />
+		<LocomotorSet
+			Locomotor="NormalRangedSquadLocomotor"
+			Condition="NORMAL"
+			Speed="55" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				DependencySharedModelFlags="EMOTION_TAUNTING EMOTION_ALERT EMOTION_MORALE_HIGH EMOTION_MORALE_LOW EMOTION_AFRAID EMOTION_COWER SELECTED  EMOTION_TERROR EMOTION_LOOK_TO_SKY">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="FXSniper_FP" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="WORLD_BUILDER">
+					<Model
+						Name="GU_SnprSh_SKN" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SquadSniperRangefinder" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="400" />
+			<Physics
+				id="ModuleTag_Physics"></Physics>
+			<HordeContain
+				id="ModuleTag_HordeContain"
+				FrontAngle="4.7123"
+				FlankedDelaySeconds="2.0"
+				ShowPips="false"
+				Formation="MAIN"
+				MeleeAttackLeashDistance="1"
+				Slots="1"
+				ObjectStatusOfContained=""
+				ConditionForEntry="INVALID"
+				SpawnBannerCarrierImmediately="true">
+				<PassengerFilter
+					Rule="NONE"
+					Include="INFANTRY" />
+				<DieMuxData />
+				<InitialPayload
+					Name="GDISniper"
+					Count="1" />
+				<!--<InitialPayload Name="GDISpotter" Count="1" />-->
+				<MeleeBehavior
+					Type="AMOEBA" />
+				<!--<RankInfo RankID="1" UnitType="GDISpotter">
+					<Position X="0" Y="10" />
+				</RankInfo>
+				-->
+				<RankInfo
+					RankID="1"
+					UnitType="GDISniper">
+					<Position
+						X="0"
+						Y="10" />
+				</RankInfo>
+				<RankToReleaseWhenAttacking>1</RankToReleaseWhenAttacking>
+				<BannerCarrierPosition>
+					<UnitType>GDISpotter</UnitType>
+					<Pos
+						x="-20"
+						y="-10" />
+				</BannerCarrierPosition>
+				<BannerCarriersAllowed>GDISpotter</BannerCarriersAllowed>
+				<MemberTemplateStatusInfo
+					ThingTemplate="GDISpotter"
+					ObjectStatus="PRIMARY_MEMBER_PRESENT" />
+			</HordeContain>
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				GiveNoXP="true" />
+			<!-- Trigger for Call Airstrike. This power makes the squad move to within casting range and triggers the actual OCl power -->
+			<SpecialPower
+				id="ModuleTag_CallAirstrikeSpecialPowerDispatch"
+				SpecialPowerTemplate="SpecialPowerCallAirstrike"
+				UpdateModuleStartsAttack="true" />
+			<!-- Update for the trigger. This makes the unit move to within range -->
+			<ActivateModuleSpecialPower
+				id="ModuleTag_CallAirstrikeSpecialPowerUpdate"
+				SpecialPowerTemplate="SpecialPowerCallAirstrike"
+				StartAbilityRange="400">
+				<SpecialPowerModules
+					ModuleId="ModuleTag_OCLSpecialPowerCallAirstrike"
+					TriggerAtTargetPosition="true" />
+			</ActivateModuleSpecialPower>
+			<!-- Actual work for Call Airstrike is done by this power and update-->
+			<OCLSpecialPower
+				id="ModuleTag_OCLSpecialPowerCallAirstrike"
+				SpecialPowerTemplate="SpecialPowerDummyTriggered1"
+				UpdateModuleStartsAttack="true"
+				OCL="OCL_GDISniperAirstrike"
+				CreateLocation="CREATE_AT_EDGE_NEAR_TARGET_AND_MOVE_TO_LOCATION" />
+			<OCLMonitorSpecialAbilityUpdate
+				id="ModuleTag_OCLMonitorSpecialAbilityUpdateCallAirstrike"
+				SpecialPowerTemplate="SpecialPowerDummyTriggered1"
+				UnpackTime="2s"
+				PreparationTime="1s"
+				PreTriggerUnstealthTime="9999s"
+				Options="LOSE_STEALTH_ON_TRIGGER" />
+			<xi:include
+				href="../../Includes/GDICallForTransport.xml" />
+			<xi:include
+				href="DATA:Includes/CaptureBehavior.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:Behaviors/child::*)" />
+		</Behaviors>
+		<AI>
+			<HordeAIUpdate
+				id="ModuleTag_HordeAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES ATTACK_BUILDINGS"
+				MaxCowerTime="5.0s"
+				MinCowerTime="3.0s"
+				CanAttackWhileContained="true"
+				AILuaEventsList="GDISniperSquadFunctions">
+				<UnitAITargetChooserData
+					SympathyRange="100.0" />
+			</HordeAIUpdate>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				MaxHealth="1.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="15.0"
+				MinorRadius="15.0"
+				Height="20.0"></Shape>
+		</Geometry>
+		<!--
+		<AudioArraySound>
+			<AudioEntry
+				Sound="AudioEvent:GDI_Sniper_GroupSmall_MoveLoop"
+				AudioType="soundMoveLoop" />
+		</AudioArraySound>
+-->
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="500"
+			MaxVisionBonusPercent="300"
+			VisionBonusTestRadius="200"
+			VisionBonusPercentPerFoot="1" />
+		<CrusherInfo
+			UseCrushAttack="false"
+			CrushableLevel="0"
+			CrusherLevel="0" />
+	</GameObject>
+</AssetDeclaration>

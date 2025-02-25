@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="PassengerDataType">
+		<xs:sequence>
+			<xs:element name="Filter" type="ObjectFilter" />
+		</xs:sequence>
+		<xs:attribute name="BonePrefix" type="xs:string" />
+		<xs:attribute name="MaxPassengers" type="SageInt" default="0" />
+		<xs:attribute name="SlingUnderBone" type="SageBool" default="false" />
+	</xs:complexType>
+
+	<!-- If any objects with the following template gets added to the horde, set the corresponding objstatus -->
+	<!-- Perform the reverse when removing -->
+	<xs:complexType name="MemberTemplateStatusData">
+		<xs:attribute name="ThingTemplate" type="GameObjectWeakRef" use="required" />
+		<xs:attribute name="ObjectStatus" type="ObjectStatusType" use="required" />
+	</xs:complexType>
+
+	<!-- Module to allow overriding of certain OpenContain values when upgraded -->
+	<xs:complexType name="OpenContainUpgradeOverrideData">
+		<xs:attribute name="UpgradeTriggeredBy" type="UpgradeTemplateWeakRef" use="required" />
+		<xs:attribute name="ObjectStatusOfContained" type="ObjectStatusBitFlags" />
+	</xs:complexType>
+
+	<!-- The container get these Attribute Modfiers when a valid Occupant enters it -->
+	<xs:complexType name="ContainerAttributeModifier">
+		<xs:sequence>
+			<xs:element name="ObjectFilter" type="ObjectFilter" />
+		</xs:sequence>
+		<xs:attribute name="ModifierToReceive" type="AttributeModifierRef" />
+	</xs:complexType>
+
+	<xs:complexType name="OpenContainModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="PassengerFilter" type="ObjectFilter" />
+					<xs:element name="DieMuxData" type="DieMuxDataType" minOccurs="0" maxOccurs="1" />
+					<xs:element name="PassengerData" type="PassengerDataType" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="ModifierToGiveOnExit" type="AttributeModifierRef" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="MemberTemplateStatusInfo" type="MemberTemplateStatusData" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="OpenContainUpgradeOverride" type="OpenContainUpgradeOverrideData" minOccurs="0"  maxOccurs="1"/>
+					<xs:element name="ContainerAttributeModifiersByRiderFilter" type="ContainerAttributeModifier" minOccurs="0"  maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="ContainMax" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="EnterSound" type="AudioEventInfoRef" />
+				<xs:attribute name="ExitSound" type="AudioEventInfoRef" />
+				<xs:attribute name="DamagePercentToUnits" type="Percentage" default="0" />
+				<xs:attribute name="PassengersTestCollisionHeight" type="SageReal" default="-1000" />
+				<xs:attribute name="PassengersInTurret" type="SageBool" default="false" />
+				<xs:attribute name="NumberOfExitPaths" type="SageInt" default="1" />
+				<xs:attribute name="DoorOpenTime" type="SageUnsignedInt" default="1" />
+				<xs:attribute name="AllowOwnPlayerInsideOverride" type="SageBool" default="false" />
+				<xs:attribute name="AllowAlliesInside" type="SageBool" default="true" />
+				<xs:attribute name="AllowEnemiesInside" type="SageBool" default="true" />
+				<xs:attribute name="AllowNeutralInside" type="SageBool" default="true" />
+				<xs:attribute name="PassDisabilityToRiders" type="SageBool" default="false" />
+				<xs:attribute name="IgnoreDisabledBitsForRiders" type="DisabledBitFlags" default="UNDERPOWERED EMP" />
+				<xs:attribute name="ShowPips" type="SageBool" default="true" />
+				<xs:attribute name="CollidePickup" type="SageBool" default="true" />
+				<xs:attribute name="EjectPassengersOnDeath" type="SageBool" default="true" />
+				<xs:attribute name="KillPassengersOnDeath" type="SageBool" default="false" />
+				<xs:attribute name="HasObjectStatusOfContainedEntry" type="SageBool" default="true" />
+				<xs:attribute name="Enabled" type="SageBool" default="true" />
+				<xs:attribute name="ObjectStatusOfContained" type="ObjectStatusBitFlags" />
+				<xs:attribute name="ObjectStatusWhileContaining" type="ObjectStatusBitFlags" default="CONTAINER_OCCUPIED"/>
+				<xs:attribute name="PassengersRequireContainerObjectStatusToFire" type="ObjectStatusBitFlags" />
+				<xs:attribute name="PreventExitObjectStatus" type="ObjectStatusBitFlags" default="OUT_OF_PHASE BURROWING"/>
+				<xs:attribute name="ModifierRequiredTime" type="SageUnsignedInt" default="100" />
+				<xs:attribute name="KillIfEmptyTime" type="Time" default="0s" />
+				<xs:attribute name="CanPassengersFireFilter" type="ObjectFilterAssetRef" default="ObjectFilter_OpenContainCanPassengersFire" />
+				<xs:attribute name="DisabledTypesToProcess" type="DisabledBitFlags" default=""/>
+      </xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

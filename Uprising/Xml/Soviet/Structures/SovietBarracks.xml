@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include
+			type="all"
+			source="ART:SBBarracks_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:SBBarracks_BLD.w3x" />
+		<Include
+			type="all"
+			source="ART:SBBarracks_DOOR.w3x" />
+		<Include
+			type="all"
+			source="ART:SBBarracks_LIGHTS.w3x" />
+		<Include
+			type="all"
+			source="ART:SBBarracks_Scaffold.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseSovietStructure.xml" />
+	</Includes>
+	<Defines>
+		<Define name="SOVIET_BARRACKS_LOCAL_UNPACK_TIME" value="10s" />
+	</Defines>	
+	<GameObject
+		id="SovietBarracks"
+		inheritFrom="BaseSovietStructure"
+		Side="Soviet"
+		EditorSorting="STRUCTURE"
+		
+		BuildTime="0.0"
+		SelectPortrait="Portrait_SovietBarracks_big"
+		ButtonImage="Button_SovietBarracks_small"
+		EnergyProduction="-25"
+		CommandSet="SovietBarracksCommandSet"
+		KindOf="-CAN_BUILD_ON_WATER -CAN_BUILD_ON_DEEP_WATER +FS_FACTORY +AUTO_RALLYPOINT +FS_BARRACKS"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="SovietBarracks"
+		Description="Desc:SovietBarracks"
+		TypeDescription="Type:SovietBarracks">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SovietBarracks</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="500"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietBarracksArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="FRONT">
+      <ConstructionBaseSelectionCriteria
+        ExcludedBaseTypes="NO_BUILD_RADIUS CAPTURED"/>
+    </SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				StaticModelLODMode="true"
+				ExtraPublicBone="CONTACT_POINT_01 CONTACT_POINT_02 CONTACT_POINT_03 CONTACT_POINT_04 CONTACT_POINT_05 CONTACT_POINT_06 CONTACT_POINT_07">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBBarracks_SKN" />
+				</ModelConditionState>
+		
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="SBBarracks_SKN" />
+					<Texture
+						Original="SBBuilding_Holes"
+						New="SBBuilding_FP" />						
+					<Texture
+						Original="SBBuilding_Filler"
+						New="SBBuilding_FP" />
+				</ModelConditionState>					
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="SBBarracks_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBBarracks_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationBlendTime="0"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="SBBarracks_BLD"
+						AnimationMode="MATCH_UNPACKING"
+						AnimationBlendTime="0" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Med"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Lights"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Flash"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			
+			<!-- Lights-->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_LIGHTS"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBBarracks_LIGHTS" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+					CurDrawableHideSubObjectPermanently("FX_LightsBuilding")
+					CurDrawableHideSubObjectPermanently("Fans")
+					</Script>
+				</AnimationState>
+
+        <AnimationState
+            ParseCondStateType="PARSE_NORMAL"
+            ConditionsYes="AFFECTED_BY_EMP ">
+          <Script>
+            CurDrawableHideSubObjectPermanently("FX_LightsBuilding")
+            CurDrawableHideSubObjectPermanently("Fans")
+          </Script>
+        </AnimationState>
+        <AnimationState
+            ParseCondStateType="PARSE_NORMAL"
+            ConditionsYes="PARALYZED">
+          <Script>
+            CurDrawableHideSubObjectPermanently("FX_LightsBuilding")
+            CurDrawableHideSubObjectPermanently("Fans")
+          </Script>
+        </AnimationState>
+        
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACTIVELY_CONSTRUCTING">
+					<Animation
+						AnimationName="SBBarracks_LIGHTS"
+						AnimationMode="LOOP"/>
+					<Script>
+					CurDrawableShowSubObjectPermanently("FX_LightsBuilding")
+					CurDrawableShowSubObjectPermanently("Fans")
+					</Script>
+				</AnimationState>
+			</ScriptedModelDraw>
+			
+
+<!-- DRAW DOOR01 -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Door"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBBarracks_DOOR" />
+				</ModelConditionState>
+       <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FROZEN">
+          <Model
+						Name="SBBarracks_DOOR" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedCryoFrozenMistBuildingLarge"
+						FollowBone="true"/>          
+          <Material
+					  ShaderName="ObjectsFrozen.fx"
+					  TechniqueName="Default">
+            <Constants>
+              <Texture Name="DiffuseTexture">
+                <Value>SBBarracks</Value>
+              </Texture>
+              <Texture Name="NormalMap">
+                <Value>SBBarracks_NRM</Value>
+              </Texture>
+              <Texture Name="SpecMap">
+                <Value>SBBarracks_SPM</Value>
+              </Texture>
+              <Float Name="EnvMult">
+                <Value>1.000000</Value>
+              </Float>
+              <Bool Name="AlphaTestEnable">
+                <Value>false</Value>
+              </Bool>
+            </Constants>
+          </Material>
+        </ModelConditionState>	
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="SBBarracks_DOOR"
+						AnimationMode="ONCE_BACKWARDS" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="SBBarracks_DOOR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_WAITING_OPEN"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBBarracks_DOOR"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_OPENING"
+					StateName="STATE_Open">
+					<Animation
+						AnimationName="SBBarracks_DOOR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_CLOSING"
+					StateName="STATE_Closed"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBBarracks_DOOR"
+						AnimationMode="ONCE_BACKWARDS" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- DRAW SCAFFOLD -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Scaffold"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="SBBarracks_Scaffold" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING JUST_BUILT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="SBBarracks_Scaffold" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SBBarracks_Scaffold"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="SBBarracks_Scaffold"
+						AnimationMode="MATCH_UNPACKING"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+<!-- DRAW PARTICLES -->
+
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SBBarracks_FX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="SBBarracks_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="BuildingDamageFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageFire02"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageSmoke"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="SBBarracks_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="BuildingDamageFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageFire02"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="BuildingDamageSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02" 
+						FXParticleSystemTemplate="BuildingDamageFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02"
+ 						FXParticleSystemTemplate="BuildingDamageFire02"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02"
+ 						FXParticleSystemTemplate="BuildingDamageSmoke"
+						FollowBone="true"/>
+				</ModelConditionState>
+				
+			</ScriptedModelDraw>					
+		
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+				<Item
+					BonePrefix="CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="SovietBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_LargeBuildingDieExplosion" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SBBarracks_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</DestroyDie>
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />
+			<ProductionUpdate
+				id="ModuleTag_06"
+				GiveNoXP="true"
+				Type="INFANTRY"
+				NumDoorAnimations="1"
+				DoorOpeningTime="0.66s"
+				DoorWaitOpenTime="1.0s"
+				DoorCloseTime="0.66s" 
+				NewObjectFadeInTime="0.5s">
+				<GiveUpgradeToProduced>
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_VETERAN"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_VETERAN" />
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_ELITE"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_ELITE" />
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_HEROIC"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_HEROIC" />
+				</GiveUpgradeToProduced>
+			</ProductionUpdate>
+			<QueueProductionExitUpdate
+				id="ModuleTag_07"
+				PlacementViewAngle="45d"
+				ExitDelaySeconds="0.07s">
+				<UnitCreatePoint
+					x="0.0"
+					y="18.0" />
+				<NaturalRallyPoint
+					x="40.0"
+					y="18.0" />
+			</QueueProductionExitUpdate>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="=$SOVIET_BARRACKS_LOCAL_UNPACK_TIME" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericSovietBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericSovietBuildingSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainInfantry.xml" />								
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="Generic" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_SoWeCanUseWeapon"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_05"
+				MaxHealth="1250" />
+		</Body>
+		<Geometry>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "45.0"
+     MinorRadius = "45.0"
+     Height = "30.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "0.0"
+        y = "0.0"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "10.0"
+     MinorRadius = "10.0"
+     Height = "66.0"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "-30.497"
+        y = "-0.397858"
+        z = "0.0" />
+</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="SOV_Barracks_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+<!--
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+-->
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="300" />
+		<ProjectedBuildabilityInfo
+			Radius="195"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:FXInvisBone.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseTimedAllyVisibleDecal.xml" />
+	</Includes>
+	<GameObject
+		id="GDIRestorationProxyObject"
+		EditorName="GDIRestorationProxyObject: DO NOT USE"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+			<!--  NOTE:  This object needs a draw module and a weapon bone setup to 
+												properly fire the particle system that draws the effect -->
+			<ScriptedModelDraw
+					id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXINVISBONE" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="MESH" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+				<!-- Activate the PurgeBuffs Special power on object creation -->
+			<ActivateSpecialPowerOnCreate
+				id="ModuleTag_ActivateSpecialPowerOnCreate"
+				ActivateAtObjectPosition="true">
+				<SpecialPowerTemplate>SpecialPower_GDI_Restoration</SpecialPowerTemplate>
+			</ActivateSpecialPowerOnCreate>
+				
+			<PurgeBuffsSpecialPower
+				id="ModuleTag_GDI_Restoration"
+				SpecialPowerTemplate="SpecialPower_GDI_Restoration"
+				Radius="=$GDI_RESTORATION_AOE_RADIUS"
+				EnemyBuffsToPurge="OFFENSE_POSITIVE DEFENSE_POSITIVE"
+				AlliedBuffsToPurge="OFFENSE_NEGATIVE DEFENSE_NEGATIVE"
+				TargetObjectFX="FX_GDIBuff_StatusReboot"/>
+			
+			<AutoHealBehavior
+				id="ModuleTag_AutoHealBehavior"
+				InitiallyActive="true"
+				StartImmediately="true"
+				Radius="=$GDI_RESTORATION_AOE_RADIUS"
+				HealingAmount="=$GDI_RESTORATION_AMOUNT"
+				HealingDelay="1.0s"
+				HealingDuration="0.0s"
+				RespawnMinimumDelay="1.0s"
+			HealFXList="FX_Repair_Large"
+				HealAlwaysActive="true">
+				<HealObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE VEHICLE INFANTRY AIRCRAFT"
+					Exclude="NEUTRAL_TECH"
+					StatusBitFlagsExclude="NO_HEALING">
+					<ExcludeThing>GDIPointDefenseShield</ExcludeThing>
+				</HealObjectFilter>
+			</AutoHealBehavior>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="0.2s"
+				MaxLifetime="0.2s"
+				DeathType="SUICIDED" />
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!--	Nod Structure H / Long Range Artillery T3 / Incinerator
+			Medium-long range AOE Weapon
+			Heats up an area over time, high total damage
+			Burns off ammo and causes ammo explosions  -->
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NSL_StructureH_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NSL_StructureH_BLDA.w3x" />
+		
+		<Include
+			type="all"
+			source="ART:NSL_StructureH_DMG.xml" />
+		<Include
+			type="all"
+			source="ART:FXTracerNOD.xml" />
+		<Include
+			type="instance"
+			source="DATA:GlobalData/upgrade.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NODSTRUCTUREH_ATTACK_RANGE" value="800.0" />
+	</Defines>
+	<GameObject
+		id="NODStructureH" 
+		inheritFrom="BaseDefensiveStructure"
+		SubGroupPriority="463"
+		HealthBoxHeightOffset="40"
+		HealthBar="Structure"
+		SelectPortrait="Portrait_NOD_Structure_H"
+		ButtonImage="Btn_NOD_Structure_H"
+		Side="NOD"
+		ParticipationValue="=$NODSTRUCTUREH_PARTICIPATION_VALUE"
+		BuildTime="25.0"
+		EnergyProduction="=$NOD_STRUCTURE_H_COMMANDPOINT_COST"
+		CommandSet="NODStructureHCommandSet"
+		KindOf="+CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="NOD_D3_Struct_Blast(Incinerator)"
+		EditorSorting="STRUCTURE"
+		WeaponCategory="CANNON"
+		Description="Desc:NODStructureH"
+		TypeDescription="Type:NODStructureH">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade> 
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODStructureH</DisplayName>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="16.0"
+				MaxRecoilDistance="10.0"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				ExtraPublicBone="FXWeapon01 NH_Turret NH_Chassis"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NSL_StructureH_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<Turret
+						TurretNameKey="NH_Chassis"
+						TurretPitch="NH_Turret"
+						TurretID="1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NSL_StructureH_SKN" />
+					<Texture
+						Original="NSL_StructureH"
+						New="NSL_StructureH_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage03"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NSL_StructureH_SKN" />
+					<Texture
+						Original="NSL_StructureH"
+						New="NSL_StructureH_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<!-- REPAIR FROM RUBBLE ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="NSL_StructureH_BLDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NSL_StructureH_BLDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+			
+			<!-- Temporarily removing stream draw.
+				 
+			<StreamDraw
+				id="ModuleTag_StreamDraw"
+				UseDistortionShader="false"
+				Velocity="200.0"
+				ArcHeightFactor="0.0625"
+				UVWorldSize="100.0"
+				NumTubeSides="8"
+				TubeRadius="80.0"
+				HitFx="FX_NodHeatRay_Hit">
+				<FXShader
+					ShaderName="Stream.fx"
+					TechniqueIndex="1">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDIDEATH</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXGDIDEATH</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</StreamDraw> -->
+
+			<StreamDraw
+				id="ModuleTag_StreamDraw"
+				UseDistortionShader="false"
+				Velocity="200.0"
+				ArcHeightFactor="0.0625"
+				UVWorldSize="100.0"
+				NumTubeSides="8"
+				TubeRadius="0.0"
+				HitFx="FX_NodHeatRay_Hit">
+				<FXShader
+					ShaderName="Stream.fx"
+					TechniqueIndex="1">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDIDEATH</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXGDIDEATH</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</StreamDraw>
+
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODStructureHWeapon" />
+					<TurretSettings
+						Options="NO_TURN_WHEN_WEAPON_FIRING" 
+						TurretTurnRate="100"
+						TurretTurnRateOutsideArcOfFire="20"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-30d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="180.0"
+						MaxFiringArcClockwise="45d"
+						MaxFiringArcAntiClockwise="45d">
+						<TurretAITargetChooserData
+							CanPickDynamicTargets="true"
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+
+			<StreamState
+				id="ModuleTag_StreamState"
+				StreamId="0" />
+			
+			<!-- By having the primary weapon trigger this module it simulates firing a series 
+				of shots at a location. This is useful for 'artillery' type weapons.  -->
+			<WeaponSweepBehavior
+				id="ModuleTag_WeaponSweep"
+				NumFiresPerSweep="12"
+				DistanceBetweenEachFiring="0.0"
+				DelayBetweenEachFiring="0.5s"
+				WeaponSweepOptions="BUSY_WHILE_SWEEP_ACTIVE NO_AUTO_ACQUIRE_WHILE_SWEEP_ACTIVE">
+				<WeaponToFire
+					WeaponName="NODStructureHSweepWeapon"
+					SlotType="PRIMARY_WEAPON"
+					SlotID="1" >
+				</WeaponToFire>
+			</WeaponSweepBehavior>			
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Small" />
+				<Event
+					Index="onDeath"
+					FX="FX_NOD_DefensiveTurret_Explode_NoSound" />
+				<Event Index="onDeath" FX="FX_GDIArtilleryHitBIG"/>
+				<Event Index="onDeath" FX="FX_StructureLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NODStructureH_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					TargetingCompareList="BaseDefenseTargetingCompareList" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="900.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_TurretMoveLoop">
+				<ModelConditionSound Sound="NOD_Incinerator_StrH_TurretMoveLoop" RequiredFlags="ENGAGED TURRET_ROTATE" ExcludedFlags="USING_WEAPON_A DYING"/>
+			</ModelConditionAudioLoopClientBehavior>		
+			
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="NOD_Incinerator_StrH_EndImpactMS" Animation="NSL_StructureH_BLDA" Frame="19" />
+			</AnimationSoundClientBehavior>			
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<PlacementShape
+				Type= "BOX"
+				MajorRadius = "64.0"
+				MinorRadius = "64.0"
+				Height = "50.0" >
+			</PlacementShape>
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "30.0"
+					 MinorRadius = "30.0"
+					 Height = "90.0"
+					 ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-25.75"
+					y="0.0"
+					z="22.27" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="28.44"
+					y="-38.94"
+					z="16.65" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="26.28"
+					y="24.11"
+					z="26.03" />
+			</ContactPoint>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "50.0"
+					 MinorRadius = "50.0"
+					 Height = "25.0">
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_Incinerator_StrH_SelectMS" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<!-- <AudioEntry Sound="Fire1_StructureLarge_LoopMS" AudioType="soundAmbientReallyDamaged" /> -->
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnReallyDamaged" />
+			<!-- <AudioEntry
+				Sound="AudioEvent:NOD_GenericTurret_MoveStart"
+				AudioType="soundTurretMoveLoop" />
+			<AudioEntry
+				Sound="NOD_GenericTurret_Deploy"
+				AudioType="soundPrepositioned" /> -->
+		</AudioArraySound>
+		<VisionInfo
+			UIWeaponRangePreview="=$NODSTRUCTUREH_ATTACK_RANGE - 5.0"
+			VisionRange="850"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+	<AttributeModifier
+		id="Modifier_NODStructureHHeatDamageMult1"
+		Category="NONE">
+		<Modifier Type="DAMAGE_MULT" Value="200%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_NODStructureHHeatDamageMult2"
+		Category="NONE">
+		<Modifier Type="DAMAGE_MULT" Value="300%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_NODStructureHHeatDamageMult3"
+		Category="NONE">
+		<Modifier Type="DAMAGE_MULT" Value="400%"/>
+	</AttributeModifier>
+
+	<WeaponTemplate
+		id="NODStructureHWeapon"
+		AttackRange="=$NODSTRUCTUREH_ATTACK_RANGE"
+		MinimumAttackRange="200.0"
+		WeaponSpeed="1000"
+		FireSoundPerClip="NOD_Incinerator_StrH_MicrowaveWeaponStartms"
+		FiringLoopSound="NOD_Incinerator_StrH_MicrowaveWeaponLoopMS"
+		FiringLoopSoundContinuesDuringReload="false"
+		FireFX="FX_NodHeatRay_Fire"
+		FireVeteranFX="FX_NodHeatRay_Fire"
+		AcceptableAimDelta="1d"
+		ClipSize="1"
+		AutoReloadsClip="AUTO"
+		Flags="CAN_FIRE_ON_GROUND SPIN_DOWN_ONLY_ON_ACQUIRING_NEW_TARGET"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		RevealShroudOnFire="true"
+		ReAcquireDetailType="PER_CLIP"
+		CanBeDodged="false">
+		<FiringDuration
+			MinSeconds="6.0s"
+			MaxSeconds="6.0s" />
+		<ClipReloadTime
+			MinSeconds="=$EPSILON_SECONDS"
+			MaxSeconds="=$EPSILON_SECONDS" />
+		<Nuggets>
+		
+			<ActivateWeaponSweepNugget
+				ModuleId="ModuleTag_WeaponSweep"
+				PartitionFilterTestType="CENTER_3D"/>
+			
+		</Nuggets>
+		<SpinUpInfo
+			SpinUpDuration="6.0s"
+			SpinDownDuration="0.0s"
+			SpinStartPercentage="0%"
+			Flags="DO_NOT_MODIFY_FIRING_DURATION">
+			<SpinUpAttributeModifier
+				PercentageSetAt="33%"
+				AttributeModifierToSet="Modifier_NODStructureHHeatDamageMult1"/>
+			<SpinUpAttributeModifier
+				PercentageSetAt="66%"
+				AttributeModifierToSet="Modifier_NODStructureHHeatDamageMult2"/>
+			<SpinUpAttributeModifier
+				PercentageSetAt="100%"
+				AttributeModifierToSet="Modifier_NODStructureHHeatDamageMult3"/>
+		</SpinUpInfo>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODStructureHSweepWeapon"
+		AttackRange="=$NODSTRUCTUREH_ATTACK_RANGE"
+		MinimumAttackRange="200.0"
+		WeaponSpeed="2000"
+		FireSoundPerClip="NOD_Incinerator_StrH_MicrowaveWeaponStartms"
+		FiringLoopSound="NOD_Incinerator_StrH_MicrowaveWeaponLoopMS"
+		FiringLoopSoundContinuesDuringReload="false"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		ClipSize="1"
+		ShotsPerBarrel="1"
+		AutoReloadsClip="AUTO"
+		ReAcquireDetailType="PER_CLIP"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY">
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<Nuggets>
+			<ActivateStreamNugget
+				Lifetime="5.9s"
+				StreamId="0"/>
+			<FireOnObjectsNugget
+				Damage="3"
+				Radius="100"
+				DelayTimeSeconds="0.0s"
+				DamageType="BLAST"
+				DamageFXType="NOD_HEATRAY"
+				DeathType="AMMO_BURSTED"
+				PartitionFilterTestType="CENTER_3D"
+				FireOnVictimObject="true">
+				<Weapon
+					WeaponName="NODStructureHSweepWeaponEffect"/>
+			</FireOnObjectsNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODStructureHSweepWeaponEffect"
+		AttackRange="99999"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY">
+		<Nuggets>
+			<AttributeModifierNugget
+				AttributeModifierName="AttributeModifier_NodStructureHIncinerateVictim"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<LogicCommandSet
+		id="NODStructureHCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_NODSellSelf</Cmd>
+	</LogicCommandSet>
+
+	<ExperienceLevelTemplate
+		id="NODStructureHExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_01"
+		ExperienceAward="12">
+		<Target>NODStructureH</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODStructureHExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_02"
+		Prerequisite="NODStructureHExperienceLevel_1"
+		RequiredExperience="24"
+		ExperienceAward="14">
+		<Target>NODStructureH</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODStructureHExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_03"
+		Prerequisite="NODStructureHExperienceLevel_2"
+		RequiredExperience="84"
+		ExperienceAward="16">
+		<Target>NODStructureH</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODStructureHExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_04"
+		Prerequisite="NODStructureHExperienceLevel_3"
+		RequiredExperience="108"
+		ExperienceAward="18">
+		<Target>NODStructureH</Target>
+	</ExperienceLevelTemplate>
+
+	<AttributeModifier
+		id="AttributeModifier_NodStructureHIncinerateVictim"
+		Category="NONE"
+		Duration="0.5s" 
+		RenderBuffEffectFlags="INCINERATOR"/>
+
+	<ObjectCreationList
+		id="NODStructureH_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectOffset x="0" y="0" z="0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+</AssetDeclaration>

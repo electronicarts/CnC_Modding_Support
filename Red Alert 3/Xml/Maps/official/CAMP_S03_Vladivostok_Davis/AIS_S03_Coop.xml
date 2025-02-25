@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes/>
+
+  <!-- Mission Intro Start -->
+  <AIStrategicStateDefinition
+   id="AIState_S03_Initial_Transports"
+   MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FlAG - Initial Forces"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestSurfaceUnitHeuristic"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="1"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="STANDARD"
+                    AlwaysRecruit="true"
+                    MicroManager="FearlessMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>SovietAntiAirShip</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_S03_Initial_Infantry"
+   MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FlAG - Initial Forces"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestSurfaceUnitHeuristic"/>
+    <Tactic id="Attack" Tactic="SimpleAttack">
+      <TeamTemplate MinUnits="1"
+      							IncludeKindOf="CAN_ATTACK INFANTRY"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD"
+                    AlwaysRecruit="true"
+                    MicroManager="FearlessMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_S03_Initial_Attack_Boats"
+   MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FlAG - Initial Forces"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestSurfaceUnitHeuristic"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD"
+                    AlwaysRecruit="true"
+                    MicroManager="FearlessMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>SovietAntiNavyShipTech1</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  <!-- Mission Intro End -->
+
+  <AIStrategicStateDefinition
+    id="AIState_S03_Part2_Infantry_Idle"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FlAG - Part 2"/>
+      <IntervalHeuristic IntervalTime="20s" ActiveTime="2s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestFriendlyStructureHeuristic"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="100" EndBehavior="DISBAND" EndIfStateTurnsOff="true" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="20"
+                    RegisteredObjectSet="INFANTRY"
+                    IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HIGH" AlwaysRecruit="true" SortByDistance="true"
+                    MicroManager="DefenseMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S03_Part2_ManCannonTeam_Idle"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FlAG - Part 2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestFriendlyConyardHeuristic"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="100" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="20"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="LOW" AlwaysRecruit="true" SortByDistance="true"
+                    MicroManager="DefenseMicroManager">
+        <ObjectFilter Rule="ANY"
+          Include="INFANTRY">
+          <IncludeThing>SovietAntiAirShip</IncludeThing>
+          <IncludeThing>SovietAntiAirShip_Ground</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S03_Part2_ManCannon_WP_1"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FlAG - ManCannon 1"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="CloseToShoreNonDefensiveStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="FarFromShoreNonDefensiveStructureHeuristic" Priority="10"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1"  GatherWaypoint="WP_AI_ManCannonTarget_1_Gather">
+      <TeamTemplate MinUnits="4" MaxUnits="6"
+										IncludeKindOf="CAN_ATTACK INFANTRY"
+										ExcludeKindOf="MCV HARVESTER IGNORES_SELECT_ALL"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+										MicroManager="ManCannonMicroManager">
+        <CreateUnits UnitName="SovietAntiAirShip" MinUnits="0" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S03_Part2_ManCannon_WP_2"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FlAG - ManCannon 2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="CloseToShoreNonDefensiveStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="FarFromShoreNonDefensiveStructureHeuristic" Priority="10"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1">
+      <TeamTemplate MinUnits="4" MaxUnits="6"
+										IncludeKindOf="CAN_ATTACK INFANTRY"
+										ExcludeKindOf="MCV HARVESTER IGNORES_SELECT_ALL"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+										MicroManager="ManCannonMicroManager">
+        <CreateUnits UnitName="SovietAntiAirShip" MinUnits="0" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S03_Part2_ManCannon_WP_3"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FlAG - ManCannon 3"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="CloseToShoreNonDefensiveStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="FarFromShoreNonDefensiveStructureHeuristic" Priority="10"/>
+    <Tactic id="Defend" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1" GatherWaypoint="WP_AI_ManCannonTarget_3_Gather">
+      <TeamTemplate MinUnits="4" MaxUnits="6"
+										IncludeKindOf="CAN_ATTACK INFANTRY"
+										ExcludeKindOf="MCV HARVESTER IGNORES_SELECT_ALL"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+										MicroManager="ManCannonMicroManager">
+        <CreateUnits UnitName="SovietAntiAirShip" MinUnits="0" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_S03_Part2_Infantry_Attack"
+   MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FlAG - Initial Forces"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="1" MaxUnits="8"
+      							IncludeKindOf="CAN_ATTACK INFANTRY"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="true" SortByDistance="true"
+                    MicroManager="FearlessMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S03_Part2_Boat_Attack"
+    MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/P2 - AI FlAG - Part 2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="8" MaxUnits="16"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S03_Part2_Dreadnaught_Attack"
+    MaxTargets="1">
+    <Heuristic>
+      <ObjectOfTypeExistsHeuristic
+         PassIfExists="true">
+        <ObjectFilter
+          Rule="ANY"
+          Relationship="SAME_PLAYER">
+          <IncludeThing>SovietAntiStructureShip</IncludeThing>
+        </ObjectFilter>
+      </ObjectOfTypeExistsHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="CloseToShoreStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="8"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    MicroManager="FearlessMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S03_Part2_FollowPlayer_NormalUnits"
+    MaxTargets="1">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_S03_ClosestAllyNormalUnitHeuristic" Priority="20"/>    
+    <Tactic id="Attack" Tactic="StaticDefense" Distance="250" EndBehavior="DISBAND" UseAestheticsManager="true">
+      <TeamTemplate MinUnits="1" MaxUnits="8"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER SIEGE_WEAPON"
+                    AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    MicroManager="FearlessDefenseMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S03_Part2_FollowPlayer_SiegeUnits"
+    MaxTargets="1">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_S03_ClosestAllySiegeUnitHeuristic" Priority="20"/>
+    <Tactic id="Attack" Tactic="StaticDefense" Distance="150" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="1" MaxUnits="4"
+                    IncludeKindOf="CAN_ATTACK SIEGE_WEAPON"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER"
+                    Priority="HIGH" AlwaysRecruit="true"
+                    MicroManager="FearlessDefenseMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S03_FinalObjective"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Objectives - FLAG - Objective 3 - Complete"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_S03_Palace"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND" UseAestheticsManager="false">
+      <TeamTemplate MinUnits="6"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    Priority="HIGH" AlwaysRecruit="true"
+                    MicroManager="S03_FearlessMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+</AssetDeclaration>

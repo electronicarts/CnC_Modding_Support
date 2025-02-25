@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+  		<Include type="instance" source="DATA:SkirmishAI\States\SovietBaseStates.xml" />  		
+  </Includes>
+
+  <AIStrategicStateDefinition
+    id="AIState_S04_SovietCoCommander_MainAttack"
+    MaxTargets="2">
+    <Heuristic>
+      <TimerHeuristic StartTime="120s" EndTime="-1s" CountFrom="MAP_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="10" MaxUnits="20"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S04_Coop_LandDefense"
+    MaxTargets="1">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="FriendlyNonRefineryLandStructureHeuristic"/>
+    <Tactic id="Defense" Tactic="StaticDefense" Distance="300" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="10"
+                    RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" SortByDistance="true"
+                    MicroManager="DefenseMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+          <ExcludeThing>SovietFighterAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+<!-- Hotspot States -->
+  
+  <AIStrategicStateDefinition
+    id="AIState_S04_SovietCoCommander_V2Attack_A"
+    MaxTargets="2">
+    <Heuristic>
+      <ConstantHeuristic/>
+      <ScriptedFlagHeuristic FlagName="FLAG - P2 - Hotspot 3 - V2 Tactic Activate"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="3" MaxUnits="6"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER SUBMARINE"
+                    AllowedLocomotorTypes="LAND"
+                    Priority="HOTSPOT" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager">
+                    <CreateUnits UnitName="SovietAntiStructureVehicle" MinUnits="3" MaxUnits="6"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S04_SovietCoCommander_V2Attack_B"
+    MaxTargets="2">
+    <Heuristic>
+      <ConstantHeuristic/>
+      <ScriptedFlagHeuristic FlagName="FLAG - P2 - Hotspot 3 - V2 Tactic Activate"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="30"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="2" MaxUnits="4"
+                    IncludeKindOf="CAN_ATTACK"
+                    ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER SUBMARINE"
+                    AllowedLocomotorTypes="LAND"
+                    Priority="HOTSPOT" AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager">
+                    <CreateUnits UnitName="SovietAntiStructureVehicle" MinUnits="2" MaxUnits="4"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S04_SovietCoCommander_DefendMCV"
+    MaxTargets="1">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+      <ScriptedFlagHeuristic FlagName="FLAG - P2 - Hotspots - MCV Moving"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_S04_CoOp_MCV" Priority="50"/>
+    <Tactic id="Attack" Tactic="StaticDefense" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="4" MaxUnits="6"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="HOTSPOT" AlwaysRecruit="false"
+                    MicroManager="FearlessDefenseMicroManager" />
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_S04_SovietWarFactoryBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="SovietScoutVehicle" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="SovietAntiInfantryVehicle" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="SovietAntiVehicleVehicleTech1" Heuristic="FEWEST_UNIT" CountModifier="2.0"/>
+    <BuildEntry Build="SovietAntiStructureVehicle" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="SovietAntiVehicleVehicleTech3" Heuristic="FEWEST_UNIT"/>
+  </AIBuildStateDefinition>
+
+</AssetDeclaration>
+
+

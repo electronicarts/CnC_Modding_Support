@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseFirestormObject.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NOD_VEHICLE_F_FLAME_WEAPON_DOT_RADIUS" value="40" />
+	</Defines>
+	<GameObject
+		id="NODVehicleFPrimaryEffect"
+		inheritFrom="BaseFirestormAOEObject"
+		KindOf="+GRANT_PLAYER_THREAT" 
+		EditorName="NODVehicleFPrimaryEffect">
+		<DisplayName>NODVehicleFPrimaryEffect</DisplayName>
+		<Behaviors>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateNODVehicleFFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="5.0s"
+				MaxLifetime="5.0s" />
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<RequiredObject
+					Range="=$NOD_VEHICLE_F_FLAME_WEAPON_DOT_RADIUS">
+					<ObjectFilter
+						Rule="ALL"
+						StatusBitFlagsExclude="IN_SHIELD_SPHERE"/>
+				</RequiredObject>
+				<FireWeaponNugget
+					WeaponName="NODVehicleFPrimaryDOT" />
+			</FireWeaponUpdate>
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate_02">
+				<RequiredObject
+					Range="=$NOD_VEHICLE_F_FLAME_WEAPON_DOT_RADIUS">
+					<ObjectFilter
+						Rule="ANY"
+						Include="FIRESTORM"
+						Relationship="SAME_PLAYER"
+						StatusBitFlagsExclude="IN_SHIELD_SPHERE"/>
+				</RequiredObject>
+				<FireWeaponNugget
+					WeaponName="GenericKillOwnerFirestormWeapon" 
+					OneShot="true"/>
+			</FireWeaponUpdate>
+
+			<FireGroupCenterUpdate
+				id="ModuleTag_FirestormWeapon"
+				WeaponName="GenericKillOwnerFirestormWeapon"
+				Range="=$NOD_VEHICLE_F_FLAME_WEAPON_DOT_RADIUS"
+				RequiredCount="3">
+				<ObjectFilter
+					Rule="NONE"
+					Relationship="SAME_PLAYER"
+					Include="HAS_FIRE_GROUP_CENTER_UPDATE"
+					StatusBitFlagsExclude="IN_SHIELD_SPHERE"/>
+			</FireGroupCenterUpdate>
+			
+		</Behaviors>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_VEHICLE_F_FLAME_WEAPON_DOT_RADIUS"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+
+		<VisionInfo
+			VisionRange="1"
+			ShroudClearingRange="0" />		
+	</GameObject>
+	
+	<GameObject
+		id="NODVehicleFTrailOfFlame"
+		Side="NOD"
+		EditorSorting="SYSTEM"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE NO_COLLIDE INERT PASS_EXPERIENCE_TO_PRODUCER GRANT_PLAYER_THREAT"
+		EditorName="NODVehicleF_TrailOfFlame">
+		<DisplayName>NODVehicleF_TrailOfFlame</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+			DodgeSafetyDistance="200.0">
+			<DodgeWithUnits
+			  Rule="ALL"
+			  StatusBitFlagsExclude="AIRBORNE_TARGET">
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="5.0s"
+				MaxLifetime="5.0s" />
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onCreate"
+					FX="FX_NODFlameTankFire" />
+			</FXListBehavior>
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="NODVehicleFTrailOfFlameDOT">
+				</FireWeaponNugget>	
+			</FireWeaponUpdate>
+
+			<SlowDeath
+				id="ModuleTag_SlowDeath"
+				SinkDelay="0.0s"
+				DestructionDelay="0.0s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_VEHICLE_F_FLAME_WEAPON_DOT_RADIUS"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_FlameTank_VehF_TrailOfFireLoopMS" AudioType="soundAmbient"/>
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="1"
+			ShroudClearingRange="0" />
+	</GameObject>
+	
+	<!-- limited lifetime egg that pulses damage to nearby enemies -->
+	<GameObject
+		id="NODVehicleFFirestormObject"
+		inheritFrom="BaseFirestormObject"
+		KindOf="+GRANT_PLAYER_THREAT +SKIRMISH_AI_ATTEMPT_TO_DODGE" 
+		EditorName="NODVehicleFFirestormObject">
+		<DisplayName>NODVehicleFFirestormObject</DisplayName>
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NOD_VEHICLE_F_FLAME_WEAPON_DOT_RADIUS + $AI_DODGE_SAFETY_BUFFER">
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"
+				StatusBitFlagsExclude="AIRBORNE_TARGET">
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="2.0s"
+				MaxLifetime="2.0s" />
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateNODVehicleFFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+
+			<FireWeaponUpdate
+				id="ModuleTag_WeaponUpdate"
+				FireDelay="1.0s">
+				<FireWeaponNugget
+					OneShot="true" 
+					WeaponName="NODVehicleFOneShotFirestormWeapon" />
+			</FireWeaponUpdate>
+
+		</Behaviors>
+		<!-- geometry is necessary for FireGroupCenterUpdate to be accurate -->
+		<!-- DO_NOT_CLASSIFY prevents it from affecting the pathfinder -->
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_VEHICLE_F_FLAME_WEAPON_DOT_RADIUS"
+				Height="1.0"/>
+		</Geometry>
+	</GameObject>
+
+</AssetDeclaration>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Includes>
+		<!-- note: temp art has 3 mines in it, but it's actually a single explosive -->
+		
+		<!-- note: temporarily replaced with smaller explosive effect until the explosive FX are tuned down -JF -->
+		
+		<Include type="instance" source="ART:NODMine.w3x" />
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NOD_INCENDIARY_MINE_RADIUS" value="50" />
+	</Defines>
+	<GameObject
+		id="NODIncendiaryMine"
+		Side="NOD"
+		EditorSorting="MISC_MAN_MADE"
+		KindOf="=$BASE_MINE_KINDOF"
+		EditorName="NODIncendiaryMine"
+		UnitCategory="MINE"
+		ReinvisibilityDelay="1s">
+		<DisplayName>NODIncendiaryMine</DisplayName>
+		<ArmorSet
+			Armor="StructureArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NODMine" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NODMine" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NOD_Incendiary_Blast02"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NOD_Incendiary_Flame02"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NOD_Incendiary03"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+
+		<Behaviors>
+			<InvisibilityBehavior
+				id="ModuleTag_Invisibility"
+				InvisibilityTemplate="GenericMineInvisibilityTemplate" />
+
+			<FireWeaponCollide
+				id="ModuleTag_FireWeaponCollide"
+				CollideWeapon="NODIncendiaryMineSuicide"
+				WhereToFire="OWNER_POSITION"
+				Flags="TARGET_MUST_BE_MOVING">
+				<ObjectFilter
+					Rule="ALL">
+					<ExcludeThing>GDIVehicleAC</ExcludeThing>
+					<ExcludeThing>GDIVehicleAJ</ExcludeThing>
+					<ExcludeThing>GDIVehicleAK</ExcludeThing>
+					<ExcludeThing>GDIVehicleH</ExcludeThing>
+					<ExcludeThing>GDIVehicleP</ExcludeThing>
+				</ObjectFilter>
+			</FireWeaponCollide>
+			
+			<!-- Death type EXTRA_1 means dying from exploding itself- so the delayed
+			explosion only happens when the mine "dies" to a unit shooting it -->
+			<SlowDeath
+				id="ModuleTag_DelayedExplodeDeath"
+				SinkDelay="0s"
+				SinkRate="0.01"
+				DestructionDelay="0.1s">
+				<FX
+					Type="FINAL">
+					<FX></FX>
+				</FX>
+				<Weapon
+					Type="FINAL">
+					<Weapon>NODIncendiaryMineExplosion</Weapon>
+				</Weapon>
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="EXTRA_1"/>
+			</SlowDeath>
+			<SlowDeath
+				id="ModuleTag_ExplodeDeath"
+				SinkDelay="0s"
+				SinkRate="0.01"
+				DestructionDelay="0.20s">
+				<FX
+					Type="FINAL">
+					<FX></FX>
+				</FX>
+				<Weapon
+					Type="FINAL">
+					<Weapon>NODIncendiaryMineExplosion</Weapon>
+				</Weapon>
+				<DieMuxData
+					DeathTypes="EXTRA_1"/>
+			</SlowDeath>
+			<!-- no worky
+			<FXListBehavior id="ModuleTag_FXList">
+				<DieMuxData DeathTypes="ALL"/>
+				<Event Index="onDeath" FX="FX_NOD_Slave_VehAE_IncendiaryMineWeaponExplosion_AudioOnly"/>
+			</FXListBehavior> -->
+		</Behaviors>
+
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1.0" />
+		</Body>
+
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.0"
+				Height="10.0" />
+		</Geometry>
+
+		<VisionInfo
+			VisionRange="10"
+			ShroudClearingRange="10" />
+	</GameObject>
+
+	<WeaponTemplate
+		id="NODIncendiaryMineSuicide">
+		<Nuggets>
+			<DamageNugget
+				OnlyKillOwnerWhenTriggered="true"
+				Damage="100000.0"
+				Radius="0.0"
+				DamageType="BLAST"
+				FXListVictim="FX_NOD_FireDamage"
+				DeathType="EXTRA_1" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODIncendiaryMineExplosion"
+		inheritFrom="NODInfantryBHolyWaterDetonationTrigger"
+		FireFX="FX_NOD_Slave_VehAE_IncendiaryMineWeaponExplosion_AudioOnly">
+		<Nuggets>
+			<DamageNugget
+				Damage="50.0"
+				Radius="=$NOD_INCENDIARY_MINE_RADIUS"				
+				DamageType="BLAST"
+				FXListVictim="FX_NOD_FireDamage"
+				DeathType="EXPLODED">
+			</DamageNugget>
+			<DOTNugget
+				Damage="1.0"
+				Radius="=$NOD_INCENDIARY_MINE_RADIUS"
+				DamageInterval="1.0s"
+				DamageDuration="20s"				
+				DamageType="BLAST"
+				FXListVictim="FX_NOD_FireDamage"
+				DeathType="EXPLODED">
+			</DOTNugget>			
+			<DamageNugget
+				id="DamageNugget_NODInfantryBHolyWaterDetonationTrigger"
+				Radius="=$NOD_INCENDIARY_MINE_RADIUS" />
+		</Nuggets>
+	</WeaponTemplate>
+
+</AssetDeclaration>

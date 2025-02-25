@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!-- Base of all the music script condition nuggets -->
+	<xs:complexType name="MusicScriptConditionNuggetBase" abstract="true"  xas:typeGroup="Xml" >
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType" />
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="MusicScriptConditionRef"
+								 xas:isRef="true"
+								 xas:refType="MusicScriptConditionNuggetBase">
+		<xs:restriction base="AssetReference" />
+	</xs:simpleType>
+
+	<xs:simpleType name="MusicScriptTrackRef"
+								 xas:isRef="true"
+								 xas:refType="MusicScriptTrack">
+		<xs:restriction base="AssetReference" />
+	</xs:simpleType>
+
+	<xs:simpleType name="MusicScriptTrackWeakRef"
+								 xas:isRef="true"
+								 xas:refType="MusicScriptTrack">
+		<xs:restriction base="WeakReference" />
+	</xs:simpleType>
+
+	<xs:simpleType name="ScreenStatus">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ON_SCREEN" />
+			<xs:enumeration value="OFF_SCREEN" />
+			<xs:enumeration value="ON_OR_OFF_SCREEN" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- For the nuggets whose conditions are expensive to compute, this nugget says "recompute the
+	     conditions truth only once every n seconds. Between checks, just return the previous value" -->
+	<xs:complexType name="MusicScriptConditionExpensiveNuggetBase" abstract="true"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence />
+				<xs:attribute name="TimeBetweenConditionChecks" type="Time" default="5s" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- All the condition nuggets -->
+
+	<!-- True if the local player is an observer, post-commentator, etc -->
+	<xs:complexType name="MusicScriptConditionNugget_LocalPlayerIsObserver"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence />
+				<xs:attribute name="CountDeadPlayersAsObservers" type="SageBool" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- True if enough units are far enough away from some player's home base-->
+	<xs:complexType name="MusicScriptConditionNugget_UnitsFarFromBase"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionExpensiveNuggetBase" >
+				<xs:sequence />
+				<xs:attribute name="MinUnitsToPass" type="SageInt" use="required" />
+				<xs:attribute name="MinDistanceFromBase" type="SageReal" use="required" />
+				<xs:attribute name="Relationship" type="ObjectFilterRelationshipBitMask" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- true if enough time has passed-->
+	<xs:complexType name="MusicScriptConditionNugget_TimeFromStartOfLevel"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence />
+				<xs:attribute name="Timeout" type="Time" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- true if a track has played enough times -->
+	<xs:complexType name="MusicScriptConditionNugget_TrackPlayedCount"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence />
+				<xs:attribute name="Track" type="MusicScriptTrackWeakRef" use="required" />
+				<xs:attribute name="Count" type="SageInt" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<!-- true if a specific track is playing -->
+	<xs:complexType name="MusicScriptConditionNugget_SpecificTrackTypePlaying"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence />
+				<xs:attribute name="TrackType" type="StringHash" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- true if any track is playing -->
+	<xs:complexType name="MusicScriptConditionNugget_AnyTrackPlaying"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- true if at least some number of objects which pass the given filter and have the given model conditions exist on the map.
+	     (Filter's players are relative to the local player) -->
+	<xs:complexType name="MusicScriptConditionNugget_ObjectsOfTypeExist"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionExpensiveNuggetBase" >
+				<xs:sequence >
+					<xs:element name="Filter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="Count" type="SageInt" default="1" />
+				<xs:attribute name="RequiredModelConditions" type="ModelConditionBitFlags" default="" />
+				<xs:attribute name="ExcludedModelConditions" type="ModelConditionBitFlags" default="" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- true if a certain Eva event has played within the last n seconds -->
+	<xs:complexType name="MusicScriptConditionNugget_EvaEventPlayedRecently"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence />
+				<xs:attribute name="EvaEvent" type="EvaEventRef" use="required" />
+				<xs:attribute name="Timeout" type="Time" default="1s" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- true if at least some number of objects which pass the given filter are within some distance of an Eva event's
+	     last-played location -->
+	<xs:complexType name="MusicScriptConditionNugget_ObjectsNearEvaEvent"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionExpensiveNuggetBase" >
+				<xs:sequence >
+					<xs:element name="Filter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="EvaEvent" type="EvaEventRef" use="required" />
+				<xs:attribute name="Count" type="SageInt" default="1" />
+				<xs:attribute name="Distance" type="SageReal" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- true if the given number of objects which pass the filter were killed by the player within the given period of time -->
+	<xs:complexType name="MusicScriptConditionNugget_ScoredKillCount"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence />
+				<xs:attribute name="Count" type="SageInt" use="required" />
+				<xs:attribute name="Time" type="Time" use="required" />
+				<xs:attribute name="CountOnlyKillsAgainstTheLocalPlayer" type="SageBool" use="required" />
+				<xs:attribute name="CountOnlyKillsByTheLocalPlayer" type="SageBool" use="required" />
+				<xs:attribute name="Filter" type="ObjectFilterAssetRef" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<!-- true if its subcondition is false -->
+	<xs:complexType name="MusicScriptConditionNugget_Not"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence >
+					<xs:element name="Condition" type="MusicScriptConditionRef" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- true if one or more subconditions is true. Ordering is important - put cheapest / most likely to return true 
+	     conditions first for optimization -->
+	<xs:complexType name="MusicScriptConditionNugget_Or"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence >
+					<xs:element name="Condition" type="MusicScriptConditionRef" minOccurs="2" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- true if all the subconditions are true. Ordering is important - put cheapest / most likely to return false
+	     conditions first for optimization -->
+	<xs:complexType name="MusicScriptConditionNugget_And"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence >
+					<xs:element name="Condition" type="MusicScriptConditionRef" minOccurs="2" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Condition that tracks the time since a State was last active -->
+	<xs:complexType name="MusicScriptConditionNugget_PathMusicStateLastActive"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:attribute name="TrackedState" type="PathMusicGameDynamicStateWeakRef" use="required"/>
+				<xs:attribute name="TrackedStateChange" type="StateChangeType" use="required"/>
+				<xs:attribute name="TimeSinceLastActive" type="Time" use="required"/>
+				<xs:attribute name="TimeSicneLastActiveOp" type="ComparisonOperator" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Condition that determines whether or not a State is currently active -->
+	<xs:complexType name="MusicScriptConditionNugget_PathMusicStateCurrentlyActive"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:attribute name="TrackedState" type="PathMusicGameDynamicStateWeakRef" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<!-- Condition that tracks "Engagements", or combat between two units, over time.  The units must
+	 pass the filters specified here-->
+	<xs:complexType name="MusicScriptConditionNugget_EngagementCount"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionExpensiveNuggetBase" >
+				<xs:sequence />
+				<xs:attribute name="Count" type="SageInt" use="required" />
+				<xs:attribute name="Time" type="Time" use="required" />
+				<xs:attribute name="CountOnlyEngagementsAgainstTheLocalPlayer" type="SageBool" use="required" />
+				<xs:attribute name="CountOnlyEngagementsByTheLocalPlayer" type="SageBool" use="required" />
+				<xs:attribute name="RequiredScreenStatus" type="ScreenStatus" use="required" />
+				<xs:attribute name="TargetFilter" type="ObjectFilterAssetRef" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Condition that tracks Kills made by the Player vs. Kills made against them, over time.  It
+	 then computes the ratio of these Kills -->
+	<xs:complexType name="MusicScriptConditionNugget_LocalPlayerKillRatio"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionExpensiveNuggetBase" >
+				<xs:sequence />
+				<xs:attribute name="Time" type="Time" use="required" />
+				<xs:attribute name="Ratio" type="SageReal" use="required" />
+				<xs:attribute name="RatioOp" type="ComparisonOperator" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Condition that detects when a number of objects have been hit by a super weapon -->
+	 <xs:complexType name="MusicScriptConditionNugget_HitBySuperWeapon"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="MusicScriptConditionNuggetBase" >
+				<xs:sequence />
+				<xs:attribute name="TrackedWeapon" type="WeaponWeakRef" use="required" />
+				<xs:attribute name="Time" type="Time" use="required" />
+				<xs:attribute name="Count" type="SageInt" use="required" />
+				<xs:attribute name="CountOnlyHitsAgainstTheLocalPlayer" type="SageBool" use="required" />
+				<xs:attribute name="TargetFilter" type="ObjectFilterAssetRef" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="MusicScriptTimeoutSpecifier" >
+		<xs:sequence/>
+		<xs:attribute name="Weight" type="SageInt" default="1000" />
+		<xs:attribute name="Duration" type="Time" use="required" />
+	</xs:complexType>
+	
+	<!-- A music track that can play, and all the data about when & how it plays-->
+	<xs:complexType name="MusicScriptTrack"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Timeout" type="MusicScriptTimeoutSpecifier" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="TrackTypeKey" type="StringHash" default="" />
+				<xs:attribute name="Level" type="SageInt" use="required" />
+				<xs:attribute name="Priority" type="SageInt" use="required" />
+
+				<xs:attribute name="Condition" type="MusicScriptConditionRef" use="optional" />
+				<!-- If ConditionsAreLatch is true, the conditions are only checked until they become true, at which point the
+				     music tracks plays every time the timeout expires. If false, conditions are checked before each playback -->
+				<xs:attribute name="ConditionsAreLatch" type="SageBool" default="false" />
+				<xs:attribute name="Track" type="AudioEventInfoRef" use="required" />
+				<xs:attribute name="FadeInTrack" type="SageBool" default="false" />
+				<xs:attribute name="FadeOutLowerLevelTrack" type="SageBool" default="true" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Top-level type. We are running exactly one of these at a time. Normally, only one is linked to a map.
+	     Selecting one of these selects all the lower-level music controls under it -->
+	<xs:complexType name="MusicPalette"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Track" type="MusicScriptTrackRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="IsDefaultForNewMap" type="SageBool" default="false" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>
+

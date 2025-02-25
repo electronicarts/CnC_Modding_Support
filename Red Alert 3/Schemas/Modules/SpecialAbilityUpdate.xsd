@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="SpecialAbilityUpdateOptionsType" >
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CHECK_SPECIALPOWER_REQUIREMENTS_DURING_UPDATE" />
+			<xs:enumeration value="SKIP_PACKING_WITH_NO_TARGET" />
+			<xs:enumeration value="SPECIAL_OBJECTS_PERSISTENT" />
+			<xs:enumeration value="UNIQUE_SPECIAL_OBJECT_TARGETS" />
+			<xs:enumeration value="SPECIAL_OBJECTS_PERSIST_WHEN_OWNER_DIES" />
+			<xs:enumeration value="ALWAYS_VALIDATE_SPECIAL_OBJECTS" />      
+			<xs:enumeration value="FLIP_OWNER_AFTER_PACKING" />
+			<xs:enumeration value="FLIP_OWNER_AFTER_UNPACKING" />
+			<xs:enumeration value="DO_CAPTURE_FX" />
+			<xs:enumeration value="LOSE_STEALTH_ON_TRIGGER" />
+			<xs:enumeration value="APPROACH_REQUIRES_LINE_OF_SIGHT" />
+			<xs:enumeration value="CHARGE_ATTACK_SPEED_BOOST" />
+			<xs:enumeration value="MUST_FINISH_ABILITY" />
+			<xs:enumeration value="KILL_ATTRIBUTE_MODIFIER_ON_EXIT" />
+			<xs:enumeration value="KILL_ATTRIBUTE_MODIFIER_ON_REJECTED" />
+			<xs:enumeration value="INSTANT" />
+			<xs:enumeration value="NEED_COLLISION_BEFORE_TRIGGER" />
+			<xs:enumeration value="SUPPRESS_FOR_HORDES" />
+			<xs:enumeration value="APPROACH_UNTIL_MEMBERS_IN_RANGE" />
+			<xs:enumeration value="IGNORE_FACING_CHECK" />
+			<xs:enumeration value="USE_OBJECT_GEOMETRY_FOR_WITHIN_RANGE_CHECK" />
+			<xs:enumeration value="CHECK_CHAINED_COMMAND" />
+			<xs:enumeration value="SHOW_PREPARATION_PROGRESS" />
+			<xs:enumeration value="DESTROY_OCL_REGISTERED_OBJECTS_ON_EXIT"/>
+			<xs:enumeration value="UPDATE_REQUIRES_LINE_OF_SIGHT"/>
+			<xs:enumeration value="CHECK_PREVENT_CONDITIONS"/>
+			<xs:enumeration value="RECONSTITUTE_STORED_COMMAND"/>
+			<xs:enumeration value="DO_NOT_DO_AI_SPECIAL_POWER"/>
+			<xs:enumeration value="BUSY_DURING_UNPACK"/>
+			<xs:enumeration value="BUSY_DURING_PACK"/>
+      <!-- This will cancel the Special Ability if after the approach the unit is not in range to cast the special ability -->
+      <xs:enumeration value="FAIL_WITH_INVALID_APPROACH" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SpecialAbilityUpdateOptionsTypeBitFlags">
+		<xs:list itemType="SpecialAbilityUpdateOptionsType"></xs:list>
+	</xs:simpleType>
+
+  <xs:simpleType name="ConditionsType" >
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="MOUNTED" />
+      <xs:enumeration value="WEAPON_TOGGLE" />
+      <xs:enumeration value="MOVING" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ConditionsBitFlags">
+    <xs:list itemType="ConditionsType"></xs:list>
+  </xs:simpleType>
+
+  <xs:complexType name="SpecialAbilityUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="CustomAnimAndDuration" type="AnimAndDuration" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="SpecialPowerTemplate" type="SpecialPowerTemplateRef" />
+				<xs:attribute name="StartAbilityRange" type="SageReal" default="10000000.0" />
+				<xs:attribute name="AbilityAbortRange" type="SageReal" default="10000000.0" />
+				<xs:attribute name="PreparationTime" type="Time" default="0s" />
+				<xs:attribute name="PersistentPrepTime" type="Time" default="0s" />
+				<xs:attribute name="PersistentCount" type="SageInt" default="-1" />
+				<xs:attribute name="PackTime" type="Time" default="0s" />
+				<xs:attribute name="UnpackTime" type="Time" default="0s" />
+				<xs:attribute name="PreTriggerUnstealthTime" type="Time" default="0s" />
+				<xs:attribute name="Options" type="SpecialAbilityUpdateOptionsTypeBitFlags" />
+				<xs:attribute name="PackUnpackVariationFactor" type="SageReal" default="0.0" />
+				<xs:attribute name="ParalyzeDurationWhenCompleted" type="Time" default="0s" />
+				<xs:attribute name="ParalyzeDurationWhenAborted" type="Time" default="0s" />
+				<xs:attribute name="SpecialObject" type="GameObjectWeakRef" />
+				<xs:attribute name="SpecialObjectAttachToBone" type="xs:string" />
+				<xs:attribute name="MaxSpecialObjects" type="SageUnsignedInt" default="1" />
+				<xs:attribute name="EffectDuration" type="Time" default="0s" />
+				<xs:attribute name="EffectValue" type="SageInt" default="1" />
+				<xs:attribute name="EffectRange" type="SageReal" default="0" />
+				<xs:attribute name="FleeRangeAfterCompletion" type="SageReal" default="0.0" />
+				<xs:attribute name="DisableFXParticleSystem" type="FXParticleSystemRef" />
+				<xs:attribute name="PackSound" type="AudioEventInfoRef" />
+				<xs:attribute name="UnpackSound" type="AudioEventInfoRef" />
+				<xs:attribute name="PrepSoundLoop" type="AudioEventInfoRef" />
+				<xs:attribute name="TriggerSound" type="AudioEventInfoRef" />
+				<xs:attribute name="ActiveLoopSound" type="AudioEventInfoRef" />
+				<xs:attribute name="AwardXPForTriggering" type="SageInt" default="0" />
+				<xs:attribute name="SkillPointsForTriggering" type="SageInt" default="-1" />
+				<xs:attribute name="UnpackingVariation" type="SageInt" default="0" />
+				<xs:attribute name="FreezeAfterTriggerDuration" type="Time" default="0s" />
+				<xs:attribute name="RequiredConditions" type="ConditionsBitFlags" />
+				<xs:attribute name="RejectedConditions" type="ConditionsBitFlags" />
+				<xs:attribute name="SetObjectStatusOnTrigger" type="ObjectStatusBitFlags" />
+				<xs:attribute name="ClearObjectStatusOnExit" type="ObjectStatusBitFlags" />
+			    <xs:attribute name="ContactPointOverride" type="xs:string" />
+				<xs:attribute name="TriggerAttributeModifier" type="AttributeModifierRef" />
+				<xs:attribute name="AttributeModifierDuration" type="Time" default="0s" />
+				<xs:attribute name="ChainedButton" type="LogicCommandRef" />
+				<xs:attribute name="StartRechargeOnExit" type="SageBool" default="false" />
+				<xs:attribute name="RequireAndSpendTiberiumOnCaster" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="GoIdleInStartPreparation" type="SageBool" default="true" />
+				<xs:attribute name="FaceTarget" type="SageBool" default="true" />
+				<xs:attribute name="DisabledTypesToProcess" type="DisabledBitFlags" default="HELD"/>
+				<xs:attribute name="DisabledTypesToContinueSoundsFor" type="DisabledBitFlags"/>
+				<xs:attribute name="ActiveModelCondition" type="ModelConditionFlagType" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Tags></Tags>
+  <Includes>
+    <Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+    <Include type="all"	source="ART:NY_FortWall01.W3X" />
+    <Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+    <Include type="instance" source="DATA:Civilian/New_York_NY/Props/NY_FortWall01_Collapse.xml" />
+
+  </Includes>
+  <GameObject
+		id="NY_FortWall01"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		EditorName="NY_FortWall01"
+    	EditorSorting="STRUCTURE"
+		Browser="REGION NEW_YORK_NY STRUCTURE"
+		KindOf="+WALL_PIECE +AUTO_ACQUIRABLE_BY_AI">
+
+
+	  <ArmorSet
+                  Armor="AlliedWarFactoryArmor"
+                  DamageFX="FactionStructureDamageFX" />
+
+	  <Draws>
+      <ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18 BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="NY_FortWall01" />
+        </ModelConditionState>
+      </ScriptedModelDraw>
+    </Draws>
+    <Behaviors>
+	  <SquishCollide
+				id ="DefaultSquishCollide"
+				AllowAllyCrush="true"/>
+		<Physics
+				id="ModuleTag_Physics"/>
+		<BuildingDestructionBehavior
+					id="ModuleTag_BuildingDestruction">
+			<DieMuxData
+						DeathTypes="ALL" />
+			<Item
+						BonePrefix="BONE_CONTACT_POINT_"
+						FX="FX_BuildingDebrisExplosion"
+						CreationObject="AlliedBarracks_Debris"
+						FlingVelocity="100.0"/>
+		</BuildingDestructionBehavior>
+
+		<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+        <DieMuxData
+					DeathTypes="ALL" />
+        <Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Small" />
+      </FXListBehavior>
+
+      <CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NY_FortWall01_Die_OCL">
+        <DieMuxData
+					DeathTypes="ALL" />
+      </CreateObjectDie>
+
+      <!-- civ buildings should have a CreateObjectDie to make a collapse version. -->
+      <DestroyDie
+				id="ModuleTag_DestroyDie">
+        <DieMuxData
+					DeathTypes="ALL" />
+      </DestroyDie>
+    </Behaviors>
+    <Body>
+      <ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_SMALL"
+				/>
+    </Body>
+    <Geometry
+			IsSmall="false">
+
+      <Shape
+           Type= "BOX"
+           MajorRadius = "31.0"
+           MinorRadius = "9.0"
+           Height = "30.4948"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "-0.0381966"
+            y = "-0.142279"
+            z = "0.0" />
+      </Shape>
+
+	</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+
+	<ObjectCreationList
+		id="NY_FortWall01_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>NY_FortWall01_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>		
+</AssetDeclaration>

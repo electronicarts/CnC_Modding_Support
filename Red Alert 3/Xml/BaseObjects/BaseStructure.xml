@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="BaseStructure"
+		inheritFrom="BaseObject" 
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER SCORE CAN_BUILD_ON_WATER CAN_BUILD_ON_DEEP_WATER" 
+		CampnessValue="2000"
+		CampnessValueRadius="300"
+		UnitCategory="STRUCTURE"
+		>
+		<ArmorSet
+			Armor="CryoBeamFrozenArmor"
+			DamageFX="VehicleDamageFX"
+			Conditions="SECONDARY_DAMAGE"
+		/>
+    
+		<Behaviors>
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+
+			<FireWeaponWhenDead
+				id="ModuleTag_CatalystDeathWeapon"
+				InitiallyActive="true"
+				DeathWeapon="CatalystBuildingDeathWeapon"
+				ContinueToBezierDestination="false"
+				UseMyKillerAsWeaponSource="true">
+				<DieMuxData DeathTypes="CATALYST" />
+			</FireWeaponWhenDead>
+
+			<StructureSellUpdate
+				id="ModuleTag_StructureSellUpdate"
+				SellTime="2.0s"
+				ActiveModelCondition="SOLD"/>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_MediumBuildingDieExplosion" />
+			</FXListBehavior>
+			<SecondaryDamageTracker
+				id="ModuleTag_SecondaryDamageTracker"
+				UpdateDuration="1s"
+				DissipateAmount="25"
+				MaxDamageClampScaler="=$MAX_SECONDARY_DAMAGE_SCALER">
+				<Color R="1.0" G="1.0" B="1.75"/>
+				<EffectInfo
+					Fraction="0.2"
+					AttributeModifier="AttributeModifer_CryoBeam_02"
+				/>
+				<EffectInfo
+					Fraction="0.4"
+					AttributeModifier="AttributeModifer_CryoBeam_04"
+				/>
+				<EffectInfo
+					Fraction="0.6"
+					AttributeModifier="AttributeModifer_CryoBeam_06"
+				/>
+				<EffectInfo
+					Fraction="0.8"
+					AttributeModifier="AttributeModifer_CryoBeam_08"
+				/>
+				<EffectInfo
+					Fraction="1.0"
+					SetUpgradedArmor="true"
+					OnEnterDisable="true"
+					OnEnterCancelSpecialAbilities="true"
+					AttributeModifier="AttributeModifer_CryoBeam_10"
+				/>
+				<ObjectStatusValidation
+					ForbiddenStatus="UNDER_IRON_CURTAIN" />
+			</SecondaryDamageTracker>
+		</Behaviors>
+
+		<Body>
+			<ActiveBody
+				id="DefaultBody" />			
+		</Body>
+
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Sold">
+				<ModelConditionSound Sound="BuildingSold" RequiredFlags="SOLD" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior
+				id="ModuleTag_StructureConstructionAudio">
+				<ModelConditionSound
+					Sound="BuildingPlacedLand"
+					RequiredFlags="STRUCTURE_UNPACKING"
+					ExcludedFlags="OVER_WATER"/>
+				<ModelConditionSound
+					Sound="BuildingPlacedWaterMS"
+					RequiredFlags="STRUCTURE_UNPACKING OVER_WATER"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_IronCurtain">
+				<ModelConditionSound Sound="SOV_IronCurtain_LoopMS" RequiredFlags="IRONCURTAIN" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionSoundSelectorClientBehavior id="Frozen">
+				<Override RequiredFlags="PARALYZED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="" AudioType="voiceAttack" />
+						<AudioEntry Sound="" AudioType="voiceAttackAir" />
+						<AudioEntry Sound="" AudioType="voiceAttackAfterMoving" />
+						<AudioEntry Sound="" AudioType="voiceAttackGarrisonedStructure" />
+						<AudioEntry Sound="" AudioType="voiceAttackStructure" />
+						<AudioEntry Sound="" AudioType="voiceCreated" />
+						<AudioEntry Sound="" AudioType="voiceDock" />
+						<AudioEntry Sound="" AudioType="voiceFear" />
+						<AudioEntry Sound="" AudioType="voiceGarrison" />
+						<AudioEntry Sound="" AudioType="voiceMove" />
+						<AudioEntry Sound="" AudioType="voiceAttackAfterMoving" />
+						<AudioEntry Sound="" AudioType="voiceMoveWaterToLand" />
+						<AudioEntry Sound="" AudioType="voiceMoveLandToWater" />
+						<AudioEntry Sound="" AudioType="voiceRepair" />
+						<AudioEntry Sound="" AudioType="voiceRetreatToCastle" />
+						<AudioEntry Sound="BuildingSelectFrozen" AudioType="voiceSelect" />
+						<AudioEntry Sound="BuildingSelectFrozen" AudioType="voiceSelectBattle" />
+						<AudioEntry Sound="BuildingSelectFrozen" AudioType="voiceSelectUnderFire" /> 
+						<AudioEntry Sound="BuildingSelectFrozen" AudioType="voiceSupply" />
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+
+		<AudioArrayVoice>
+			<AudioEntry EvaEvent="BuildingStolen" AudioType="voiceDefectingAway" />
+			<AudioEntry EvaEvent="EnemyBuildingCaptured" AudioType="voiceDefectingTowards" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="BuildingUnderConstructionLoop" AudioType="soundUnderConstruction" />
+		</AudioArraySound>
+		<EvaEventArray>
+			<EvaEntry EvaEvent="BuildingConstructionStarted" EvaType="productionStarted" />
+			<EvaEntry EvaEvent="BuildingConstructionComplete" EvaType="productionComplete" />
+			<EvaEntry EvaEvent="StructureUnderAttack" EvaType="damagedOwner" />
+			<EvaEntry EvaEvent="AllyStructureUnderAttack" EvaType="damagedAlly" />
+			<EvaEntry EvaEvent="StructureSold" EvaType="soldOwner" />
+			<EvaEntry EvaEvent="StructureRepairing" EvaType="repairingOwner" />
+			<EvaEntry EvaEvent="EnemyCampSighted" EvaType="enemyObjectSighted" />
+			<EvaEntry EvaEvent="NewConstructionOptions" EvaType="availableForProduction" />
+			<EvaEntry EvaEvent="StructurePlacementFailed" EvaType="placementFailed" />
+			<EvaEntry EvaEvent="StructureCannotBuildDueToFullBuildQueue" EvaType="cannotBuildDueToFullBuildQueue" />
+			<EvaEntry EvaEvent="BuildOnHold" EvaType="buildOnHold" />
+			<EvaEntry EvaEvent="BuildCancelled" EvaType="buildCancelled" />
+			<EvaEntry EvaEvent="BuildingManuallyPoweredDown" EvaType="manuallyPoweredOff" />
+			<EvaEntry EvaEvent="BuildingManuallyPoweredUp" EvaType="manuallyPoweredOn" />
+		</EvaEventArray>
+
+	</GameObject>
+
+</AssetDeclaration>

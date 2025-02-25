@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:SUBomberAircraft_Special_SKN.w3x" />			
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:Soviet/Units/SovietBomberAircraft.xml" />
+		<Include type="instance" source="DATA:Soviet/props/SovietBomberAircraft_Special_Dying.xml" />
+			
+	</Includes>
+	<!-- aka Soviet Kirov (the Hindenberg unit)-->
+	<GameObject
+		id="SovietBomberAircraft_Special"
+		inheritFrom="SovietBomberAircraft"
+		Side="Soviet"
+		EditorSorting="CAMPAIGN_UNITS"
+		EditorName="SovietBomberAircraft_Special"
+		Description="Desc:SovietBomberAircraft_Special"
+		TypeDescription="Type:SovietBomberAircraft">
+
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw" 
+				xai:joinAction="Replace"
+				OkToChangeModelColor="true" >
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SUBomberAircraft_Special_SKN" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON" />
+				</ModelConditionState>
+
+				<!-- TEMP FX FOR VENT HYDROGEN-->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="LOCOMOTOR_NORMAL_UPGRADED">
+					<Model
+						Name="SUBomberAircraft_Special_SKN" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="alliedbomberdyingfire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="alliedbomberdyingSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="alliedbomberdyingfirelight"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="SUBomberAircraft_Special_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="SUBomberAircraft_Special_SKN" />
+					<Texture
+						Original="SUBomberAircraft"
+						New="SUBomberAircraft_D" />
+					<ParticleSysBone
+						BoneName="FX_Fire_03"
+						FXParticleSystemTemplate="VehicleDamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Fire_03"
+						FXParticleSystemTemplate="VehicleDamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Fire_03"
+						FXParticleSystemTemplate="VehicleDamageFire02"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="SUBomberAircraft_Special_SKN" />
+					<ParticleSysBone
+						BoneName="B_Prop05"
+						FXParticleSystemTemplate="VehicleDamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="SUBomberAircraft_IDLA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<ScriptedModelDraw
+				id="ModuleTag_BombRackDraw"
+				xai:joinAction="Remove"/>	
+		</Draws>
+		
+		<Behaviors>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				xai:joinAction="Replace"
+				CreationList="SUBomberAircraft_Special_Dying_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+		</Behaviors>							
+
+	</GameObject>
+
+	<ObjectCreationList
+		id="SUBomberAircraft_Special_Dying_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING INHERIT_VELOCITY"
+			Count="1"
+			VelocityScale="1.0"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="1.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>SovietBomberAircraft_Special_Dying</CreateObject>
+		</CreateObject>
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING INHERIT_VELOCITY"
+			Count="1"
+			VelocityScale="1.0"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="1.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>SovietBomberAircraft_Debris</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>	
+</AssetDeclaration>

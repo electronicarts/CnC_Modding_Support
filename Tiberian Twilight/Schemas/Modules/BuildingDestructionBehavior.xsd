@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	
+	<!-- the 'BonePrefix' method of scanning for bones is old news (though still useful for mastadons and simple structures -->
+	<!-- The new method is to have explicit locations (which each logically represent one portion of health), each with their own
+	   explicit bone names -->
+
+	<xs:simpleType name="BuildingDestructionFlagsType">
+		<xs:restriction base="xs:string">
+			<!-- Parse groups and locations in order listed in xml, default is to use closest to hit location -->
+			<xs:enumeration value="DETERMINISTIC" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="BuildingDestructionFlags">
+		<xs:list itemType="BuildingDestructionFlagsType"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="NamedBoneInfo">
+		<xs:sequence>
+			<xs:element name="BoneName" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="BuildingDestructionItem">
+		<xs:sequence>
+			<!-- specifying an explicit list of LocationBoneInfos causes 'BonePrefix' to be ignored -->
+			<xs:element name="NamedBoneInfo" type="NamedBoneInfo" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="BonePrefix" type="xs:string" />
+		<xs:attribute name="FX" type="FXListRef" />
+		<xs:attribute name="CreationObject" type="GameObjectWeakRef" />
+		<xs:attribute name="FlingVelocity" type="SageReal" default="1.0" />
+	</xs:complexType>
+
+	<xs:complexType name="BuildingDestructionModuleData">
+		<xs:complexContent>
+			<xs:extension base="DieModuleData">
+				<xs:sequence>
+					<xs:element name="Item" type="BuildingDestructionItem" minOccurs="1" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="AssociatedModule" type="Poid" xas:refType="ModuleData" />
+				<xs:attribute name="MaxDebrisCloudsPerSecond" type="SageReal" default="2.0" />
+				<xs:attribute name="FillerMesh" type="Poid" xas:refType="SubObject" default="NEWSKIN_FILL" />
+				<xs:attribute name="Flags" type="BuildingDestructionFlags" default="" />
+				<xs:attribute name="PreventBoneUpdateModelConditionFlag" type="ModelConditionBitFlags" use="optional" />
+				<xs:attribute name="BoneOpacitySourceDrawModule" type="Poid" xas:refType="ModuleData" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+</xs:schema>

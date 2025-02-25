@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NODE_LIFETIME_DESOLATOR" value="0.5s" />
+		<Define name="DESOLATOR_LINE_DAMAGE_RADIUS" value="25.0" />
+		<Define name="BLAT_SINK_DELAY_TIME" value="0.0s" />
+		<Define name="BLAT_DESTRUCTION_DELAY_TIME" value="0.0s" />
+	</Defines>
+	<!-- This is the sovietDesolatorInfantry's the primary weapon object.  
+	     It follows the desolator dude and will draw when he begins attacking.  
+	     The line segment update begins doing damage when object_status_IS_ATTACKING is true. 
+		 LineSegmentUpdate tweaks damage output.
+		 SpawnedSlaveUpdate radius must be greater than or equal to the desolator infantry's primary weapon range -->
+	<GameObject
+		id="DesolatorSprayDamageTrail"
+		Side="Soviet"
+		EditorSorting="SYSTEM"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE DO_NOT_CLASSIFY NO_COLLIDE PATH_THROUGH_INFANTRY CAN_ATTACK INERT SKIRMISH_AI_ATTEMPT_TO_DODGE PASS_EXPERIENCE_TO_PRODUCER"
+		EditorName="DesolatorSprayDamageTrail">
+		<DisplayName>DesolatorSprayDamageTrail</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<LocomotorSet
+			Locomotor="DesolatorInfantrySprayEffectLocomotor"
+			Condition="NORMAL"
+			Speed="180.0" />
+		<SkirmishAIInformation
+		  DodgingRequiredObjectStatus="IS_ATTACKING"
+		  DodgeSafetyDistance="200.0">
+			<DodgeWithUnits 
+			  Rule="ALL"
+			  Exclude="VEHICLE"
+			  StatusBitFlagsExclude="AIRBORNE_TARGET">
+			  <ExcludeThing>SovietDesolatorInfantry</ExcludeThing>
+			  <ExcludeThing>SovietScoutVehicle</ExcludeThing>
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="SUToxicCorrosionSatellite" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="ROOTTRANSFORM" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SUToxicCorrosionSatellite"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+			 id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietDesolatorAttachedDamage"
+						ObjectStatus="ATTACHED"
+						/>					
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietDesolatorAttachingWeapon"						
+						ForbiddenObjectStatus="ATTACHED"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+		
+			<LineSegmentDamageUpdate
+				id="ModuleTag_LineSegmentDamageUpdate"
+				NodeLifetime="=$NODE_LIFETIME_DESOLATOR"
+				WeaponName="SovietDesolatorSprayLineDamage"
+				DamageInterval="0.1s"			
+				Distance="=$DESOLATOR_LINE_DAMAGE_RADIUS" 
+				MaxValidHeightOffGround="5.0"
+				MinDistanceTolerance="30.0">				
+				<ObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES" 
+					Include="VEHICLE HUGE_VEHICLE INFANTRY STRUCTURE SHIP"
+					Exclude="AIRCRAFT SUBMARINE">
+					<IncludeThing>AlliedAntiNavalScout</IncludeThing>
+					<ExcludeThing>SovietScoutVehicle</ExcludeThing>
+				</ObjectFilter>
+				<ObjectStatusValidation
+					RequiredStatus="IS_ATTACKING" />
+				<ParticleSystems>
+					<ParticleSys>SovietToxic_Node</ParticleSys>
+					<ParticleSys>SovietToxicCloudFlash</ParticleSys>
+					<ParticleSys>SovietToxicCloudShimmer</ParticleSys>
+					<ParticleSys>SovietToxicCloudPuddle</ParticleSys>
+					<ParticleSys>SovietToxicCloudDistortion</ParticleSys>
+					<ParticleSys>SovietToxicCloudGlow</ParticleSys>
+				</ParticleSystems>
+			</LineSegmentDamageUpdate>
+
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Flags="ONE_ATTACH_PER_PARENT TELEPORT STICK_TO_PARENT"
+				ParentStatus="IRRADIATED"
+				CloseEnoughRange="=$DESOLATOR_INFANTRY_SPRAY_ATTACH_RANGE"
+				Range="=$DESOLATOR_INFANTRY_SPRAY_ATTACH_RANGE"
+				ParentStatusToCopy="AIRBORNE_TARGET"
+				ForbiddenParentStatus="UNDERGOING_REPAIR"
+				ForbiddenParentStatusDieDeathType="EXTRA_1"
+			/>
+
+			<SpawnedSlaveUpdate
+				id="ModuleTag_SlavedUpdate"
+				LeashRange="300"
+				AttackRange="300"
+				DieOnMastersDeath="true"
+				UseSlaverAsControlForEvaObjectSightedEvents="false" />
+
+			<DestroyDie
+				id="ModuleTag_DieDestroy">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData 
+					CanAutoAcquireNonAutoAcquirable="true"/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="100.0" />			
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="1.0"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+		<!--<AudioArraySound>
+			<AudioEntry Sound="SOV_ToxicCorrosion_Launch" AudioType="soundAmbient"/>
+		</AudioArraySound>-->
+		<!--
+		plays again a few seconds later
+	-->
+		<ShadowInfo
+			Type="NONE" />
+		<VisionInfo
+			VisionRange="30"
+			ShroudClearingRange="0" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrushableLevel="0" />
+
+	</GameObject>
+
+
+	<!-- This is the sovietDesolatorInfantry's secondary weapon.  -->
+	<GameObject
+		id="DesolatorBlatGoo"
+		Side="Soviet"
+		EditorSorting="SYSTEM"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE NO_COLLIDE INERT SKIRMISH_AI_ATTEMPT_TO_DODGE PASS_EXPERIENCE_TO_PRODUCER"
+		EditorName="DesolatorBlatGoo">
+		<DisplayName>DesolatorBlatGoo</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+		  DodgeSafetyDistance="200.0">
+			<DodgeWithUnits Rule="ALL"
+			  StatusBitFlagsExclude="AIRBORNE_TARGET">
+			  <ExcludeThing>SovietDesolatorInfantry</ExcludeThing>
+			  <ExcludeThing>SovietScoutVehicle</ExcludeThing>
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietDesolatorAttachingWeapon"
+						ForbiddenObjectStatus="ATTACHED"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="SovietBlatAttachedDamage" />
+			</FireWeaponUpdate>
+			
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="10.0s"
+				MaxLifetime="10.0s" />
+			
+			<!--LineSegmentDamageUpdate
+				id="ModuleTag_LineSegmentDamageUpdate"
+				NodeLifetime="=$NODE_LIFETIME_DESOLATOR"
+				WeaponName="SovietDesolatorSprayLineDamage"
+				DamageInterval="0.1s"
+				Distance="=$DESOLATOR_LINE_DAMAGE_RADIUS"
+				MaxValidHeightOffGround="5.0">
+				<ObjectFilter
+					Rule="ANY"
+					Include="VEHICLE HUGE_VEHICLE INFANTRY STRUCTURE SHIP"
+					Exclude="AIRCRAFT SUBMARINE">
+					<IncludeThing>AlliedAntiNavalScout</IncludeThing>
+					<ExcludeThing>SovietScoutVehicle</ExcludeThing>
+				</ObjectFilter>
+				<ObjectStatusValidation
+					RequiredStatus="ATTACHED" />
+				<ParticleSystems>
+					<ParticleSys>SovietToxic_Node</ParticleSys>
+					<ParticleSys>SovietToxicCloudFlash</ParticleSys>
+					<ParticleSys>SovietToxicCloudShimmer</ParticleSys>
+					<ParticleSys>SovietToxicCloudPuddle</ParticleSys>
+				</ParticleSystems>
+			</LineSegmentDamageUpdate-->
+
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Flags="TELEPORT STICK_TO_PARENT DIE_WHEN_DETACH_ALWAYS DIE_WHEN_PARENT_HAS_FORBIDDEN_STATUS SCAN_FOR_NEW_PARENT_WHEN_DETACHED"
+				ParentStatus="IRRADIATED"
+				ParentStatusAttached="BLATTED"
+				CloseEnoughRange="10.0"
+				Range="10"
+				ParentStatusToCopy="AIRBORNE_TARGET"				
+				ForbiddenParentStatusDieDeathType="EXTRA_1">
+				<ObjectFilter
+					Rule="ANY"
+					Include="VEHICLE STRUCTURE INFANTRY"
+					Exclude="ENCLOSURE"
+					Relationship="ENEMIES ALLIES NEUTRAL"
+					StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+			</AttachUpdate>
+			
+
+			<!-- Spawn a desolator field and do some one-shot damage -->
+			<SlowDeath
+				id="ModuleTag_GroundDeath"
+				SinkDelay="=$BLAT_SINK_DELAY_TIME"
+				DestructionDelay="=$BLAT_DESTRUCTION_DELAY_TIME">
+				<!--OCL
+					Type="INITIAL">
+					<OCL>OCL_DesolatorField</OCL>
+				</OCL>
+				<Weapon
+					Type="INITIAL">
+					<Weapon>DesolatorBlatGooExplosion</Weapon>
+				</Weapon-->
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="AIRBORNE_TARGET OVER_WATER" />
+			</SlowDeath>
+
+			<!-- killed in the air, don't spawn a radiation field. -->
+			<SlowDeath
+				id="ModuleTag_AirDeath"
+				SinkDelay="=$BLAT_SINK_DELAY_TIME"
+				DestructionDelay="=$BLAT_DESTRUCTION_DELAY_TIME">
+				<!--Weapon
+					Type="INITIAL">
+					<Weapon>DesolatorBlatGooExplosion</Weapon>
+				</Weapon-->
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="AIRBORNE_TARGET" />
+			</SlowDeath>
+
+			<!-- killed in the water, don't spawn a radiation field. -->
+			<SlowDeath
+				id="ModuleTag_WaterDeath"
+				SinkDelay="=$BLAT_SINK_DELAY_TIME"
+				DestructionDelay="=$BLAT_DESTRUCTION_DELAY_TIME">
+				<!--Weapon
+					Type="INITIAL">
+					<Weapon>DesolatorBlatGooExplosion</Weapon>
+				</Weapon-->
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="OVER_WATER" />
+			</SlowDeath>
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="100.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="1.0"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+
+		<ShadowInfo
+			Type="NONE" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrushableLevel="0" />
+	</GameObject>
+
+	<WeaponTemplate
+		id="DesolatorBlatGooExplosion"
+		FireFX="FX_SovDesolatorDecal"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS">
+		<Nuggets>
+			<DamageNugget
+				Damage="30"
+				Radius="10"
+				DamageType="EXPLOSIVE"
+				DamageFXType="RADIATION"
+				DeathType="IRRADIATED"/>
+			<DamageContainedNugget
+			   WindowBlastFX="FX_None"
+			   Damage="1000"
+			   DamageType="RADIATION"
+			   DamageFXType="RADIATION"
+			   DeathType="IRRADIATED">
+					<DamageObjectFilter
+					Rule="NONE"
+					Include="INFANTRY" />
+			</DamageContainedNugget>
+			<TintObjectsNugget
+				Radius="80"
+				PreColorTime="1s"
+				SustainedColorTime="2s"
+				PostColorTime="1s"
+				Frequency="0"
+				Amplitude="0">
+				<Color R="1.58" G="1.98" B="1.19"/>
+			</TintObjectsNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	   
+	
+	<!-- spawned by both desolator infantry weapons on death, this spawns a huge damage field that lasts for a while -->
+	<ObjectCreationList
+		id="OCL_DesolatorField">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="ON_GROUND_ALIGNED">
+			<CreateObject>DesolatorField</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+
+	<!-- This is the field left over by the SovietDesolatorInfantry's weapons.  it continually damages units in its AOE -->
+	<GameObject
+		id="DesolatorField"
+		Side="Soviet"
+		EditorSorting="SYSTEM"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE NO_COLLIDE INERT INERT_SHROUD_REVEALER SKIRMISH_AI_ATTEMPT_TO_DODGE PASS_EXPERIENCE_TO_PRODUCER"
+		EditorName="DesolatorField">
+		<DisplayName>DesolatorField</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+		  DodgeSafetyDistance="400.0">
+			<DodgeWithUnits Rule="ALL"
+			  StatusBitFlagsExclude="AIRBORNE_TARGET">
+			  <ExcludeThing>SovietDesolatorInfantry</ExcludeThing>
+			  <ExcludeThing>SovietScoutVehicle</ExcludeThing>
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="" />
+					<ParticleSysBone
+						FXParticleSystemTemplate="SovietToxicDeathExplosionCloudGlow" />
+					<ParticleSysBone
+						FXParticleSystemTemplate="SovietToxicDeathExplosionCloud" />
+					<ParticleSysBone
+						FXParticleSystemTemplate="SovietToxicDeathExplosionEmbers" />						
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="Moduletag_LifetimeUpdate"
+				MinLifetime="3s"
+				MaxLifetime="3s" />
+			<DestroyDie
+				id="ModuleTag_DieDestroy">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="Weapon_IrradiatedTargetDieUpdate" />
+			</FireWeaponUpdate>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="1.0"
+				Height="1.0">
+			</Shape>
+		</Geometry>
+
+		<ShadowInfo
+			Type="NONE" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrushableLevel="0" />
+	</GameObject>
+
+
+	<WeaponTemplate
+		id="SovietDesolatorSprayLineDamage"
+		AttackRange="=$DESOLATOR_LINE_DAMAGE_RADIUS"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		WeaponSpeed="999999"
+		FireFX=""
+		FireVeteranFX=""
+		FiringLoopSound=""
+		FiringLoopSoundContinuesDuringReload="true"
+		RadiusDamageAffects="ENEMIES"
+		ClipSize="1"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		CanFireWhileMoving="true"		
+		ReAcquireDetailType="PER_CLIP"
+		IgnoresContactPoints="true">
+		<Nuggets>
+			<DamageNugget
+				Damage="15.0"
+				DamageType="RADIATION"
+				DeathType="IRRADIATED"
+				DamageFXType="RADIATION" />
+			<DamageContainedNugget
+				MaxUnitsToDamage="1"
+				WindowBlastFX="FX_None"
+				Damage="5"
+				DamageType="RADIATION"
+				DeathType="IRRADIATED">
+				<DamageObjectFilter
+					Rule="NONE"
+					Include="INFANTRY" />
+			</DamageContainedNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+</AssetDeclaration>

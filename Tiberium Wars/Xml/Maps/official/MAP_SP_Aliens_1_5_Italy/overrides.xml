@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags/>
+	<Includes>
+	<Include
+		source="DATA:Alien/Structures/ABTower.xml"
+		type="instance"/>
+	<Include
+		source="DATA:Alien/Structures/AlienSignalTransmitter.xml"
+		type="instance"/>
+	<Include
+		source="DATA:Alien/Units/AlienMothership.xml"
+		type="instance"/>
+	<Include
+		source="DATA:GlobalData/SpecialPowerTemplates.xml"
+		type="instance"/>
+	<Include
+		source="DATA:Alien/Props/AlienWormhole.xml"
+		type="instance"/>
+	</Includes>
+	
+	<MissionObjectiveList id="MissionObjectives">
+		<MissionObjectiveTag
+			Script="SCRIPT:Alien_1_5_Objective_1"
+			Description="SCRIPT:Alien_1_5_Obj_1_Detail">
+					<PresentationSettings
+					ID = "Alien_1_5_Obj_1"
+					Dialog = "MAA4_AlienAI01"
+					UseDynamicZoom="False">
+					<Duration>10s</Duration>
+					<CameraStartAngle>30d</CameraStartAngle>
+					<CameraEndAngle>55d</CameraEndAngle>
+					<CameraFieldOfView>60d</CameraFieldOfView>
+			</PresentationSettings>		
+		</MissionObjectiveTag> <!--"Defend the Tower."-->
+		
+		<MissionObjectiveTag
+			Script="SCRIPT:Alien_1_5_Objective_2"
+			Description="SCRIPT:Alien_1_5_Obj_2_Detail">
+			<PresentationSettings
+					ID = "Alien_1_5_Obj_2"
+					Dialog = "MAA4_AlienAI05"
+					UseDynamicZoom="False">
+					<Duration>10s</Duration>
+					<CameraStartAngle>25d</CameraStartAngle>
+					<CameraEndAngle>-25d</CameraEndAngle>
+					<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>
+			</MissionObjectiveTag> <!--"Construct a Signal Transmitter."-->
+		
+		<MissionObjectiveTag
+			Script="SCRIPT:Alien_1_5_Objective_3"
+			Description="SCRIPT:Alien_1_5_Obj_3_Detail">
+				<PresentationSettings
+					ID = "Alien_1_5_Obj_3"
+					Dialog = "MAA4_AlienAI06"
+					UseDynamicZoom="False">
+					<Duration>10s</Duration>
+					<CameraStartAngle>25d</CameraStartAngle>
+					<CameraEndAngle>-25d</CameraEndAngle>
+					<CameraFieldOfView>35d</CameraFieldOfView>
+			</PresentationSettings>			
+			</MissionObjectiveTag> <!--"Guide and protect the Mothership to the Tower."-->
+
+	
+	<!-- Bonus Objective -->
+			<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:Alien_1_3_BonusObjective_1"
+			Description="SCRIPT:Alien_1_3_BonObj_1_Detail">
+			<PresentationSettings
+					ID = "Alien_1_5_BonObj_1"
+					Dialog = "MAA3_AlienAI04">
+					<Duration>5s</Duration>
+					<CameraStartAngle>10d</CameraStartAngle>
+					<CameraEndAngle>20d</CameraEndAngle>
+					<!--
+					<CameraFieldOfView>35d</CameraFieldOfView>
+					-->
+			</PresentationSettings>			
+		</MissionObjectiveTag>		<!--"Destroy the GDI base."--> 
+
+	</MissionObjectiveList>
+	
+	<!-- Shockwave Artillery Override -->
+
+	<SpecialPowerTemplate
+		id="SpecialPowerGDI_SpaceCommandShockwaveArtillery"
+		ReloadTime="100s"
+		RadiusCursorRadius="110"
+		TargetType="LOCATION"
+		InitiateAtLocationSound="GDI_ShockwaveArtillery_WeaponFire_Stereo"
+		Flags="IS_PLAYER_POWER WATER_OK SHARED_SYNC" 
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		Money="-500"/>
+
+	<!-- Alien Tower Overrides -->
+		<GameObject id = "ABTower" inheritFrom="ABTower">
+		<!--
+				<ArmorSet
+			id="DefaultArmor"
+			Armor="SPAlienStructureArmor"
+			DamageFX="GenericStructureDamageFX"/>
+			-->
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="30000.0"
+				InitialHealth="30000.0" />
+		</Body>
+		</GameObject>
+
+	<!-- Alien Phase Generator Overrides -->
+	<!--
+		<GameObject id = "Alien_PhaseGenerator" inheritFrom="Alien_PhaseGenerator">
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="SPAlienStructureArmor"
+			DamageFX="GenericStructureDamageFX"/>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="10000.0" />
+		</Body>
+		</GameObject>
+	-->
+	<!-- Tower/Phase Generator: Increasing Armor -->
+	<!--
+		<ArmorTemplate
+		id="StructureArmor"
+		Default="100"
+		SideDamageScalar="100"
+		RearDamageScalar="100">
+		<Armor
+			Damage="SNIPER"
+			Percent="1" />
+		<Armor
+			Damage="CANNON"
+			Percent="100" />
+		<Armor
+			Damage="ROCKET"
+			Percent="50" />
+		<Armor
+			Damage="GRENADE"
+			Percent="50" />
+		<Armor
+			Damage="GUN"
+			Percent="50" />
+	</ArmorTemplate>
+	-->
+	
+	<!-- Summon Mothership Power Overrides -->
+	<!-- Changed Reload Time and Cost -->
+	<SpecialPowerTemplate
+		id="SpecialPower_SummonMothership"
+		Flags="IS_PLAYER_POWER WATER_OK SHARED_SYNC"
+		ReloadTime="9999999s"
+		TargetType="NONE" 
+		Money="0"
+		InitiateAtLocationSound="ALI_MotherShip_SoundCreate">
+		<GameDependency>
+			<RequiredObject>AlienSignalTransmitter</RequiredObject>
+			<ForbiddenUpgrade>Upgrade_MotherShipBuilt</ForbiddenUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+	
+	<!-- Signal Transmitter Overrides -->
+	<!-- Changed Location Mothership is Spawned From -->
+<GameObject id="AlienSignalTransmitter" inheritFrom="AlienSignalTransmitter">
+	<Behaviors>
+    <OCLSpecialPower 
+    id="ModuleTag_SummonMothership"
+    xai:joinAction="Overwrite" 
+    SpecialPowerTemplate="SpecialPower_SummonMothership" 
+    OCL="OCL_SummonMothership" 
+    CreateLocation="CREATE_CLOSEST_TO_SPAWN_POINT">
+    </OCLSpecialPower>
+  </Behaviors>
+</GameObject>
+	
+	<!-- Mothership Overrides -->
+	<!-- Changed MaxHealth from 30000 -->
+		<GameObject id = "AlienMothership" inheritFrom="AlienMothership">
+			<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="100000" />
+		</Body>
+		</GameObject>
+		
+	<!-- Alien Wormhole Overrides -->
+	<!-- Changed Lifetime Update from 25.0s -->
+			<GameObject id = "AlienWormhole" inheritFrom="AlienWormhole">
+			<Behaviors>	
+				<LifetimeUpdate
+				id="ModuleTag_Lifetime"
+				MinLifetime="999999.0s"
+				MaxLifetime="999999.0s" />
+			</Behaviors>
+			</GameObject>
+
+	
+</AssetDeclaration>
+

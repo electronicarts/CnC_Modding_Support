@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+    <Include type="instance" source="DATA:SkirmishAI\States\AlliedSquadronLeaderStates.xml" />
+  </Includes>
+
+  <AIStrategicStateDefinition
+    id="AIState_A06_MainAttack"
+    MaxTargets="2">
+    <Heuristic>
+      <TimerHeuristic StartTime="240s" EndTime="-1s" CountFrom="AI_START"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="12" MaxUnits="24" MinPowerAdvantage="0.5"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+                    MicroManager="StandardMicroManager">
+        <ObjectFilter Rule="ALL">
+          <ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+          <ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+          <ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A06_AlliedCaptureBase"
+    MaxTargets="5">
+    <Heuristic>
+         <ScriptedFlagHeuristic FlagName="/Flag-OKToGrabP2Base"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A06_P2ConYard" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="AITarget_A06_P2Barracks" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="AITarget_A06_P2PowerPlant01" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="AITarget_A06_P2WarFactory" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="AITarget_A06_P2PowerPlant02" Priority="10"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" MaxUnits="1" IncludeKindOf="CAN_CAPTURE" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON  HARVESTER"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="true"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    MicroManager="FearlessCaptureTechMicroManager">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A06_President_P2CaptureGW"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="/Flag-P2OKToCaptureGW"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A06_GWControlRoom"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1">
+      <TeamTemplate MinUnits="2" MaxUnits="4" IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="SIEGE_WEAPON HARVESTER"
+                    Priority="HOTSPOT" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="BlankMicroManager">
+        <CreateUnits UnitName="AlliedEngineer"/>
+        <CreateUnits UnitName="AlliedBomberAircraft"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A06_President_P2CaptureTJ"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="/Flag-P2OKToCaptureTJ"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A06_TJControlRoom"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1">
+      <TeamTemplate MinUnits="2" MaxUnits="4" IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="SIEGE_WEAPON HARVESTER"
+                    Priority="HOTSPOT" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="BlankMicroManager">
+        <CreateUnits UnitName="AlliedEngineer"/>
+        <CreateUnits UnitName="AlliedBomberAircraft"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+     id="AIState_A06_President_P2CaptureAL"
+     MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="/Flag-P2OKToCaptureAL"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_A06_ALControlRoom"/>
+    <Tactic id="Engineer" Tactic="Engineer" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="1">
+      <TeamTemplate MinUnits="2" MaxUnits="4" IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="SIEGE_WEAPON HARVESTER"
+                    Priority="HOTSPOT" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="BlankMicroManager">
+        <CreateUnits UnitName="AlliedEngineer"/>
+        <CreateUnits UnitName="AlliedBomberAircraft"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_A06_Coop_Expansion">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+      <TimerHeuristic StartTime="240s" EndTime="-1s" CountFrom="AI_START"/>
+      <EnemyNearbyHeuristic Distance="600.0" EnemyNearby="false"/>
+      <AllNearbyNodesFullHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ExpansionHeuristic"/>
+    <Tactic id="Expand" Tactic="SimpleExpansion" Distance="200">
+      <TeamTemplate MinUnits="5" MaxUnits="10"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" ReleaseType="NEVER_RELEASE" AlwaysRecruit="false"
+                    MicroManager="DefenseMicroManager">
+        <CreateUnits UnitName="AlliedMiner" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_A06_Coop_WarFactoryBuildState">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <BuildEntry Build="AlliedAntiInfantryVehicle_Ground" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech1" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiAirVehicleTech1" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="AlliedAntiVehicleVehicleTech3" Heuristic="FEWEST_UNIT" CountModifier="4.0"/>
+    <BuildEntry Build="AlliedAntiStructureVehicle" Heuristic="FEWEST_UNIT"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_A06_Coop_TechBuild">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <BuildEntry Upgrade="Upgrade_AlliedTech2" Heuristic="UPGRADE_TECH" ForceTime="180s"/>
+    <BuildEntry Build="AlliedAirfield" Heuristic="TECH" ForceTime="240s"/>
+    <BuildEntry Upgrade="Upgrade_AlliedTech3" Heuristic="UPGRADE_TECH" ForceTime="360s"/>
+    <!--
+    <BuildEntry Build="AlliedTechStructure" Heuristic="TECH" ForceTime="60s"/>
+    -->
+  </AIBuildStateDefinition>
+
+</AssetDeclaration>

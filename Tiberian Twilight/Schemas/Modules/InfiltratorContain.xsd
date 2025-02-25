@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="InfiltratorEffectType.xsd"/>
+
+	<!-- 
+	 Depending on the effect, the ObjectRef attribute may be used and the corresponding object may be manipulated in 
+	 the engine.  For example: for effect type ENERGY, the ObjectRef should refer to the EnergyDisabler object 
+	 that disables a player's energy for it's lifetime.  It's lifetime is calculated in engine and set at runtime.  
+	 If you were to change the ObjectRef to an object without a LifetimeUpdate behavior, then it would never die.
+	-->
+
+	<xs:complexType name="InfiltratorContainModuleData">
+		<xs:complexContent>
+			<xs:extension base="ContainModuleData">
+				<xs:sequence>
+				</xs:sequence>
+				<xs:attribute name="BlockedDuration" type="Time" default="2s"/>				
+				<xs:attribute name="InfiltratedStatusFilter" type="ObjectStatusBitFlags" default="DESTROYED UNDER_CONSTRUCTION SOLD UNPACKING" />							
+				<xs:attribute name="CanEnterFilter" type="ObjectFilterAssetRef" default="InfiltrationCanEnterObjectFilter" />			
+				<xs:attribute name="ImmediatelyEnabled" type="SageBool" default="false" />
+				<xs:attribute name="ReplaceWith" type="ObjectCreationListRef" />
+				<xs:attribute name="NameOfVoiceToUseForHostileEnter" type="StringHash" default="VoiceInfiltrate" />
+				<xs:attribute name="NameOfVoiceToUseForInfiltrationDeath" type="StringHash" default="VoiceInfiltrateDeath" />
+				<xs:attribute name="EvaEventForInfiltratingPlayer" type="EvaEventRef" default="EnemyBuildingInfiltrated" />
+				<xs:attribute name="EvaEventForInfiltratedPlayer" type="EvaEventRef" default="OurBuildingInfiltrated" />
+				<xs:attribute name="FXForInfiltrate" type="FXListRef" default="FX_Building_Infiltrated_Generic" />
+				<xs:attribute name="Duration" type="Time" default="0s"/>
+				<xs:attribute name="UnitDuration" type="Time" default="0s"/>
+				<xs:attribute name="Amount" type="SageReal" default="0.0"/>
+				<xs:attribute name="Effect" type="InfiltratorEffectType"/>
+				<xs:attribute name="ObjectRef" type="GameObjectWeakRef"  />	
+				<xs:attribute name="UnitFilter" type="ObjectFilterAssetRef" use="optional" />			
+				<xs:attribute name="StructureFilter" type="ObjectFilterAssetRef" use="optional" />		
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

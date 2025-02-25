@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="all"	source="ART:ABWarfactory.w3x" />   
+		<Include type="all"	source="ART:ABWarfactory_BLD.w3x" />
+		<Include type="all"	source="ART:ABWarfactory_particles.w3x" />								
+		<Include type="all"	source="ART:ABWarfactory_GAG.w3x" />				
+		<Include type="all"	source="ART:ABWarfactory_DOOR.w3x" />
+		<Include type="all"	source="ART:ABWarfactory_Platform.w3x" />
+		<Include type="all"	source="ART:ABWarfactory_LIGHTS.w3x" />							
+		<Include type="all"	source="ART:FXInvisBone.w3x" />
+		<Include type="all"	source="ART:Decal_Rig_CO.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="AlliedWarFactory"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_AlliedWarFactory"
+		ButtonImage="Button_AlliedWarFactory_on"
+		Side="Allies"
+		EditorSorting="STRUCTURE"
+		BuildTime="20"
+		HealthBoxHeightOffset="40"
+		EnergyProduction="-50"
+		CommandSet="AlliedWarFactoryCommandSet"
+		KindOf="-CAN_BUILD_ON_WATER -CAN_BUILD_ON_DEEP_WATER +FS_FACTORY +AUTO_RALLYPOINT +FS_WAR_FACTORY"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="-45d"
+		ThreatLevel="1.0"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="AlliedWarFactory"
+		Description="Desc:AlliedWarFactory"
+		TypeDescription="Type:AlliedWarFactory">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:AlliedWarFactory</DisplayName>
+		<GameDependency>
+			<RequiredObject>AlliedRefinery</RequiredObject>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="2000"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="AlliedWarFactoryArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="FRONT">
+      <ConstructionBaseSelectionCriteria
+        ExcludedBaseTypes="NO_BUILD_RADIUS CAPTURED"
+        PreferredBaseTypes="MAIN_BASE"
+        SortOrder="PREFER_OLDEST" />
+    </SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10"
+				StaticModelLODMode="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABWarfactory" />
+				</ModelConditionState>
+
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+          <Model
+						Name="ABWarfactory" />
+        </ModelConditionState>
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="ABWarfactory_BLD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="ABWarfactory_BLD" />
+				</ModelConditionState>				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="ABWarfactory_BLD"
+						AnimationMode="ONCE" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Big"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Flash"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Lights"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABWarfactory_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>					
+			</ScriptedModelDraw>
+			
+<!-- DRAW GAG -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_GAG"
+				OkToChangeModelColor="true"
+				StaticModelLODMode="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABWarfactory_GAG" />
+				</ModelConditionState>
+
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FROZEN">
+          <Model
+						Name="ABWarfactory_GAG" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedCryoFrozenMistBuildingLarge"
+						FollowBone="true"/>
+          <Material
+					  ShaderName="ObjectsFrozen.fx"
+					  TechniqueName="Default">
+            <Constants>
+              <Texture Name="DiffuseTexture">
+                <Value>ABWarfactory</Value>
+              </Texture>
+              <Texture Name="NormalMap">
+                <Value>ABWarfactory_NRM</Value>
+              </Texture>
+              <Texture Name="SpecMap">
+                <Value>ABWarfactory_SPM</Value>
+              </Texture>
+              <Float Name="EnvMult">
+                <Value>1.000000</Value>
+              </Float>
+              <Bool Name="AlphaTestEnable">
+                <Value>false</Value>
+              </Bool>
+            </Constants>
+          </Material>
+        </ModelConditionState>        
+			        
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+          <Model
+						Name="" />
+        </ModelConditionState>        
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="" />
+				</ModelConditionState>				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACTIVELY_CONSTRUCTING"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="ABWarfactory_GAG"
+						AnimationMode="LOOP"
+						AnimationBlendTime="0"  />
+				</AnimationState>
+			</ScriptedModelDraw>
+			
+			<!-- Lights-->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_LIGHTS"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABWarFactory_Lights" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+					CurDrawableHideSubObjectPermanently("FX_LightsBuilding")
+					</Script>
+				</AnimationState>
+
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="PARALYZED">
+          <Script>
+            CurDrawableHideSubObjectPermanently("FX_LightsBuilding")
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="AFFECTED_BY_EMP">
+          <Script>
+            CurDrawableHideSubObjectPermanently("FX_LightsBuilding")
+          </Script>
+        </AnimationState>
+        
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACTIVELY_CONSTRUCTING">
+					<ParticleSysBone
+						BoneName="FX_Steam01"
+						FXParticleSystemTemplate="AlliedRefinerySteam"
+						FollowBone="true" />
+						<ParticleSysBone
+						BoneName="FX_Steam02"
+						FXParticleSystemTemplate="AlliedRefinerySteam"
+						FollowBone="true" />
+						<ParticleSysBone
+						BoneName="FX_Steam03"
+						FXParticleSystemTemplate="AlliedRefinerySteam"
+						FollowBone="true" />
+					<Script>
+					CurDrawableShowSubObjectPermanently("FX_LightsBuilding")
+					</Script>
+				</AnimationState>
+			</ScriptedModelDraw>
+						
+<!-- DRAW DOOR01 -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Door"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABWarFactory_Door" />
+				</ModelConditionState>
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+          <Model
+						Name="" />
+        </ModelConditionState>        
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="" />
+				</ModelConditionState>				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="ABWarFactory_Door"
+						AnimationMode="ONCE_BACKWARDS" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="ABWarFactory_Door"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_WAITING_OPEN"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABWarFactory_Door"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_OPENING"
+					StateName="STATE_Open">
+					<Animation
+						AnimationName="ABWarFactory_Door"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_CLOSING"
+					StateName="STATE_Closed"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABWarFactory_Door"
+						AnimationMode="ONCE_BACKWARDS" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+<!-- DRAW PLATFORM -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABWarfactory_Platform" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="" />
+				</ModelConditionState>			
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>	
+				
+	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+						CurDrawableHideSubObjectPermanently("Bib")
+					</Script>
+				</AnimationState>																				
+			</ScriptedModelDraw>
+			
+<!-- DRAW PARTICLES -->
+	
+		    <ScriptedModelDraw
+				id="ModuleTag_Draw_particles"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="">
+					<Model
+						Name="ABWArfactory_particles" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ABWArfactory_particles" />
+					<ParticleSysBone 
+						BoneName="FX_D1Fire01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_D1Fire01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ABWArfactory_particles" />
+					<ParticleSysBone 
+						BoneName="FX_D1Fire01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_D1Fire01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_D2Fire01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_D2Fire01"
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+				</ModelConditionState>
+		</ScriptedModelDraw>
+
+			<ScriptedModelDraw
+				id="ModuleTag_RepairDecal"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$REPAIR_DRONE_HOME_DECAL_SIZE"
+						SizeY="=$REPAIR_DRONE_HOME_DECAL_SIZE"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Rig_CO"
+						LocalPlayerOnly="true"						
+					/>
+				</ModelConditionState>
+			</ScriptedModelDraw>							
+		</Draws>
+		<Behaviors>
+			<AssignSlavesTargetObjectSpecialPower
+				id="ModuleTag_SpecialPowerRepairVehicle"
+				SpecialPowerTemplate="SpecialPower_TargetedRepairVehicle" />
+			<SpawnBehavior
+				id="ModuleTag_SpawnRepairDrones"
+				SpawnNumberData="3"
+				InitialBurst="3"
+				SpawnReplaceDelayData="10s"
+				SpawnedRequireSpawner="true"
+				KillSpawnsOnCaptured="true"
+				SpawnInsideBuilding="true"
+				KillSpawnsOnDisabled="true">
+				<Die
+					DeathTypes="ALL" />
+				<SpawnTemplate>AlliedWarFactoryRepairDrone</SpawnTemplate>
+			</SpawnBehavior>
+								
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+				<Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+				<Event
+					Index="onDeath"
+					FX="FX_LargeBuildingDieExplosionRumble" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData 
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+				<Event Index="onDeath" FX="FX_LargeBuildingDieExplosion" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="ABWarFactory_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"  />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"  />
+			</DestroyDie>	
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				GiveNoXP="true"
+				Type="VEHICLE"
+				NumDoorAnimations="1"
+				DoorOpeningTime="0.66s"
+				DoorWaitOpenTime="3.00s"
+				DoorCloseTime="0.66s"
+				NewObjectFadeInTime="0.5s">
+				<GiveUpgradeToProduced>
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_VETERAN"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_VETERAN" />
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_ELITE"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_ELITE" />
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_HEROIC"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_HEROIC" />
+				</GiveUpgradeToProduced>
+			</ProductionUpdate>
+			<QueueProductionExitUpdate
+				id="ModuleTag_QueueProduction"
+				ExitDelaySeconds="0.07s">
+				<UnitCreatePoint
+					x="-20.0"
+					y="20.0"
+					z="0.0" />
+				<NaturalRallyPoint
+					x="80.0"
+					y="20.0"
+					z="0.0" />
+			</QueueProductionExitUpdate>			
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />			
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="2s" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericAlliedBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericAlliedBuildingSuicide.xml" />
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="Generic" />
+<!--				
+			<SubStructureBuild
+					 id="ModuleTag_SubStructureBuild">
+				<TriggeredBy>Upgrade_AlliedWarFactoryRepairBay</TriggeredBy>
+
+				<AvailableSubStructure>
+					<UpgradeTrigger>Upgrade_AlliedWarFactoryRepairBay</UpgradeTrigger>
+					<ObjectTemplate>AlliedWarFactoryRepairBay</ObjectTemplate>
+				</AvailableSubStructure>
+
+				<StructureOffset
+							ModelCondition="USER_6">
+					<Offset
+							x="-75"
+							y="-30"
+							z="0" />
+				</StructureOffset>
+			</SubStructureBuild>
+-->			
+			<xi:include
+				href="DATA:Includes/AlliedTechUpgradeReceiverLevel3.xml" />
+			<xi:include
+				href="DATA:Includes/AlliedTechUpgradeReceiverLevel2.xml" />
+			<xi:include
+				href="DATA:Includes/AlliedSubObjectsUpgradeTech2.xml" />
+			<xi:include
+				href="DATA:Includes/AlliedSubObjectsUpgradeTech3.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainVehicle.xml" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="AlliedBarracksFunctions" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_StructureBody"
+				MaxHealth="2500" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type= "BOX"
+				MajorRadius = "60.0"
+				MinorRadius = "60.0"
+				Height = "5.0" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "22.3742"
+				MinorRadius = "19.0705"
+				Height = "19.9748"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x = "-36.051"
+					y = "-39.2282"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "42.2155"
+				MinorRadius = "36.3178"
+				Height = "44.3884"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x = "-15.9325"
+					y = "22.1659"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="ALL_ArmorFacility_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+<!--
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

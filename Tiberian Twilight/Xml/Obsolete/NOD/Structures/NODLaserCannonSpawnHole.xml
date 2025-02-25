@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBRDefense.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="NODLaserCannonSpawnHole"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_NODLaserTurret"
+		ButtonImage="Portrait_NODLaserTurret"
+		Side="NOD"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildTime="10.0"
+		CommandSet="EmptyCommandSet"
+		KindOf="-SELECTABLE +UNATTACKABLE +NOT_AUTOACQUIRABLE +NOT_SELLABLE +CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="NODLaserCannonSpawnHole"
+		WeaponCategory="MISSILE"
+		Description="Desc:NODLaserCannonDebris"
+		TypeDescription="Type:NODLaserCannonDebris">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="1"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODLaserCannonDebris</DisplayName>
+		<ArmorSet
+			Armor="NODBaseDefenceArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BuildingPlacementType="SpreadDefault" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBLsrCann_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Default">
+					<Animation
+						AnimationName="NBLsrCann_BLD"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "STATE_Default" and Prev ~= "TRANS_ToDefault" then
+						CurDrawableSetTransitionAnimState("TRANS_ToDefault")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					Flags="START_FRAME_LAST"
+					StateName="TRANS_ToDefault">
+					<Animation
+						AnimationName="NBLsrCann_BLD"
+						AnimationMode="ONCE_BACKWARDS" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<!-- died normally (hub died), sink -->
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="FADED" />
+				<FX
+					Type="INITIAL">
+					<FX>FX_TEMPLarge</FX>
+				</FX>					
+			</SlowDeath>			
+			
+			<!-- just respawned, kill right away -->
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="FADED" />
+			</DestroyDie>
+			<SlavedUpdate
+				id="ModuleTag_SlavedUpdate"
+				DieOnMastersDeath="true"
+				DieOnMastersDeathType="SUICIDED" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="20.0"
+				Height="40.0" />
+		</Geometry>
+	</GameObject>
+</AssetDeclaration>

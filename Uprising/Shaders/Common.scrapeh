@@ -1,0 +1,134 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2007 Electronic Arts Inc
+//
+// Scrape script for common procedures
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_COMMON_SCRAPEH
+#define SCRAPE_SCRIPT_COMMON_SCRAPEH
+
+//
+// Common
+//
+
+// Command to flush GPU
+#if defined(EA_PLATFORM_XENON)
+	#define GPUFLUSH gpuflush
+#else
+	#define GPUFLUSH
+#endif
+
+#define BinCommand_Default 0
+#define BinCommand_RenderParticles 1
+
+// Frame buffers
+var surface FrameBuffer color0
+var surface DepthBuffer depth
+
+#if defined(EA_PLATFORM_WINDOWS)
+	var surface FrameRenderTarget edram $WW3D.FrameBufferSize.x $WW3D.FrameBufferSize.y $WW3D.FrameRenderTargetSurfaceFormat $WW3D.AntiAliasingMode
+
+	// Allocate second depth buffer to match anti-aliased render targets. To save memory when AA is off, WW3D.FrameBufferSizeIfAntiAliasing will be 0,0 then
+	var surface FrameDepthBuffer edramdepth $WW3D.FrameBufferSizeIfAntiAliasing.x $WW3D.FrameBufferSizeIfAntiAliasing.y D24S8 $WW3D.AntiAliasingMode
+#else
+	// Xenon doesn't do antialiasing based on the WW3D.AntiAliasingMode
+	var surface FrameRenderTarget edram $WW3D.FrameBufferSize.x $WW3D.FrameBufferSize.y $WW3D.FrameRenderTargetSurfaceFormat
+	#define FrameDepthBuffer DepthBuffer
+#endif
+
+proc updateFrameRenderTargetToUse
+	if WW3D IsHdrEnabled
+		setbool WW3D IsUsingFrameRenderTarget true
+	elif WW3D IsAntiAliasingEnabled
+		setbool WW3D IsUsingFrameRenderTarget true
+	else
+		setbool WW3D IsUsingFrameRenderTarget false
+	endif
+endproc
+
+proc setFrameRenderTarget
+	if WW3D IsUsingFrameRenderTarget
+		settarget 0 FrameRenderTarget
+	else
+		settarget 0 FrameBuffer
+	endif
+endproc
+
+proc setFrameDepthBuffer
+	if WW3D IsAntiAliasingEnabled // Only use custom depth buffer for IsAntiAliasingEnabled, not when just using HDR without AA
+		setdepth FrameDepthBuffer
+	else
+		setdepth DepthBuffer
+	endif
+endproc
+
+
+// Helper functions for rendering bin collections
+proc renderBinsUnit
+	renderbin UnitPlayer0
+	renderbin UnitPlayer1
+	renderbin UnitPlayer2
+	renderbin UnitPlayer3
+	renderbin UnitPlayer4
+	renderbin UnitPlayer5
+	renderbin UnitPlayer6
+	renderbin UnitPlayer7
+	renderbin UnitPlayer8
+	renderbin UnitPlayer9
+	renderbin UnitPlayer10
+	renderbin UnitPlayer11
+	renderbin UnitPlayer12
+	renderbin UnitPlayer13
+	renderbin UnitPlayer14
+	renderbin UnitPlayer15
+	renderbin UnitPlayer16
+	renderbin UnitPlayer17
+	renderbin UnitPlayer18
+	renderbin UnitPlayer19
+endproc
+
+proc renderBinsStaticSort
+	// Static sorting rendering goes from high to low, so that the lower numbers are in-front of the higher ones
+//	renderbin StaticSort5  //This is now used for underwater sorting - MJ
+	renderbin StaticSort4
+	renderbin StaticSort3
+	renderbin StaticSort2
+	renderbin StaticSort1
+endproc
+
+proc renderBinsStructureOutline
+	renderbin StructureOutlineSelected
+	renderbin StructureOutlineHoverAttack
+	renderbin StructureOutlineHoverSelect
+endproc
+	
+proc renderBinsUnitOutline
+	renderbin UnitOutlineSelected
+	renderbin UnitOutlineHoverAttack
+	renderbin UnitOutlineHoverSelect
+endproc	
+
+//////////////////////////////////////////////////////////////////////////////
+// Define textures that are not in the normal art pipeline
+//////////////////////////////////////////////////////////////////////////////
+
+var texture FXDistortionFractal FXDistortionFractal01
+var texture FXOceanCubeMap FXOceanCubeMap
+var texture FXJapanBuildMask FXJapanBuildMask
+var texture FXChronoRift FXChronoRift
+var texture FXIronCurtain FXIronCurtain
+var texture FXLightningTeslaHit FXLightningTeslaHit
+var texture FXXrayMask FXXrayMask
+var texture FXFilmLut FXFilmLut
+
+proc initCustomTextures
+	settexture WW3D FXDistortionFractal FXDistortionFractal // SasBindAddress = "WW3D.FXDistortionFractal"
+	settexture WW3D FXOceanCubeMap FXOceanCubeMap // SasBindAddress = "WW3D.FXOceanCubeMap"
+	settexture WW3D FXJapanBuildMask FXJapanBuildMask // SasBindAddress = "WW3D.FXJapanBuildMask"
+	settexture WW3D FXChronoRift FXChronoRift // SasBindAddress = "WW3D.FXChronoRift"
+	settexture WW3D FXIronCurtain FXIronCurtain // SasBindAddress = "WW3D.FXIronCurtain"
+	settexture WW3D FXLightningTeslaHit FXLightningTeslaHit // SasBindAddress = "WW3D.FXLightningTeslaHit"
+	settexture WW3D FXXrayMask FXXrayMask // SasBindAddress = "WW3D.FXXrayMask"
+	settexture PostEffect LookupTable.FilmTonemapping FXFilmLut
+endproc
+
+#endif

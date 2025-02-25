@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- GDI Scout Drone -->
+	<Includes>
+		<!-- Art Includes -->
+		<Include type="all" source="ART:GDIAircraftZ.w3x" />
+
+		<Include type="all" source="ART:FXGDIMachineGunTracer.xml" />
+
+		<!-- Data Includes -->
+		<Include type="instance" source="DATA:GDI/Props/GDIAircraftQProps.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseLightAircraft.xml" />
+	</Includes>
+
+	<GameObject
+		id="GDIScoutDrone"
+		inheritFrom="BaseLightAircraft"
+		SelectPortrait="Portrait_GDI_Aircraft_Z"
+		ButtonImage="Btn_GDI_Aircraft_Z"
+		Side="GDI"
+		BuildTime="1"
+		CommandSet="EmptyCommandSet"
+		KindOf="+NO_COLLIDE +IGNORES_SELECT_ALL -CONTROL_GROUP_ALLOWABLE +TARGETABLE +SKIRMISH_AI_DONT_CONSIDER_THREAT +NOT_AUTOACQUIRABLE"
+		ThreatLevel="10"
+		VoicePriority="148"
+		EditorName="GDIScoutDrone"
+		Description="Desc:GDIScoutDrone"
+		TypeDescription="Type:GDIScoutDrone">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="100"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIScoutDrone</DisplayName>
+		<LocomotorSet
+			Locomotor="GDIScoutDroneLocomotor"
+			Condition="NORMAL"
+			Speed="150.0" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone=""
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GDIAircraftZ" />
+					<!--
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="" />
+					-->
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_FX_Con01"
+				AttachToBoneInAnotherModule="FXR">
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="GDIAircraftAContrail"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_FX_Con02"
+				AttachToBoneInAnotherModule="FXL">
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="GDIAircraftAContrail"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<Physics
+				id="ModuleTag_Physics"
+				GravityMultiplier="30" />
+
+			<!-- drones have stealth detection -->
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="500" />
+
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="180s"
+				MaxLifetime="180s"
+				Flags="DRAW_LIFETIME_BAR"
+				DeathType="SUICIDED" />
+
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_Vision_Aura"
+				AttributeModifierName="Modifier_GDIScoutDrone_Vision_Aura"
+				Range="250"
+				InitiallyActive="true"
+				AllowSelf="false"
+				RefreshDelay="2s">
+				<ObjectFilter
+					Relationship="ALLIES"
+					Rule="ALL" />
+			</AttributeModifierAuraUpdate>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Aircraft_Small_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIAirVehicleExplode" />
+				<Event Index="onDeath" FX="FX_VehicleSmall_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_JetAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="HelicopterAIStateMachine">
+				<UnitAITargetChooserData
+					SympathyRange="100.0" />
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="300"
+				DodgePercentage="50%" />
+		</Body>
+		<!-- 
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior
+				id="ModuleTag_FlyingLoop">
+				<ModelConditionSound
+					Sound="TEMP_OrcaAmbientLoop"
+					RequiredFlags="FLYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		 -->
+		 <Geometry>
+			<Shape
+				Type="BOX"
+				MajorRadius="16.0"
+				MinorRadius="11.0"
+				Height="8.0"
+				ContactPointGeneration="VEHICLE">
+				<Offset
+					x="-4" />
+			</Shape>
+		</Geometry>
+
+		<!-- <AudioArrayVoice>
+			<AudioEntry
+				Sound="GDI_Orca_VoiceCreate"
+				AudioType="voiceCreated" />
+			<AudioEntry
+				Sound="GDI_Orca_VoiceSelectMS"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice> -->
+
+		<AudioArraySound>
+			<!-- 
+			<AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry
+				Sound="OrcaMoveStart"
+				AudioType="soundMoveStart" />
+			<AudioEntry
+				Sound="TEMP_OrcaMoveLoop"
+				AudioType="soundMoveLoop" />
+			 -->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="300" />
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   ATTRIBUTE MODIFIERS						-->
+	<!-- ////////////////////////////////////////	-->
+	<AttributeModifier
+		id="Modifier_GDIScoutDrone_Vision_Aura"
+		Duration="2.1s" 
+		Category="NONE">
+		<BuffInfo Type="OFFENSE_POSITIVE" SourceString="Name:GDIScoutDrone" />
+		<Modifier Type="RANGE" Value="125%" />
+		<Modifier Type="VISION" Value="125%" />
+		<Modifier Type="SHROUD_CLEARING" Value="125%" />
+	</AttributeModifier>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		LOCOMOTORS						-->
+	<!-- //////////////////////////////////////	-->
+	<LocomotorTemplate
+		id="GDIScoutDroneLocomotor"
+		AccelerationSeconds="0.5s"
+		ActiveModelConditions="FLYING"
+		AirborneTargetingHeight="30"
+		AllowMotiveForceWhileAirborne="true"
+		Appearance="WINGS"
+		Apply2DFrictionWhenAirborne="true"
+		AttackPathTrailDistance="100"
+		BehaviorZ="SURFACE_RELATIVE_HEIGHT"
+		BrakingSeconds="0.5s"
+		CirclingRadius="120"
+		CirclingSpeed="90%"
+		ClampOrientationToPathTangent="true"
+		ElevatorCorrectionDegree="0.103"
+		ElevatorCorrectionRate="0.016"
+		FastTurnRadius="20.0"
+		ForwardVelocityPitchFactor="0.0"
+		LateralVelocityRollFactor="-0.075"
+		LocomotorWorksWhenDead="true"
+		Lift="120%"
+		LiftDamaged="80%"
+		MinTurnSpeed="100%"
+		PreferredHeight="150"
+		PreferredHeightPitchingEpsilon="9"
+		PitchByZVelCoef="1.0"
+		PitchStiffness="0.75"
+		PitchDamping="1.0"
+		ReorientIfTurnTooSharp="true"
+		RollStiffness="0.75"
+		RollDamping="1.0"
+		RudderCorrectionDegree="0.169"
+		RudderCorrectionRate="0.027"
+		SlowTurnRadius="20.0"
+		Surfaces="AIR"
+		TakeOffAndLandingSpeed="6.0"
+		TakeOffAndLandingSlowDownDelta="25.0"
+		TakeOffAndLandingSlowDownTime=".5s"
+		TurnTimeSeconds="1.0s"
+		TurnTimeDamagedSeconds="1.0s" />
+
+	<!-- //////////////////////////////////////	-->
+	<!--		EXPERIENCE LEVEL TEMPLATES					-->
+	<!-- //////////////////////////////////////	-->
+	<ExperienceLevelTemplate
+		id="GDIScoutDroneExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="1"
+		BountyValue="25">
+		<Target>GDIScoutDrone</Target>
+	</ExperienceLevelTemplate>
+</AssetDeclaration>

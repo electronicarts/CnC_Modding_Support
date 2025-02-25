@@ -1,0 +1,31 @@
+;////////////////////////////////////////////////////////////////////////////////
+;//																																						 //
+;//  (c) 2001-2003 Electronic Arts Inc.																				 //
+;//																																						 //
+;////////////////////////////////////////////////////////////////////////////////
+
+; Terrain pixel shader
+; Created:   Mark Wilczynski, August 2001
+
+; Declare pixel shader version 1.1
+ps.1.1
+
+tex t0	; get texture 0
+;dp3  r1, c1, t0
+;add	r0,r1,-c2
+;mul r0,r0,c3
+;mov r0,t0				;do nothing
+
+dp3 r1, t0, c0			;black & white conversion
+mul	r1, r1, c1			;modulate by filter color
+lrp r0, c2, r1, t0	;blend modified image into original image so smooth fade in/out
+
+;Code to clamp and expand dynamic range
+;add_sat	r1,r1,-c7		;clamp out low values - 30
+;add_sat r1,r1,c5		;clamp out upper values +60
+;add		r1,r1,-c6		;shift to center range at 0
+
+
+;add r0,r0,-c5
+;mul_x4 r0,r0,c6
+

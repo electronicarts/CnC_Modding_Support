@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="RestrictedAttributeModifierDataType">
+		<xs:sequence>
+			<xs:element name="GameDependency" type="GameDependencyType" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="AttributeModifier" type="AttributeModifierRef" />
+		<xs:attribute name="AttributeModifierAffectsSelf" type="SageBool" default="true" />
+	</xs:complexType>
+
+	<xs:complexType name="ObjectFilterAssetReferenceListEntry">
+		<xs:sequence />
+		<xs:attribute name="ObjectFilter" type="ObjectFilterAssetRef" use="required" />
+	 </xs:complexType>
+	
+	<xs:complexType name="ObjectFilterListType">
+		<xs:sequence>
+			<xs:element name="FilterEntry" type="ObjectFilterAssetReferenceListEntry" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	 </xs:complexType>
+	
+	<xs:complexType name="SpecialPowerModuleData">
+		<xs:complexContent>
+			<xs:extension base="BehaviorModuleData">
+				<xs:sequence>
+					<xs:element name="AttributeModifierAffects" type="ObjectFilter" xas:byValue="true" minOccurs="0" maxOccurs="1" />
+					<xs:element name="RequirementsFilterMP" type="ObjectFilter" xas:byValue="true" minOccurs="0" maxOccurs="1" />
+					<xs:element name="RequirementsFilterStrategic" type="ObjectFilter" xas:byValue="true" minOccurs="0" maxOccurs="1" />
+					<xs:element name="InitiateSound" type="SoundOrEvaEvent" minOccurs="0" maxOccurs="1" />
+					<xs:element name="RestrictedAttributeModifier" type="RestrictedAttributeModifierDataType" minOccurs="0" maxOccurs="unbounded" />
+					<!-- CanAffectFilterList is a logical or.  If it passes one filter it passes all
+							 It chains after CanAffectObjectFilter, so make CanAffectObjectFilter a too permissive
+							 filter, then use CanAffectFilterList to narrow down to exactly what you want -->
+					<xs:element name="CanAffectSupplementalFilterList" type="ObjectFilterListType" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="SpecialPowerTemplate" type="SpecialPowerTemplateRef" use="required" />
+				<xs:attribute name="UpdateModuleStartsAttack" type="SageBool" default="false" />
+				<xs:attribute name="StartsPaused" type="SageBool" default="false" />
+				<xs:attribute name="AntiFX" type="FXListRef" />
+				<xs:attribute name="AttributeModifier" type="AttributeModifierRef" />
+				<xs:attribute name="AttributeModifierRange" type="SageReal" default="0.0" />
+				<xs:attribute name="AttributeModifierAffectsSelf" type="SageBool" default="false" />
+				<xs:attribute name="AttributeModifierFX" type="FXListRef" />
+				<xs:attribute name="InitiateFX" type="FXListRef" />
+				<xs:attribute name="TriggerFX" type="FXListRef" />
+				<xs:attribute name="SetModelCondition" type="ModelConditionFlagType" />
+				<xs:attribute name="SetModelConditionTime" type="Time" default="0s" />
+				<xs:attribute name="GiveLevels" type="SageInt" default="0" />
+				<xs:attribute name="DisableDuringAnimDuration" type="SageBool" default="false" />
+				<xs:attribute name="IdleWhenStartingPower" type="SageBool" default="false" />
+				<xs:attribute name="AffectAllies" type="SageBool" default="true" />
+				<xs:attribute name="AvailableAtStart" type="SageBool" default="true" />
+				<xs:attribute name="AvailableOnCapture" type="SageBool" default="true" />
+				<xs:attribute name="AvailableOnCaptureFromNeutral" type="SageBool" default="true" />
+				<xs:attribute name="MaintainStateOnCapture" type="SageBool" default="false" />
+				<xs:attribute name="AdjustVictim" type="SageBool" default="false" />
+				<xs:attribute name="OnTriggerRechargeSpecialPower" type="SpecialPowerWeakRef" />
+				<xs:attribute name="UseDistanceFromCommandCenter" type="SageBool" default="false" />
+				<xs:attribute name="MaxDistanceFromCommandCenter" type="SageReal" default="0" />
+				<xs:attribute name="ChildModuleHandlesFX" type="SageBool" default="false" />
+				<xs:attribute name="LeechRechargePercentPlayerTechTrigger" type="PlayerTechRef"/>
+				<xs:attribute name="LeechRechargePercentFromSpecialPower" type="SpecialPowerRef"/>
+				<!-- if there is a SpecialAbilityUpdate module with this special power, you probably want to set its DisabledTypesToProcess to match -->
+				<xs:attribute name="DisabledTypesToIgnore" type="DisabledBitFlags" default="HELD"/>
+				<xs:attribute name="CanAffectObjectFilter" type="ObjectFilterAssetRef" default="GenericSpecialPowerObjectFilter" />
+				<xs:attribute name="AttributeModifierAffectsRef" type="ObjectFilterAssetRef" use="optional" />
+				<xs:attribute name="ForceAllowRechargeWhileUnderConstruction" type="SageBool" default="false" />
+				<xs:attribute name="CanAffectPartitionFilterTestType" type="PartitionManagerDistanceType" default="CENTER_2D" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+</xs:schema>

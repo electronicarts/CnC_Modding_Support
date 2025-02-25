@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<!-- Temp Art -->
+		<Include type="all"	source="ART:GSL_StructureE_SKN.w3x" />
+		<Include type="all"	source="ART:FXInvisBone.w3x" />		
+
+		<Include type="instance" source="DATA:BaseObjects/BaseObject.xml" />
+		<Include type="all" source="ART:FXInvisBone.w3x" />
+		<Include type="all" source="ART:locator.W3x" />
+	</Includes>
+	
+	<!-- Allows GDI Aircraft S / Campaign Boss a place to land -->
+	<GameObject
+		id="GDIAircraftLanding"
+		inheritFrom="BaseObject"
+		KindOf="STRUCTURE IMMOBILE SELECTABLE NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY NOT_SELLABLE AIRFIELD UNATTACKABLE INERT"
+		UnitCategory="STRUCTURE"
+		RadarPriority="NOT_ON_RADAR"
+		EditorSorting="CAMPAIGN_UNITS"
+		Side="GDI"
+		EditorName="GDIAircraftLanding">
+		<DisplayName>Name:GDIAircraftLanding</DisplayName>
+		<ArmorSet
+			Armor="TechStructureArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="WORLD_BUILDER">
+					<Model
+						Name="locator" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="locator" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<GarrisonContain
+				id="ModuleTag_Garrison"
+				ObjectStatusOfContained="CAN_ATTACK"
+				ContainMax="1"
+				EnterSound="GenericBuilding_Garrison"
+				ExitSound="GenericBuilding_Ungarrison"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="true"
+				AllowNeutralInside="true"
+				AllowOwnPlayerInsideOverride="true"
+				KillPassengersOnDeath="false">
+				<PassengerFilter
+					Rule="NONE"
+					Relationship="ALLIES">
+					<IncludeThing>GDIAircraftS</IncludeThing>
+				</PassengerFilter>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</GarrisonContain>			
+			
+			<ParkingPlaceBehavior
+				id="ModuleTag_ParkingPlaceBehavior"
+				NumRows="1"
+				NumCols="1"
+				ApproachHeight="0"
+				ParkInHangars="true"
+				DoorOpenTime="2s"
+				DoorCloseTime="2s"
+				HelipadBoneName="E_Root"
+				LimitedProductionAircraftSpots="1">
+				<CanParkHereFilter
+					Rule="NONE"
+					Relationship="ALLIES">
+					<IncludeThing>GDIAircraftS</IncludeThing>
+				</CanParkHereFilter>
+			</ParkingPlaceBehavior>		
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<Geometry>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "1.0"
+				MinorRadius = "1.0"
+				Height = "1.0"
+				ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+		</Geometry>
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="175" />
+	</GameObject>
+	
+</AssetDeclaration>

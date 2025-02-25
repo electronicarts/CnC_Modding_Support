@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="AssetTypeAISpecialPower.xsd"/>
+	<xs:include schemaLocation="../Includes/MissionObjectiveCategory.xsd"/>
+
+	<xs:complexType name="AIPowerUseEntry">
+		<xs:sequence>
+			<xs:element name="AISpecialPowerInfo" type="AISpecialPowerInfo" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="SpecialPower" type="SpecialPowerTemplateRef" use="required" />
+		<xs:attribute name="Weight" type="xs:float" default="1.0"/> 				<!-- Chance to cast = Weight / (Sum of all Weights) -->
+	</xs:complexType>
+
+	<xs:complexType name="AIPowerUseState">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:attribute name="State" type="AssetReference" xas:refType="AIPowerUseStateDefinition" use="required"/>
+				<xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+			</xs:extension>
+		</xs:complexContent>  
+	</xs:complexType>
+
+	
+	<xs:complexType name="AIPowerBeaconResponseEntry">
+		<xs:sequence>
+			<!-- This is a test for the object the Beacon is attached to.
+				If no IncludeObjectFilter, then any object will be used -->
+			<xs:element name="IncludeAttachedToObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+			<xs:element name="ExcludeAttachedToObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+
+			<!-- List of special powers we will attempt to use -->
+			<xs:element name="SpecialPower" type="SpecialPowerTemplateRef" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="BeaconCategory" type="MissionObjectiveCategory" use="required" />
+		<xs:attribute name="IsObjectRequired" type="SageBool" default="true" />
+		<xs:attribute name="MaxDistanceFromBeacon" type="xs:float" default="200" />
+		<xs:attribute name="TimeDelayAssistPlayerAgain" type="Time" default="60s" />
+	</xs:complexType>
+
+	<xs:complexType name="AIPowerBeaconResponseDefinition" xas:runtimeWrapper="::AIPowerBeaconResponse" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="BeaconResponseEntry" type="AIPowerBeaconResponseEntry" minOccurs="1" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>  
+	</xs:complexType>
+
+    <xs:simpleType name="AIPowerBeaconResponseRef"
+					xas:isRef="true"
+					xas:refType="AIPowerBeaconResponseDefinition">
+		<xs:restriction base="AssetReference" />
+    </xs:simpleType>
+
+	<xs:complexType name="AIPowerUseStateDefinition" xas:runtimeWrapper="::AIPowerUseState" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="AIStateDefinition">
+				<xs:sequence>
+					<xs:element name="PowerUseEntry" type="AIPowerUseEntry" minOccurs="1" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="BeaconResponse" type="AIPowerBeaconResponseRef" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

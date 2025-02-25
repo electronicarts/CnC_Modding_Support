@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GBConYard.w3x" />
+		<Include
+			type="all"
+			source="ART:GBConYardD2_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBConYardD2_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBConYardD3_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBConYardD3_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBConYardX_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBConYardX_D3.w3x" />
+		<Include
+			type="all"
+			source="ART:GBConYardX_IDL.w3x" />
+		<Include
+			type="all"
+			source="ART:GUMCV_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUMCV_PAK.w3x" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:GUMCVUPAK_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUMCVUPAK_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GBConYardSRF_SKN.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GDIConstructionYard"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_GDIConYard"
+		ButtonImage="Portrait_GDIConYard"
+		Side="GDI"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="3500"
+		BuildTime="25"
+		PlacementViewAngle="315d"
+		CommandSet="GDIConstructionYardCommandSet"
+		EnergyProduction="10"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS CONSTRUCTION_YARD FS_FACTORY NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER AUTO_RALLYPOINT PROJECT_BUILDABILITY_FOR_ALLIES"
+		RadarPriority="STRUCTURE"
+		CampnessValue="=$CAMPNESS_CONYARD"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="GDIConstructionYard"
+		Description="Desc:GDIConstructionYard"
+		TypeDescription="Type:GDIConstructionYard">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIConstructionYard</DisplayName>
+		<ArmorSet
+			Armor="GDIConstructionYardArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<ArmorSet
+			Conditions="PLAYER_UPGRADE"
+			Armor="GDIConstructionYardSonicRepulsionFieldArmor"
+			DamageFX="NormalDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="SIDE" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBConYard" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING REALLYDAMAGED">
+					<Model
+						Name="GUMCVUPAK_SN" />
+					<Texture
+						Original="GB_Conyard01"
+						New="GB_Conyard01D" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING DAMAGED">
+					<Model
+						Name="GUMCVUPAK_SN" />
+					<Texture
+						Original="GB_Conyard01"
+						New="GB_Conyard01D" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Model
+						Name="GUMCVUPAK_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBConYardD2_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBConYardD2_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="GBConYardD3_SN" />
+				</ModelConditionState>
+				<!-- UNPACKING -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName="GUMCVUPAK_AN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<!-- DAMAGE ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="GBConYardD2_AN"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<!-- REALLY DAMAGED ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged">
+					<Animation
+						AnimationName="GBConYardD2_AN"
+						AnimationMode="ONCE" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+							if Prev == "STATE_Damaged" then CurDrawableSetTransitionAnimState("TRANS_DamagedToReallyDamaged") end;
+					</Script>
+				</AnimationState>
+				<!-- DYING ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="GBConYardD3_AN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Des_Medium"
+						FollowBone="false" />
+				</AnimationState>
+				<!-- Transitions -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					ConditionsYes="TRANS_DamagedToReallyDamaged">
+					<Animation
+						AnimationName="GBConYardD2_AN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					ConditionsYes="TRANS_ReallyDamagedToDying">
+					<Animation
+						AnimationName="GBConYardD3_AN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+<!-- DRAW GAG ANIMATION -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Gag"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBConYardX_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBConYardX_SKN" />
+					<Texture
+						Original="GB_Conyard01"
+						New="GB_Conyard01D" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBConYardX_SKN" />
+					<Texture
+						Original="GB_Conyard01"
+						New="GB_Conyard01D" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="GBConYardX_D3" />
+					<Texture
+						Original="GB_Conyard01"
+						New="GB_Conyard01D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle"
+					Flags="RESTART_ANIM_WHEN_COMPLETE DO_NOT_PLAY_WHEN_UNPOWERED">
+					<Animation
+						AnimationName="GBConYardX_IDL"
+						AnimationMode="ONCE" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+							if Prev == "STATE_Idle" then CurDrawableSetTransitionAnimState("TRANS_Bored") end;
+					</Script>
+				</AnimationState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBEmpty_ABLD"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName="NBEmpty_ABLD"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="0.8" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="GBConYardX_D3"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_Bored">
+					<Animation
+						AnimationName="GBConYardX_IDL"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			
+			<!-- Draw sonic repulsion field -->
+			
+			<ScriptedModelDraw
+				id="ModuleTag_DrawGDIWarfactorySRF"
+				OkToChangeModelColor="true"
+				UseStandardModelNames="true"
+				StaticModelLODMode="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT" >
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6 DYING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6 REALLYDAMAGED">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6 DAMAGED">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6">
+					<Model
+						Name="GBConYardSRF_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_OPENING">
+					<Script>
+						CurDrawableHideSubObject("Gate01")
+						CurDrawableHideSubObject("Gate02")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_CLOSING"
+					StateName="STATE_Closed">
+					<Script>
+						CurDrawableShowSubObject("Gate01")
+						CurDrawableShowSubObject("Gate02")
+					</Script>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<ModelConditionUpgrade
+				id="ModuleTag_UpgradeSonicRepulsion"
+				AddConditionFlags="USER_6">
+				<TriggeredBy>Upgrade_SonicRepulsionField</TriggeredBy>
+			</ModelConditionUpgrade>
+			
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />
+			<RadarBehavior
+				id="ModuleTag_RadarBehavior" />
+		
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				UnpackTime="0.1s" />
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				Type="MAIN_STRUCTURE"
+				MaxQueueEntries="1" />
+			<ProductionUpdate
+				id="ModuleTag_OtherProductionUpdate"
+				Type="OTHER_STRUCTURE"
+				MaxQueueEntries="1" 
+				NumDoorAnimations="1"
+				DoorOpeningTime="0.66s"
+				DoorWaitOpenTime="3.00s"
+			DoorCloseTime="0.66s" />
+
+			<ProductionUpdateInfo
+				id="ModuleTag_ProductionUpdateInfo"/>
+			<QueueProductionExitUpdate
+				id="ModuleTag_QueueProduction"
+				ExitDelay="1">
+				<UnitCreatePoint
+					x="-3.0"
+					y="0.0"
+					z="0.0" />
+				<NaturalRallyPoint
+					x="80.0"
+					y="0.0"
+					z="0.0" />
+			</QueueProductionExitUpdate>
+			<xi:include
+				href="DATA:Includes/GenericPackPower.xml" />
+			<xi:include
+				href="DATA:Includes/GenericPackUpdate.xml" />
+			<ReplaceSelfUpgrade
+				id="ModuleTag_ReplaceSelf"
+				NewObjectUnpackTime="5.0s">
+				<TriggeredBy>Upgrade_Pack</TriggeredBy>
+				<ReplacementTemplate>GDIMCV</ReplacementTemplate>
+			</ReplaceSelfUpgrade>
+				
+			<xi:include
+				href="../../Includes/GDISonicRepulsionFieldArmorUpgrade.xml" />
+			<xi:include
+   				href="../../Includes/GDISonicRepulsionFieldStatusUpgrade.xml" />    
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="../../Includes/GenericGDIBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/ConYardGDIBuildingSuicide.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO" 
+				AILuaEventsList="BuildingPowerFunctions"
+			/>
+		</AI>
+		<Body>
+ 		  <ActiveBody
+ 		   id="ModuleTag_Body"
+ 		   MaxHealth="20000.0">
+ 		   <DamageTrigger
+ 		    HealthLevelBelowPercent="66"
+ 		    RemoveUpgrade="Upgrade_SonicRepulsionField"/>
+ 		  </ActiveBody>
+ 		 </Body> 
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior
+				id="AnimationSoundCB" >
+				<Sound
+					Sound="GDI_MCVUnpack1MS"
+					Animation="GUMCVUPAK_AN"
+					Frame="1" />
+				<Sound
+					Sound="GDI_MCVUnpack2"
+					Animation="GUMCVUPAK_AN"
+					Frame="55" />
+				<Sound
+					Sound="GDI_MCVUnpack3"
+					Animation="GUMCVUPAK_AN"
+					Frame="74" />
+				<Sound
+					Sound="GDI_MCVUnpack4"
+					Animation="GUMCVUPAK_AN"
+					Frame="87" />
+			</AnimationSoundClientBehavior>				
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="46.0"
+				MinorRadius="35"
+				Height="30.0">
+				<Offset
+					x="9"
+					y="0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="17.5"
+				MinorRadius="10"
+				Height="14.0">
+				<Offset
+					x="53"
+					y="-32"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="11.0"
+				MinorRadius="8.5"
+				Height="18.0">
+				<Offset
+					x="43"
+					y="44"
+					z="0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-30.0"
+					y="34.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="55.0"
+					y="35.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="55.0"
+					y="-35.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="55.0"
+					y="35.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-30.0"
+					y="-35.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="55.0"
+					y="35.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-30.0"
+					y="-35.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-30.0"
+					y="34.0"
+					z="0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="GDI_ConstructionYardSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="500" />
+		<ProjectedBuildabilityInfo
+			Radius="450"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

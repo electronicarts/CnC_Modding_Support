@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:ABTower.W3X" />
+		<Include
+			type="all"
+			source="ART:ABTower_D2.W3X" />
+		<Include
+			type="all"
+			source="ART:ABTower_D3.W3X" />
+		<Include
+			type="all"
+			source="ART:ABTower_D4.W3X" />
+		<Include
+			type="all"
+			source="ART:ABTowerR.W3X" />
+		<Include
+			type="all"
+			source="ART:HC_ABTower_Build.XML" />
+	</Includes>
+	<GameObject
+		id="ABTower"
+		SelectPortrait="Portrait_AlienTower"
+		ButtonImage="Portrait_AlienTower"
+		Side="Alien"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="1"
+		BuildTime="10.0"
+		CommandSet="EmptyCommandSet"
+		KindOf="STRUCTURE IMMOBILE CAN_CAST_REFLECTIONS KEEP_CLASSIFIED_WHEN_DEAD SELECTABLE AIRCRAFT_PATH_AROUND"
+		RadarPriority="STRUCTURE"
+		EditorName="AlienTower">
+		<DisplayName>Name:AlienTower</DisplayName>
+		<ArmorSet
+			id="DefaultArmor" 
+			Armor="StructureArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABTower" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="AlienTowerTibMaster"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="AlienTowerTibMaster"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone03"
+						FXParticleSystemTemplate="AlienTowerTibMaster"
+						FollowBone="true" />
+				</ModelConditionState>
+				<!-- DAMAGE STATES -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="ABTower_D4" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ABTower_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ABTower_D2" />
+				</ModelConditionState>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4">
+					<Model
+						Name="ABTower" />
+					<Texture
+						Original="HC_ABTower"
+						New="HC_ABTower_Build" />	
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABTower_D4"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABTower_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABTower_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Damaged" and Prev ~= "TRANS_IntoDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4">
+					<Script>
+						CurDrawableHideSubObject("Plane05")
+					</Script>	
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoDamaged">
+					<Animation
+						AnimationName="ABTower_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="ABTower_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="ABTower_D4"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_rest"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABTowerR" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4">
+					<Model
+						Name="ABTowerR" />
+					<Texture
+						Original="HC_ABTower"
+						New="HC_ABTower_Build" />							
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+<!--
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="60s"
+				SinkRate="0.1"
+				DestructionDelay="62s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+-->			
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="6000.0"
+				InitialHealth="6000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="183.736"
+				MinorRadius="140.0"
+				Height="34.816">
+				<Offset
+					x="-115.544"
+					y="-73.8479"
+					z="-4.71191e-007" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="183.736"
+				MinorRadius="140.0"
+				Height="66.8467">
+				<Offset
+					x="-115.544"
+					y="-17.4258"
+					z="1.9951e-006" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="183.736"
+				MinorRadius="140.0"
+				Height="104.281">
+				<Offset
+					x="-115.544"
+					y="38.916"
+					z="4.45787e-006" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="183.736"
+				MinorRadius="140.0"
+				Height="156.421">
+				<Offset
+					x="-115.544"
+					y="75.6718"
+					z="6.06452e-006" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="183.736"
+				MinorRadius="140.0"
+				Height="209.605">
+				<Offset
+					x="-115.544"
+					y="108.195"
+					z="7.48616e-006" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="183.736"
+				MinorRadius="140.0"
+				Height="268.294">
+				<Offset
+					x="-115.544"
+					y="136.445"
+					z="8.72102e-006" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-274.94"
+					y="-189.831"
+					z="9.27735" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="44.1086"
+					y="39.8856"
+					z="209.277" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="44.1086"
+					y="-105.96"
+					z="9.27735" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-274.94"
+					y="118.027"
+					z="209.277" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-274.94"
+					y="39.8856"
+					z="209.277" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="44.1086"
+					y="-189.831"
+					z="9.27735" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="44.1086"
+					y="118.027"
+					z="209.277" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-274.94"
+					y="-105.96"
+					z="9.27735" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry
+				Sound="ALI_Tower_AmbientDelayedLoop"
+				AudioType="soundAmbient" />
+			<AudioEntry Sound="ALI_Building_LightDamage" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="ALI_Building_HeavyDamage" AudioType="soundOnReallyDamaged" />
+			<AudioEntry Sound="ALI_Building_Placed" AudioType="soundUnderConstruction" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="400" />
+	</GameObject>
+</AssetDeclaration>

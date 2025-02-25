@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!-- The 'AIBaseType' flags describe one of the AI's bases. They are set automatically by the AIBaseBuilder, and then
+	     we can request that structures are placed into bases with which have (or do not have) certain flags -->
+	<xs:simpleType name="AIBaseType">
+		<xs:restriction base="xs:string">
+			<!-- Primary type flags. Exactly one of these set at creation time and never changed thereafter -->
+			<xs:enumeration value="MAIN_BASE" /> <!-- Based around a conyard (normally, *the* conyard) -->
+			<xs:enumeration value="EXPANSION" /> <!-- Based around an outpost, or a set of freestanding buildings without a conyard -->
+			<xs:enumeration value="CAPTURED" />  <!-- Based around a captured building -->
+			<xs:enumeration value="PRIMARY_TYPE_MAX" xas:forceValue="CAPTURED" />
+			
+			<!-- Secondary type flags. Most of these can change as conditions change -->
+			<xs:enumeration value="POINT_CENTERED" />  <!-- Base was created by scripted and centered on a point instead of the normal centered-on-a-building -->
+			<xs:enumeration value="LAND_CENTERED" />	 <!-- Central building is on land. Changes only if the 'central building' of a base changes. -->
+			<xs:enumeration value="UNDER_ATTACK" />    <!-- One of the buildings in the base is under attack -->
+			<xs:enumeration value="ENEMIES_IN_BASE" /> <!-- There are enemies in the build radius of the base -->
+			<xs:enumeration value="OLDEST_OF_TYPE" />  <!-- Oldest surviving of this primary type (MAIN_BASE, EXPANSION, CAPTURED) -->
+			<xs:enumeration value="MOST_RECENT_OF_TYPE" /> <!-- Youngest surviving of this primary type (MAIN_BASE, EXPANSION, CAPTURED) -->
+			<xs:enumeration value="NO_BUILD_RADIUS" />  <!-- Set if none of the buildings in the base have a build radius. If set, we 
+																											 can't place buildings in this base except by unpacking -->
+
+			<!-- TODO Do we need these?? 
+			<xs:enumeration value="HAS_LAND_BUILDABILITY" /> <!- At least some of the buildability radius is on land ->
+			<xs:enumeration value="HAS_WATER_BUILDABILITY" /> <!- At least some of the buildability radius is on water ->
+			-->
+
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="AIBaseTypeBitFlags">
+		<xs:list itemType="AIBaseType" />
+	</xs:simpleType>
+
+</xs:schema>

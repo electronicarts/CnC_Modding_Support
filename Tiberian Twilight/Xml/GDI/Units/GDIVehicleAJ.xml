@@ -1,0 +1,1002 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- GDI Vehicle AJ / GDI Medium Caster T2 / Master Engineer / Conductor -->
+	<!--Temp art used from GDI Vechicle AC -->
+
+	<Includes>
+		<Include type="all" source="ART:GUM_VehicleAJ_SKN.w3x" />
+		<!-- Animations -->
+		<Include type="all" source="ART:GUM_VehicleAJ_AIDA.w3x" />
+		<Include type="all" source="ART:GUM_VehicleAJ_AIDD.w3x" />
+		<Include type="all" source="ART:GUM_VehicleAJ_ATKA.w3x" />
+		<Include type="all" source="ART:GUM_VehicleAJ_BATA.w3x" />
+		<Include type="all" source="ART:GUM_VehicleAJ_BIDA.w3x" />
+		<Include type="all" source="ART:GUM_VehicleAJ_DSEL.w3x" />
+		<Include type="all" source="ART:GUM_VehicleAJ_JMP1.w3x" />
+		<Include type="all" source="ART:GUM_VehicleAJ_JMP2.w3x" />
+		<Include type="all" source="ART:GUM_VehicleAJ_JMP3.w3x" />
+<!--<Include type="all" source="ART:GUM_VehicleAJ_MOVA.w3x" />
+		<Include type="all" source="ART:GUM_VehicleAJ_MOVD.w3x" />-->
+		<!-- Damaged Texture -->
+		<Include type="all" source="ART:GUM_VehicleAJ_DMG.xml" />
+		<Include type="all" source="ART:FXTracerGDI.xml" />
+		<Include type="all" source="ART:FXTracerHeroic.xml" />
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+
+		<Include type="instance" source="ART:FXGDILaser.xml" />
+		<Include type="instance" source="ART:FXEnergyBeam.xml" />
+		
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseMediumVehicle.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:GDI/Props/GDIVehicleAJProps.xml" />
+	</Includes>
+	<Defines>
+		<Define name="GDIVEHICLEAJ_STATIC_FIELD_RADIUS" value="100" />
+		<Define name="GDIVEHICLEAJ_ELECTROLYSIS_RADIUS" value="100" />
+		
+		<Define name="GDIVEHICLEAJ_AOE_HEAL_RADIUS" value="200" />
+		<Define name="GDIVEHICLEAJ_AOE_HEAL_DECAL_RADIUS" value="=($GDIVEHICLEAJ_AOE_HEAL_RADIUS * 2 ) + 20" />
+	</Defines>
+	<GameObject
+		id="GDIVehicleAJ"
+		inheritFrom="BaseMediumVehicle"
+		SubGroupPriority="206"
+		SelectPortrait="Portrait_GDI_Vehicle_AJ"
+		ButtonImage="Btn_GDI_Vehicle_AJ"
+		Side="GDI"
+		ParticipationValue="=$GDIVEHICLEAJ_PARTICIPATION_VALUE"
+		TransportSlotCount="1"
+		BuildTime="12"
+		CommandSet="GDIVehicleAJCommandSet"
+		CommandPoints="=$GDI_VEHICLE_AJ_COMMANDPOINT_COST"
+		ThreatLevel="10"
+		WeaponCategory="BLAST"
+		VoicePriority="176"
+		EditorName="GDI_S2_Medium_Caster(Master Engineer)"
+		EditorSorting="UNIT"
+		HealthBoxHeightOffset="50"
+		Description="Desc:GDIVehicleAJ"
+		TypeDescription="Type:GDIVehicleAJ">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:GDIVehicleAJ</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+		<LocomotorSet
+			Locomotor="GDIVehicleAJLocomotor"
+			Condition="NORMAL"
+			Speed="90.0" />
+		<LocomotorSet
+			Locomotor="GDIVehicleAJUpgradeCrystalLocomotor"
+			Condition="UPGRADE_CRYSTAL_ATTACHED"
+			Speed="90.0" />
+		
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="16.0"
+				MaxRecoilDistance="14.0"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				ExtraPublicBone="GVJ_pitch02 GVJ_Tire01 GVJ_Tire02 GVJ_Tire03 GVJ_Tire04 FX_WEAPONANTENA FX_WEAPONDISH"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUM_VehicleAJ_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GVJ_pitch02" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GVJ_pitch02" />
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GVJ_pitch02" />
+					<!-- Special Power 1 -->
+					<WeaponFireFXBone
+						WeaponSlotID="2"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPONDISH" />
+					<!-- Special Power 2 -->
+					<WeaponFireFXBone
+						WeaponSlotID="2"
+						WeaponSlotType="SECONDARY_WEAPON"
+						BoneName="FX_WEAPONANTENA" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="GUM_VehicleAJ_SKN" />
+					<Texture
+						Original="GUM_VehicleAJ"
+						New="GUM_VehicleAJ_DMG" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIDebrisSmallFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIDebrisSmallFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+				ParseCondStateType="PARSE_NORMAL"
+				RetainSubObjects="true"
+				ConditionsYes="DAMAGED USER_1">
+					<Model
+						Name="GUM_VehicleAJ_SKN" />
+					<Texture
+						Original="GUM_VehicleAJ"
+						New="GUM_VehicleAJ_DMG" />
+					<ParticleSysBone
+						BoneName="GVJ_Chassis"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GVJ_Tire06"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_WEAPONANTENA"
+						FXParticleSystemTemplate="GDIConductorUpgrade"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED USER_1">
+					<Model
+						Name="GUM_VehicleAJ_SKN" />
+					<Texture
+						Original="GUM_VehicleAJ"
+						New="GUM_VehicleAJ_DMG" />
+					<ParticleSysBone
+						BoneName="GVJ_Tire06"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GVJ_Tire06"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_WEAPONANTENA"
+						FXParticleSystemTemplate="GDIConductorUpgrade"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUM_VehicleAJ_SKN" />
+					<Texture
+						Original="GUM_VehicleAJ"
+						New="GUM_VehicleAJ_DMG" />
+					<ParticleSysBone
+						BoneName="GVJ_Chassis"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GVJ_Tire06"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUM_VehicleAJ_SKN" />
+					<Texture
+						Original="GUM_VehicleAJ"
+						New="GUM_VehicleAJ_DMG" />
+					<ParticleSysBone
+						BoneName="GVJ_Tire06"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GVJ_Tire06"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+
+			
+				<ModelConditionState
+				ParseCondStateType="PARSE_NORMAL"
+				RetainSubObjects="true"
+				ConditionsYes="USER_1">
+					<Model
+						Name="GUM_VehicleAJ_SKN" />
+					<ParticleSysBone
+						BoneName="FX_WEAPONANTENA"
+						FXParticleSystemTemplate="GDIConductorUpgrade"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GUM_VehicleAJ_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+						<Script>
+									CurDrawableHideSubObjectPermanently( "GUVEHICLEAE_UPG" )
+						</Script>
+				</AnimationState>
+			
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="true"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="GUM_VehicleAJ_BIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="80" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" or Prev == "TRANS_Deselected" then
+						--Do Nothing and Re-Pick Animation
+						else
+						CurDrawableSetTransitionAnimState("TRANS_Deselected")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RELOADING_A">
+					<Animation
+						AnimationName="GUM_VehicleAJ_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="5" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust_LargeGrounded"
+						FollowBone="true" />
+				</AnimationState>
+
+				<!-- Cliff Transition animations -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIFF_TRANSITION_STARTUP">
+					<Animation
+						AnimationName="GUM_VehicleAJ_JMP1"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIFF_TRANSITION_MID">
+					<Animation
+						AnimationName="GUM_VehicleAJ_JMP2"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIFF_TRANSITION_LAND">
+					<Animation
+						AnimationName="GUM_VehicleAJ_JMP3"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+				
+
+<!--				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING REALLYDAMAGED">
+					<Animation
+						AnimationName="GUM_VehicleAJ_MOVD"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust_LargeGrounded"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="GUM_VehicleAJ_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust_LargeGrounded"
+						FollowBone="true" />
+				</AnimationState>-->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED REALLYDAMAGED">
+					<Animation
+						AnimationName="GUM_VehicleAJ_AIDD"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust_LargeGrounded"
+						FollowBone="true" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" then
+						CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Animation
+						AnimationName="GUM_VehicleAJ_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust_LargeGrounded"
+						FollowBone="true" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" then
+						CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+				</AnimationState>
+
+				<!-- TRANSITIONS -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_Deselected">
+					<Animation
+						AnimationName="GUM_VehicleAJ_DSEL"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust_LargeGrounded"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IdleToSelected">
+					<Animation
+						AnimationName="GUM_VehicleAJ_BATA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust_LargeGrounded"
+						FollowBone="true" />
+					<Script>
+						CurDrawablePlaySound("GDI_Conductor_VehAJ_HoverStart")
+					</Script>
+				</AnimationState>
+
+				<ProceduralAnimationState
+				   ConditionsYes=""
+				   SourceBoneNameKey="GVJ_RadarDish"
+				   TargetBoneNameKey="GVJ_RadarDish"
+				   Rotation="ROTATE_Z INFINITE_LOOP"
+				   RotationSpeed="5d">
+				</ProceduralAnimationState>
+
+			</TruckDraw>
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Selected_Repair_Decal"
+				OkToChangeModelColor="true"
+				StaticModelLODMode="true"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RECYCLED">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$GDIVEHICLEAJ_AOE_HEAL_DECAL_RADIUS"
+						SizeY="=$GDIVEHICLEAJ_AOE_HEAL_DECAL_RADIUS"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Rig_CO"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+			<!-- used for StaticField ability -->
+			<LaserDraw
+				id="ModuleTag_LaserDrawStaticField"
+				Texture1_UTile="1"
+				Texture1_VTile="1"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="0"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".1"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="3"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="80"
+				LightMin="20"
+				LightMax="40"
+				LaserStateID="1">
+				<LightColor R="0.50" G="0.80" B="0.50" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXAlienAABeam02</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXGDIShellTrail</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>			
+			
+			<!-- used for Electrolysis ability-->
+			<LaserDraw
+				id="ModuleTag_LaserDrawElectrolysis"
+				Texture1_UTile="1"
+				Texture1_VTile=".8"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="0"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="0"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="20"
+				LightMin="20"
+				LightMax="40"
+				LaserStateID="2">
+				<LightColor R="0.15" G="0.86" B="0.07" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>			
+			
+		</Draws>
+		
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehicleAJGrenadeWeapon"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+
+			<ModelConditionUpgrade
+				id="ModuleTag_Electrolysis"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_GDIVehicleAJElectrolysis</TriggeredBy>
+			</ModelConditionUpgrade>
+			<FXListBehavior
+				id="ModuleTag_FXListElectrolysis">
+				<TriggeredBy>Upgrade_GDIVehicleAJElectrolysis</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeGDIElectrolysisProjector" />
+			</FXListBehavior>
+
+			<SpecialPower
+				id="ModuleTag_StaticFieldAbility"
+				SpecialPowerTemplate="SpecialPower_GDIVehicleAJStaticFieldAbility"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="GDIVehicleAJStaticFieldAbilityObjectFilter"/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_StaticFieldAbility_Update"
+				SpecialPowerTemplate="SpecialPower_GDIVehicleAJStaticFieldAbility"
+				SpecialWeapon="GDIVehicleAJStaticFieldWeapon"
+				UnpackTime="0.1s"
+				TriggerSound="GDI_Conductor_VehAJ_StaticFieldWeaponFire"
+				TriggerAttributeModifier="Modifier_GDIVehicleAJUnstealthStatus"
+				AttributeModifierDuration="0.5s"
+				PackTime="0.1s"
+				StartAbilityRange="300.0"
+				BusyForDuration="1.0s"
+				StartRechargeOnExit="true"
+				WeaponSlotID="2"
+				WeaponSlotType="PRIMARY_WEAPON"/>
+			<LaserState
+				id="ModuleTag_StaticFieldLaserState"
+				LaserId="1"
+				OriginBoneName="FX_WEAPONDISH"/>			
+
+			<SpecialPower
+				id="ModuleTag_ElectrolysisAbility"
+				SpecialPowerTemplate="SpecialPower_GDIVehicleAJElectrolysisAbility"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="GDIVehicleAJStaticFieldAbilityObjectFilter"/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_ElectrolysisAbility_Update"
+				SpecialPowerTemplate="SpecialPower_GDIVehicleAJElectrolysisAbility"
+				SpecialWeapon="GDIVehicleAJElectrolysisWeapon"
+				UnpackTime="0.1s"
+				TriggerSound="GDI_Conductor_VehAJ_ElectrolysisWeaponFire"
+				TriggerAttributeModifier="Modifier_GDIVehicleAJUnstealthStatus"
+				AttributeModifierDuration="0.5s"
+				PackTime="0.1s"
+				StartAbilityRange="300.0"
+				BusyForDuration="1.0s"
+				StartRechargeOnExit="true"
+				WeaponSlotID="2"
+				WeaponSlotType="SECONDARY_WEAPON" />
+			<LaserState
+				id="ModuleTag_ElectrolysisLaserState"
+				LaserId="2"
+				OriginBoneName="FX_WEAPONANTENA" />
+
+			<AutoHealBehavior
+				id="ModuleTag_RadiusHeal"
+				HealFXList="FX_Repair"
+				InitiallyActive="true"
+				HealingAmount="6"
+				HealingDelay="1s"
+				Radius="=$GDIVEHICLEAJ_AOE_HEAL_RADIUS"
+				HealAlwaysActive="false">
+				<ObjectStatusValidation
+					ForbiddenStatus="DISABLED_FOR_RECYCLE" />
+				<HealObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE VEHICLE INFANTRY AIRCRAFT"
+					Exclude="NEUTRAL_TECH"
+					StatusBitFlagsExclude="NO_HEALING">
+					<ExcludeThing>GDIPointDefenseShield</ExcludeThing>
+				</HealObjectFilter>
+			</AutoHealBehavior>
+
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleAJWeaponSpeedUpgrade"
+				AttributeModifier="Modifier_GDIVehicleAJSpeedUpgrade">
+				<TriggeredBy>Upgrade_GDI_Support_Speed</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplode_Medium" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<CliffTransitionUpdate
+				id="ModuleTag_CliffTransition"
+				StartupFX="FX_DirtHit"
+				LandFX="FX_DirtHit"
+				LandFXOffsetDistance="12.0"
+				JumpWeaponSlot="TERTIARY_WEAPON">
+				<Transition
+					Type="UPWARD"
+					WeaponTemplate="CliffJumpingWeaponTemplate"
+					TravelDistance="150"
+					StartupDuration="0.3s"
+					LandDuration="0.37s"
+					ProjectileUpdateModuleId="ModuleTag_CliffTransitionProjectile"/>
+				<Transition
+					Type="DOWNWARD"
+					WeaponTemplate="CliffJumpingWeaponTemplate"
+					TravelDistance="150"
+					StartupDuration="0.3s"
+					LandDuration="0.37s"
+					ProjectileUpdateModuleId="ModuleTag_CliffTransitionProjectile"/>
+			</CliffTransitionUpdate>
+
+			<BezierProjectile
+				id="ModuleTag_CliffTransitionProjectile"
+				Flags="NO_DETONATE"
+				FirstHeightMin="40"
+				FirstHeightMax="40"
+				SecondHeightMin="30"
+				SecondHeightMax="30"
+				FirstPercentIndent="20%"
+				SecondPercentIndent="66%"
+				BounceCount="0"/>
+
+			<SelectiveVisibilityBehavior
+				id="ModuleTag_SelectiveVisibility"
+				DrawModuleId="ModuleTag_Draw_Selected_Repair_Decal"
+				AllowedPlayers="ALLIES"
+				UpdateRate="0.5s" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					SympathyRange="200.0"/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="450" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "35.0"
+					 MinorRadius = "30.0"
+					 Height = "30.0"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+
+		</Geometry>
+
+		<!-- <ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_HiJackedSounds">
+				<Override ExcludedFlags="HIJACKED">
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors> -->
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_VehAJConductor_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="GDI_VehAJConductor_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="GDI_VehAJConductor_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="GDI_VehAJConductor_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="GDI_VehAJConductor_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="GDI_VehAJConductor_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="GDI_VehAJConductor_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="GDI_VehAJConductor_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+			<NamedEntry Sound="GDI_VehAJConductor_VoiceAttackSpecial" Name="VoiceAttackSpecialStaticField" />
+			<NamedEntry Sound="GDI_VehAJConductor_VoiceMoveAttack" Name="voiceAttackElectrolysisAbility" />
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleMedium_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="GDI_Conductor_VehAJ_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="GDI_Conductor_VehAJ_MoveLoop" AudioType="soundMoveLoop" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="500" />
+		<xi:include
+				href="DATA:Includes/CrusherInfoMedium.xml" />
+		<DisplayUpgrade>Upgrade_GDI_Support_Speed</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDIVehicleAJElectrolysis</DisplayUpgrade>
+	</GameObject>
+
+	<LogicCommandSet
+		id="GDIVehicleAJCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+		<Cmd>Command_GDIVechicleAJ_StaticField</Cmd>
+		<Cmd>Command_GDIVechicleAJ_Electrolysis</Cmd>
+	</LogicCommandSet>
+
+	<LogicCommand
+		Options="NEED_TARGET_POS"
+		Type="SPECIAL_POWER"
+		id="Command_GDIVechicleAJ_StaticField">
+		<SpecialPower>SpecialPower_GDIVehicleAJStaticFieldAbility</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<SpecialPowerWeapon
+				Weapon="GDIVehicleAJStaticFieldWeapon"
+				IgnoreStructures="true"
+				TotalValueGreaterThan="600"
+				AoeAttackPowerType="DISABLING_ATTACK" />
+			<!-- NOTE: This value computation is the Skirmish AI Value (also build time * logic frames per sec[15]) -->
+			<AISpecialPowerInfo	Heuristic="AOE_ATTACK">
+			</AISpecialPowerInfo>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<ObjectFilterAsset
+		id="GDIVehicleAJStaticFieldAbilityObjectFilter">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES"
+			Exclude="DEBRIS STRUCTURE"/>
+	</ObjectFilterAsset>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDIVehicleAJStaticFieldAbility"
+		ReloadTime="60s"
+		TargetType="LOCATION"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceAttackSpecialStaticField"
+		RadiusCursorRadius="=$GDIVEHICLEAJ_STATIC_FIELD_RADIUS"/>
+
+	<LogicCommand
+		Options="NEED_TARGET_POS"
+		Type="SPECIAL_POWER"
+		id="Command_GDIVechicleAJ_Electrolysis">
+		<SpecialPower>SpecialPower_GDIVehicleAJElectrolysisAbility</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<SpecialPowerWeapon
+				Weapon="GDIVehicleAJElectrolysisWeapon"
+				IgnoreStructures="true"
+				TotalValueGreaterThan="3"
+				AoeAttackPowerType="DAMAGE_ATTACK" />
+			<!-- NOTE: This value computation is the total number of enemy units affected - allied units injured -->
+			<AISpecialPowerInfo	Heuristic="AOE_ATTACK">
+			</AISpecialPowerInfo>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDIVehicleAJElectrolysisAbility"
+		ReloadTime="60s"
+		TargetType="LOCATION"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="voiceAttackElectrolysisAbility"
+		RadiusCursorRadius="=$GDIVEHICLEAJ_ELECTROLYSIS_RADIUS">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_GDIVehicleAJElectrolysis</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<!-- For use with the special power to cause the unit to unstealth briefly-->
+	<AttributeModifier
+		id="Modifier_GDIVehicleAJUnstealthStatus"
+		Category="NONE"
+		ObjectStatusToSet="NOT_STEALTHABLE"/>
+	
+	<AttributeModifier
+		id="Modifier_GDIVehicleAJSpeedUpgrade"
+		inheritFrom="Modifier_GDISpeedBoostUpgrade">
+		<Modifier Type="SPEED" Value="125%" />
+	</AttributeModifier>
+	
+	<AttributeModifier
+		id="AttributeModifier_GDIVehicleAJStaticField"
+		Category="NONE"
+		Duration="5.0s"
+		StartFX="FX_EMPEE_Long"
+		ObjectStatusToSet="IMMOBILE">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:GDIVehicleAJ" />
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-50%"/>
+		<Modifier Type="SPEED" Value="0%"/>
+	</AttributeModifier>
+	
+	<WeaponTemplate
+		id="GDIVehicleAJGrenadeWeapon"
+		AttackRange="150.0"
+		WeaponSpeed="300"
+		MinWeaponSpeed="300"
+		MaxWeaponSpeed="300"
+		FireFX="FX_GDISonicBlast_Medium_Fire"
+		FireVeteranFX="FX_GDISonicBlast_Medium_FireVet"
+		FireStrongCounterFX="FX_GDISonicBlast_Medium_FireVet" 
+		FireSound="GDI_Light_RocketMS"
+		AcceptableAimDelta="5d"
+		ClipSize="1"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		ReAcquireDetailType="PRE_FIRE"
+		RequiredAntiMask="ANTI_GROUND"
+		CanFireWhileMoving="true">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s"/>
+		<ClipReloadTime
+			MinSeconds="5.5s"
+			MaxSeconds="5.5s" />
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="GDIVehicleAJGrenadeWarhead"
+				ProjectileTemplate="GDIVehicleAJGrenadeProjectile" >
+				<CombatChainProjectiles
+					CombatChain="STRONG"
+					ProjectileTemplate="GDIVehicleAJGrenadeProjectile_Veteran" />
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIVehicleAJGrenadeWarhead"
+		ProjectileCollidesWith="ENEMIES"
+		FireFX="FX_GDI_Conductor_VehAJ_EMPgrenadeWeaponImpactExplosion_AudioOnly"
+		RequiredAntiMask="ANTI_GROUND">
+		<Nuggets>
+			<DamageNugget
+				id="NuggetTag_DamageNugget"
+				Damage="10"
+				Radius="100.0"
+				DamageType="BLAST"
+				DeathType="NORMAL">
+			</DamageNugget>
+			<ParalyzeNugget
+				Radius="100.0"
+				ParalyzeType="EMP"
+				DurationSeconds="2.0s"
+				FXListVictim="FX_EMPEE_Short">
+			</ParalyzeNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIVehicleAJStaticFieldWeapon"
+		AttackRange="300.0"
+		WeaponSpeed="99999"
+		FireFX="FX_StaticFieldFireFX"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		CanFireWhileMoving="true">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.25s"
+				LaserId="1" />
+			
+			<WeaponOCLNugget WeaponOCL="OCL_CreateGDIVehicleAJStaticFieldFX" />
+			
+			<AttributeModifierNugget
+				Radius="=$GDIVEHICLEAJ_STATIC_FIELD_RADIUS"
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifier_GDIVehicleAJStaticField">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ENEMIES" 
+					Exclude="STRUCTURE"/>
+			</AttributeModifierNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIVehicleAJElectrolysisWeapon"
+		AttackRange="300.0"
+		WeaponSpeed="99999"
+		FireFX="FX_ElectrolysisFireFX"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		CanFireWhileMoving="true">
+		<FiringDuration
+			MinSeconds="=$EPSILON_SECONDS"
+			MaxSeconds="=$EPSILON_SECONDS" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="4.0s"
+			MaxSeconds="4.0s" />
+		<Nuggets>
+			<WeaponOCLNugget WeaponOCL="OCL_CreateGDIVehicleAJElectroFX" />
+			<DamageNugget
+				id="Nugget_AOEEffect"
+				Damage="100.0"
+				Radius="=$GDIVEHICLEAJ_ELECTROLYSIS_RADIUS"
+				DamageType="BLAST"
+				DeathType="NORMAL"
+				PartitionFilterTestType="CIRCLE">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<LocomotorTemplate
+		id="GDIVehicleAJLocomotor"
+		Surfaces="GROUND CLIFF CRUSHABLE_OBSTACLE"
+		JumpsCliffs="true"
+		TurnTimeSeconds="2.5s"
+		TurnTimeDamagedSeconds="2.5s"
+		AccelerationSeconds="1.5s"
+		MaxSpeedDamaged="100%"
+		BrakingSeconds="1.5s"
+		SlowTurnRadius="15.0"
+		FastTurnRadius="30.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="FOUR_WHEELS"
+		UseTerrainSmoothing="false"
+		UniformAxialDamping="0.1"
+		PitchStiffness="0.45"
+		RollStiffness="0.6"
+		PitchDamping="0.1"
+		RollDamping="0.1"
+		ForwardAccelerationPitchFactor="-0.05"
+		LateralAccelerationRollFactor="-0.25"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="false"
+		CanReverseMove="true"
+	/>
+
+	<LocomotorTemplate
+		id="GDIVehicleAJUpgradeCrystalLocomotor"
+		inheritFrom="GDIVehicleAJLocomotor"
+		Surfaces="-CLIFF"
+		JumpsCliffs="false"/>
+	
+	<ExperienceLevelTemplate
+		id="GDIVehicleAJExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="6">
+		<Target>GDIVehicleAJ</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAJExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIVehicleAJExperienceLevel_1"
+		RequiredExperience="12"
+		ExperienceAward="7">
+		<Target>GDIVehicleAJ</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAJExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIVehicleAJExperienceLevel_2"
+		RequiredExperience="30"
+		ExperienceAward="8">
+		<Target>GDIVehicleAJ</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAJExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIVehicleAJExperienceLevel_3"
+		RequiredExperience="54"
+		ExperienceAward="9">
+		<Target>GDIVehicleAJ</Target>
+	</ExperienceLevelTemplate>
+
+</AssetDeclaration>

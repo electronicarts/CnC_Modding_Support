@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Includes>
+		<!-- note: temp art has 3 mines in it, but it's actually a single explosive -->
+		<Include type="instance" source="ART:GDIMine.w3x" />
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="GDIEMPMine"
+		Side="GDI"
+		EditorSorting="MISC_MAN_MADE"
+		KindOf="=$BASE_MINE_KINDOF"
+		EditorName="GDIEMPMine"
+		UnitCategory="MINE">
+		<DisplayName>GDIEMPMine</DisplayName>
+		<ArmorSet
+			Armor="StructureArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GDIMine" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NODMine" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+
+		<Behaviors>
+
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="300.0s"
+				MaxLifetime="300.0s" />
+
+			<InvisibilityBehavior
+				id="ModuleTag_Invisibility"
+				InvisibilityTemplate="GenericMineInvisibilityTemplate" />
+
+			<FireWeaponCollide
+				id="ModuleTag_FireWeaponCollide"
+				CollideWeapon="GDIEMPMineSuicide"
+				WhereToFire="OWNER_POSITION"
+				Flags="TARGET_MUST_BE_MOVING" />
+
+			<!-- Death type EXTRA_1 means dying from exploding itself- so the delayed
+			explosion only happens when the mine "dies" to a unit shooting it -->
+			<SlowDeath
+				id="ModuleTag_DelayedExplodeDeath"
+				SinkDelay="0s"
+				SinkRate="0.01"
+				DestructionDelay="3.0s">
+				<FX
+					Type="FINAL">
+					<FX>FX_GDISonicBlast_Large_Hit</FX>
+				</FX>
+				<Weapon
+					Type="FINAL">
+					<Weapon>GDIEMPMineExplosion</Weapon>
+				</Weapon>
+				<Sound
+					Type="FINAL"
+					List="GDI_Builder_InfU_MineEMPWeaponExplosion"/>
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="EXTRA_1"/>
+			</SlowDeath>
+			<SlowDeath
+				id="ModuleTag_ExplodeDeath"
+				SinkDelay="0s"
+				SinkRate="0.01"
+				DestructionDelay="0.20s">
+				<FX
+					Type="FINAL">
+					<FX>FX_GDISonicBlast_Large_Hit</FX>
+				</FX>
+				<Weapon
+					Type="FINAL">
+					<Weapon>GDIEMPMineExplosion</Weapon>
+				</Weapon>
+				<Sound
+					Type="FINAL"
+					List="GDI_Builder_InfU_MineEMPWeaponExplosion"/>
+				<DieMuxData
+					DeathTypes="EXTRA_1"/>
+			</SlowDeath>
+			<!-- <FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath"
+					FX="FX_GDI_Builder_InfU_MineEMPWeaponExplosion_AudioOnly"/>
+			</FXListBehavior> -->
+		</Behaviors>
+
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1.0" />
+		</Body>
+
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.0"
+				Height="10.0" />
+		</Geometry>
+
+		<VisionInfo
+			VisionRange="10"
+			ShroudClearingRange="10" />
+	</GameObject>
+
+	<WeaponTemplate
+		id="GDIEMPMineSuicide">
+		<Nuggets>
+			<DamageNugget
+				OnlyKillOwnerWhenTriggered="true"
+				Damage="100000.0"
+				Radius="0.0"
+				DamageType="BLAST"
+				DamageFXType="GDI_MINE"
+				DeathType="EXTRA_1" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIEMPMineExplosion">
+		<Nuggets>
+			<DamageNugget
+				Damage="50.0"
+				Radius="50.0"
+				DamageType="BLAST"
+				DeathType="EXPLODED">
+			</DamageNugget>
+			<ParalyzeNugget
+				Radius="50.0"
+				ParalyzeType="EMP"
+				DurationSeconds="4.0s"
+				FXListVictim="FX_EMPEE">
+			</ParalyzeNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+</AssetDeclaration>

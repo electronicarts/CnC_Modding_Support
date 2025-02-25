@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+  <xs:complexType name="BaseRenderAssetType" abstract="true" xas:runtimeWrapper="Sage::Render::BaseRenderObjectFactory" xas:typeGroup="Xml">
+    <xs:complexContent>
+      <xs:extension base="BaseAssetType"/>
+     </xs:complexContent>
+  </xs:complexType>
+
+	<!-- Generic support types -->
+	<xs:complexType name="W3DVector2">
+		<xs:annotation>
+			<xs:documentation>2d vector, float precis</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="X" type="xs:float" use="required" />
+		<xs:attribute name="Y" type="xs:float" use="required" />
+	</xs:complexType>
+	<xs:complexType name="W3DVector3">
+		<xs:annotation>
+			<xs:documentation>3d vector, float precis</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="X" type="xs:float" use="required" />
+		<xs:attribute name="Y" type="xs:float" use="required" />
+		<xs:attribute name="Z" type="xs:float" use="required" />
+	</xs:complexType>
+	<xs:complexType name="W3DVector4">
+		<xs:annotation>
+			<xs:documentation>4d vector, float precis</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="X" type="xs:float" use="required" />
+		<xs:attribute name="Y" type="xs:float" use="required" />
+		<xs:attribute name="Z" type="xs:float" use="required" />
+		<xs:attribute name="W" type="xs:float" use="required" />
+	</xs:complexType>
+	<xs:complexType name="W3DQuaternion">
+		<xs:annotation>
+			<xs:documentation>quaternion</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="X" type="xs:float" use="required" />
+		<xs:attribute name="Y" type="xs:float" use="required" />
+		<xs:attribute name="Z" type="xs:float" use="required" />
+		<xs:attribute name="W" type="xs:float" use="required" />
+	</xs:complexType>
+	
+	<!-- W3DMesh support types -->
+	<xs:simpleType name="MeshGeometryType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Normal" />
+			<xs:enumeration value="Skin" />
+			<xs:enumeration value="CameraAligned" />
+			<xs:enumeration value="CameraOriented" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="BoneInfluence">
+		<xs:annotation>
+			<xs:documentation>CHUNK_VERTEX_INFLUENCES</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="Weight" type="xs:float" />
+		<xs:attribute name="Bone" type="xs:unsignedShort" />
+	</xs:complexType>
+
+	<xs:complexType name="Triangle">
+		<xs:annotation>
+			<xs:documentation>CHUNK_TRIANGLES</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="V" type="xs:unsignedInt" minOccurs="3" maxOccurs="3" />
+			<xs:element name="Nrm" type="W3DVector3" />
+			<xs:element name="Dist" type="xs:float" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="RenderingSortLevel">
+		<xs:restriction base="xs:unsignedByte">
+			<xs:maxInclusive value="32" />
+			<xs:minInclusive value="0" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="BoxMinMax">
+		<xs:sequence>
+			<xs:element name="Min" type="W3DVector3" />
+			<xs:element name="Max" type="W3DVector3" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Sphere">
+		<xs:sequence>
+			<xs:element name="Center" type="W3DVector3" />
+		</xs:sequence>
+		<xs:attribute name="Radius" type="xs:float" />
+	</xs:complexType>
+	
+	<xs:complexType name="FXShaderConstant" xas:isPolymorphic="true">
+		<xs:attribute name="Name" type="xs:string" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="FXShaderConstantTexture">
+		<xs:complexContent>
+			<xs:extension base="FXShaderConstant">
+				<xs:sequence>
+					<xs:element name="Value" type="AssetReference" xas:refType="Texture" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="FXShaderConstantFloat">
+		<xs:complexContent>
+			<xs:extension base="FXShaderConstant">
+				<xs:sequence>
+					<xs:element name="Value" type="xs:float" maxOccurs="4" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="FXShaderConstantInt">
+		<xs:complexContent>
+			<xs:extension base="FXShaderConstant">
+				<xs:sequence>
+					<xs:element name="Value" type="xs:int" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="FXShaderConstantBool">
+		<xs:complexContent>
+			<xs:extension base="FXShaderConstant">
+				<xs:sequence>
+					<xs:element name="Value" type="xs:boolean" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="FXShaderMaterial">
+		<xs:sequence>
+			<xs:element name="Constants" minOccurs="0" maxOccurs="1" xas:byValue="true">
+				<xs:complexType>
+					<xs:choice minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="Texture" type="FXShaderConstantTexture" />
+						<xs:element name="Float" type="FXShaderConstantFloat" />
+						<xs:element name="Int" type="FXShaderConstantInt" />
+						<xs:element name="Bool" type="FXShaderConstantBool" />
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="ShaderName" type="xs:string" use="required" />
+		<xs:attribute name="TechniqueName" type="xs:string" default="" /> <!-- if TechniqueName is empty, TechniqueIndex is used -->
+		<xs:attribute name="TechniqueIndex" type="xs:unsignedByte" default="0" />
+	</xs:complexType>
+	
+	<xs:complexType name="AABTree">
+		<xs:annotation>
+			<xs:documentation>CHUNK_AABTREE_*</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="PolyIndices">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="P" type="xs:unsignedInt" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Node" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Min" type="W3DVector3" />
+						<xs:element name="Max" type="W3DVector3" />
+						<xs:choice>
+							<xs:element name="Children">
+								<xs:complexType>
+									<xs:attribute name="Front" type="xs:unsignedInt" use="required" />
+									<xs:attribute name="Back" type="xs:unsignedInt" use="required" />
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Polys">
+								<xs:complexType>
+									<xs:attribute name="Begin" type="xs:unsignedInt" use="required" />
+									<xs:attribute name="Count" type="xs:unsignedInt" use="required" />
+								</xs:complexType>
+							</xs:element>
+						</xs:choice>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!-- This is a helper class for the pipeline vertex processor. It needs to stay in sync with the vertex tags in W3DMesh below, until we get XML element groups working -->
+	<xs:complexType name="W3DMeshPipelineVertexData">
+		<xs:sequence>
+			<xs:element name="Vertices" maxOccurs="2">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="V" type="W3DVector3" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Normals" minOccurs="0" maxOccurs="2">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="N" type="W3DVector3" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Tangents" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="T" type="W3DVector3" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Binormals" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="B" type="W3DVector3" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VertexColors" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="C" type="RGBAColor" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TexCoords" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="T" type="W3DVector2" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BoneInfluences" minOccurs="0" maxOccurs="2">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="I" type="BoneInfluence" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ShadeIndices" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="I" type="xs:unsignedInt" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	
+	<!-- W3DMesh types -->
+	<xs:complexType name="W3DMesh" xas:runtimeWrapper="Sage::Render::MeshFactory" xas:typeGroup="W3D">
+		<xs:complexContent>
+			<xs:extension base="BaseRenderAssetType">
+				<xs:sequence>
+					<xs:element name="BoundingBox" type="BoxMinMax" />
+					<xs:element name="BoundingSphere" type="Sphere" />
+
+					<!-- The following needs to stay in sync with W3DMeshPipelineVertexData above, until we get XML element groups working -->
+					<xs:element name="Vertices" maxOccurs="2">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="V" type="W3DVector3" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="Normals" minOccurs="0" maxOccurs="2">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="N" type="W3DVector3" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="Tangents" minOccurs="0" maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="T" type="W3DVector3" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="Binormals" minOccurs="0" maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="B" type="W3DVector3" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="VertexColors" minOccurs="0" maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="C" type="RGBAColor" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="TexCoords" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="T" type="W3DVector2" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="BoneInfluences" minOccurs="0" maxOccurs="2">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="I" type="BoneInfluence" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="ShadeIndices" minOccurs="0" maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="I" type="xs:unsignedInt" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<!-- End W3DMeshVertexData copy section -->
+
+					<xs:element name="Triangles">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="T" type="Triangle" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="FXShader" type="FXShaderMaterial" />
+					<xs:element name="AABTree" type="AABTree" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+				<!-- Do not declare the following attribute! It's a dummy hook for the custom data. -->
+				<xs:attribute name="VertexData" type="xs:boolean" use="prohibited" />
+
+				<xs:attribute name="Hidden" type="xs:boolean" default="false" />
+				<xs:attribute name="CastShadow" type="xs:boolean" default="false" />
+				<xs:attribute name="GeometryType" type="MeshGeometryType" />
+				<xs:attribute name="SortLevel" type="RenderingSortLevel" default="0" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- W3DContainer support types -->
+	<xs:complexType name="RenderSubObjectReference">
+		<xs:choice>
+			<xs:element name="Mesh" type="AssetReference" xas:refType="W3DMesh" />
+			<xs:element name="CollisionBox" type="AssetReference" xas:refType="W3DCollisionBox" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="SubObject">
+		<xs:sequence>
+			<xs:element name="RenderObject" type="RenderSubObjectReference" />
+		</xs:sequence>
+		<xs:attribute name="BoneIndex" type="xs:unsignedInt" use="required" />
+		<xs:attribute name="SubObjectID" type="AssetId" default="" />
+	</xs:complexType>
+
+	<!-- W3DContainer -->
+	<xs:complexType name="W3DContainer" xas:runtimeWrapper="Sage::Render::RenderObjectFactory" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseRenderAssetType">
+				<xs:annotation>
+					<xs:documentation>Used to be CHUNK_HLOD</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element name="SubObject" type="SubObject" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Hierarchy" type="AssetReference" xas:refType="W3DHierarchy" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<!-- W3DHierarchy -->
+	<xs:complexType name="W3DHierarchy" xas:typeGroup="Xml" xas:runtimeWrapper="Sage::Render::W3DHierarchyWrapper">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:annotation>
+					<xs:documentation>CHUNK_HIERARCHY_*</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+					<xs:element name="Pivot" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="Translation" type="W3DVector3" />
+								<xs:element name="Rotation" type="W3DQuaternion" />
+								<xs:element name="FixupMatrix">
+									<xs:complexType>
+										<xs:sequence></xs:sequence>
+										<xs:attribute name="M00" type="xs:float" />
+										<xs:attribute name="M10" type="xs:float" />
+										<xs:attribute name="M20" type="xs:float" />
+										<xs:attribute name="M30" type="xs:float" />
+										<xs:attribute name="M01" type="xs:float" />
+										<xs:attribute name="M11" type="xs:float" />
+										<xs:attribute name="M21" type="xs:float" />
+										<xs:attribute name="M31" type="xs:float" />
+										<xs:attribute name="M02" type="xs:float" />
+										<xs:attribute name="M12" type="xs:float" />
+										<xs:attribute name="M22" type="xs:float" />
+										<xs:attribute name="M32" type="xs:float" />
+										<xs:attribute name="M03" type="xs:float" />
+										<xs:attribute name="M13" type="xs:float" />
+										<xs:attribute name="M23" type="xs:float" />
+										<xs:attribute name="M33" type="xs:float" />
+									</xs:complexType>
+								</xs:element>
+              </xs:sequence>
+              <xs:attribute name="Name" type="Poid" xas:refType="Pivot" />
+							<xs:attribute name="Parent" type="xs:int" />
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<!-- W3DAnimation support types-->
+	<xs:simpleType name="AnimationChannelType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="XTranslation" />
+			<xs:enumeration value="YTranslation" />
+			<xs:enumeration value="ZTranslation" />
+			<xs:enumeration value="Orientation" />
+			<xs:enumeration value="Visibility" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="AnimationChannelBase" xas:isPolymorphic="true">
+		<xs:attribute name="Pivot" type="xs:unsignedShort" />
+		<xs:attribute name="Type" type="AnimationChannelType" />
+		<xs:attribute name="FirstFrame" type="xs:unsignedInt" />
+	</xs:complexType>
+	
+	<xs:complexType name="AnimationChannelScalar">
+		<xs:complexContent>
+			<xs:extension base="AnimationChannelBase">
+				<xs:sequence>
+					<xs:element name="Frame" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="xs:float">
+									<xs:attribute name="BinaryMove" type="xs:boolean" default="false" />
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="AnimationChannelQuaternion">
+		<xs:complexContent>
+			<xs:extension base="AnimationChannelBase">
+				<xs:sequence>
+					<xs:element name="Frame" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="W3DQuaternion">
+									<xs:attribute name="BinaryMove" type="xs:boolean" default="false" />
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AnimationChannelBaseRuntime" xas:isPolymorphic="true">
+		<xs:attribute name="Pivot" type="xs:unsignedShort" />
+		<xs:attribute name="Type" type="AnimationChannelType" />
+		<xs:attribute name="NumFrames" type="xs:unsignedInt" />
+		<xs:attribute name="VectorLen" type="xs:unsignedInt" />
+	</xs:complexType>
+
+	<xs:complexType name="AnimationChannelTimecoded">
+		<xs:complexContent>
+			<xs:extension base="AnimationChannelBaseRuntime">
+				<xs:sequence>
+					<xs:element name="FrameAndBinaryFlag" type="UnsignedShortList" />
+					<xs:element name="Values" type="FloatList" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AnimationChannelDelta">
+		<xs:complexContent>
+			<xs:extension base="AnimationChannelBaseRuntime">
+				<xs:sequence>
+					<xs:element name="CompressedValues" type="UnsignedByteList" />
+				</xs:sequence>
+				<xs:attribute name="Scale" type="xs:float" />
+				<xs:attribute name="Init" type="FloatList" />
+				<xs:attribute name="NumBits" type="xs:unsignedInt" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- W3DAnimation runtime structure -->
+	<xs:complexType name="W3DAnimationRuntime" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Channels">
+						<xs:complexType>
+							<xs:choice maxOccurs="unbounded" minOccurs="0">
+								<xs:element name="Timecoded" type="AnimationChannelTimecoded" />
+								<xs:element name="Delta" type="AnimationChannelDelta" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="Hierarchy" type="AssetReference" xas:refType="W3DHierarchy" />
+				<xs:attribute name="NumFrames" type="xs:unsignedInt" />
+				<xs:attribute name="FrameRate" type="xs:unsignedInt" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<!-- W3DAnimation -->
+	<xs:complexType name="W3DAnimation" xas:runtimeWrapper="Sage::Render::Animation" xas:typeGroup="W3D">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="CompressionSettings" minOccurs="0">
+						<xs:complexType>
+							<xs:attribute name="AllowTimeCoded" type="xs:boolean" default="true" />
+							<xs:attribute name="AllowAdaptiveDelta" type="xs:boolean" default="true" />
+							<xs:attribute name="MaxTranslationError" type="xs:float" default="0.001" />
+							<xs:attribute name="MaxRotationError" type="xs:float" default="0.01" />
+							<xs:attribute name="MaxVisibilityError" type="xs:float" default="0.01" />
+							<xs:attribute name="MaxAdaptiveDeltaError" type="xs:float" default="0.03" />
+							<xs:attribute name="ForceReductionRate" type="xs:float" default="1.0" />
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="Channels">
+						<xs:complexType>
+							<xs:choice maxOccurs="unbounded" minOccurs="0">
+								<xs:element name="ChannelScalar" type="AnimationChannelScalar" />
+								<xs:element name="ChannelQuaternion" type="AnimationChannelQuaternion" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="Hierarchy" type="AssetReference" xas:refType="W3DHierarchy" />
+				<xs:attribute name="NumFrames" type="xs:unsignedInt" />
+				<xs:attribute name="FrameRate" type="xs:unsignedInt" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- W3DCollisionBox -->
+	<xs:complexType name="W3DCollisionBox" xas:runtimeWrapper="Sage::Render::CollisionBoxFactory" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseRenderAssetType">
+				<xs:sequence>
+					<xs:element name="Center" type="W3DVector3" />
+					<xs:element name="Extent" type="W3DVector3" />
+				</xs:sequence>
+				<xs:attribute name="JoypadPickingOnly" type="xs:boolean" default="false" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+		
+</xs:schema>

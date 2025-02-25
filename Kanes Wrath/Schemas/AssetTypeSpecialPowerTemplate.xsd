@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	
+	<xs:simpleType name="SpecialPowerTemplateFlag">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NEEDS_TARGET" />
+			<xs:enumeration value="NEEDS_OBJECT_FILTER" />
+			<xs:enumeration value="NO_FORBIDDEN_OBJECTS" />
+			<xs:enumeration value="NO_FORBIDDEN_MODEL_STATES" />
+			<xs:enumeration value="WATER_OK" />
+			<xs:enumeration value="LIMIT_DISTANCE" />
+			<xs:enumeration value="RESPECT_RECHARGE_TIME_DISCOUNT" />
+			<xs:enumeration value="PATHABLE_ONLY" />
+			<xs:enumeration value="IS_TAINTABLE" />
+			<xs:enumeration value="NOT_CLIFF_CELL" />
+			<xs:enumeration value="FOGGED_SHROUDED_CELLS_OK" />
+			<xs:enumeration value="KILL_SPECIAL_OBJECTS" />
+			<xs:enumeration value="TARGET_NEEDS_OBJECT_STATUS" />
+			<xs:enumeration value="SHARED_SYNC" />
+			<xs:enumeration value="HAS_PUBLIC_TIMER" />
+			<xs:enumeration value="IS_PLAYER_POWER" />
+			<xs:enumeration value="FIND_REACHABLE_TARGETS" />
+			<xs:enumeration value="IGNORE_MAP_EXTENTS"/>
+			<xs:enumeration value="IGNORE_SELF_IN_NEEDED_OBJECT_FILTER"/>
+			<xs:enumeration value="NOT_ON_BRIDGE"/>
+			<xs:enumeration value="NOT_BENEATH_BRIDGE"/>
+			<xs:enumeration value="NOT_WHILE_BENEATH_BRIDGE"/>
+			<xs:enumeration value="DISABLE_FOR_MULTIPLE_SELECTION"/>
+			<xs:enumeration value="CHECK_SPECIALPOWERSTORE_CANUSE"/>
+			<xs:enumeration value="USE_CASTER_RANGE"/>
+			<xs:enumeration value="CAN_PATH_TO"/>
+			<xs:enumeration value="RECHARGE_ALL_OBJECT_POWERS_ON_USE"/>
+      <xs:enumeration value="SCALE_AOI_RADIUS"/>
+      <xs:enumeration value="SPECIAL_TRAVEL_POWER" />
+			<xs:enumeration value="USE_CHAINED_COMMAND_MONEY"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="SpecialPowerTemplateBitFlag">
+		<xs:list itemType="SpecialPowerTemplateFlag"></xs:list>
+	</xs:simpleType>
+
+	<xs:simpleType name="SpecialPowerTemplateTargetType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LOCATION" />
+			<xs:enumeration value="OBJECT" />
+			<xs:enumeration value="OBJECT_OR_LOCATION" />
+			<xs:enumeration value="NONE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+  <xs:simpleType name="SpecialPowerRestrictionType"
+                 xas:useEnumPrefix="false"
+                 xas:enumItemPrefix="SPECIALPOWER_RESTRICTION_"
+                 xas:targetNamespace="" >
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="UNRESTRICTED" />
+      <xs:enumeration value="1" />
+			<xs:enumeration value="2" />
+    </xs:restriction>
+  </xs:simpleType>
+
+	<xs:simpleType name="MetagamePhaseEnum"
+		xas:targetNamespace=""
+		xas:enumItemPrefix="METAGAME_PHASE_"
+		xas:useEnumPrefix="false">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="OPERATIONS" />
+			<xs:enumeration value="RESOLVE_POWERS" />
+			<xs:enumeration value="MOVEMENT" />
+			<xs:enumeration value="BATTLE" />
+			<xs:enumeration value="UPKEEP" />
+      	</xs:restriction>
+	</xs:simpleType>
+
+  	<xs:simpleType name="MetaGamePhaseBitflags">
+		<xs:list itemType="MetagamePhaseEnum">
+		</xs:list>
+  	</xs:simpleType>
+
+	<!--	
+	m_requiredSciencesVector
+	-->
+	<xs:complexType name="SpecialPowerTemplate" xas:runtimeWrapper="::SpecialPowerTemplate">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="ObjectFilter" type="ObjectFilter" xas:byValue="true" minOccurs="0" maxOccurs="1" />
+					<xs:element name="ForbiddenObjectFilter" type="ObjectFilter" xas:byValue="true" minOccurs="0" maxOccurs="1" />
+					<!-- Redundant now that we have GameDependency here - asc 11/06 -->
+					<!-- <xs:element name="RequiresOwnedObjectFilter" type="ObjectFilter" xas:byValue="true" minOccurs="0" maxOccurs="1" /> -->
+					<xs:element name="GameDependency"	type="GameDependencyType" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="MetaGameDependencies" type="MetaGameDependenciesType" minOccurs ="0" maxOccurs="1"/>
+          <xs:element name="MetaUpgradeToGrant" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="DisplayName" type="xs:string" />
+				<xs:attribute name="Description" type="xs:string" />
+				<xs:attribute name="TargetType" type="SpecialPowerTemplateTargetType" use="required" />
+				<xs:attribute name="Flags" type="SpecialPowerTemplateBitFlag" />
+				<xs:attribute name="ReloadTime" type="Time" />
+				<xs:attribute name="InitiateSound" type="AudioEventInfoRef" />
+				<xs:attribute name="InitiateAtLocationSound" type="AudioEventInfoRef" />
+				<xs:attribute name="ViewObjectDuration" type="Time" />
+				<xs:attribute name="ViewObjectRange" type="SageReal" />
+				<xs:attribute name="RadiusCursorRadius" type="SageReal" />
+				<xs:attribute name="PreventConditions" type="ObjectStatusBitFlags" />
+				<xs:attribute name="RequiredConditions" type="ObjectStatusBitFlags" />
+				<xs:attribute name="DisallowedTargetModelStates" type="ModelConditionBitFlags" />
+				<xs:attribute name="RequiredTargetObjectStatus" type="ObjectStatusBitFlags" />
+				<xs:attribute name="DisallowedTargetObjectStatus" type="ObjectStatusBitFlags" />
+				<xs:attribute name="MaxCastRange" type="SageReal" default="1000000" />
+				<xs:attribute name="MinCastRange" type="SageReal" />
+				<xs:attribute name="ForbiddenObjectRange" type="SageReal" />
+				<!-- <xs:attribute name="RequiresOwnedObjectsCount" type="SageUnsignedInt" /> -->
+				<xs:attribute name="EvaEventToPlayOnSuccess" type="EvaEventIDType" />  <!-- played for owner when special power is successfully finished -->
+				<xs:attribute name="EvaEventToPlayWhenSelectingTarget" type="EvaEventIDType" />
+				<xs:attribute name="EvaEventToPlayOnInitiateOwner" type="EvaEventIDType" /> <!-- Played for owner when power is activated -->
+				<xs:attribute name="EvaEventToPlayOnInitiateAlly" type="EvaEventIDType" />		<!-- Played for allies when power is activated -->
+				<xs:attribute name="EvaEventToPlayOnInitiateEnemy" type="EvaEventIDType" />		<!-- Played for enemies when power is activated -->
+				<xs:attribute name="NameOfVoiceNameToUseAsInitiateIntendToDoVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsInitiateIntendToDoAfterMoveVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsInitiateIntendToDoWhileUnderAttackVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsInitiateIntendToDoAfterMoveWhileUnderAttackVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsEnterStateInitiateIntendToDoVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsEnterStateInitiateIntendToDoAfterMoveVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsEnterStateInitiateIntendToDoWhileUnderAttackVoice" type="StringHash" use="optional" />
+				<xs:attribute name="NameOfVoiceNameToUseAsEnterStateInitiateIntendToDoAfterMoveWhileUnderAttackVoice" type="StringHash" use="optional" />
+				<xs:attribute name="RestrictionType" type="SpecialPowerRestrictionType" default="UNRESTRICTED" />
+				<!-- Positive value deposits, negative value withdraws -->
+				<xs:attribute name="Money" type="SageInt" default="0"/>
+				<xs:attribute name="WaypointModeTerminal" type="SageBool" default="true" />
+				<xs:attribute name="TimerImage" type="ImageRef" />
+				<xs:attribute name="ReachableTargetsCircleDisplayRadius" type="SageReal"/>
+
+				<!-- MetaGame Operations Attributes -->
+				<xs:attribute name="MetaGameOperation" type="MetagameOperationsEnums" default="INVALID" />
+				<xs:attribute name="ActiveMetaGamePhases" type="MetaGamePhaseBitflags" default=""/>
+        <xs:attribute name="StrikeForceRejectStatus"	type="ObjectStatusBitFlags" default=""/>
+        <xs:attribute name="StrikeForceRejectMatchAll"	type="SageBool" default="false"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

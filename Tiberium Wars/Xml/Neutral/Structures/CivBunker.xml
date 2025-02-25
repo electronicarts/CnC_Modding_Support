@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:TBCivBunker.w3x" />
+		<Include
+			type="all"
+			source="ART:TBCivBunker_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:TBCivBunker_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:TBCivBunker_D3.w3x" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructure.xml" />
+		<!-- Base Object -->
+	</Includes>
+	<GameObject
+		id="CivBunker"
+		inheritFrom="BaseCivilianStructure"
+		SelectPortrait="Portrait_NeutralBunker"
+		ButtonImage="Portrait_NeutralBunker"
+		Side="Neutral"
+		EditorName="CivBunker"
+		Description="Desc:CivilianBuilding">
+		<DisplayName
+			xai:joinAction="Replace">Name:NeutralBunker</DisplayName>
+		<ArmorSet
+			xai:joinAction="Overwrite"
+			id="DefaultArmor"
+			Armor="GDIPillBoxArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				AffectedByStealth="false"
+				ExtraPublicBone="BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TBCivBunker" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="TBCivBunker_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="TBCivBunker_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="TBCivBunker_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="TBCivBunker_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="TBCivBunker_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="TBCivBunker_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="TBCivBunker_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<!-- No spotlight draw, doesn't detect stealth -->
+			<!--
+			<SpotlightDraw
+				id="ModuleTag_Spotlight"
+				AttachToBoneInAnotherModule="Bone_Spotlite"
+				RefreshTime="2.0s"
+				SweepTime="1.0s">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXspotlight" />
+				</ModelConditionState>
+			</SpotlightDraw>
+			-->
+		</Draws>
+		<Behaviors>
+		</Behaviors>
+		<Body xai:joinAction="Replace">
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_LARGE" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="22.9861"
+				MinorRadius="22.9861"
+				Height="18.412">
+				<Offset
+					x="-0.669886"
+					y="3.86762"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-15.6069"
+					y="-10.76"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.129"
+					y="-10.76"
+					z="16.863" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.129"
+					y="17.9759"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-15.6069"
+					y="17.9759"
+					z="16.863" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-15.6069"
+					y="-10.76"
+					z="16.863" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.129"
+					y="-10.76"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.129"
+					y="17.9759"
+					z="16.863" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-15.6069"
+					y="17.9759"
+					z="0.0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="GDI_PillboxSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+	</GameObject>
+</AssetDeclaration>

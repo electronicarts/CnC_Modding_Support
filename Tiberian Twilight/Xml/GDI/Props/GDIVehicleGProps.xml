@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Includes>
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+		
+		<Include type="all" source="ART:FXGDIArtilleryProjectile.w3x" />
+		<Include type="all" source="ART:GDIStickyBomb.w3x" />
+	</Includes>
+
+	<GameObject
+		id="GDIVehicleGMineProjectile"
+		inheritFrom="baseunattackableprojectile"
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		EditorName="GDIVehicleGMineProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GDIStickyBomb" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_Trail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_TrailThin"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="150"
+				FirstHeightMax="150"
+				SecondHeightMin="150"
+				SecondHeightMax="150"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH DONT_TRACK_TARGET"
+				FlightPathAdjustDistPerSecond="100"
+				GroundHitFX="FX_GDI_JuggernaughtShellDust">
+			</BezierProjectile>
+		</Behaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_Juggernaut_VehG_ArtilleryWeaponIncoming" AudioType="soundAmbient"/>
+		</AudioArraySound>
+	</GameObject>
+
+	<!-- note: temp art has 3 mines in it, but it's actually a single explosive' -->
+	<GameObject
+		id="GDIVehicleGMine"
+		Side="GDI"
+		EditorSorting="MISC_MAN_MADE"
+		KindOf="=$BASE_MINE_KINDOF + ' SELECTABLE GRANT_PLAYER_THREAT'"
+		EditorName="GDIMine"
+		UnitCategory="MINE"
+		Description="Desc:GDIVehicleGMine"
+		TypeDescription="Type:GDIVehicleGMine"
+		SelectPortrait="Portrait_GDI_Sticky_Bomb"
+		ButtonImage="Btn_GDI_Sticky_Bomb">
+
+		<DisplayName>GDIVehicleGMine</DisplayName>
+
+		<ArmorSet
+			Armor="StructureArmor" />
+
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GDIStickyBomb" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="GDIStickyBomb" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIDebrisSmallFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIDebrisSmallFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+
+		<Behaviors>
+			<FireWeaponCollide
+				id="ModuleTag_FireWeaponCollide"
+				CollideWeapon="GDIVehicleGMineSuicide"
+				WhereToFire="OWNER_POSITION" />
+
+			<!-- Death type EXTRA_1 means dying from exploding itself- so the delayed
+			explosion only happens when the mine "dies" to a unit shooting it -->
+			<SlowDeath
+				id="ModuleTag_DelayedExplodeDeath"
+				SinkDelay="0s"
+				SinkRate="0.01"
+				DestructionDelay="3.0s">
+				<FX
+					Type="FINAL">
+					<FX>FX_GDIArtilleryHit</FX>
+				</FX>
+				<Weapon
+					Type="FINAL">
+					<Weapon>GDIVehicleGMineExplosion</Weapon>
+				</Weapon>
+				<Sound Type="INITIAL" List="GDI_Juggernaut_VehG_StickyBombWeaponIgnite" />
+				<Sound Type="FINAL" List="GDI_Juggernaut_VehG_StickyBombWeaponExplosionMS" />
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="EXTRA_1"/>
+			</SlowDeath>
+			<SlowDeath
+				id="ModuleTag_ExplodeDeath"
+				SinkDelay="0s"
+				SinkRate="0.01"
+				DestructionDelay="0.20s">
+				<FX
+					Type="FINAL">
+					<FX>FX_GDIArtilleryHit</FX>
+				</FX>
+				<Weapon
+					Type="FINAL">
+					<Weapon>GDIVehicleGMineExplosion</Weapon>
+				</Weapon>
+				<Sound Type="FINAL" List="GDI_Juggernaut_VehG_StickyBombWeaponExplosionMS" />
+				<DieMuxData
+					DeathTypes="EXTRA_1"/>
+			</SlowDeath>
+		</Behaviors>
+
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="100.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Flames">
+				<ModelConditionSound Sound="NOD_FlameTank_VehF_TrailOfFireLoopMS" RequiredFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior>			
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.0"
+				Height="10.0" />
+		</Geometry>
+
+		<VisionInfo
+			VisionRange="10"
+			ShroudClearingRange="10" />
+	</GameObject>
+
+	<WeaponTemplate
+		id="GDIVehicleGMineSuicide">
+		<Nuggets>
+			<DamageNugget
+				OnlyKillOwnerWhenTriggered="true"
+				Damage="100000.0"
+				DamageType="BLAST"
+				DamageFXType="GDI_MINE"
+				DeathType="EXTRA_1" />
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="GDIVehicleGMineExplosion"
+		RadiusDamageAffects="ENEMIES NEUTRALS">
+		<Nuggets>
+			<DamageNugget
+				Damage="150.0"
+				Radius="30.0"
+				DamageType="BLAST"
+				DamageFXType="GDI_MINE"
+				DeathType="EXPLODED">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<GameObject
+		id="GDIVehicleGBlastProjectile"
+		inheritFrom="baseunattackableprojectile" 
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		EditorName="GDIVehicleGBlastProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXGDIArtilleryProjectile" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_Trail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_TrailThin"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIArtillery_ObjectTail"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior id="ModuleTag_FXList">
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIArtilleryHit" />
+				<Event Index="onDeath" FX="FX_GDI_Juggernaut_VehG_ArtilleryWeaponImpactExplosionMS_AudioOnly"/>
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="150"
+				FirstHeightMax="150"
+				SecondHeightMin="150"
+				SecondHeightMax="150"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH DONT_TRACK_TARGET"
+				FlightPathAdjustDistPerSecond="100"
+				GroundHitFX="FX_GDIArtilleryMiss_Medium">
+			</BezierProjectile>
+		</Behaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_Juggernaut_VehG_ArtilleryWeaponIncoming" AudioType="soundAmbient"/>
+		</AudioArraySound>
+	</GameObject>	
+	
+</AssetDeclaration>

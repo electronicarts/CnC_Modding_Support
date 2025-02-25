@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+	</Includes>
+	<GameObject
+		id="BaseAircraft"
+		inheritFrom="BaseObject" 
+		ShockwaveResistance="100"
+		ReinvisibilityDelay="7s"
+		EvaEventSecondDamageFarFromFirstScanRange="600"
+		EvaEventSecondDamageFarFromFirstTimeoutMS="31000"
+		KindOf="CAN_CAST_REFLECTIONS SELECTABLE CAN_ATTACK SCORE AIRCRAFT VEHICLE CAN_BE_FAVORITE_UNIT CONTROL_GROUP_ALLOWABLE LEAVE_PARKING_ON_BUILD_COMPLETE"  
+		EditorSorting="UNIT"
+		RadarPriority="UNIT"
+		UnitCategory="AIRCRAFT"
+		ProductionQueueType="INFANTRY"
+		TransportSlotCount="1">
+		<SkirmishAIInformation
+			MethodOfRemoving="RECYCLE_MSG"/>
+
+		<Behaviors>
+			<AttributeModifierPoolUpdate 
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<SquishCollide
+				id ="DefaultSquishCollide"/>
+			<Physics id="ModuleTag_Physics" />
+			<xi:include	href="DATA:Includes/GenericRecycleLifetimeUpdate.xml" />
+			<HealEffectManager
+				id="ModuleTag_HealEffectManager"
+				UpdateRate="0.25s" />
+			<!--Heroic level units auto healing-->
+			<AutoHealBehavior
+				id="Upgrade_HeroicHeal"
+				InitiallyActive="false"
+				HealOnlyIfNotInCombat="false"
+				HealOnlyIfNotUnderAttack="false"
+				StartHealingDelay="1s"
+				HealingAmount="1"
+				HealingDelay=".5s"
+				HealAlwaysActive="true">
+				<ObjectStatusValidation
+					ForbiddenStatus="DISABLED_FOR_RECYCLE" />
+				<TriggeredBy>Upgrade_Veterancy_HEROIC</TriggeredBy>
+			</AutoHealBehavior>
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="Generic"
+				/>
+			<!-- This allows the AI to remember that a unit is guarding a target, and not keep throwing
+				   units towards that target unless it has enough forces to overcome said guard -->
+			<SkirmishAIGuardTrackingBehavior
+				id="ModuleTag_SkirmishAIGuardTrackingBehavior"
+			/>
+			<LevelUpUpgrade
+				id="ModuleTag_LevelUpUpgrade_Veteran"
+				LevelCap="4"
+				LevelsToGain="1">
+				<TriggeredBy>Upgrade_ProductionVeterancy_VETERAN</TriggeredBy>
+			</LevelUpUpgrade>
+			<LevelUpUpgrade
+				id="ModuleTag_LevelUpUpgrade_Elite"
+				LevelCap="4"
+				LevelsToGain="2">
+				<TriggeredBy>Upgrade_ProductionVeterancy_ELITE</TriggeredBy>
+			</LevelUpUpgrade>
+			<LevelUpUpgrade
+				id="ModuleTag_LevelUpUpgrade_Heroic"
+				LevelCap="4"
+				LevelsToGain="3">
+				<TriggeredBy>Upgrade_ProductionVeterancy_HEROIC</TriggeredBy>
+			</LevelUpUpgrade>
+
+			<!-- provides support for units guarding this unit -->
+			<xi:include	href="DATA:Includes/GenericGuardManagerUpdate.xml" />
+
+			<!-- A necessity for the Reflection in the Active Body -->
+			<xi:include	href="DATA:Includes/GenericRefractionBehavior.xml" />
+
+			<xi:include	href="DATA:Includes/GenericDesperationBoostModules.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ModuleList/child::*)"/>
+			
+		</Behaviors>
+		<ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior
+				id="ModuleTag_RecycledSounds">
+				<Override
+					RequiredFlags="RECYCLED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="" AudioType="voiceSelect" />
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+				<!-- PARALYZED BUT INVULNERABLE -->
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_CrystallineShieldDisablesSelect">
+				<Override RequiredFlags="INVULNERABLE PARALYZED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="" AudioType="voiceSelect"/>
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+		<Body>
+			<ActiveBody
+				id="DefaultBody"/>
+		</Body>
+
+		<EvaEventArray>
+			<EvaEntry EvaEvent="UnitLost" EvaType="dieOwner" />
+			<EvaEntry EvaEvent="UnitConstructionStarted" EvaType="productionStarted" />
+			<EvaEntry EvaEvent="UnitUnderAttack" EvaType="damagedOwner" />
+			<EvaEntry EvaEvent="UnitUnderAttackFromShroudedUnit" EvaType="damagedFromShroudedSourceOwner" />
+			<EvaEntry EvaEvent="GenericUnitBeingBurned" EvaType="damagedByFireOwner" />
+			<EvaEntry EvaEvent="UnitAmbushed" EvaType="ambushed" />
+			<EvaEntry EvaEvent="GenericEnemyUnitSighted" EvaType="enemyObjectSighted" />
+			<EvaEntry EvaEvent="EnemyStealthUnitDiscovered" EvaType="detectedEnemy" />
+			<EvaEntry EvaEvent="NewConstructionOptions" EvaType="availableForProduction" />
+			<EvaEntry EvaEvent="BuildOnHold" EvaType="buildOnHold" />
+			<EvaEntry EvaEvent="BuildCancelled" EvaType="buildCancelled" />
+			<EvaEntry EvaEvent="UnitPromoted" EvaType="promotedOwner" />
+		</EvaEventArray>
+		
+		<CrusherInfo
+			CrusherLevel="1"
+			CrushableLevel="2" />
+	</GameObject>
+
+</AssetDeclaration>

@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="us-ascii" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset">
+
+	<!-- Reminder - you need to remove or set HitStoredTarget="false" if you want cannons or rockets to miss -->
+	
+	<!-- Arena -->
+	<Tags />
+	<Includes>
+		<Include type="all"	source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="all"	source="Weapon_PlayerPowers.xml" />
+	</Includes>
+
+	<Defines>
+	</Defines>
+
+	<WeaponTemplate
+		id="NODVehicleFDebrisWeapon">
+		<Nuggets>
+			<DamageNugget
+				Damage="200.0"
+				Radius="30.0"
+				DelayTimeSeconds="0.0s"
+				DamageType="GRENADE"
+				DeathType="NORMAL"
+			/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="ExplodingBarrelWeapon"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		FireFX="FX_BarrelXplosion">
+		<Nuggets>
+			<DamageNugget
+				Damage="1000"
+				Radius="100"
+				DamageType="GRENADE"
+				DeathType="NORMAL">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODStructureCAmmoBurstWeapon"
+		FireFX="FX_NOD_ShredderHit"
+		RadiusDamageAffects="ENEMIES NEUTRALS">
+		<Nuggets>
+			<DamageNugget
+				Damage="150.0"
+				Radius="100"
+				DamageType="CANNON"
+				DamageFXType="NOD_CANNON"
+				DeathType="NORMAL">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="DummyWeaponWarhead"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"/>
+
+	<WeaponTemplate
+		id="GenericDestroySelfWeapon"
+		AttackRange="25.0"
+		RadiusDamageAffects="ENEMIES NEUTRALS SELF"
+		MeleeWeapon="true"
+		CanFireWhileMoving="true">
+		<Nuggets>
+			<DamageNugget
+				OnlyKillOwnerWhenTriggered="true"
+				DamageType="CANNON"
+				DamageFXType="NOD_CANNON"
+				DeathType="SUICIDED" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GenericKillOwnerFirestormWeapon">
+		<Nuggets>
+			<DamageNugget
+				DamageType="BLAST"
+				DamageFXType="NOD_FLAMETHROWER"
+				DeathType="FIRESTORM_DETONATED"
+				OnlyKillOwnerWhenTriggered="true">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GenericOneShotFirestormWeapon">
+		<Nuggets>
+			<DamageNugget
+				id="DamageNugget_OneShotFirestorm"
+				Damage="8"
+				Radius="40"
+				DamageType="BLAST"
+				DamageFXType="NOD_FLAMETHROWER"
+				DeathType="BURNED">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="Weapon_BaseGDIDropPod_Impact">
+		<Nuggets>
+			<DamageNugget
+				Damage="200.0"
+				Radius="100"
+				DamageType="BLAST"
+				DeathType="DETONATED"
+				PartitionFilterTestType="CIRCLE">
+				<SpecialObjectFilter
+					Rule="ALL">
+					<ExcludeThing>GDIAircraftS</ExcludeThing>
+				</SpecialObjectFilter>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODInfantryBHolyWaterDetonationTrigger">
+		<Nuggets>
+			<!-- This needs to be overridden and given a radius -->
+			<DamageNugget
+				id="DamageNugget_NODInfantryBHolyWaterDetonationTrigger"
+				Damage="1.0"
+				DamageType="FLAME"
+				DeathType="BURNED">
+				<SpecialObjectFilter
+					Rule="NONE">
+					<IncludeThing>NODInfantryBHolyWaterEffect_1</IncludeThing>
+					<IncludeThing>NODInfantryBHolyWaterEffect_2</IncludeThing>
+					<IncludeThing>NODInfantryBHolyWaterEffect_3</IncludeThing>
+				</SpecialObjectFilter>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Actual range is controlled by WeaponFireSpecialAbilityUpdate -->
+	<WeaponTemplate
+		id="GDIDefenseInfantryFireJumpJets"
+		AttackRange="999999.0"
+		WeaponSpeed="=$GDI_JUMPJET_SPEED"
+		ProjectileSelf="true"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="DummyWeaponWarhead" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="BaseBlastWeapon"
+		WeaponCategory="BLAST"/>
+
+	<WeaponTemplate
+		id="BaseCannonWeapon"
+		WeaponSpeed="800"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RequiredAntiMask="ANTI_GROUND"
+		CanFireWhileMoving="true"
+		WeaponCategory="CANNON">
+		<AccuracyParameters
+			id="CannonAccuracyParameters" 
+			BaseHitPercentage="100%"
+			MissType="OVERSHOOT"
+			HitModifierWhileMoving="-50%" />
+	</WeaponTemplate>
+
+	<!-- ReAcquireDetailType is PRE_FIRE instead of the default PER_SHOT because if we use
+	PER_SHOT it will find a new detail position immediately after firing but before the 
+	tracer is set up (so it will use a new, non-miss detail position) -->
+	<WeaponTemplate
+		id="BaseGunWeapon"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		ReAcquireDetailType="PRE_FIRE" 
+		PreloadClip="false"
+		CanFireWhileMoving="true"
+		AutoReloadWhenIdleSeconds="2.0s"
+		WeaponCategory="GUN">
+		<FiringDuration
+			id="GunFiringDuration"  
+			MinSeconds="=$EPSILON_SECONDS"
+			MaxSeconds="=$EPSILON_SECONDS" />
+		<AccuracyParameters
+			id="GunAccuracyParameters"
+			BaseHitPercentage="100%"
+			MissType="OVERSHOOT" />
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="BaseSpinUpGunWeapon"
+		inheritFrom="BaseGunWeapon">
+		<SpinUpInfo
+			SpinUpDuration="3.0s"
+			SpinDownDuration="2.0s"
+			SpinStartPercentage="20%">
+			<SpinUpModelCondition
+				PercentageSetAt="33%"
+				ModelConditionToSet="WEAPON_SPINUP_STAGE1"/>
+			<SpinUpModelCondition
+				PercentageSetAt="66%"
+				ModelConditionToSet="WEAPON_SPINUP_STAGE2"/>
+			<SpinUpModelCondition
+				PercentageSetAt="100%"
+				ModelConditionToSet="WEAPON_SPINUP_STAGE3"/>
+		</SpinUpInfo>
+	</WeaponTemplate>
+
+	<!-- Same as BaseGunWeapon, ReAcquireDetailType needs to be PRE_FIRE to prevent
+	the target detail type from changing before the LaserDraw has a chance to act on it -->
+	<WeaponTemplate
+		id="BaseLaserWeapon"
+		ReAcquireDetailType="PRE_FIRE"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_ENEMY_BUILDINGS"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		FinishAttackOnceStarted="true"
+		WeaponCategory="LASER">
+		<WeaponAiHintInfo
+			UseLongLockOnTimeCode="true"/>
+		<AccuracyParameters
+			id="LaserAccuracyParameters"
+			BaseHitPercentage="100%"
+			MissType="OVERSHOOT" />
+	</WeaponTemplate>
+
+	<!-- Note that rocket warhead weapons need to have their RequiredAntiMask set up,
+	otherwise the rockets will shoot at air units but not do any damage. -->
+	<WeaponTemplate
+		id="BaseRocketWeapon"
+		WeaponSpeed="200"
+		PreloadClip="false"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		CanFireWhileMoving="true"
+		WeaponCategory="MISSILE">
+		<!-- Lets the Kodiak anticipate incoming rocket damage -->
+		<Nuggets>
+			<InformTargetNugget/>
+		</Nuggets>
+		<AccuracyParameters
+			id="RocketAccuracyParameters"
+			BaseHitPercentage="100%"
+			MissDistance="50">
+			<AccuracyDetailVersusMoving
+				HitModifier="-50%">
+				<Filter Rule="ALL" />
+			</AccuracyDetailVersusMoving>
+		</AccuracyParameters>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="CliffJumpingWeaponTemplate"
+		AttackRange="999999.0"
+		MinimumAttackRange="20"
+		WeaponSpeed="250"
+		ProjectileSelf="true"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		AutoReloadsClip="AUTO"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		IdleAfterFiringDelaySeconds="0s"
+		PreAttackType="PER_SHOT">
+		<FiringDuration
+			MinSeconds="3.0s"
+			MaxSeconds="3.0s" />
+		<ClipReloadTime
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="CliffJumpingWeaponWarhead" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="CliffJumpingWeaponWarhead">
+		<!-- Intentially empty -->
+	</WeaponTemplate>		
+	
+	<!-- /////////////////////////////////// -->
+	<!--	Dying Aircraft Weapon definitions  -->
+	<WeaponTemplate
+		id="BaseDyingAircraft_DeathWeapon"
+		AttackRange="100.0"
+		WeaponSpeed="1250"
+		ClipSize="1"
+		AutoReloadsClip="AUTO"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_ENEMY_BUILDINGS"
+		RequiredAntiMask="ANTI_GROUND">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<Nuggets>
+			<DamageNugget
+				id="Tag_DamageNugget"
+				DamageType="BLAST"
+				DeathType="EXPLODED">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="BaseDyingAircraft_DeathWeapon_Large"
+		inheritFrom="BaseDyingAircraft_DeathWeapon">
+		<Nuggets>
+			<DamageNugget
+				id="Tag_DamageNugget"
+				Damage="100.0"
+				Radius="100.0"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="BaseDyingAircraft_DeathWeapon_Medium"
+		inheritFrom="BaseDyingAircraft_DeathWeapon">
+		<Nuggets>
+			<DamageNugget
+				id="Tag_DamageNugget"
+				Damage="50.0"
+				Radius="50.0"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- The faction specific weapons are only begin used to play the various fx needed -->
+	<!-- GDI -->
+	<WeaponTemplate
+		id="GDIDyingAircraft_DeathWeapon_Large"
+		inheritFrom="BaseDyingAircraft_DeathWeapon_Large">
+		<Nuggets>
+			<DamageNugget
+				id="Tag_DamageNugget"
+				DamageFXType="GDI_MISSILE"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIDyingAircraft_DeathWeapon_Medium"
+		inheritFrom="BaseDyingAircraft_DeathWeapon_Medium">
+		<Nuggets>
+			<DamageNugget
+				id="Tag_DamageNugget"
+				DamageFXType="GDI_MISSILE"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- NOD -->
+	<WeaponTemplate
+		id="NODDyingAircraft_DeathWeapon_Large"
+		inheritFrom="BaseDyingAircraft_DeathWeapon_Large">
+		<Nuggets>
+			<DamageNugget
+				id="Tag_DamageNugget"
+				DamageFXType="NOD_MISSILE"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODDyingAircraft_DeathWeapon_Medium"
+		inheritFrom="BaseDyingAircraft_DeathWeapon_Medium">
+		<Nuggets>
+			<DamageNugget
+				id="Tag_DamageNugget"
+				DamageFXType="NOD_MISSILE"/>
+		</Nuggets>
+	</WeaponTemplate>
+	<!-- /////////////////////////////////// -->
+	
+</AssetDeclaration>
+

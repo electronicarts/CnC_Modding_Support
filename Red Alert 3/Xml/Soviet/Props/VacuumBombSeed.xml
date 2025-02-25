@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:SBSuperweaponAdvanced_Missle_SKN.w3x" />
+		<Include type="all" source="ART:SBSuperweaponAdvanced_Missle_ATKA.w3x" />
+	</Includes>
+	<GameObject
+		id="VacuumBombSeed"
+		Side="Soviet"
+		EditorSorting="UNIT"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE INERT INERT_SHROUD_REVEALER"
+		EditorName="VacuumBombEffect">
+		<DisplayName>VacuumBombEffect</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				ExtraPublicBone="FX_Rocket Missle">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="SBSuperweaponAdvanced_Missle_SKN" />
+                    <ParticleSysBone
+                        BoneName="FX_Rocket"
+                        FXParticleSystemTemplate="VacuumTrailFire"
+                        FollowBone="true" />
+                    <ParticleSysBone
+                        BoneName="FX_Rocket"
+                        FXParticleSystemTemplate="VacuumTrailSmoke"
+                        FollowBone="true" />
+                        
+					<!-- Play these so the player knows where the effect has been placed -->                        
+                    <ParticleSysBone
+                        BoneName="None"
+                        FXParticleSystemTemplate="BeaconSmoke"
+                        FollowBone="true" />
+                    <ParticleSysBone
+                        BoneName="None"
+                        FXParticleSystemTemplate="BeaconFlare"
+                        FollowBone="true" />
+                        
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="SBSuperweaponAdvanced_Missle_ATKA"
+						AnimationMode="ONCE"	
+						AnimationBlendTime="0" />
+				</AnimationState>				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="4.0s"
+				MaxLifetime="4.0s" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_VacuumBomb">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_SOV_VacuumBomb_Explosion1MS" />
+			</FXListBehavior>
+			<FXListBehavior
+				id="ModuleTag_FXListAudio">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onCreate" FX="FX_SOV_VacuumImploder_FlareAudio" />
+			</FXListBehavior>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="SOV_VacuumBomb_MissileMoveLoopMS" AudioType="soundAmbient" />
+			<!-- <AudioEntry Sound="SOV_VacuumBomb_MissileLaunch" AudioType="soundMoveStart" /> no worky -->
+		</AudioArraySound>
+		
+		<VisionInfo
+			VisionRange="0"
+			ShroudClearingRange="300" />	
+		
+	</GameObject>
+</AssetDeclaration>

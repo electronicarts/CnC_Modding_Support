@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:NOD/Structures/NODTechAssemblyPlant.xml" />
+	</Includes>
+	<GameObject
+		id="BlackHandTechAssemblyPlant"
+		inheritFrom="NODTechAssemblyPlant"
+		Side="BlackHand"
+		EditorSorting="STRUCTURE"
+		CommandSet="BlackHandTechAssemblyPlantCommandSet"
+		EditorName="BlackHandTechAssemblyPlant"
+		Description="Desc:BlackHandTechAssemblyPlant"
+		TypeDescription="Type:BlackHandTechAssemblyPlant">
+		<GameDependency
+			xai:joinAction="Replace">
+			<RequiredObject>BlackHandOperationsCenter</RequiredObject>
+		</GameDependency>
+		<!--<ArmorSet
+			Armor="NODTechAssemblyPlantArmor"
+			DamageFX="FactionStructureDamageFX" />-->
+		<SkirmishAIInformation
+			BaseBuildingLocation="SPREAD" />
+		<Draws>
+			<ScriptedModelDraw
+				xai:joinAction="Replace"
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechPlant" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="NB_TechPlant" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NB_TechPlantA_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NB_TechPlant_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NB_TechPlant_D2SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NB_TechPlant" />
+					<Texture
+						Original="NB_Tech"
+						New="NB_Tech_D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>		
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Script>
+						CurDrawableHideSubObject("UG_EMP")
+						CurDrawableHideSubObject("UG_Lasers")
+						CurDrawableHideSubObject("UG_SigGen")
+						CurDrawableHideSubObject("UG_DozerBlades")
+					</Script>	
+				</AnimationState>		
+				<!-- BUILDUP ANIMATION -->						
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NB_TechPlantA_AN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Large"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NB_TechPlant_D3AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NB_TechPlant_D2AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NB_TechPlant_D2AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NB_TechPlant_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			
+			<GrantUpgradeAreaOfEffectSpecialPower
+				id="ModuleTag_RedemptionTrigger"
+				xai:joinAction="Remove" />
+							
+			<OCLSpecialPower
+				id="ModuleTag_Redemption"
+				xai:joinAction="Remove" />
+
+			<AISpecialPowerUpdate
+				id="ModuleTag_NODTechLabRedemptionAI"
+				xai:joinAction="Remove"	/>	
+				
+			<SubObjectsUpgrade
+				xai:joinAction="Remove"
+				id="ModuleTag_LaserCapacitorSubObject"
+				ShowSubObjects="UG_Lasers">
+				<TriggeredBy>Upgrade_NODTechCenterLaserCapacitor</TriggeredBy>
+			</SubObjectsUpgrade>		
+			<SubObjectsUpgrade
+				id="ModuleTag_ChargedParticleBeamSubObject"
+				ShowSubObjects="CHARGEDPARTICALBEAM_01 CHARGEDPARTICALBEAM_02 CHARGEDPARTICALBEAM_03">
+				<TriggeredBy>Upgrade_NodTechCenterChargedParticleBeam</TriggeredBy>
+			</SubObjectsUpgrade>
+<!-- Decoy Temple Power -->		
+			<OCLSpecialPower
+				id="ModuleTag_SpecialPowerDecoyTemple"
+				SpecialPowerTemplate="SpecialPower_DecoyTemple"
+				OCL="OCL_CreateDecoyTemple"
+				CreateLocation="CREATE_AT_LOCATION"
+			/>	
+
+			<GrantUpgradeAreaOfEffectSpecialPower
+				xai:joinAction="Remove"
+				id="ModuleTag_CloakingField"
+				SpecialPowerTemplate="SpecialPower_LaserFencing" 
+				TriggerFX="FX_NOD_LaserFencingTriggeredByBuilding"
+				Radius="10">
+				<AcceptObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE"
+				/>
+				<UpgradeTemplate>Upgrade_CloakingFieldInvisibility</UpgradeTemplate>
+			</GrantUpgradeAreaOfEffectSpecialPower>
+			<WeaponFireSpecialAbilityUpdate
+				xai:joinAction="Remove"
+				id="ModuleTag_WeaponFireSpecialAbilityUpdateLaserFencing"
+				SpecialPowerTemplate="SpecialPower_LaserFencing"
+				SpecialWeapon="CloakingFieldKillInfantryWeapon"
+				WhichSpecialWeapon="2"
+			/>
+			<AISpecialPowerUpdate
+				xai:joinAction="Remove"
+				id="ModuleTag_NODTechLabLaserFencingAI"
+				CommandButtonName="Command_SpecialPowerLaserFencing"
+				AllyUnitInclude="STRUCTURE"
+				SpecialPowerRadius="100.0" 
+				SpecialPowerAIType="SPECIAL_POWER_AOE_BUFF"
+			/>			
+			<xi:include
+				xai:joinAction="Remove"
+				href="../../Includes/AdvancedNODBuildingDestruction.xml" />
+			<xi:include
+				xai:joinAction="Remove"
+				href="../../Includes/AdvancedNODBuildingSuicide.xml" />
+			
+			<xi:include
+				href="../../Includes/AdvancedBlackHandBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/AdvancedBlackHandBuildingSuicide.xml" />
+
+
+				
+					
+		</Behaviors>
+	</GameObject>
+</AssetDeclaration>

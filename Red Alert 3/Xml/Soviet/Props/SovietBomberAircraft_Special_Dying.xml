@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+		
+		<Include
+			type="all"
+			source="ART:SUBomberAircraft_Special_Dying_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:SUBomberAircraft_DYING.w3x" />			
+		<Include
+			type="all"
+			source="ART:SUBomberAircraft_D.xml" />
+		<Include type="instance" source="DATA:Soviet/props/SovietBomberAircraft_Special_Collapse.xml" />
+							
+	</Includes>
+	<GameObject
+		id="SovietBomberAircraft_Special_Dying"
+		EditorName="SovietBomberAircraft_Special_Dying"
+		Description="Desc:SovietBomberAircraft_Special_Dying"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FX_Fire_01 FX_Fire_02 FX_Fire_03 FX_Lfan FX_Rfan">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SUBomberAircraft_Special_Dying_SKN" />
+					<Texture
+						Original="SUBomberAircraft"
+						New="SUBomberAircraft_D" />		
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="KirovDestructionMainFire01"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="KirovDestructionMainSmoke01"
+						FollowBone="true" />
+        </ModelConditionState>							
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="SUBomberAircraft_DYING"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="1.4"
+						AnimationSpeedFactorMax="1.8" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		
+		</Draws>
+		<Behaviors>
+			<ProjectileUpdate
+				id="ModuleTag_BombUpdate"
+				StateMachine="BombProjectile"
+				MinDetonationHeight="12"
+				MinTargetDistance="5">
+				<Movement>
+					<MoveToGround
+						Acceleration="0.1"
+						TerminalVelocity="2.5"
+						ForwardVelocityDamping="5%"/>
+				</Movement>
+			</ProjectileUpdate>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SUBomberAircraft_Special_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<ShipSlowDeath
+				id="ModuleTag_Rotate"
+				DestructionDelay="10s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</ShipSlowDeath>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="100" />
+		</Body>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="300" />		
+	</GameObject>
+
+	<ObjectCreationList
+		id="SUBomberAircraft_Special_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING INHERIT_VELOCITY"
+			Count="1"
+			VelocityScale="1.0"
+			MinForceMagnitude="0.05"
+			MaxForceMagnitude="0.1"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>SovietBomberAircraft_Special_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+	
+</AssetDeclaration>

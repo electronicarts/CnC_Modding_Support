@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance"  xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include type="all"	source="ART:SUAntiGroundAircraft_SKN.w3x" />
+		<Include type="all"	source="ART:SUAntiGroundAircraft_FP.w3x" />
+		<Include type="all"	source="ART:SUAntiGroundAircraft_IDLA.w3x" />
+		<Include type="all"	source="ART:SUAntiGroundAircraft_MOVA.w3x" />	
+		<Include type="all"	source="ART:SUAntiGroundAircraft_D.xml" />
+		<Include type="all"	source="ART:FXTracerHeroic.xml" />
+		<Include type="all"	source="ART:FXTracer.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<!-- aka Hind aka Twinblade -->
+	<GameObject
+		id="SovietAntiGroundAircraft"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_SovietAntiGroundAircraft_big"
+		ButtonImage="Button_SovietAntiGroundAircraft_small"
+		Side="Soviet"
+		SubGroupPriority="720"
+		EditorSorting="UNIT"
+		TransportSlotCount="20"
+		BuildTime="15"
+		CommandSet="SovietAntiGroundAircraftCommandSet"
+		KindOf="CAN_CAST_REFLECTIONS CAN_ATTACK SELECTABLE SCORE AIRCRAFT VEHICLE ASSAULT_AIRCRAFT LINE_OF_SIGHT_IGNORES_BUILDINGS CAN_BE_FAVORITE_UNIT TRANSPORT LEAVE_PARKING_ON_BUILD_COMPLETE PRODUCED_AT_HELIPAD"
+		RadarPriority="UNIT"
+		ThreatLevel="10"
+		ProductionQueueType="AIRCRAFT"
+		UnitCategory="AIRCRAFT"
+		WeaponCategory="MISSILE"
+		VoicePriority="148"
+		EditorName="SovietAntiGroundAircraft"
+		Description="Desc:SovietAntiGroundAircraft"
+		TypeDescription="Type:SovietAntiGroundAircraft"
+		HealthBoxHeightOffset="35"
+		UnitIntro="Soviet_Twinblade_UnitIntro">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SovietAntiGroundAircraft</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="1200"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietAntiGroundAircraftArmor"
+			DamageFX="AircraftDamageFX" />
+		<LocomotorSet
+			Locomotor="BasicHelicopterTaxiLocomotor"
+			Condition="TAXIING"
+			Speed="10" />
+		<LocomotorSet
+			Locomotor="SovietAntiGroundAircraftLocomotor"
+			Condition="NORMAL"
+			Speed="150.0" />
+
+		<!-- Need ConquerMetricsOverrideDefendingAntiMask or else the TAXIING locomotor will make the AI try to build anti-ground units against this -->
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true"
+			ConquerMetricsOverrideDefendingAntiMask="ANTI_AIRBORNE_VEHICLE" />
+
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="SUANTIGROUNDAIRCRAFT">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SUAntiGroundAircraft_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON_ROCKETS_" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON_ROCKETS_" />
+					<WeaponFireFXBone
+						WeaponSlotID="2"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON_" />
+					<WeaponLaunchBone
+						WeaponSlotID="2"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON_" />
+					<Turret
+						TurretNameKey="Bone_Turret"
+						TurretPitch="Bone_turret_pitch"
+						TurretID="2" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="SUAntiGroundAircraft_FP" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="SUAntiGroundAircraft_SKN" />
+					<Texture
+						Original="SUAntiGroundAircraft"
+						New="SUAntiGroundAircraft_D" />
+					<ParticleSysBone
+						BoneName="FX_Damage01"
+						FXParticleSystemTemplate="ChopperDamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="SUAntiGroundAircraft_SKN" />
+					<Texture
+						Original="SUAntiGroundAircraft"
+						New="SUAntiGroundAircraft_D" />
+					<ParticleSysBone
+						BoneName="FX_Damage01"
+						FXParticleSystemTemplate="ChopperDamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Damage01"
+						FXParticleSystemTemplate="ChopperDamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="SUAntiGroundAircraft_IDLA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+          <Animation
+						AnimationName="SUAntiGroundAircraft_IDLA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="HelicopterMovingWaterWake"
+						FollowBone="false" />
+        </AnimationState>        
+        
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING OVER_WATER">
+					<Animation
+						AnimationName="SUAntiGroundAircraft_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="HelicopterMovingWaterWake"
+						FollowBone="false" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="SUAntiGroundAircraft_MOVA"
+						AnimationMode="LOOP" 
+						AnimationBlendTime="15"/>
+				</AnimationState>
+
+  			<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="WALKING">
+					<Animation
+						AnimationName="SUAntiGroundAircraft_IDLA"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="15" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw"
+				MinLength="25.0"
+				MaxLength="50.0"
+				Width="6.0"
+				MinSpeed="18"
+				MaxSpeed="40"
+				SweepSpeed="2.0"
+				SpreadAngle="5.0"
+				MinTracersPerFrame=".3"
+				MaxTracersPerFrame=".5"
+				FrameLifeTime="25"
+				WeaponSlotType="PRIMARY_WEAPON"
+				WeaponSlotID="2"
+				Texture="FXTracer"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_BulletHitSovietLarge">
+				<HeadColor r="1.0" g="1.0" b="1.0" a="1.0" />
+				<TailColor r="0.0" g="0.0" b="0.0" a="0.0" />
+				<ObjectStatusValidation
+					ForbiddenStatus="WEAPON_UPGRADED_01" />
+			</TracerModelDraw>
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDrawVeterancy"
+				MinLength="50.0"
+				MaxLength="50.0"
+				Width="10.0"
+				MinSpeed="30"
+				MaxSpeed="30"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame="0.5"
+				MaxTracersPerFrame="0.5"
+				FrameLifeTime="35"
+				WeaponSlotType="PRIMARY_WEAPON"
+				WeaponSlotID="2"
+				Texture="FXTracerHeroic"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_BulletHitSovietLarge">
+				<HeadColor r="1.0" g="0.0" b="0.0" a="1.0" />
+				<TailColor r="1.0" g="0.0" b="0.0" a="0.0" />
+				<ObjectStatusValidation
+					RequiredStatus="WEAPON_UPGRADED_01" />
+			</TracerModelDraw>
+			
+		</Draws>
+		
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietAntiGroundAircraftWeapon" />
+				</WeaponSlotHardpoint>
+				<WeaponSlotTurret
+					ID="2">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietAntiGroundAircraftAutoCannon"/>
+					<TurretSettings
+						TurretTurnRate="360"
+						MinimumPitch="-60d"
+						AllowsPitch="true"
+						PitchHeight="10%"
+						TurretPitchRate="180"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="4.0s"
+						MinIdleScanAngle="30.0"
+						MaxIdleScanAngle="50.0">
+						<TurretAITargetChooserData
+							IdleScanDelay="=$FAST_IDLE_SCAN_DELAY"
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<!-- gravity mult of 30 is temporary -->
+			<Physics
+				id="ModuleTag_Physics"
+				GravityMultiplier="30" />
+
+			<TransportContain
+				id="ModuleTag_Contain"
+				ObjectStatusOfContained="UNSELECTABLE NO_ATTACK"
+				ObjectStatusWhileContaining="CONTAINER_OCCUPIED CANNOT_LAND_AT_AIRFIELD"
+				ContainMax="5"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="true"
+				AllowNeutralInside="false"
+				AllowOwnPlayerInsideOverride="true"
+				ShowPips="true"
+				EnterSound="VehicleEnter"
+				ExitSound="VehicleExit"
+				KillPassengersOnDeath="true"
+				ConditionForEntry="INVALID"
+				ExtendedExitContainerChecks="true">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY VEHICLE"
+					Exclude="AIRCRAFT SHIP SUBMARINE"
+					StatusBitFlagsExclude="AIRBORNE_TARGET">
+					<ExcludeThing>AlliedAntiNavyShipTech1</ExcludeThing>
+					<ExcludeThing>JapanAntiInfantryVehicle</ExcludeThing>
+					<ExcludeThing>JapanAntiAirVehicleTech1</ExcludeThing>
+				</PassengerFilter>
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="NONE">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</PassengerData>
+				<PassengerData
+					BonePrefix="SUANTIGROUNDAIRCRAFT"
+					MaxPassengers="1"
+					SlingUnderBone="true">
+					<Filter
+						Rule="NONE"
+						Include="VEHICLE" />
+				</PassengerData>
+			</TransportContain>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SUAntiGroundAircraft_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="PARKED_AT_AIRFIELD"/>
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieAtAirfield"
+				CreationList="SUAntiGroundAircraft_Collapse_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="PARKED_AT_AIRFIELD"/>
+			</CreateObjectDie>
+			<DynamicsUpdate
+				id="ModuleTag_DefaultDynamicsUpdate"
+				xai:joinAction="Remove" />
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_SOV_TwinbladeDie" />
+			</FXListBehavior>
+		</Behaviors>
+		<AI>
+			<!-- This should really be a 'AIUpdate' but there are some small issues. -->
+			<JetAIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="TransportHelicopterAIStateMachine">
+				<UnitAITargetChooserData 
+					IdleScanDelay="=$FAST_IDLE_SCAN_DELAY"/>
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Flying">
+				<ModelConditionSound Sound="SOV_Hind_MoveLand" RequiredFlags="LANDING" />
+				<ModelConditionSound Sound="SOV_Hind_MoveLift" RequiredFlags="TAKING_OFF" />
+				<ModelConditionSound Sound="SOV_Hind_MoveLoop" RequiredFlags="FLYING MOVING" ExcludedFlags="DAMAGED REALLYDAMAGED DYING" />
+				<ModelConditionSound Sound="SOV_Hind_MoveDamagedLoop" RequiredFlags="FLYING MOVING DAMAGED" ExcludedFlags="REALLYDAMAGED DYING" />
+				<ModelConditionSound Sound="SOV_Hind_MoveReallyDamagedLoop" RequiredFlags="FLYING MOVING REALLYDAMAGED" ExcludedFlags="DAMAGED DYING" />
+				<ModelConditionSound Sound="SOV_Hind_IdleLoop" RequiredFlags="FLYING" ExcludedFlags="DAMAGED REALLYDAMAGED MOVING" />
+				<ModelConditionSound Sound="SOV_Hind_IdleDamagedLoop" RequiredFlags="FLYING DAMAGED" ExcludedFlags="REALLYDAMAGED MOVING" />
+				<ModelConditionSound Sound="SOV_Hind_IdleReallyDamagedLoop" RequiredFlags="FLYING REALLYDAMAGED" ExcludedFlags="DAMAGED MOVING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrusherLevel="0"
+			CrushableLevel="20" />
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="16.0"
+				MinorRadius="11.0"
+				Height="8.0"
+				ContactPointGeneration="VEHICLE">
+				<Offset
+					x="-4" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="SOV_Twinblade_VoiceAttack" AudioType="voiceAttack" />
+			<AudioEntry Sound="SOV_Twinblade_VoiceMoveAttack" AudioType="voiceAttackAfterMoving" />
+			<AudioEntry Sound="SOV_Twinblade_VoiceCreate" AudioType="voiceCreated" />
+			<AudioEntry Sound="SOV_Twinblade_VoiceMove" AudioType="voiceMove" />
+			<AudioEntry Sound="SOV_Twinblade_VoiceRetreat" AudioType="voiceRetreatToCastle" />
+			<AudioEntry Sound="SOV_Twinblade_VoiceSelectMS" AudioType="voiceSelect" />
+			<AudioEntry Sound="SOV_Twinblade_VoiceSelectBattleMS" AudioType="voiceSelectBattle" />
+			<AudioEntry Sound="SOV_Twinblade_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="SOV_Hind_MoveStart" AudioType="soundMoveStart" />
+			<!-- <AudioEntry Sound="SOV_Hind_MoveLoop" AudioType="soundMoveLoop" /> -->
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="200"
+			ShroudClearingRange="=$STANDARD_SHROUD_CLEAR" />
+	</GameObject>
+</AssetDeclaration>

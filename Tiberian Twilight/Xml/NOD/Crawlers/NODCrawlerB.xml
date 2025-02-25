@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<!-- Offense Crawler -->
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="NODCrawlerBVehicle.xml" />
+		<Include type="all" source="NODCrawlerBStructure.xml" />
+		<Include type="all" source="NODCrawlerBProps.xml" />
+		<Include type="all" source="NODCrawlerBVehicle_Collapse.xml" />
+		<Include type="all" source="NODCrawlerBStructure_Collapse.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+	</Includes>
+
+	<WeaponTemplate
+		id="NODCrawlerBLaserWeapon"
+		inheritFrom="BaseLaserWeapon"
+		AttackRange="=$NOD_OFFENSE_CRAWLER_LASER_ATTACK_RANGE"
+		UseCenterForRangeCheck="true"
+		MinimumAttackRange="50.0"
+		FireSound="NOD_CrawlerBOffense_LaserWeaponFire"
+		FireFX="FX_NODLaserMedium_Fire"
+		PreAttackFX="FX_NODLaserMedium_PreFire"
+		FireStrongCounterFX="FX_NODLaserMedium_Fire_Veteran"
+		CanFireWhileMoving="true">
+		<PreAttackDelay
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.5s"
+				LaserId="1"
+				HitGroundFX="FX_NODLaser_Medium_Miss"/>
+			<LineDamageNugget
+				Damage="80.0"
+				LineWidth="5.0"
+				DamageType="LASER"
+				DamageFXType="NOD_LASER"
+				DeathType="LASERED"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODCrawlerBFlameWeapon"
+		AttackRange="=$NOD_OFFENSE_CRAWLER_FLAME_ATTACK_RANGE"
+		WeaponSpeed="200.0"
+		PreAttackType="PER_SHOT"
+		RequiredAntiMask="ANTI_STRUCTURE ANTI_GROUND"
+		ClipSize="0"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT CAN_FIRE_ON_GROUND"
+		FireSound="NOD_CrawlerBOffense_FireballWeaponFire"
+		FireFX="FX_NODFireball_Muzzle" 
+		CanFireWhileMoving="true"
+		WeaponCategory="BLAST">
+		<FiringDuration
+				MinSeconds="5s"
+				MaxSeconds="5s" />
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="NODCrawlerBFlameWeaponProjectile"
+				WarheadTemplate="NODCrawlerBFlameWeaponWarhead">
+				<RandomPositionMin x="-20" y="-20" z="0"/>
+				<RandomPositionMax x="20" y="20" z="0"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="NODCrawlerBFlameWeaponWarhead"
+		ProjectileCollidesWith="ENEMIES">
+		<Nuggets>
+			<DamageNugget
+				Damage="100.0"
+				Radius="=$NOD_CRAWLER_B_FLAME_WEAPON_DOT_RADIUS"
+				DamageType="BLAST"
+				FXListVictim="FX_NOD_FireDamage"
+				DeathType="NORMAL" />
+			<WeaponOCLNugget
+				WeaponOCL="OCL_NODCrawlerBFlameWeaponWarhead"
+				ForbiddenSourceObjectStatus="CLONED FIRESTORM_PLAYERPOWER_ACTIVE"/>
+			<WeaponOCLNugget
+				WeaponOCL="OCL_CreateNODCrawlerBFirestormOCL"
+				ForbiddenSourceObjectStatus="CLONED"
+				RequiredSourceObjectStatus="FIRESTORM_PLAYERPOWER_ACTIVE"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODCrawlerBFlameWeaponWarheadDOTWeapon"
+		inheritFrom="NODInfantryBHolyWaterDetonationTrigger"
+		FireFX="FX_NOD_FireballHit">
+		<Nuggets>
+			<DOTNugget
+				Damage="1"
+				Radius="=$NOD_CRAWLER_B_FLAME_WEAPON_DOT_RADIUS"
+				DamageInterval="0.5s"
+				DamageDuration="5s"
+				DamageType="BLAST"
+				DamageFXType="NOD_FLAMETHROWER"
+				DeathType="BURNED"
+				ForbiddenTargetObjectStatus="AFLAME">
+			</DOTNugget>
+			<DamageNugget
+				id="DamageNugget_NODInfantryBHolyWaterDetonationTrigger"
+				Radius="=$NOD_CRAWLER_B_FLAME_WEAPON_DOT_RADIUS" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- removed
+	 			FireFX="FX_NODLateFire
+					 -->
+	<WeaponTemplate
+		id="Weapon_NODCrawlerBFirestormWeapon">
+		<Nuggets>
+			<DamageNugget
+				Damage="20"
+				Radius="=$NOD_CRAWLER_B_FLAME_WEAPON_DOT_RADIUS"
+				DamageType="BLAST"
+				FXListVictim="FX_NOD_FireDamage"
+				DeathType="BURNED" >
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="Weapon_NODCrawlerBOneShotFirestormWeapon"
+		inheritFrom="GenericOneShotFirestormWeapon">
+		<Nuggets>
+			<DamageNugget
+				id="DamageNugget_OneShotFirestorm"
+				Radius="=$NOD_CRAWLER_B_FLAME_WEAPON_DOT_RADIUS">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<ObjectCreationList
+		id="OCL_NODCrawlerBFlameWeaponWarhead">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODCrawlerBWeaponWarheadEgg"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_CreateNODCrawlerBFirestormOCL">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="NODCrawlerBFirestormDamager"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+	
+	
+</AssetDeclaration>

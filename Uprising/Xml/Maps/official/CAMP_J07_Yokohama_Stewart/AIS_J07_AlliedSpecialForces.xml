@@ -1,0 +1,299 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+  </Includes>
+
+  <!-- OBJECTIVE 1 -->
+
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedFighterAircraftDefense"
+    MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_1"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Relay_01" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Relay_04" Priority="30"/>
+    <Tactic id="Defend" Tactic="StaticDefense" Distance="350" EndBehavior="RETURN_HOME_AND_DISBAND">
+      <TeamTemplate MinUnits="2" MaxUnits="4"
+                    IncludeKindOf="CAN_ATTACK FIGHTER_AIRCRAFT" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    MicroManager="FearlessDefenseMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- OBJECTIVE 3 -->
+  <!-- This state take control of scipted paradrops and attacks the outposts with them -->
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedParatroopers_Hive_A"
+    MaxTargets="4">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_outpost_01_not_captured"/>
+      <ScriptedFlagHeuristic FlagName="f_hive_01_alive"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Hive_01" Priority="50"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="1" MaxUnits="4"
+                    IncludeKindOf="INFANTRY CAN_ATTACK" ExcludeKindOf="VEHICLE IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HIGH" AlwaysRecruit="true"
+                    MicroManager="FearlessMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedParatroopers_Hive_B"
+    MaxTargets="4">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_outpost_04_not_captured"/>
+      <ScriptedFlagHeuristic FlagName="f_hive_04_alive"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Hive_02" Priority="50"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="1" MaxUnits="4"
+                    IncludeKindOf="INFANTRY CAN_ATTACK" ExcludeKindOf="VEHICLE IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HIGH" AlwaysRecruit="true"
+                    MicroManager="FearlessMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedParatroopers"
+    MaxTargets="8">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_1_incomplete"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestOffensiveStructureHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="CloseToShoreStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundUnitHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="1" MaxUnits="8"
+                    IncludeKindOf="INFANTRY CAN_ATTACK" ExcludeKindOf="VEHICLE IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    MicroManager="FearlessMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- OBJECTIVE 2 -->
+
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedVindicatorAttack"
+    MaxTargets="4">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_show_outpost_hotspots"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestOffensiveStructureHeuristic" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="CloseToShoreStructureHeuristic" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirSurfaceUnitHeuristic" Priority="20"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="1" MaxUnits="2"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="FearlessVindicatorMicroManager">
+        <ObjectFilter Rule="NONE">
+          <IncludeThing>AlliedAntiGroundAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedCenturyBomberAttack"
+    MaxTargets="4">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirSurfaceVehicleHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirPowerPlantHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic_NonUnique" Priority="5"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="2"
+                    RegisteredObjectSet="AIRCRAFT"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false" SortByDistance="false"
+                    MicroManager="FearlessCenturyBomberMicroManager">
+        <ObjectFilter Rule="ANY">
+          <IncludeThing>AlliedBomberAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedWaterAttack_EASY"
+    MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristic" Priority="60"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristic" Priority="50"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="3" MaxUnits="5"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="ASSAULT_AIRCRAFT FIGHTER_AIRCRAFT BOMBER_AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedWaterAttack_MEDIUM"
+    MaxTargets="4">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristic" Priority="60"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristic" Priority="50"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="4" MaxUnits="6"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="ASSAULT_AIRCRAFT FIGHTER_AIRCRAFT BOMBER_AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedWaterAttack_HARD"
+    MaxTargets="5">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristic" Priority="60"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristic" Priority="50"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="5" MaxUnits="7"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="ASSAULT_AIRCRAFT FIGHTER_AIRCRAFT BOMBER_AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedAmphibiousAttack_EASY"
+    MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristic" Priority="30"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="2" MaxUnits="4"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="ASSAULT_AIRCRAFT FIGHTER_AIRCRAFT BOMBER_AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedAmphibiousAttack_MEDIUM"
+    MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristic" Priority="30"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="3" MaxUnits="5"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="ASSAULT_AIRCRAFT FIGHTER_AIRCRAFT BOMBER_AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedAmphibiousAttack_HARD"
+    MaxTargets="4">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="40"/>
+    <TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristic" Priority="30"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="4" MaxUnits="6"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="ASSAULT_AIRCRAFT FIGHTER_AIRCRAFT BOMBER_AIRCRAFT IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS AIR"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- OBJECTIVE 3 -->
+  <!-- This state guards the relay stations -->
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedRelayStationGuards"
+    MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Relay_01" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Relay_02" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Relay_03" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Relay_04" Priority="10"/>
+    <Tactic id="Defend" Tactic="StaticDefense" Distance="250" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="4"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND"
+                    Priority="HIGH" AlwaysRecruit="true"
+                    MicroManager="FearlessDefenseMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+   id="AIState_J07_AlliedShrinkFreezeSuprise"
+   MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_3"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="CommandoUnitHeuristic" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirUnitHeuristic" Priority="30"/>
+    <TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="20"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="RETURN_HOME_AND_DISBAND">
+      <TeamTemplate MinUnits="2" MaxUnits="4"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="HarrassmentMicroManager">
+        <ObjectFilter Rule="NONE">
+          <IncludeThing>AlliedSupportAircraft</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J07_AlliedCaptureAttempt"
+    MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_3"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="50"/>
+    <Tactic id="Attack" Tactic="DefenseAvoidanceAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="5"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="HIGH" AlwaysRecruit="false"
+                    MicroManager="FearlessCaptureAnythingMicroManager">
+        <CreateUnits UnitName="AlliedEngineer" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+</AssetDeclaration>

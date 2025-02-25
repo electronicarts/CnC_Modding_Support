@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- Neutral Sonic Fence Network -->
+	
+	<!-- 
+		'CAPTURED_BY_GDI' Model Condition - Set when the gate is captured by GDI   
+		'CAPTURED_BY_NOD' Model Condition - Set when the gate is captured by Nod  
+		'USER_3' Object Status & Model Condition - Set when the gate is OPEN
+		'USER_4' Object Status & Model Condition - Set when the gate is CLOSED
+	-->
+	<Includes>
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseTechStructure.xml" />
+
+        <Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+        <Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+ 
+	<GameObject
+		id="TechStructureI_Base"
+		inheritFrom="BaseTechStructure"
+		HealthBoxHeightOffset="92"
+		SubGroupPriority="469"
+		SelectPortrait="Portrait_Neutral_TSL_Structure_I_GDI"
+		ButtonImage="Portrait_Neutral_TSL_Structure_I_GDI"
+		Side="Neutral"
+        ParticipationValue="=$NEUTRALTECHSTRUCTUREI_PARTICIPATION_VALUE"
+		BuildTime="1.0"
+		EnergyProduction="0"
+		CommandSet="TechStructureICommandSet"
+		KindOf="+CLASSIFY_ENTIRE_FOOTPRINT +ALLIES_CAN_USE_ABILITIES +NO_HEALTH_BAR +TREAT_AS_TERRAIN_FOR_LINE_OF_SIGHT"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="NEUTRAL_Struct_Barrier_Base(Do Not Place)"
+		EditorSorting="STRUCTURE" 
+		WeaponCategory="NONE"
+		Description="Desc:TechStructureI"
+		TypeDescription="Type:TechStructureI">
+		<DisplayName xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechStructureI</DisplayName>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Behaviors>
+
+			<ProximityCaptureUpdate
+				id="ModuleTag_ProximityCaptureUpdate"
+				CaptureRadius="=$TECH_STRUCTURE_PROXIMITY_CAPTURE_RADIUS"
+				NeutralCapturingDurationInSec="20s"
+				OwningCapturingDurationInSec="30s"
+				FXForCapture="FX_TechBuilding_Captured"
+				FXForLoss="FX_TechBuilding_Lost">
+				<CapturingObjectFilter
+					Rule="ANY"
+					Include="INFANTRY VEHICLE CRAWLER OBJECTIVE_STRUCTURE GARRISON"
+					Exclude="AIRCRAFT"
+					StatusBitFlagsExclude="BURROWING AIRBORNE_TARGET CLONED NOT_ABLE_TO_CAPTURE">
+					<IncludeThing>GDIAircraftS</IncludeThing>
+					<ExcludeThing>GoalStructure</ExcludeThing>
+					<ExcludeThing>MonumentShieldGenerator</ExcludeThing>
+					<ExcludeThing>GDIScoutDrone</ExcludeThing>
+					<ExcludeThing>NODObeliskOfLife</ExcludeThing>
+				</CapturingObjectFilter>
+				<ProximityCaptureModelCondition
+					ModelConditionsToSetWhenCaptured="CAPTURED_BY_GDI"
+					RequiredFaction="GDI">
+				</ProximityCaptureModelCondition>
+				<ProximityCaptureModelCondition
+					ModelConditionsToSetWhenCaptured="CAPTURED_BY_NOD"
+					RequiredFaction="NOD">
+				</ProximityCaptureModelCondition>
+				<ProximityCaptureModelCondition
+					ModelConditionsToClearWhenCaptured="CAPTURED_BY_GDI CAPTURED_BY_NOD"
+					RequiredFaction="Neutral">
+				</ProximityCaptureModelCondition>
+			</ProximityCaptureUpdate>						 
+
+			<!-- Manages the state of the gate -->
+			<GateOpenAndCloseBehavior
+				id="ModuleTag_GateOpenAndCloseBehavior"
+				Options="OPEN_BY_DEFAULT OPEN_CLOSE_ON_STATUS OPEN_WHEN_DISABLED REPEL_ON_COLLIDE"
+				PercentOpenForPathing="50"
+				ForceOpenWhenModelConditionNotSet="CAPTURED_BY_GDI CAPTURED_BY_NOD"
+				ResetFrames="30">
+				<OpenStatusValidation
+					RequiredStatus="USER_3" />
+				<GeometriesForClosed>GATE</GeometriesForClosed>
+				<OutOfTheWayPosition x="350" y="255" z="0" />
+				<OutOfTheWayPosition x="350" y="-95" z="0" />
+			</GateOpenAndCloseBehavior>
+
+			<!-- required so flingable props respect door -->
+			<DynamicsUpdate
+				id="ModuleTag_DefaultDynamicsUpdate"
+				Motion="STATIC"
+				Collision="OMNICOLLIDING" />			
+			
+			<!-- Allows toggling between states that trigger gate state change to OPEN and CLOSE -->
+			<SpecialPower
+				id="ModuleTag_ToggleGate"
+				SpecialPowerTemplate="SpecialPower_TechStructureIToggleGate"
+				UpdateModuleStartsAttack="true" />
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleGateUpdate"
+				SpecialPowerTemplate="SpecialPower_TechStructureIToggleGate"
+				UnpackTime="1.0s"
+				Options="BUSY_DURING_UNPACK">
+				
+				<!-- USER_3 is used to denote the gate being OPEN -->
+				<ToggleState
+					ObjectStatus="USER_3"
+					ModelConditions="USER_3"
+					InitiateIntentToExitStateSound="NEU_SonicFence_StrI_FenceCloseMS">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_ALWAYS"
+						UseOnlyWhenPowerAdvantageIsBelow="1.0">
+					</SkirmishAiInfo>					
+				</ToggleState>
+
+				<!-- USER_4 is used to denote the gate being CLOSED -->
+				<ToggleState
+					ObjectStatus="USER_4"
+					ModelConditions="USER_4"
+					InitiateIntentToExitStateSound="NEU_SonicFence_StrI_FenceOpenMS">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_ALWAYS"
+						UseOnlyWhenPowerAdvantageIsAbove="4.0">
+					</SkirmishAiInfo>
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="AIUpdate"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				InitialHealth="1.0"
+				MaxHealth="1000.0"/>			  						
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_FenceLoop">
+				<ModelConditionSound Sound="NEU_SonicFence_StrI_FenceLoop" RequiredFlags="USER_4" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NEU_SonicFence_StrI_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET			-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_TechStructureIToggleGate">
+		<SpecialPower>SpecialPower_TechStructureIToggleGate</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo Heuristic="TOGGLE"/>
+		</AISpecialPower>
+	</LogicCommand>
+	
+	<LogicCommandSet
+		id="TechStructureICommandSet">
+		<Cmd>Command_TechStructureIToggleGate</Cmd>
+	</LogicCommandSet>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_TechStructureIToggleGate"
+		TargetType="NONE"
+		ReloadTime="1.0s"
+		Flags="CAN_NOT_BE_SCRAMBLED"
+		WaypointModeTerminal="false" />
+
+</AssetDeclaration>

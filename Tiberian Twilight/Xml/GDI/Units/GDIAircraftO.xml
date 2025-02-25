@@ -1,0 +1,821 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- GDI Aircraft O / Zephyr / Spanner / GDI S Tier 1 Light Caster -->
+	<Includes>
+		<Include type="all"	source="ART:GUS_AircraftO_ACLA.w3x" />
+		<Include type="all"	source="ART:GUS_AircraftO_DCLA.w3x" />
+		<Include type="all"	source="ART:GUS_AircraftO_AIDA.w3x" />
+		<Include type="all"	source="ART:GUS_AircraftO_MOVA.w3x" />
+		<Include type="all"	source="ART:GUS_AircraftO_MOVD.w3x" />
+		<Include type="all"	source="ART:GUS_AircraftO_RPRA.w3x" />
+		<Include type="all"	source="ART:GUS_AircraftO_SKN.w3x" />
+		<Include type="all"	source="ART:GUS_AircraftO_TRNL.w3x" />
+		<Include type="all"	source="ART:GUS_AircraftO_TRNR.w3x" />
+		<Include type="all"	source="ART:GUS_AircraftO_FP.w3x" />
+		<Include type="all"	source="ART:GUS_AircraftO_DMG.xml" />
+
+		<Include type="instance" source="ART:FXGDIHealingBeam.xml" />
+		<Include type="instance" source="ART:FXLaserOverlay.xml" />
+		<Include type="instance" source="ART:FXGDILaser_Secondary.xml" />
+		<Include type="all"	source="ART:Decal_StealthDetect.xml" />
+
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseLightAircraft.xml" />
+		
+	</Includes>
+	
+	<Defines>
+		<Define name="GDIAIRCRAFTO_ROF_DEBUFF_RADIUS" value="200.0" />
+	</Defines>
+
+	<GameObject
+		id="GDIAircraftO"
+		inheritFrom="BaseLightAircraft"
+		SubGroupPriority="309"
+		HealthBoxHeightOffset="15"
+		HealthBar="Small"
+		SelectPortrait="Portrait_GDI_Aircraft_O"
+		ButtonImage="Btn_GDI_Aircraft_O"
+		Side="GDI"
+		ParticipationValue="=$GDIAIRCRAFTO_PARTICIPATION_VALUE"
+		BuildTime="10"
+		CommandSet="GDIAircraftOCommandSet"
+		CommandPoints="=$GDI_AIRCRAFT_O_COMMANDPOINT_COST" 
+		KindOf="+NO_COLLIDE +CAN_HEAL_ALLIES"
+		ThreatLevel="10"
+		VoicePriority="148"
+		EditorName="GDI_S1_Light_Caster(Zephyr)"
+		Description="Desc:GDIAircraftO"
+		TypeDescription="Type:GDIAircraftO">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIAircraftO</DisplayName>
+		<LocomotorSet
+			Locomotor="BasicHelicopterTaxiLocomotor"
+			Condition="TAXIING"
+			Speed="160" />
+		<LocomotorSet
+			Locomotor="GDIAircraftOLocomotor"
+			Condition="NORMAL"
+			Speed="160.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="GAO_Emitter02 GAO_Emitter01 GAO_Claw"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUS_AircraftO_SKN" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAO_Claw" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAO_Claw" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverDust_Smallest"
+						FollowBone="true" />
+
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="GUS_AircraftO_FP" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUS_AircraftO_SKN" />
+					<Texture
+						Original="GUS_AircraftO"
+						New="GUS_AircraftO_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverDust_Smallest"
+						FollowBone="true" />
+
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUS_AircraftO_SKN" />
+					<Texture
+						Original="GUS_AircraftO"
+						New="GUS_AircraftO_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverDust_Smallest"
+						FollowBone="true" />
+
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="GUS_AircraftO_SKN" />
+					<ParticleSysBone
+						BoneName="GAO_Emitter02"
+						FXParticleSystemTemplate="GDIDebrisSmallFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GAO_Emitter02"
+						FXParticleSystemTemplate="GDIDebrisSmallFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GAO_Emitter02"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimNickName="HVRA"
+						AnimationName="GUS_AircraftO_AIDA"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="LOCOMOTOR_TAXIING">
+					<Animation
+						AnimNickName="HVRA"
+						AnimationName="GUS_AircraftO_AIDA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_LEFT_HIGH_SPEED">
+					<Animation
+						AnimationName="GUS_AircraftO_TRNL"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_RIGHT_HIGH_SPEED">
+					<Animation
+						AnimationName="GUS_AircraftO_TRNR"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_LEFT">
+					<Animation
+						AnimationName="GUS_AircraftO_TRNL"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_RIGHT">
+					<Animation
+						AnimationName="GUS_AircraftO_TRNR"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE">
+					<Animation
+						AnimationName="GUS_AircraftO_ACLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE">
+					<Animation
+						AnimationName="GUS_AircraftO_DCLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="GUS_AircraftO_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USING_WEAPON_A">
+					<Animation
+						AnimationName="GUS_AircraftO_RPRA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_Particles"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="GAO_Emitter02 GAO_Emitter01 FXExhaust01 FXExhaust02"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT"
+					Skeleton="">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Model
+						Name="" />
+					<ParticleSysBone
+						BoneName="FXExhaust01"
+						FXParticleSystemTemplate="OrcaJetWash"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust02"
+						FXParticleSystemTemplate="OrcaJetWash"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="" />
+					<ParticleSysBone
+						BoneName="FXExhaust01"
+						FXParticleSystemTemplate="OrcaDustDesert"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust01"
+						FXParticleSystemTemplate="OrcaDustRocksDesert"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust02"
+						FXParticleSystemTemplate="OrcaDustDesert"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust02"
+						FXParticleSystemTemplate="OrcaDustRocksDesert"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_FX_Lfan"
+				AttachToBoneInAnotherModule="FXExhaust01"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="orcaexhaust"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_FX_Rfan"
+				AttachToBoneInAnotherModule="FXExhaust02"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="orcaexhaust"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="FXInvisBone" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<!-- STEALTH DETECT RADIUS (temp decal -Aram) when selected -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawStealthDetectDecal"
+				OkToChangeModelColor="true"
+				Options="RENDER_BUFF_EFFECTS IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="1000"
+						SizeY="1000"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_StealthDetect"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<!-- Healing laser -->
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile=".8"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="5"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="5"
+				LightMin="20"
+				LightMax="40"
+				LaserStateID="1">
+				<LightColor R="0.15" G="0.07" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDIHealingBeam</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+			<!-- Secondary laser draw -->
+			<!--
+			<LaserDraw
+				id="ModuleTag_LaserDraw2"
+				Texture1_UTile="1"
+				Texture1_VTile="3"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="0.75"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile="1"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="0"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="10"
+				WeaponSlotID="1"
+				LightMin="10"
+				LightMax="20"
+				LaserStateID="1">
+				<LightColor R="0.15" G="0.07" B="0.86" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDILaser_Secondary</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw> -->
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIAircraftOHealWeapon" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<LaserState
+				id="ModuleTag_LaserState"
+				LaserId="1">
+				<LaserEndParticleSystem>HealingBeamHit</LaserEndParticleSystem>
+			</LaserState>
+			<!-- gravity mult of 30 is temporary -->
+			<Physics
+				id="ModuleTag_Physics"
+				GravityMultiplier="30" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Aircraft_Small_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIAirVehicleExplode_Small" />
+				<Event Index="onDeath" FX="FX_VehicleSmall_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIAircraftAFunctions" />
+
+			<!-- Range Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIInfantryR_WeaponRangeUpgrade"
+				AttributeModifier="Modifier_Generic_GDIWeaponRange_T1">
+				<TriggeredBy>Upgrade_GDI_Support_Range</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Speed Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIAircraftOSpeedBoostUpgrade"
+				AttributeModifier="Modifier_Generic_GDISpeedBoostUpgrade">
+				<TriggeredBy>Upgrade_GDI_Support_Speed</TriggeredBy>
+			</AttributeModifierUpgrade>
+      
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="500"
+				CanDetectWhileGarrisoned="true"/>
+      
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIAircraftOFunctions"/>
+
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_GDIAircraftODampen</TriggeredBy>
+				<Nugget
+					ShowSubObjects="GUS_AircraftO_UPG"
+					Upgrade="Upgrade_GDIAircraftODampen"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>          
+			</SubObjectsUpgrade>
+			<FXListBehavior
+				id="ModuleTag_FXListDampenUpgrade">
+				<TriggeredBy>Upgrade_GDIAircraftODampen</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeGDIWeaponDampeners" />
+			</FXListBehavior>
+      
+			<!-- Debuff special ability ("Dampen")-->
+			<SpecialPower
+				id="ModuleTag_DampenROFDebuff"
+				SpecialPowerTemplate="SpecialPower_GDIAircraftODampenROFDebuff"
+				CanAffectObjectFilter="GenericAllEnemyObjectSpecialPowerObjectFilter"
+				UpdateModuleStartsAttack="true" />
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_DampenROFDebuffUpdate"
+				SpecialWeapon="GDIAircraftODebuffWeapon"
+				SpecialPowerTemplate="SpecialPower_GDIAircraftODampenROFDebuff"
+				UnpackTime="0.3s"
+				PackTime="0.3s"
+				UnpackSound="GDI_Spanner_AirO_DampenFire"
+				FaceTarget="true"
+				WhichSpecialWeapon="1"
+				StartAbilityRange="200" 
+				Options="BUSY_DURING_UNPACK BUSY_DURING_PACK FAIL_WITH_INVALID_APPROACH" />
+
+			<SpecialPower
+				id="ModuleTag_PurgeBuffsUpdateTrigger"
+				SpecialPowerTemplate="SpecialPower_GDIAircraftOPurgeBuffs"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="GenericAllObjectSpecialPowerObjectFilter"/>
+			<ActivateModuleSpecialAbilityUpdate
+				id="ModuleTag_PurgeBuffsUpdateUpdate"
+				SpecialPowerTemplate="SpecialPower_GDIAircraftOPurgeBuffs"
+				StartAbilityRange="200"
+				FaceTarget="true">
+				<SpecialPowerModules
+					ModuleId="ModuleTag_PurgeBuffsTrigger" />
+			</ActivateModuleSpecialAbilityUpdate>
+			<PurgeBuffsSpecialPower
+				id="ModuleTag_PurgeBuffsTrigger"
+				SpecialPowerTemplate="SpecialPower_GDIAircraftOPurgeBuffsTrigger"
+				Radius="200"
+				Options="INCLUDE_SELF"
+				EnemyBuffsToPurge="OFFENSE_POSITIVE DEFENSE_POSITIVE"
+				AlliedBuffsToPurge="OFFENSE_NEGATIVE DEFENSE_NEGATIVE"
+				MaxBuffsToPurgePerUnit="1"
+				TargetObjectFX="FX_SystemRestore"
+				InitiateFX="FX_GDISpecialPowerCast">
+			</PurgeBuffsSpecialPower>
+
+			<FXListBehavior
+				id="ModuleTag_FXListUpgradeSystemRestore">
+				<TriggeredBy>Upgrade_GDIAircraftOPurge</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					  Index="onUpgraded"
+					  FX="FX_UpgradeGDIEnhancedRepairs" />
+			</FXListBehavior>
+
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_JetAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="HelicopterAIStateMachine">
+				<UnitAITargetChooserData
+					AutoAcquireAllies="true"
+					CanPickDynamicTargets="true"
+					TargetInvalidAtFullHealth="true"
+					SympathyRange="100.0"
+					TargetingCompareList="HealingUnitTargetingCompareList"
+					ReacquireDelay="3.0s" />
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="120" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_FlyingLoop">
+				<ModelConditionSound Sound="GDI_Zephyr_AirO_IdleLoop" RequiredFlags="FLYING" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_TakeoffLanding">
+				<ModelConditionSound Sound="GDI_Zephyr_AirO_MoveStart" RequiredFlags="LANDING" ExcludedFlags="RECYCLED DYING" />
+				<ModelConditionSound Sound="GDI_Zephyr_AirO_MoveStart" RequiredFlags="TAKING_OFF" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "10.0"
+					 MinorRadius = "10.0"
+					 Height = "27.0"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_AirOSpanner_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="GDI_AirOSpanner_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="GDI_AirOSpanner_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="GDI_AirOSpanner_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="GDI_AirOSpanner_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="GDI_AirOSpanner_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="GDI_AirOSpanner_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="GDI_AirOSpanner_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+			<NamedEntry Sound="GDI_AirOSpanner_VoiceAttackSpecial1" Name="VoiceAttackSpecialDampen" />
+			<NamedEntry Sound="GDI_AirOSpanner_VoiceAttackSpecial2" Name="VoiceAttackSpecialSystemRestore" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleSmall_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="GDI_Zephyr_AirO_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="GDI_Zephyr_AirO_MoveByLoop" AudioType="soundMoveLoop" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="250"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_GDIAircraftODampen</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDI_Support_Range</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDI_Support_Speed</DisplayUpgrade>
+	</GameObject>
+
+	<WeaponTemplate
+		id="GDIAircraftOHealWeapon"
+		AttackRange="200.0"
+		WeaponSpeed="99999"
+		FireSound="GDI_Spanner_AirO_HealBeamFireMS"
+		FireFX="FX_HealingBeam"
+		AcceptableAimDelta="20d"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT IGNORE_FORCE_FIRE"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		RadiusDamageAffects="ALLIES" 
+		ReAcquireDetailType="PRE_FIRE" 
+		CanFireWhileMoving="true">
+		<NuggetObjectFilter
+			Rule="ALL"
+			Exclude="HUSK" />
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.8s"
+				LaserId="1">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE VEHICLE INFANTRY AIRCRAFT"
+					Exclude="NEUTRAL_TECH"
+					StatusBitFlagsExclude="NO_HEALING">
+				</SpecialObjectFilter>
+			</ActivateLaserNugget>
+			<HOTNugget
+				DamageFXType="GDI_HEAL"
+				HealDuration="1.0s"
+				Damage="15.0"
+				AlwaysActive="true">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE VEHICLE INFANTRY AIRCRAFT"
+					Exclude="NEUTRAL_TECH"
+					StatusBitFlagsExclude="NO_HEALING">
+				</SpecialObjectFilter>
+			</HOTNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIAircraftODebuffWeapon"
+		AttackRange="300.0"
+		WeaponSpeed="99999"
+		FireFX="FX_GDISpecialPowerCast" 
+		AcceptableAimDelta="20d"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		CanFireWhileMoving="false">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<AttributeModifierNugget
+				AttributeModifierName="Modifier_DampenROFDebuff"
+				Radius="=$GDIAIRCRAFTO_ROF_DEBUFF_RADIUS" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<AttributeModifier
+		id="Modifier_DampenROFDebuff"
+		Category="NONE"
+		Duration="5.0s"
+		StartFX="FX_GDIBuff_ROFDecrease">
+		<BuffInfo Type="OFFENSE_NEGATIVE" SourceString="Name:GDIAircraftO" />
+		<Modifier Type="RATE_OF_FIRE" Value="50%" />
+	</AttributeModifier>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDIAircraftODampenROFDebuff"
+		ReloadTime="60s"
+		TargetType="LOCATION"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceAttackSpecialDampen"
+		RadiusCursorRadius="=$GDIAIRCRAFTO_ROF_DEBUFF_RADIUS" >
+		<GameDependency>
+			<NeededUpgrade>Upgrade_GDIAircraftODampen</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDIAircraftOPurgeBuffs"
+		ReloadTime="30s"
+		TargetType="LOCATION"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceAttackSpecialSystemRestore"
+		RadiusCursorRadius="200" >
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDIAircraftOPurgeBuffsTrigger"
+		InitiateAtLocationSound="GDI_Spanner_AirO_SystemRestoreFire"
+		TargetType="LOCATION">
+	</SpecialPowerTemplate>
+	
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_GDIAircraftODampenROFDebuff">
+		<SpecialPower>SpecialPower_GDIAircraftODampenROFDebuff</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<SpecialPowerWeapon
+				Weapon="GDIAircraftODebuffWeapon"
+				TotalValueGreaterThan="2"
+				AoeAttackPowerType="ENEMY_DEBUFF"/>
+			<AISpecialPowerInfo	Heuristic="AOE_ATTACK"/>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_GDIAircraftOPurgeBuffs">
+		<SpecialPower>SpecialPower_GDIAircraftOPurgeBuffs</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo
+				Heuristic="CLEANSE"
+				MinTargetsHit="3">
+			</AISpecialPowerInfo>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="GDIAircraftOCommandSet">
+		<Cmd>Command_AttackMove</Cmd>
+		<Cmd>Command_GDIAircraftODampenROFDebuff</Cmd>
+		<Cmd>Command_GDIAircraftOPurgeBuffs</Cmd>
+	</LogicCommandSet>
+
+	<LocomotorTemplate
+		id="GDIAircraftOLocomotor"
+		Surfaces="AIR"
+		TurnTimeSeconds="0.8s"
+		TurnTimeDamagedSeconds="0.8s"
+		AccelerationSeconds="1.0s"
+		Lift="120%"
+		LiftDamaged="80%"
+		BrakingSeconds="0.4s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="40.0"
+		MinTurnSpeed="0%"
+		PreferredHeight="80"
+		AllowMotiveForceWhileAirborne="true"
+		BehaviorZ="SURFACE_RELATIVE_HEIGHT"
+		Appearance="HOVER"
+
+		Apply2DFrictionWhenAirborne="true"
+		AirborneTargetingHeight="30"
+		LocomotorWorksWhenDead="true"
+		
+		LookAheadMult="5.0"
+		TakeOffAndLandingSpeed="=$SMALL_MEDIUM_AIRCRAFT_TAKEOFF_SPEED"
+		TakeOffAndLandingSlowDownDelta="0.25"
+		TakeOffAndLandingSlowDownTime="0.1s"
+
+		RudderCorrectionDegree="0.169"
+		RudderCorrectionRate="0.027"
+		ElevatorCorrectionDegree="0.103"
+		ElevatorCorrectionRate="0.016"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		CanReverseMove="true"
+		IgnorePreferredHeightWhenComingOutOfFactory="true"/>
+
+	<ExperienceLevelTemplate
+		id="GDIAircraftOExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="3">
+		<Target>GDIAircraftO</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIAircraftOExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIAircraftOExperienceLevel_1"
+		RequiredExperience="6"
+		ExperienceAward="4">
+		<Target>GDIAircraftO</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIAircraftOExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIAircraftOExperienceLevel_2"
+		RequiredExperience="12"
+		ExperienceAward="5">
+		<Target>GDIAircraftO</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIAircraftOExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIAircraftOExperienceLevel_3"
+		RequiredExperience="21"
+		ExperienceAward="6">
+		<Target>GDIAircraftO</Target>
+	</ExperienceLevelTemplate>
+</AssetDeclaration>

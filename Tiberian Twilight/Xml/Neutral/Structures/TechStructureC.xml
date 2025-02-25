@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<!-- model conditions set by included CaptureStructureBehavior.xml -->
+	<!-- USER 1: Captured by anyone -->
+	<Tags></Tags>
+	<!-- Artillery Emplacement -->
+	<Includes>
+		<Include type="all" source="ART:NB_TechStructC_ATKA.w3x" />
+		<Include type="all" source="ART:NB_TechStructC_CPTR.w3x" />
+		<Include type="all" source="ART:NB_TechStructC_UNCPTR.w3x" />
+		<Include type="all" source="ART:NB_TechStructC_SKN.w3x" />
+		<Include type="all" source="ART:NB_TechStructC_SKL.w3x" />
+		
+		<Include type="instance" source="DATA:BaseObjects/BaseTechStructure.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+        <Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+        <Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+	</Includes>
+	<GameObject
+		id="TechStructureC"
+		inheritFrom="BaseTechStructure"
+		HealthBoxHeightOffset="52"
+		SubGroupPriority="475"
+		SelectPortrait="Portrait_Neutral_TechStr_B_GDI"
+		ButtonImage="Portrait_Neutral_TechStr_B_GDI"
+		Side="Neutral"
+		WeaponCategory="BLAST" 
+        ParticipationValue="=$NEUTRALTECHSTRUCTUREC_PARTICIPATION_VALUE"
+		CommandSet="EmptyCommandSet"
+		KindOf="+CAN_ATTACK +NO_HEALTH_BAR"
+		RadarPriority="STRUCTURE"
+		EditorName="NEUTRAL_Struct_Blast(Artillery)"
+		EditorSorting="STRUCTURE" 
+		Description="DESC:TechStructureC">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:TechStructureC</DisplayName>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="sc_cannon01 sc_cannon02 sc_cannon03 sc_cannon04"
+				InitialRecoilSpeed="16.0"
+				MaxRecoilDistance="10.0"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechStructC_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="sc_cannon" />
+					<WeaponRecoilBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="sc_cannon" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="sc_cannon" />
+					<Turret
+						TurretNameKey="SC_Turret"
+						TurretPitch="SC_Pitch"
+						TurretID="1" />						
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NB_TechStructC_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NB_TechStructC_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NB_TechStructC_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="NB_TechStructC_SKN" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="UNCAPTURED_IDLE">
+					<Animation
+						AnimationName="NB_TechStructC_UNCPTR"
+						AnimationMode="LOOP"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "CAPTURED" or Prev == "USER_1" then
+						CurDrawableSetTransitionAnimState("Transition_ToNeutral")
+						end
+					</Script>
+				</AnimationState>
+
+				<!--when captured -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="CAPTURED">
+					<Animation
+						AnimationName="NB_TechStructC_CPTR"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="NB_TechStructC_ATKA"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToNeutral"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NB_TechStructC_CPTR"
+						AnimationMode="ONCE_BACKWARDS"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+			
+			<xi:include href="DATA:Includes/CaptureStructureFeedbackDraw.xml" />
+			
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="TechStructureCSweepWeapon" />
+					<TurretSettings
+						TurretTurnRate="100"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="0d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0"
+						IdleRequiresModelConditions="USER_1">
+						<TurretAITargetChooserData
+							CanPickDynamicTargets="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+
+			<WeaponSweepBehavior
+				id="ModuleTag_WeaponSweep"
+				NumFiresPerSweep="4"
+				DistanceBetweenEachFiring="0.0"
+				DelayBetweenEachFiring="0.2s"
+				WeaponSweepOptions="FIRE_EACH_WEAPON_IN_SUCCESSION CONFORM_TO_TERRAIN NOT_WHILE_MOVING SET_WEAPON_BARREL_TO_CURRENT_SHOT">
+				<WeaponToFire
+					WeaponName="NeutralTechStructureCCannon"
+					SlotType="PRIMARY_WEAPON"
+					SlotID="1" >
+					<Offset
+						x="0.0"
+						y="0.0" />
+				</WeaponToFire>
+				<WeaponToFire
+					WeaponName="NeutralTechStructureCCannon"
+					SlotType="PRIMARY_WEAPON"
+					SlotID="1"  >
+					<Offset
+						x="50.0"
+						y="0.0" />
+				</WeaponToFire>
+				<WeaponToFire
+					WeaponName="NeutralTechStructureCCannon"
+					SlotType="PRIMARY_WEAPON"
+					SlotID="1"  >
+					<Offset
+						x="0.0"
+						y="50.0" />
+				</WeaponToFire>
+				<WeaponToFire
+					WeaponName="NeutralTechStructureCCannon"
+					SlotType="PRIMARY_WEAPON"
+					SlotID="1"  >
+					<Offset
+						x="-50.0"
+						y="0.0" />
+				</WeaponToFire>
+			</WeaponSweepBehavior>
+			
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="StructureLarge_DieExplosionMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<RebuildHoleExposeDie
+				id="ModuleTag_RebuildHoleExposeDie"
+				HoleObject="TechStructureCHole"
+				FadeInTimeSeconds="3.0s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</RebuildHoleExposeDie>
+			
+			<xi:include	href="DATA:Includes/CaptureStructureBehavior.xml" />
+			
+
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="2.0s" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="TechStructureEFunctions"
+			/>
+			
+			<!-- This allows the AI to remember that this structure is guarding a target, and not keep throwing
+				   units towards that target unless it has enough forces to overcome said guard -->
+			<SkirmishAIGuardTrackingBehavior
+				id="ModuleTag_SkirmishAIGuardTrackingBehavior"
+			/>
+
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_NONE" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_NONE" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_NONE" />
+				<Event
+					Index="onDeath"
+					FX="FX_NONE" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="OffensiveStructureAIStateMachine"
+				AutoAcquireEnemiesWhenIdle="YES">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				InitialHealth="1.0"
+				MaxHealth="1000.0"/>
+		</Body>
+		<Geometry>
+			<PlacementShape
+				Type="BOX"
+				MajorRadius="45.0"
+				MinorRadius="45.0"
+				Height="5.0"/>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="40.0"
+				Height="75.0"
+				ContactPointGeneration="STRUCTURE"/>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="-9.13983"
+					z="-2.11332e-007" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="-9.13983"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="11.6674"
+					z="6.98181e-007" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="11.6674"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="-9.13983"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="-9.13983"
+					z="-2.11332e-007" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="12.7738"
+					y="11.6674"
+					z="66.9918" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.03337"
+					y="11.6674"
+					z="6.98181e-007" />
+			</ContactPoint>
+		</Geometry>
+
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_ReloadSound">
+				<Sound Sound="NEU_ArtilleryEmplacement_StrC_ArtilleryWeaponReload" Animation="NB_TechStructC_ATKA" Frame="5"/>
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NEU_ArtilleryEmplacement_StrC_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<VisionInfo
+			VisionRange="800"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+	<WeaponTemplate
+		id="TechStructureCSweepWeapon"
+		AttackRange="800.0"
+		MinimumAttackRange="150.0"
+		WeaponSpeed="1000"
+		AcceptableAimDelta="1d"
+		ClipSize="1"
+		AutoReloadsClip="AUTO"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT CAN_FIRE_ON_GROUND"
+		CanFireWhileMoving="true"
+		RequiredAntiMask="ANTI_GROUND"
+		RevealShroudOnFire="true"
+		ReAcquireDetailType="PER_CLIP">
+		<FiringDuration
+			MinSeconds="4.0s"
+			MaxSeconds="4.0s" />
+		<ClipReloadTime
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ActivateWeaponSweepNugget
+				ModuleId="ModuleTag_WeaponSweep" />
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="NeutralTechStructureCCannon"
+		AttackRange="800.0"
+		MinimumAttackRange="150.0"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		WeaponSpeed="300"
+		FireFX="FX_GDI_ArtilleryEmplacement_ArtilleryWeaponFire_WithAudio"
+		WeaponRecoil="0d"
+		RequiredAntiMask="ANTI_GROUND"
+		CanFireWhileMoving="false"
+		ClipSize="1"
+		AcceptableAimDelta="180d" 
+		ReAcquireDetailType="POST_FIRE"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RevealShroudOnFire="true">
+		<FiringDuration
+			MinSeconds="0.8s"
+			MaxSeconds="0.8s"/>
+		<ClipReloadTime
+			MinSeconds="0.9s"
+			MaxSeconds="0.9s" />
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="TechStructureCArtilleryShell"
+				WarheadTemplate="NeutralTechStructureCCannonWarhead" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NeutralTechStructureCCannonWarhead"
+		ProjectileCollidesWith="ENEMIES NEUTRAL STRUCTURES WALLS"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<DamageNugget
+				Damage="50.0"
+				Radius="50.0"
+				DamageType="BLAST"
+				DeathType="EXPLODED">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<ExperienceLevelTemplate
+		id="TechStructureCExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_01"
+		ExperienceAward="10">
+		<Target>TechStructureC</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="TechStructureCExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_02"
+		Prerequisite="TechStructureCExperienceLevel_1"
+		RequiredExperience="20"
+		ExperienceAward="12">
+		<Target>TechStructureC</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="TechStructureCExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_03"
+		Prerequisite="TechStructureCExperienceLevel_2"
+		RequiredExperience="50"
+		ExperienceAward="14">
+		<Target>TechStructureC</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="TechStructureCExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_04"
+		Prerequisite="TechStructureCExperienceLevel_3"
+		RequiredExperience="90"
+		ExperienceAward="16">
+		<Target>TechStructureC</Target>
+	</ExperienceLevelTemplate>
+	
+</AssetDeclaration>

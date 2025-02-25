@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	<xs:complexType name="ConquerCardDefinitionBase">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<!-- xs:attribute name="DisplayName" type="xs:string" use="required" / -->
+				<!-- xs:attribute name="Description" type="xs:string" / -->
+				<xs:attribute name="Cost" type="SageInt" use="required" />
+				<xs:attribute name="Maximum" type="SageInt" default="0" />
+				<!-- xs:attribute name="Side" type="AssetId" use="required" / -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ConquerCardDefinitionUnit" xas:runtimeWrapper="Sage::Multiplayer::ConquerCardDefinitionUnit">
+		<xs:complexContent>
+			<xs:extension base="ConquerCardDefinitionBase">
+				<xs:sequence>
+					<xs:element name="Upgrade" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<!-- xs:attribute name="DisplayName" type="xs:string" use="required" / -->
+							<!-- xs:attribute name="Description" type="xs:string" / -->
+							<xs:attribute name="Upgrade" type="UpgradeTemplateRef" use="required" />
+							<xs:attribute name="Cost" type="SageInt" use="required" />
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="Veterancy" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:attribute name="Veterancy" type="VeterancyLevel" use="required" />
+							<xs:attribute name="Cost" type="SageInt" use="required" />
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="Unit" type="GameObjectRef" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ConquerCardDefinitionStructure" xas:runtimeWrapper="Sage::Multiplayer::ConquerCardDefinitionStructure">
+		<xs:complexContent>
+			<xs:extension base="ConquerCardDefinitionBase">
+				<xs:sequence />
+				<xs:attribute name="Structure" type="GameObjectRef" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ConquerCardDefinitionPower" xas:runtimeWrapper="Sage::Multiplayer::ConquerCardDefinitionPower">
+		<xs:complexContent>
+			<xs:extension base="ConquerCardDefinitionBase">
+				<xs:sequence />
+				<xs:attribute name="Power" type="SpecialPowerTemplateRef" use="required" />
+				<xs:attribute name="Side" type="AssetId" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="ConquerCardDefinitionRef"
+							 xas:isRef="true"
+							 xas:refType="ConquerCardDefinitionBase">
+		<xs:restriction base="AssetReference" />
+	</xs:simpleType>
+
+	<!-- xs:complexType name="ConquerCardDefinitions">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Card" type="ConquerCardDefinitionRef"  minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType -->
+
+	<!-- xs:complexType name="ConquerCardDefinitions">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:choice minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="Unit" type="ConquerCardDefinitionUnit" />
+					<xs:element name="Structure" type="ConquerCardDefinitionStructure" />
+					<xs:element name="Power" type="ConquerCardDefinitionPower" />
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType -->
+
+
+	<xs:complexType name="ConquerCard" xas:isPolymorphic="true">
+		<xs:sequence />
+		<xs:attribute name="Card" type="ConquerCardDefinitionRef" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="ConquerCardUnit">
+		<xs:complexContent>
+			<xs:extension base="ConquerCard">
+				<xs:sequence>
+					<!-- Unit Attributes -->
+					<xs:element name="Upgrade" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:attribute name="Upgrade" type="UpgradeTemplateRef" use="required" />
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="Count" type="SageInt" default="1" />
+				<xs:attribute name="Veterancy" type="VeterancyLevel" default="REGULAR" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ConquerCardList">
+		<xs:choice minOccurs="1" maxOccurs="unbounded" >
+			<xs:element name="Unit" type="ConquerCardUnit" />
+			<xs:element name="Structure" type="ConquerCard" />
+			<xs:element name="Power" type="ConquerCard" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="ConquerCardPrebuiltDeck" xas:runtimeWrapper="Sage::Multiplayer::ConquerDeck">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Cards" type="ConquerCardList" />
+				</xs:sequence>
+				<xs:attribute name="DisplayName" type="xs:string" use="required" />
+				<xs:attribute name="Description" type="xs:string" />
+				<xs:attribute name="Side" type="AssetId" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+</xs:schema>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="Includes/PlayerClassType.xsd"/>
+
+	<!-- CBD implementation. Each class template is class- and faction-specific -->
+
+
+	<!-- This section is for player power support for the Support class -->
+	<xs:simpleType name="PlayerPowerThreatRanks">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="RANK_0" />
+			<xs:enumeration value="RANK_1" />
+			<xs:enumeration value="RANK_2" />
+			<xs:enumeration value="RANK_3" />
+			<xs:enumeration value="RANK_4" />
+			<!-- don't forget to adjust the minOccurs/maxOccurs of the 'RankInfo' sequence in the PlayerPowerThreatRankRequirements struct 
+			if you update this enum -->
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- not used anywhere, but creates a COUNT value for the game to use -->
+	<xs:simpleType name="PlayerPowerThreatRankSlotType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SLOT_0" />
+			<xs:enumeration value="SLOT_1" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="PlayerPowerThreatRankInfo">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="ThreatRequired" type="SageUnsignedInt" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="PlayerPowerThreatRankRequirements">
+		<xs:sequence>
+			<xs:element name="RankInfo" type="PlayerPowerThreatRankInfo" minOccurs="5" maxOccurs="5" />
+		</xs:sequence>
+		<xs:attribute name="ThreatRequired" type="SageUnsignedInt" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="PlayerPowerRankInfo">
+		<xs:sequence>
+			<xs:element name="Power" type="SpecialPowerWeakRef" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="ThreatRequired" type="SageUnsignedInt" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="PlayerPowerInfo">
+		<xs:sequence>
+			<xs:element name="Rank" type="PlayerPowerRankInfo" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="Power" type="SpecialPowerWeakRef" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="PlayerPowerThreatRankInfoDEBUG">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="PlayerTech" type="PlayerTechWeakRef" use="required" />
+		<xs:attribute name="Rank" type="SageUnsignedInt" use="required" />
+		<xs:attribute name="Slot" type="SageUnsignedInt" use="required" />
+	</xs:complexType>
+	
+	<xs:simpleType name="StartingStructureType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="GENERIC"/>
+			<xs:enumeration value="RESOURCE"/>
+			<xs:enumeration value="DEFENSE_ANTI_INFANTRY"/>
+			<xs:enumeration value="DEFENSE_ANTI_VEHICLE"/>
+			<xs:enumeration value="DEFENSE_ANTI_AIR"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="StartingStructureInfo">
+		<xs:sequence>
+			<xs:element name="PositionOffset" type="Vector2" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="Structure" type="GameObjectWeakRef" use="required"/>
+		<xs:attribute name="Type" type="StartingStructureType" use="required"/>
+		<!-- Rotation around Z axis.  0 degree faces the center of the map -->
+		<xs:attribute name="Rotation" type="Angle" default="0d"/> 
+	</xs:complexType>
+
+	<xs:complexType name="StartingStructureFromWaypointInfo">
+		<xs:attribute name="Structure" type="GameObjectWeakRef" use="required"/>
+		<xs:attribute name="Type" type="StartingStructureType" use="required"/>
+		<!-- Rotation around Z axis.  0 degree faces the center of the map -->
+		<xs:attribute name="Rotation" type="Angle" default="0d"/>
+	</xs:complexType>
+
+	<xs:complexType name="UpgradeToClassMapping">
+		<xs:attribute name="Upgrade" type="UpgradeTemplateWeakRef" use="required" />
+		<xs:attribute name="TargetPlayerClass" type="PlayerClassTemplateWeakRef" use="required" />
+	 </xs:complexType>
+
+	<xs:complexType name="UpkeepStateDefinition">
+		<xs:sequence />
+		<xs:attribute name="MinimumCP" type="SageUnsignedInt" use="required" />
+		<xs:attribute name="MaximumCP" type="SageUnsignedInt" use="required" />
+		<!-- < 100% means cheaper build, > 100% means more expensive build -->
+		<xs:attribute name="BuildCostMultiplier" type="Percentage" use="required" />
+		<!-- < 100% means faster build, > 100% means slower build -->
+		<xs:attribute name="BuildSpeedMultiplier" type="Percentage" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="PlayerClassTemplate" xas:runtimeWrapper="::PlayerClassTemplate" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="PlayerThreatTracker" type="PlayerThreatTrackerTemplateRef" minOccurs="0" maxOccurs="1"/>
+					<!-- These should be in order: positive upkeep, no upkeep, negative upkeep -->
+					<xs:element name="UpkeepState" type="UpkeepStateDefinition" minOccurs="0" maxOccurs="3" />
+					<xs:element name="ClassChangeRemoveScience" type="ScienceTemplateRef" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="GameObjectAllowed" type="GameObjectWeakRef" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="UpgradeAllowed" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="RemoveUpgradeOnClassChange" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="StartingUpgrade" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="StartingStructure" type="StartingStructureInfo" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="StartingStructureFromWaypoint" type="StartingStructureFromWaypointInfo" minOccurs="0" maxOccurs="5" />
+					<xs:element name="StartingTech" type="PlayerTechRef" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="PlayerPowerThreatRankRequirements" type="PlayerPowerThreatRankRequirements" minOccurs="0" maxOccurs="1" />
+					<xs:element name="PlayerPowerThreatRankInfoDEBUG" type="PlayerPowerThreatRankInfoDEBUG" minOccurs="0" maxOccurs="10" />
+					<xs:element name="PlayerPowerInfo" type="PlayerPowerInfo" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="DisplayName" type="xs:string" />
+				<xs:attribute name="PlayerClassType" type="PlayerClassType" />
+				<xs:attribute name="Faction" type="FactionType" />
+				<xs:attribute name="AllowProjectBuildabilityForAllies" type="SageBool" default="false"/>
+				<xs:attribute name="PlayerTechDependencies" type="PlayerTechDependencyGroupWeakRef" />
+
+				<!-- Redeployment related -->
+				<xs:attribute name="RedeploymentRadius" type="SageReal" default="0.0"/>
+				<xs:attribute name="RedeploymentEnemyKillRadius" type="SageReal" default="0.0"/>
+				<xs:attribute name="RedeploymentSuperpowerWeapon" type="WeaponRef" />
+				<xs:attribute name="RedeploymentSuperpowerWeaponFireDelay" type="Time" default="0s"/>
+				<xs:attribute name="RedeploymentPlaceBaseDelay" type="Time" default="0s"/>
+				<xs:attribute name="CommandPointBonus" type="SageInt" default="0" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

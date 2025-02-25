@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!-- Dynamic Game State -->
+	<xs:complexType name="AudioGameDynamicState" xas:runtimeWrapper="::AudioGameDynamicStateWrap" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="Transition" type="AudioGameDynamicTransitionRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="PathMusicEnterEvent" type="PathMusicEventRef" use="optional" />
+				<xs:attribute name="PathMusicExitEvent" type="PathMusicEventRef" use="optional" />
+				<xs:attribute name="AudioMixerEnterEvent" type="AudioMixerSnapshotRef" use="optional" />
+				<xs:attribute name="AudioMixerExitEvent" type="AudioMixerSnapshotRef" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- Corresponding Ref is in Ref.xsd -->
+
+	<!-- Pathfinder Dynamic Game State Set Catgory -->
+	<xs:simpleType name="AudioGameDynamicStateSetCategory">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="STANDARD"/>
+			<xs:enumeration value="OBSERVER"/>
+			<xs:enumeration value="SCRIPTED"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Dynamic Game Transition, from one State to another-->
+	<xs:complexType name="AudioGameDynamicTransition" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Condition" type="MusicScriptConditionRef" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="DestinationState" type="AudioGameDynamicStateWeakRef" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="AudioGameDynamicTransitionRef" xas:isRef="true" xas:refType="AudioGameDynamicTransition">
+		<xs:restriction base="AssetReference" />
+	</xs:simpleType>
+
+	<!-- List of Dynamic Game States -->
+	<xs:complexType name="PathMusicGameDynamicStateSet"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="State" type="AudioGameDynamicStateRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Category" type="AudioGameDynamicStateSetCategory" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- List of Dynamic Game States -->
+	<xs:complexType name="AudioMixerGameDynamicStateSet"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="State" type="AudioGameDynamicStateRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Category" type="AudioGameDynamicStateSetCategory" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

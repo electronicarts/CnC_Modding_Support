@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+		xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+		xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	
+	<!-- Tactic and unit builder modifiers-->
+	<xs:simpleType name="Tactics">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SimpleAttack" />
+			<xs:enumeration value="FlankAttack" />
+			<xs:enumeration value="DefenseAvoidanceAttack" />
+			<xs:enumeration value="SimpleSiege" />
+			<xs:enumeration value="Capture" />
+			<xs:enumeration value="Retrieval" />
+			<xs:enumeration value="ProximityCapture"/>
+			<xs:enumeration value="SimpleDefense" />
+			<xs:enumeration value="StaticDefense" />
+			<xs:enumeration value="ReactiveDefense" />
+			<xs:enumeration value="SimpleExpansion" />
+			<xs:enumeration value="ExactExpansion" />
+			<xs:enumeration value="Hunt" />
+			<xs:enumeration value="SimpleMovement"/>
+			<xs:enumeration value="RepairMovement"/>
+
+			<xs:enumeration value="RoamingDefense" />
+			<xs:enumeration value="GarrisonBuilding"/>
+			<xs:enumeration value="Scripted" />
+			<xs:enumeration value="NullTactic" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TacticEndBehavior">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="RAMPAGE" />
+			<xs:enumeration value="DISBAND" />
+			<xs:enumeration value="RETURN_HOME_AND_DISBAND" />
+			<xs:enumeration value="PICK_NEW_TARGET" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="BeaconPriorityValue">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="LOWEST" />
+			<xs:enumeration value="MEDIUM" />
+			<xs:enumeration value="HIGH" />
+			<xs:enumeration value="URGENT" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Used on state definition -->
+	<xs:simpleType name="TacticTargetType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ANY" />
+			<xs:enumeration value="LOCATION"	/>
+			<xs:enumeration value="TEAM" />
+			<xs:enumeration value="OBJECT" />
+			<xs:enumeration value="BASE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TacticTargetTypeBitFlags">
+		<xs:list itemType="TacticTargetType" />
+	</xs:simpleType>
+
+	<xs:complexType name="AIStateTacticIndicatorPlacementCriteria">
+		<xs:sequence/>
+		<!-- If during this tactic, the Command Point advantage is below a certain amount (for example, at 0.5 we are outnumbered 2 to 1) 
+					place a Indicator on our target (or center of the target objects) to rally the other AIs and humans to come to our aid -->
+		<xs:attribute name="PlaceIfCommandPointAdvantageIsBelow" type="SageReal" use="required" />
+		<!-- If during this tactic, the Command Point advantage goes above a certain level, the remove the indicator that we placed 
+					on our target (of target location) to return to normal operation -->
+		<xs:attribute name="RemoveIfCommandPointAdvantageIsAbove" type="SageReal" use="required" />
+		<!-- A tunable "how close is too close" value for indicator positions? we don't want to replace it if the location is very similar -->
+		<xs:attribute name="IndicatorCloseDistance" type="SageReal" default="50.0" />
+		<xs:attribute name="CheckTargetUpdateRate" type="Time" default="5s" />
+	</xs:complexType>
+
+	<xs:complexType name="AIStateTacticBeaconPlacementCriteria">
+		<xs:complexContent>
+			<xs:extension base="AIStateTacticIndicatorPlacementCriteria">
+				<!-- How important are we relative to other tactics? -->
+				<xs:attribute name="BeaconPriority" type="BeaconPriorityValue" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- NOTE:  An indicator object is different than a beacon because the AI can place multiple 
+								instances on different targets and these are not visible to human players -->
+	<xs:complexType name="AIStateTacticIndicatorObjectPlacementCriteria">
+		<xs:complexContent>
+			<xs:extension base="AIStateTacticIndicatorPlacementCriteria">
+				<xs:attribute name="IndicatorObjectOCL"	type="ObjectCreationListRef" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AIStateTactic">
+		<xs:sequence>
+			<xs:element name="TargetBaseCriteria" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1" />
+			<!-- For ReactiveDefense -->
+
+			<!-- For anything with EndBehavior="RETURN_HOME_AND_DISBAND", this is what "home" is. To avoid massive cut&paste, there
+						 is also a default HomeBaseCriteria in the personality -->
+			<xs:element name="HomeBaseCriteria" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1" />
+			
+			<xs:element name="BeaconPlacementCriteria" type="AIStateTacticBeaconPlacementCriteria" minOccurs="0" maxOccurs="1" />
+			<xs:element name="IndicatorObjectPlacementCriteria" type="AIStateTacticIndicatorObjectPlacementCriteria" minOccurs="0" maxOccurs="1" />
+
+			<xs:element name="TeamTemplate" type="AITeamTemplate" minOccurs="0" maxOccurs="4"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:refType="AIStateTactic" use="required"/>
+		<xs:attribute name="Tactic" type="Tactics" use="required"/>
+		<xs:attribute name="Targetless" type="xs:boolean" default="false"/>
+		<xs:attribute name="EndBehavior" type="TacticEndBehavior" default="RAMPAGE"/>
+		<xs:attribute name="DisbandAfterRetreatTeamSize" type="xs:int" default="0"/>
+		<xs:attribute name="EndIfStateTurnsOff" type="xs:boolean" default="false"/>
+		<xs:attribute name="UseAestheticsManager" type="xs:boolean" default="true"/>
+		<xs:attribute name="AestheticsManagerPatrolIdleTime" type="Time" default="10s"/>
+		<xs:attribute name="AestheticsManagerMinDistanceFromHarvester" type="SageReal" default="300.0"/>
+		<xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+		<xs:attribute name="Distance" type="SageReal" default="400.0" />
+		<!-- Used by StaticDefense to prevent units from bouncing back and forth on the edge of their leash distance -->
+		<xs:attribute name="CombatLeashSlack" type="SageReal" default="1.5" />
+		<xs:attribute name="TargetDispositionToDisplay" type="AITargetDisposition" default="Invalid" />
+		<!-- Used by SimpleAttack to let designers override the gather location the team uses before engaging its target with a WorldBuilder waypoint -->
+		<xs:attribute name="GatherWaypoint" type="xs:string" use="optional"/>
+		<xs:attribute name="UseTransports" type="xs:boolean" default="true"/>
+		<xs:attribute name="UpdateTime" type="Time" default="1.0s"/>
+		<xs:attribute name="DistanceClearOfEnemiesToCapture" type="xs:float" default="200.0"/>
+
+		<!-- Used by ProximityCapture.  In order for the teamMaker to take a team member from a ProximityCapture tactic,
+			it must pass a couple of tests.  First, all enemy CPs around node are counted, then all allies.  Then added to ally
+			CP count are all members of tactic. Unit in question is NOT added to ally CP.
+			If (AllyCP < EnemyCP + ProximityCaptureReleaseCpDiff) or ((AllyCP / EnemyCP) < ProximityCaptureReleaseCpRatio), then
+			we do not allow unit to be taken from the team. 
+		 -->
+		<xs:attribute name="ProximityCaptureReleaseCpDiff" type="xs:int" default="5" />
+		<xs:attribute name="ProximityCaptureReleaseCpRatio" type="SageReal" default="1.2" />
+
+		<!-- When team move is called for an AI, it can check the path to make sure it is not traveling
+			through a high power enemy.  If it is, then it will try to find another path.	-->
+		<xs:attribute name="UseTeamMoveAvoidance" type="xs:boolean" default="true"/>
+
+		<!-- If set to true, MaintainBehindFrontLines will consider this team when considering what its 
+					 'front lines' are. If false, it won't. By default, "defense" teams have this false and 
+					 other teams have this true. -->
+		<xs:attribute name="CountForFrontLines" type="xs:boolean" use="optional" />
+
+		<!-- Currently implemented for Capture tactics only: When escorts get within this distance of the target,
+				 don't let them get any closer. This is to prevent the escorts from blocking the capture unit from
+				 pathing to the target -->
+		<xs:attribute name="AvoidTargetDistance" type="SageReal" default="0.0" />
+		
+		<!-- If we are targeting some thing that isn't a position, how often should we update its location? (default is every frame) -->
+		<xs:attribute name="TargetPositionUpdateRate" type="Time" default="0s" />
+		
+		<!-- Normally, if we are moving towards a target and we run into a fight we lose, we 
+				 remember those units as guards of the point we were trying to get to. But in 
+				 the first x% of the move, we don't record them as guards, because they were 
+				 probably just hanging around the point we started at. -->
+		<xs:attribute name="DoNotTrackGuardsIfEncounteredInFirstPercentOfJourney" type="Percentage" default="60%" />
+		
+		<!-- Exception to the above rule: If the guards are within X feet of the target, always 
+		     count them as guards, even if the team is just beginning its journey. At this point,
+				 they are close enough that it doesn't matter how far the team has come - they are 
+				 guarding the target -->
+		<xs:attribute name="TrackGuardsIfWithinDistanceOfTarget" type="SageReal" default="600.0" />
+		
+		<!-- And finally, don't tag anything which is further than some distance from the target  -->
+		<xs:attribute name="NeverTagGuardsFurtherThan" type="SageReal" default="1400.0" />
+		
+		<!-- Used by repair movement tactic to know when it should release units -->
+		<xs:attribute name="RepairMovementReleaseHealthPercentage" type="Percentage" default="100%" />
+	</xs:complexType>
+</xs:schema>

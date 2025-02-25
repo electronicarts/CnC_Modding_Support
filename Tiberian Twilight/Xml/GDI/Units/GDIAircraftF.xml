@@ -1,0 +1,1538 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- GDI Aircraft F / GDI Heavy Blast T3 / Kodiak Cruiser -->
+	<!-- TRANSFORMATION_TOGGLE_STATE = armor-up ability, uses USER_1 model condition -->
+	<Includes>
+		<Include type="all"	source="ART:GUAircraftF_FP.w3x" />
+		<Include type="all"	source="ART:GUAircraftF_SKL.w3x" />
+		<Include type="all"	source="ART:GUAircraftF_SKN.w3x" />
+		<Include type="all"	source="ART:GUAircraftf_AIDA.w3x" />
+		<Include type="all"	source="ART:GUAircraftf_AIDB.w3x" />
+		<Include type="all"	source="ART:GUAircraftf_TRNL.w3x" />
+		<Include type="all" source="ART:GUAircraftf_TRNR.w3x" />
+		<Include type="all"	source="ART:GUAircraftF_ACCL.w3x" />
+		<Include type="all" source="ART:GUAircraftF_ACCL2.w3x" />
+		<Include type="all"	source="ART:GUAircraftF_ATKA.w3x" />
+
+		<Include type="all"	source="ART:GUAircraftF_ACCLD.W3X" />
+		<Include type="all"	source="ART:GUAircraftF_AIDD.W3X" />
+		<Include type="all"	source="ART:GUAircraftF_AIDD2.W3X" />
+		<Include type="all"	source="ART:GUAircraftF_MOVD.W3X" />
+		<Include type="all"	source="ART:GUAircraftF_MOVD2.W3X" />
+
+		<Include type="all"	source="ART:GUAircraftFAA_SKN.W3X" />
+		<Include type="all"	source="ART:GUAircraftFAA_SKL.W3X" />
+		<Include type="all"	source="ART:GUAircraftFAA_ATKA.W3X" />
+
+		<Include type="all"	source="ART:GUAircraftFGuns_SKN.W3X" />
+		<Include type="all"	source="ART:GUAircraftFGuns_SKL.W3X" />
+		<Include type="all"	source="ART:GUAircraftFGuns_ATKA.W3X" />
+		<Include type="all"	source="ART:GUAircraftFGuns_ATKB.W3X" />
+		<Include type="all"	source="ART:GUAircraftFGuns_ATKC.W3X" />
+
+		<Include type="all"	source="ART:FXTracerGDI.xml" />
+		<Include type="all"	source="ART:FXTracerHeroic.xml" />
+		<Include type="all" source="ART:FXGDIMachineGunTracer.xml" />
+		<Include type="all" source="ART:FXGDIMachineGunTracer_Veteran.xml" />
+		<Include type="instance" source="DATA:GDI/Props/GDIBlastProjectiles.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:GDI/Props/GDIAircraftFProps.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseHeavyAircraft.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+	</Includes>
+
+	<Defines>
+		<Define name="GDIAIRCRAFTF_ARMOR_UP_RADIUS" value="250" />
+		<Define name="GDIAIRCRAFTF_ARMOR_UP_DECAL_RADIUS" value="=($GDIAIRCRAFTF_ARMOR_UP_RADIUS * 2 ) + 20" />
+	</Defines>
+
+	
+	<GameObject
+		id="GDIAircraftF"
+		inheritFrom="BaseHeavyAircraft"
+		HealthBoxHeightOffset="65"
+		HealthBar="Large"
+		SubGroupPriority="142"
+		SelectPortrait="Portrait_GDI_Aircraft_F"
+		ButtonImage="Btn_GDI_Aircraft_F"
+		Side="GDI"	
+		ParticipationValue="=$GDIAIRCRAFTF_PARTICIPATION_VALUE"
+		BuildTime="20"
+		CommandSet="GDIAircraftFCommandSet"
+		CommandPoints="=$GDI_AIRCRAFT_F_COMMANDPOINT_COST"
+		KindOf="+ASSAULT_AIRCRAFT +MEGA_UNIT +HAS_BUILDING_DESTRUCT_BEHAVIOR +MULTIPLE_WEAPON_CATEGORIES"
+		VoicePriority="152"
+		EditorName="GDI_S3_Heavy_Blast(Kodiak)"
+		WeaponCategory="BLAST"
+		Description="Desc:GDIAircraftF"
+		TypeDescription="Type:GDIAircraftF">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIAircraftF</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+		<LocomotorSet
+			id="AirLocomotor" 
+			Locomotor="GDIAircraftFLocomotor"
+			Condition="NORMAL"
+			Speed="70" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="0.1"
+				MaxRecoilDistance="0.1"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				ExtraPublicBone="=$GDIAIRCRAFTF_DAMAGE_BONE_NAMES + ' ATTACHFRONTAA ATTACHLEFTAA ATTACHBACKAA attachgun01 attachgun02 attachgun03 CS_Rreactor CS_2ndturbine'"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUAircraftF_SKN" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BF"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_LF"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+
+					<ParticleSysBone
+						BoneName="FX_Burner_LR"
+						FXParticleSystemTemplate="GDIAircraftF_Embers"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BR"
+						FXParticleSystemTemplate="GDIAircraftF_Embers"
+							FollowBone="true" />
+
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverDust_Large"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverRocks_Large"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="GUAircraftF_FP" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED USER_1">
+					<Model
+						Name="GUAircraftF_SKN" />
+					<ParticleSysBone
+						BoneName="FX_Burner_LR"
+						FXParticleSystemTemplate="VenomExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BR"
+						FXParticleSystemTemplate="VenomExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_L"
+						FXParticleSystemTemplate="VenomDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_2ndturbine"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_Rreactor"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BF"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_LF"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverDust_Large"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverRocks_Large"
+						FollowBone="true" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$GDIAIRCRAFTF_ARMOR_UP_DECAL_RADIUS"
+						SizeY="=$GDIAIRCRAFTF_ARMOR_UP_DECAL_RADIUS"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Rig_CO"/>
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUAircraftF_SKN" />
+					<ParticleSysBone
+						BoneName="FX_Burner_LR"
+						FXParticleSystemTemplate="VenomExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BR"
+						FXParticleSystemTemplate="VenomExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_L"
+						FXParticleSystemTemplate="VenomDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_2ndturbine"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_Rreactor"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BF"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_LF"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverDust_Large"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverRocks_Large"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED USER_1">
+					<Model
+						Name="GUAircraftF_SKN" />
+					<ParticleSysBone
+						BoneName="FX_Burner_LR"
+						FXParticleSystemTemplate="VenomExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BR"
+						FXParticleSystemTemplate="VenomExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_L"
+						FXParticleSystemTemplate="VenomDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_L"
+						FXParticleSystemTemplate="VenomDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_2ndturbine"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_2ndturbine"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_Rreactor"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_Rreactor"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BF"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_LF"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverDust_Large"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverRocks_Large"
+						FollowBone="true" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$GDIAIRCRAFTF_ARMOR_UP_DECAL_RADIUS"
+						SizeY="=$GDIAIRCRAFTF_ARMOR_UP_DECAL_RADIUS"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Rig_CO"/>
+				</ModelConditionState>
+
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUAircraftF_SKN" />
+					<ParticleSysBone
+						BoneName="FX_Burner_LR"
+						FXParticleSystemTemplate="VenomExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BR"
+						FXParticleSystemTemplate="VenomExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_L"
+						FXParticleSystemTemplate="VenomDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_Engine_L"
+						FXParticleSystemTemplate="VenomDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_2ndturbine"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_2ndturbine"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_Rreactor"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="CS_Rreactor"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BF"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_LF"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverDust_Large"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIHoverRocks_Large"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="GUAircraftF_SKN" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIDebrisSmallFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIDebrisSmallFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model Name="GUAircraftF_SKN" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$GDIAIRCRAFTF_ARMOR_UP_DECAL_RADIUS"
+						SizeY="=$GDIAIRCRAFTF_ARMOR_UP_DECAL_RADIUS"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Rig_CO"/>
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GUAircraftf_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<Animation
+						AnimationName="GUAircraftf_AIDB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+
+				</AnimationState>
+
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					ConditionsYes="REALLYDAMAGED">
+					<Animation
+						AnimationName="GUAircraftF_AIDD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<Animation
+						AnimationName="GUAircraftF_AIDD2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE REALLYDAMAGED">
+					<Animation
+						AnimationName="GUAircraftF_ACCLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+
+
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					ConditionsYes="ACCELERATE">
+					<Animation
+						AnimationName="GUAircraftF_ACCL"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<Animation
+						AnimationName="GUAircraftF_ACCL2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE REALLYDAMAGED">
+					<Animation
+						AnimationName="GUAircraftF_AIDD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE">
+					<Animation
+						AnimationName="GUAircraftF_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USING_AND_NOT_EMPTY_A">
+					<Animation
+						AnimationName="GUAircraftF_ATKA"
+						AnimationMode="ONCE"/>
+
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_OR_PREATTACK_A">
+					<Animation
+						AnimationName="GUAircraftF_ATKA"
+						AnimationMode="ONCE"/>
+
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_RIGHT">
+					<Animation
+						AnimationName="GUAircraftf_TRNR"
+						AnimationMode="LOOP"
+						AnimationBlendTime="30" />
+						<ParticleSysBone
+						BoneName="FX_Burner_LR"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+							FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BR"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+							FollowBone="true" />
+
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_LEFT">
+					<Animation
+						AnimationName="GUAircraftf_TRNL"
+						AnimationMode="LOOP"
+						AnimationBlendTime="30" />
+						<ParticleSysBone
+						BoneName="FX_Burner_LR"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+							FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BR"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+							FollowBone="true" />
+
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					ConditionsYes="MOVING REALLYDAMAGED">
+					<Animation
+						AnimationName="GUAircraftf_MOVD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<Animation
+						AnimationName="GUAircraftf_MOVD2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="FX_Burner_LR"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BR"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="GUAircraftf_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="FX_Burner_LR"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_Burner_BR"
+						FXParticleSystemTemplate="GDIAircraft_HoverFlamesB"
+						FollowBone="true" />
+
+				</AnimationState>
+
+				<ProceduralAnimationState
+				   ConditionsYes=""
+				   SourceBoneNameKey="CS_Rdrdish"
+				   TargetBoneNameKey="CS_Rdrdish"				   
+				   Rotation="ROTATE_Z INFINITE_LOOP"
+				   RotationSpeed="10d">
+				</ProceduralAnimationState>
+			</ScriptedModelDraw>
+
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw_Gun1"
+				MinLength="25.0"
+				MaxLength="25.0"
+				Width="7.0"
+				MinSpeed="25"
+				MaxSpeed="30"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame=".2"
+				MaxTracersPerFrame=".3"
+				FrameLifeTime="35"
+				Texture="FXGDIMachineGunTracer"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_GDIMachineGun_Medium_Hit"
+				CombatChainCounter="EQUAL WEAK"
+				WeaponSlotID="3"
+				WeaponSlotType="QUATERNARY_WEAPON">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+			</TracerModelDraw>
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw_Gun2"
+				MinLength="25.0"
+				MaxLength="25.0"
+				Width="7.0"
+				MinSpeed="25"
+				MaxSpeed="30"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame=".2"
+				MaxTracersPerFrame=".3"
+				FrameLifeTime="35"
+				Texture="FXGDIMachineGunTracer"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_GDIMachineGun_Medium_Hit"
+				CombatChainCounter="EQUAL WEAK"
+				WeaponSlotID="4"
+				WeaponSlotType="QUINARY_WEAPON">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+			</TracerModelDraw>
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw_Gun3"
+				MinLength="25.0"
+				MaxLength="25.0"
+				Width="7.0"
+				MinSpeed="25"
+				MaxSpeed="30"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame=".2"
+				MaxTracersPerFrame=".3"
+				FrameLifeTime="35"
+				Texture="FXGDIMachineGunTracer"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_GDIMachineGun_Medium_Hit"
+				CombatChainCounter="EQUAL WEAK"
+				WeaponSlotID="5"
+				WeaponSlotType="SENARY_WEAPON">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+			</TracerModelDraw>
+
+			<!-- strong counter tracer -->
+
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw_Gun1_Strong"
+				MinLength="25.0"
+				MaxLength="25.0"
+				Width="7.0"
+				MinSpeed="25"
+				MaxSpeed="30"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame=".2"
+				MaxTracersPerFrame=".3"
+				FrameLifeTime="35"
+				Texture="FXGDIMachineGunTracer_Veteran"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_GDIMachineGun_Medium_Hit"
+				CombatChainCounter="STRONG"
+				WeaponSlotID="3"
+				WeaponSlotType="QUATERNARY_WEAPON">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+			</TracerModelDraw>
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw_Gun2_Strong"
+				MinLength="25.0"
+				MaxLength="25.0"
+				Width="7.0"
+				MinSpeed="25"
+				MaxSpeed="30"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame=".2"
+				MaxTracersPerFrame=".3"
+				FrameLifeTime="35"
+				Texture="FXGDIMachineGunTracer_Veteran"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_GDIMachineGun_Medium_Hit"
+				CombatChainCounter="STRONG"
+				WeaponSlotID="4"
+				WeaponSlotType="QUINARY_WEAPON">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+			</TracerModelDraw>
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw_Gun3_Strong"
+				MinLength="25.0"
+				MaxLength="25.0"
+				Width="7.0"
+				MinSpeed="25"
+				MaxSpeed="30"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame=".2"
+				MaxTracersPerFrame=".3"
+				FrameLifeTime="35"
+				Texture="FXGDIMachineGunTracer_Veteran"
+				UseAdditiveBlending="true"
+				TracerHitFx="FX_GDIMachineGun_Medium_Hit"
+				CombatChainCounter="STRONG"
+				WeaponSlotID="5"
+				WeaponSlotType="SENARY_WEAPON">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+			</TracerModelDraw>
+
+
+			<!-- Draws for 3 Ground turrets, Side gun (left)-->
+			<ScriptedModelDraw
+				id="ModuleTag_Ground_GUN_01"
+				ExtraPublicBone="FXMuzzle01 FXMuzzle02 FXMuzzle03"
+				AttachToBoneInAnotherModule="attachgun01"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUAircraftFGuns_SKN" />
+					<Turret
+						TurretNameKey="b_turret01"
+						TurretPitch="b_pitch01"
+						TurretID="0" />
+					<WeaponFireFXBone
+						WeaponSlotID="0"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="fxmuzzle" />
+					<WeaponLaunchBone
+						WeaponSlotID="0"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="fxmuzzle" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="GUAircraftFGuns_ATKA"
+						AnimationMode="ONCE"/>
+					<Animation
+						AnimationName="GUAircraftFGuns_ATKB"
+						AnimationMode="ONCE"/>
+					<Animation
+						AnimationName="GUAircraftFGuns_ATKC"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+
+			<!-- Draws for 3 Ground turrets, Front Left gun -->
+			<ScriptedModelDraw
+				id="ModuleTag_Ground_GUN_02"
+				ExtraPublicBone="FXMuzzle01 FXMuzzle02 FXMuzzle03"
+				AttachToBoneInAnotherModule="attachgun02"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUAircraftFGuns_SKN" />
+					<Turret
+						TurretNameKey="b_turret01"
+						TurretPitch="b_pitch01"
+						TurretID="1" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="SECONDARY_WEAPON"
+						BoneName="fxmuzzle" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="SECONDARY_WEAPON"
+						BoneName="fxmuzzle" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_B">
+					<Animation
+						AnimationName="GUAircraftFGuns_ATKA"
+						AnimationMode="ONCE"/>
+					<Animation
+						AnimationName="GUAircraftFGuns_ATKB"
+						AnimationMode="ONCE"/>
+					<Animation
+						AnimationName="GUAircraftFGuns_ATKC"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- Draws for 3 Ground turrets, Front Right gun -->
+			<ScriptedModelDraw
+				id="ModuleTag_Ground_GUN_03"
+				ExtraPublicBone="FXMuzzle01 FXMuzzle02 FXMuzzle03"
+				AttachToBoneInAnotherModule="attachgun03"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUAircraftFGuns_SKN" />
+					<Turret
+						TurretNameKey="b_turret01"
+						TurretPitch="b_pitch01"
+						TurretID="2" />
+					<WeaponFireFXBone
+						WeaponSlotID="2"
+						WeaponSlotType="TERTIARY_WEAPON"
+						BoneName="fxmuzzle" />
+					<WeaponLaunchBone
+						WeaponSlotID="2"
+						WeaponSlotType="TERTIARY_WEAPON"
+						BoneName="fxmuzzle" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_C">
+					<Animation
+						AnimationName="GUAircraftFGuns_ATKA"
+						AnimationMode="ONCE"/>
+					<Animation
+						AnimationName="GUAircraftFGuns_ATKB"
+						AnimationMode="ONCE"/>
+					<Animation
+						AnimationName="GUAircraftFGuns_ATKC"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+
+			<!-- Draws for 3 AA turrets, front gun -->
+			<ScriptedModelDraw
+				id="ModuleTag_AA_GUN_01"
+				ExtraPublicBone="FXMuzzleAA01 FXMuzzleAA02"
+				AttachToBoneInAnotherModule="ATTACHFRONTAA"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUAircraftFAA_SKN" />
+					<Turret
+						TurretNameKey="b_turret"
+						TurretPitch="b_pitch"
+						TurretID="3" />
+					<WeaponFireFXBone
+						WeaponSlotID="3"
+						WeaponSlotType="QUATERNARY_WEAPON"
+						BoneName="FXMuzzleAA" />
+					<WeaponLaunchBone
+						WeaponSlotID="3"
+						WeaponSlotType="QUATERNARY_WEAPON"
+						BoneName="FXMuzzleAA" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_D">
+					<Animation
+						AnimationName="GUAircraftFAA_ATKA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+			
+			<!-- Draws for 3 AA turrets, side gun  -->
+			<ScriptedModelDraw
+				id="ModuleTag_AA_GUN_02"
+				ExtraPublicBone="FXMuzzleAA gun_"
+				AttachToBoneInAnotherModule="ATTACHLEFTAA"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUAircraftFAA_SKN" />
+					<Turret
+						TurretNameKey="b_turret"
+						TurretPitch="b_pitch"
+						TurretID="4" />
+					<WeaponFireFXBone
+						WeaponSlotID="4"
+						WeaponSlotType="QUINARY_WEAPON"
+						BoneName="FXMuzzleAA" />
+					<WeaponLaunchBone
+						WeaponSlotID="4"
+						WeaponSlotType="QUINARY_WEAPON"
+						BoneName="gun_" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_E">
+					<Animation
+						AnimationName="GUAircraftFAA_ATKA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<!-- Draws for 3 AA turrets, rear gun -->
+			<ScriptedModelDraw
+				id="ModuleTag_AA_GUN_03"
+				ExtraPublicBone="FXMuzzleAA gun_"
+				AttachToBoneInAnotherModule="ATTACHBACKAA"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUAircraftFAA_SKN" />
+					<Turret
+						TurretNameKey="b_turret"
+						TurretPitch="b_pitch"
+						TurretID="5" />
+					<WeaponFireFXBone
+						WeaponSlotID="5"
+						WeaponSlotType="SENARY_WEAPON"
+						BoneName="FXMuzzleAA" />
+					<WeaponLaunchBone
+						WeaponSlotID="5"
+						WeaponSlotType="SENARY_WEAPON"
+						BoneName="gun_" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_F">
+					<Animation
+						AnimationName="GUAircraftFAA_ATKA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+		</Draws>
+		
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<!-- none of these turrets are allowed to orient the Kodiak, by design -->
+				<WeaponSlotTurret
+					ID="0"
+					Flags="CANNOT_ORIENT_UNIT">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIAircraftFWeaponA"
+						ForbiddenObjectStatus="TRANSFORMATION_TOGGLE_STATE" />
+					<TurretSettings
+						TurretTurnRate="100"
+						TurretPitchRate="80"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="180.0"
+						AllowsPitch="true"
+						MinimumPitch="-90d">
+						<TurretAITargetChooserData/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+				<WeaponSlotTurret
+					ID="1"
+					Flags="CANNOT_ORIENT_UNIT">
+					<Weapon
+						Ordering="SECONDARY_WEAPON"
+						Template="GDIAircraftFWeaponA"
+						ForbiddenObjectStatus="TRANSFORMATION_TOGGLE_STATE" />
+					<TurretSettings
+						TurretTurnRate="100"
+						TurretPitchRate="80"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="180.0"
+						AllowsPitch="true"
+						MinimumPitch="-90d"
+						MaxDeflectionAntiClockwise="160d"
+						MaxDeflectionClockwise="60d"
+						NaturalTurretAngle="0d">
+						<TurretAITargetChooserData/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+				<WeaponSlotTurret
+					ID="2"
+					Flags="CANNOT_ORIENT_UNIT">
+					<Weapon
+						Ordering="TERTIARY_WEAPON"
+						Template="GDIAircraftFWeaponA"
+						ForbiddenObjectStatus="TRANSFORMATION_TOGGLE_STATE" />
+					<TurretSettings
+						TurretTurnRate="100"
+						TurretPitchRate="80"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="180.0"
+						AllowsPitch="true"
+						MinimumPitch="-90d"
+						MaxDeflectionAntiClockwise="60d"
+						MaxDeflectionClockwise="120d"
+						NaturalTurretAngle="0d">
+						<TurretAITargetChooserData/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+
+				<!-- AA guns #1: front gun, slightly right-facing  -->
+				<WeaponSlotTurret
+					ID="3"
+					Flags="CANNOT_ORIENT_UNIT">
+					<Weapon
+						Ordering="QUATERNARY_WEAPON"
+						Template="GDIAircraftFWeaponB"
+						ForbiddenObjectStatus="TRANSFORMATION_TOGGLE_STATE" />
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-15d"
+						PitchHeight="75%"
+						MaxDeflectionClockwise="125d"
+						MaxDeflectionAntiClockwise="135d"
+						NaturalTurretAngle="0d"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="30.0">
+						<TurretAITargetChooserData/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+				<!-- AA guns #2: left-facing   -->
+				<WeaponSlotTurret
+					ID="4"
+					Flags="CANNOT_ORIENT_UNIT">
+					<Weapon
+						Ordering="QUINARY_WEAPON"
+						Template="GDIAircraftFWeaponB"
+						ForbiddenObjectStatus="TRANSFORMATION_TOGGLE_STATE" />
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-15d"
+						PitchHeight="75%"
+						MaxDeflectionClockwise="105d"
+						MaxDeflectionAntiClockwise="90d"
+						NaturalTurretAngle="45d"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="30.0">
+						<TurretAITargetChooserData/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+				<!-- AA guns #3: rear gun, slightly right-facing   -->
+				<WeaponSlotTurret
+					ID="5"
+					Flags="CANNOT_ORIENT_UNIT">
+					<Weapon
+						Ordering="SENARY_WEAPON"
+						Template="GDIAircraftFWeaponB"
+						ForbiddenObjectStatus="TRANSFORMATION_TOGGLE_STATE" />
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-15d"
+						PitchHeight="75%"
+						NaturalTurretAngle="180d"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="30.0">
+						<TurretAITargetChooserData/>
+					</TurretSettings> 
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDIAircraftF_Dying_OCL">
+				<DieMuxData
+					DeathTypes="ALL"/>
+			</CreateObjectDie>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<!-- Old Slow Death
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0s"
+				SinkRate="0.5">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="TOPPLED" />
+				<FX Type="INITIAL">
+					<FX>FX_GDI_AircraftF_VoiceDie</FX>
+				</FX>
+			</SlowDeath>
+			-->
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_AttributeModifierAura"
+				AttributeModifierName="Modifier_ArmorUp_Aura"
+				Range="=$GDIAIRCRAFTF_ARMOR_UP_RADIUS"
+				InitiallyActive="true"
+				AllowSelf="false" 
+				RefreshDelay="2.0s">
+				<UpdateStatusValidation
+					RequiredStatus="TRANSFORMATION_TOGGLE_STATE"
+					ForbiddenStatus="DISABLED_FOR_RECYCLE CLONED" />
+				<ObjectFilter
+					Relationship="ALLIES"
+					Rule="ALL" />
+			</AttributeModifierAuraUpdate>
+
+			<SpecialPower
+				id="ModuleTag_ToggleArmorUp"
+				SpecialPowerTemplate="SpecialPower_GDIAircraftFArmorUp" />
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleArmorUpUpdate"
+				SpecialPowerTemplate="SpecialPower_GDIAircraftFArmorUp"
+				Options="RECONSTITUTE_STORED_COMMAND">
+				<ToggleState
+					ObjectStatus="GENERIC_TOGGLE_STATE"
+					EnterStateSound="GDI_Kodiak_AirF_ArmorUpOff">
+					<SkirmishAiInfo
+						NeverUseWhenDodgingThreat="true"
+						ToggleHint="TOGGLE_DEFAULT" />
+				</ToggleState>
+				<ToggleState
+					ObjectStatus="TRANSFORMATION_TOGGLE_STATE"
+					AttributeModifier="Modifier_ArmorUp" 
+					ModelConditions="USER_1"
+					EnterStateSound="GDI_Kodiak_AirF_ArmorUpOn">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_DEFENSE_SELF_ONLY" 
+						SelfDefenseDamageLookAheadTime="2s"
+						SelfDefenseDamageLookBehindTime="2s"
+						SelfDefenseDamageFraction="0.1" />
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+
+			<TrackDamage
+				id="ModuleTag_TrackDamage" 
+				TimeToTrack="2s"
+				InstantWeaponsOnly="true"/>
+			<TrackIncomingWeaponFireBehavior
+				id="ModuleTag_TrackIncomingFire"/>
+
+			<FXListBehavior
+				  xmlns="uri:ea.com:eala:asset"
+				  id="ModuleTag_FXListUpgrade">
+				<TriggeredBy>Upgrade_GDIAircraftFArmorUp</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					  Index="onUpgraded"
+					  FX="FX_UpgradeGDIDefensiveManeuvers" />
+			</FXListBehavior>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIArtilleryHitBIG" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				AssociatedModule="ModuleTag_Draw">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="175.0"
+					FX="FX_GDIVehicleL_Damage">
+					<!-- 1 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_10</BoneName>
+						<BoneName>bone_contact_point_15</BoneName>
+						<BoneName>bone_contact_point_11</BoneName>
+						<BoneName>bone_contact_point_12</BoneName>
+					</NamedBoneInfo>
+					<!-- 2 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_13</BoneName>
+						<BoneName>bone_contact_point_14</BoneName>
+					</NamedBoneInfo>
+					<!-- 3 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_03</BoneName>
+						<BoneName>bone_contact_point_04</BoneName>
+						<BoneName>bone_contact_point_05</BoneName>
+						<BoneName>bone_contact_point_06</BoneName>
+					</NamedBoneInfo>
+					<!-- 4 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_09</BoneName>
+					</NamedBoneInfo>
+					<!-- 5 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_07</BoneName>
+					</NamedBoneInfo>
+					<!-- 6 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_08</BoneName>
+					</NamedBoneInfo>
+					<!-- 7 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_01</BoneName>
+					</NamedBoneInfo>
+					<!-- 8 -->
+					<NamedBoneInfo>
+						<BoneName>bone_contact_point_02</BoneName>
+					</NamedBoneInfo>
+				</Item>
+			</BuildingDestructionBehavior>
+
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_AIUpdate"
+				StateMachine="HelicopterAIStateMachine"
+				AutoAcquireEnemiesWhenIdle="YES">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					SympathyRange="200.0" />
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="1500" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_AirplaneLarge</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_FlyingLoop">
+				<ModelConditionSound Sound="GDI_AircraftF_MoveLoop" RequiredFlags="MOVING" ExcludedFlags="RECYCLED DECELERATE DYING" />
+				<ModelConditionSound Sound="GDI_AircraftF_IdleLoop" RequiredFlags="FLYING" ExcludedFlags="RECYCLED MOVING DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_TakeoffLanding">
+				<ModelConditionSound Sound="GDI_AircraftF_MoveStart" RequiredFlags="LANDING" ExcludedFlags="RECYCLED DYING" />
+				<ModelConditionSound Sound="GDI_AircraftF_MoveStart" RequiredFlags="TAKING_OFF" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+
+		<xi:include	href="DATA:GDI/Includes/GDIAircraftFGeometry.xml" />
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_AirFKodiak_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="GDI_AirFKodiak_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="GDI_AirFKodiak_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="GDI_AirFKodiak_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="GDI_AirFKodiak_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="GDI_AirFKodiak_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="GDI_AirFKodiak_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="GDI_AirFKodiak_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="GDI_AircraftF_SoundCreate" AudioType="soundCreated" />
+			<AudioEntry Sound="GDI_AircraftF_MoveStart" AudioType="soundMoveStart" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="650"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_GDIAircraftFArmorUp</DisplayUpgrade>
+	</GameObject>
+
+	<!-- GDI Aircraft F (Kodiak Cruiser) Ground Pounder weapon -->
+	<WeaponTemplate
+		id="GDIAircraftFWeaponA"
+		inheritFrom="BaseBlastWeapon" 
+		ScatterRadius="50"
+		ScatterIndependently="true"
+		AttackRange="600.0"
+		MinTargetPitch="-60d"
+		MaxTargetPitch="0d"
+		WeaponSpeed="2000"
+		WeaponRecoil="5d"
+		FireSound="GDI_Kodiak_AirF_CannonWeaponFireMS"
+		FireFX="FX_GDI_AircraftFWeaponAFire"
+		FireStrongCounterFX="FX_GDI_AircraftFWeaponAFireHeroic"
+		CanFireWhileMoving="true"
+		AcceptableAimDelta="1d"
+		ClipSize="3"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_BUILDINGS CAN_FIRE_ON_GROUND"
+		ShotsPerBarrel="1"
+		CheckStatusFlagsInRangeChecks="false"
+		PreAttackType="PER_CLIP"
+		RequiredAntiMask="ANTI_GROUND"
+		NoVictimNeeded="true"
+		RevealShroudOnFire="true">
+		<FiringDuration
+			MinSeconds="0.75s"
+			MaxSeconds="0.75s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="0.25s"
+			MaxSeconds="0.25s" />
+		<ClipReloadTime
+			MinSeconds="5.0s"
+			MaxSeconds="5.0s" />
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="GDIBlastProjectile"
+				WarheadTemplate="GDIAircraftFWeaponAWarhead">
+				<VeterancyProjectiles
+					VeterancyLevel="HEROIC"
+					ProjectileTemplate="GDIBlastProjectile_Veteran" />
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- GDI Aircraft F (Kodiak Cruiser) Ground Pounder weapon warhead -->
+	<WeaponTemplate
+		id="GDIAircraftFWeaponAWarhead"
+		ProjectileCollidesWith="ENEMIES NEUTRAL STRUCTURES WALLS"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<DamageNugget
+				Damage="22.0"
+				Radius="80.0"
+				DamageType="BLAST"
+				DeathType="EXPLODED">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- GDI Aircraft F (Kodiak Cruiser) Air Defense Guns weapon-->
+	<WeaponTemplate
+		id="GDIAircraftFWeaponB"
+		inheritFrom="BaseGunWeapon" 
+		AttackRange="300.0"
+		FiringLoopSound="GDI_Kodiak_AirF_MachineGunWeaponFireLoop"
+		FiringLoopSoundContinuesDuringReload="false"
+		FireFX="FX_GDIMachineGun_Medium_Fire"
+		FireStrongCounterFX="FX_GDIMachineGun_Medium_Fire_Veteran"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		AutoReloadsClip="AUTO"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_BUILDINGS"
+		RequiredAntiMask="ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		AcceptableAimDelta="5d"
+		MinTargetPitch="-90d">
+		<Nuggets>
+			<DamageNugget
+				Damage="0.8"
+				DamageType="GUN"
+				DamageFXType="GDI_MACHINEGUN"
+				DeathType="NORMAL" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDIAircraftFArmorUp"
+		ReloadTime="5s"
+		TargetType="NONE"
+		WaypointModeTerminal="false">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_GDIAircraftFArmorUp</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<AttributeModifier
+		id="Modifier_ArmorUp"
+		Category="NONE"
+		RenderBuffEffectFlags="PERSONAL_SHIELDS">
+		<BuffInfo Type="DEFENSE_POSITIVE" SourceString="Name:GDIAircraftF" />
+		<Modifier Type="ARMOR" Value="50%" />
+		<Modifier Type="SPEED" Value="150%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="Modifier_ArmorUp_Aura"
+		Category="NONE"
+		Duration="2.0s">
+		<BuffInfo Type="DEFENSE_POSITIVE" SourceString="Name:GDIAircraftF" />
+		<Modifier Type="ARMOR" Value="75%" />
+	</AttributeModifier>
+
+	<ObjectCreationList
+		id="GDIAircraftF_Dying_OCL">
+		<OCLModule>
+			<Modules>
+				<CreateObject
+					ObjectTemplate="GDIAircraftF_Dying"/>
+				<CopyParentLayer/>
+				<CopyBuildingDestructionBehaviorState/>
+				<InheritVelocityFromParent/>
+				<FlingObject/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+	<LocomotorTemplate
+		id="GDIAircraftFLocomotor"
+		Surfaces="AIR"
+		TurnTimeSeconds="3.0s"
+		TurnTimeDamagedSeconds="3.0s"
+		AccelerationSeconds="1.5s"
+		LookAheadMult="5.0"
+		TakeOffAndLandingSpeed="=$AIR_CREATION_UNIT_LANDING_SPEED"
+		TakeOffAndLandingSlowDownTime="0.1s"
+		TakeOffAndLandingSlowDownDelta="0.25"
+		Lift="120%"
+		LiftDamaged="80%"
+		BrakingSeconds="0.7s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="80.0"
+		PreferredHeight="125"
+		PreferredAttackHeight="100"
+		AllowMotiveForceWhileAirborne="true"
+		BehaviorZ="SURFACE_RELATIVE_HEIGHT"
+		Appearance="HOVER"
+		PitchStiffness="0.5"
+		RollStiffness="0.1"
+		PitchDamping="0.9"
+		RollDamping="0.9"
+		ForwardVelocityPitchFactor="-0.05"
+		LateralVelocityRollFactor="-0.05"
+		Apply2DFrictionWhenAirborne="true"
+		AirborneTargetingHeight="30"
+		LocomotorWorksWhenDead="true"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		IgnoreMinSurfaceElevation="true" 
+		CanReverseMove="true"/>
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_GDIAircraftFArmorUp">
+		<SpecialPower>SpecialPower_GDIAircraftFArmorUp</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo Heuristic="TOGGLE" />
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="GDIAircraftFCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+		<Cmd>Command_GDIAircraftFArmorUp</Cmd>
+	</LogicCommandSet>
+
+	<ExperienceLevelTemplate
+		id="GDIAircraftFExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="12">
+		<Target>GDIAircraftF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIAircraftFExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIAircraftFExperienceLevel_1"
+		RequiredExperience="24"
+		ExperienceAward="14">
+		<Target>GDIAircraftF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIAircraftFExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIAircraftFExperienceLevel_2"
+		RequiredExperience="48"
+		ExperienceAward="16">
+		<Target>GDIAircraftF</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIAircraftFExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIAircraftFExperienceLevel_3"
+		RequiredExperience="84"
+		ExperienceAward="18">
+		<Target>GDIAircraftF</Target>
+	</ExperienceLevelTemplate>
+	
+</AssetDeclaration>

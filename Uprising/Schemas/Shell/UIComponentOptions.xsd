@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns="uri:ea.com:eala:asset" 
+	xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema"
+	targetNamespace="uri:ea.com:eala:asset"
+	elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="../Includes/UIBaseComponent.xsd"/>
+
+    <!-- For the command list screen -->
+
+    <xs:simpleType name="JoyPadButtonType"
+        xas:useEnumPrefix="false"
+        xas:enumItemPrefix="JOYPAD_BUTTON_"
+        xas:targetNamespace="Sage::UI::Joypad">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LEFT_STICK" />
+            <xs:enumeration value="LEFT_TRIGGER" />
+            <xs:enumeration value="LEFT_BUMPER" />
+            <xs:enumeration value="RIGHT_STICK" />
+            <xs:enumeration value="RIGHT_TRIGGER" />
+            <xs:enumeration value="RIGHT_BUMPER" />
+            <xs:enumeration value="A" />
+            <xs:enumeration value="B" />
+            <xs:enumeration value="X" />
+            <xs:enumeration value="Y" />
+            <xs:enumeration value="D_PAD" />
+            <xs:enumeration value="BACK" />
+            <xs:enumeration value="START" />
+            <xs:enumeration value="GUIDE" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="JoyPadActionType"
+        xas:useEnumPrefix="false"
+        xas:enumItemPrefix="JOYPAD_ACTION_"
+        xas:targetNamespace="Sage::UI::Joypad">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PRESS" />
+            <xs:enumeration value="HOLD" />
+            <xs:enumeration value="CLICK" />
+            <xs:enumeration value="DOUBLE_CLICK" />
+            <xs:enumeration value="ON_GROUND" />
+            <xs:enumeration value="ON_TARGET" />
+            <xs:enumeration value="ON_UNIT_TYPE" />
+			<xs:enumeration value="MOVE" />
+			<xs:enumeration value="LEFT" />
+			<xs:enumeration value="RIGHT" />
+			<xs:enumeration value="UP" />
+			<xs:enumeration value="DOWN" />
+			<xs:enumeration value="LEFT_OR_RIGHT" />
+			<xs:enumeration value="UP_OR_DOWN" />
+			<xs:enumeration value="LINK_WITH_NEXT" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="InputButton">
+        <xs:attribute name="ButtonName" type="JoyPadButtonType" use="required"/>
+        <xs:attribute name="ButtonAction" type="JoyPadActionType"/>
+    </xs:complexType>
+
+    <xs:complexType name="SingleCommandLine">
+        <xs:sequence>
+            <xs:element name="Input" type="InputButton" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="Purpose" type="xs:string" use="required"/>
+        <xs:attribute name="Description" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="SingleCommandList">
+        <xs:sequence>
+            <xs:element name="CommandLine" type="SingleCommandLine" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="CategoryName" type="xs:string" />
+    </xs:complexType>
+
+    <!-- End command list screen -->
+    
+	<xs:complexType name="DefaultValues">
+		<!-- TODO: GameDifficulty enum should eventually be moved to a basetype so that the lobbies can leverage it as well -->
+		<xs:attribute name="Difficulty"			type="SageInt" default="1" />
+
+		<!-- Audio/Video Settings -->
+		<xs:attribute name="Gamma"				type="SageReal" default="1.30" />
+		<xs:attribute name="Brightness"			type="SageReal" default="0.50" />
+		<xs:attribute name="Contrast"			type="SageReal" default="1.30" />
+		<xs:attribute name="VolumeMusic"		type="SageReal" default="0.45" />
+		<xs:attribute name="VolumeFX"			type="SageReal" default="0.70" />
+		<xs:attribute name="VolumeVoice"		type="SageReal" default="0.70" />
+		<xs:attribute name="VolumeAmbient"		type="SageReal" default="0.50" />
+		<xs:attribute name="VolumeMovie"		type="SageReal" default="0.70" />
+
+		<!-- Game Settings -->
+		<xs:attribute name="ScrollSpeed"		type="SageReal" default="1.00" />
+		<xs:attribute name="ScrollMagnetism"	type="SageInt"	default="2" />
+		<xs:attribute name="ButtonIcon"			type="SageBool" default="true" />
+		<xs:attribute name="ShowCommandList"	type="SageBool" default="true" />
+		<xs:attribute name="HealthBars"			type="SageBool" default="true" />
+		<xs:attribute name="HighlightPads"		type="SageBool" default="true" />
+		<xs:attribute name="ToolTips"			type="SageBool" default="true" />
+		<xs:attribute name="Subtitles"			type="SageBool" default="false" />
+		<xs:attribute name="InvertRotate"		type="SageBool" default="true" />
+		<xs:attribute name="Telemetry"			type="SageBool" default="true" />
+
+		<!-- Xbox Live Settings -->
+		<xs:attribute name="DefaultFaction"		type="SageInt" default="-1" />
+		<xs:attribute name="VisionCamVisible"	type="SageBool" default="true" />
+		<xs:attribute name="VisionCamZoom"		type="SageInt" default="1" />
+
+		<xs:attribute name="ScrollSpeedMin"		type="SageReal" default="0.2" />
+		<xs:attribute name="ScrollSpeedMax"		type="SageReal" default="2.0" />
+	</xs:complexType>
+    
+	<xs:complexType name="UIComponentOptions">
+		<xs:complexContent>
+			<xs:extension base="UIBaseComponent">
+				
+				<xs:sequence>
+					<!-- Labels -->
+					<xs:element name="ControlsText"	type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="DefaultValues" type="DefaultValues" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="CommandList" type="SingleCommandList" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+
+				<xs:attribute name="ControlsToken" type="xs:string" />
+				<xs:attribute name="SaveFileName" type="xs:string" />
+
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

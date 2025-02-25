@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags/>
+	<Includes>
+		<Include source="DATA:GDI\Structures\GDICommandPost.xml" type="instance"/>
+		<Include source="DATA:GDI\Structures\GDIMedicalBay.xml" type="instance"/>
+		<Include source="DATA:GDI\Structures\GDIArmory.xml" type="instance"/>
+		<Include source="DATA:GDI\Structures\GDIPowerplant.xml" type="instance"/>
+		<Include source="DATA:GDI\Structures\GDIAirTower.xml" type="instance"/>
+		<Include source="DATA:GDI\Structures\GDIAABattery.xml" type="instance"/>
+		<Include source="DATA:GDI\Units\GDISniperSquad.xml" type="instance"/>
+		<Include source="DATA:NOD\Units\NODVenom.xml" type="instance"/>
+		<Include source="DATA:NOD\Structures\NodPowerPlant.xml" type="instance"/>
+		<Include source="DATA:NOD\Structures\NodLaserCannon.xml" type="instance"/>
+		<Include source="DATA:NOD\Structures\NodShredderTurret.xml" type="instance"/>
+	<Include source="DATA:NOD\Structures\NodShredderTurretHub.xml" type="instance"/>
+	<Include source="DATA:GlobalData\SpecialPowerTemplates.xml" type="instance"/>	
+		<Include type="all" source="ART:NUVenom_TKFA.w3x" />
+	</Includes>
+
+
+	<GameObject
+			id="NODShredderTurret"
+			inheritFrom="NODShredderTurret"
+			EnergyProduction="-5">
+</GameObject>
+
+<GameObject
+		id="NODShredderTurretHub"
+		inheritFrom="NODShredderTurretHub">
+		<Behaviors>
+			<GatherSlavesUpdate
+				id="ModuleTag_GatherSlaves"
+				SlaveTemplate="NODShredderTurret"
+				Radius="200.0"
+				Amount="3" />
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+			id="GDIAABattery"
+			inheritFrom="GDIAABattery"
+			EnergyProduction="-2">
+	</GameObject>
+
+	<GameObject
+			id="GDIPowerPlant"
+			inheritFrom="GDIPowerPlant"
+			EnergyProduction="30">
+	</GameObject>
+
+	<GameObject
+		id="GDICommandPost" inheritFrom="GDICommandPost">
+		<Behaviors>
+			<OCLSpecialPower
+				id="ModuleTag_OCLRadarScan"
+				xai:joinAction="Remove"
+			/>
+		</Behaviors>
+	</GameObject>
+	
+	<GameObject
+		id="GDIArmory" inheritFrom="GDIArmory">
+		<Behaviors>
+			<OCLSpecialPower
+				id="ModuleTag_CallSupportHunterKillerTeam"
+				xai:joinAction="Remove"
+			/>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="GDIMedicalBay" inheritFrom="GDIMedicalBay">
+		<Behaviors>
+			<OCLSpecialPower
+				id="ModuleTag_CallSupportGDIAirborne"
+				xai:joinAction="Remove"
+			/>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+			id="NODPowerPlant" inheritFrom ="NODPowerPlant"
+			EnergyProduction = "40">
+	</GameObject>
+			
+	<GameObject
+			id="GDIAirTower" inheritFrom ="GDIAirTower"
+			EnergyProduction="0">
+		<Behaviors>
+			<OCLSpecialPower
+				id="ModuleTag_CallSupportBloodhound"
+				xai:joinAction="Remove"
+			/>
+			<OCLSpecialPower
+				id="ModuleTag_OCLSpecialPowerBombingRun"
+				xai:joinAction="Remove"
+			/>
+		</Behaviors>
+	</GameObject>
+
+
+<!-- Unit over rides -->
+<GameObject
+		id="GDISniperSquad"
+		inheritFrom="GDISniperSquad">
+		<GameDependency
+		xai:joinAction="Replace">
+			<RequiredObject>GDIBarracks</RequiredObject>
+		</GameDependency>
+</GameObject>
+
+<SpecialPowerTemplate
+		id="SpecialPower_SpotTargetBombard"
+		inheritFrom="SpecialPower_SpotTargetBombard"
+		ReachableTargetsCircleDisplayRadius="600">
+</SpecialPowerTemplate>
+<!-- Original Bombard range was 500 -->		
+	
+<GameObject
+			id="NODVenom"
+			inheritFrom="NODVenom">
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_Draw">
+				<AnimationState
+						ParseCondStateType="PARSE_NORMAL"
+						ConditionsYes="USER_1">
+					<Animation
+						AnimationName="NUVenom_TKFA"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+
+			</TruckDraw>
+
+		</Draws>
+
+	</GameObject>
+
+
+	<MissionObjectiveList id="MissionObjectives">
+
+		<!-- 1 Rescue Base -->
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_TOW_1_2_Objective_1"
+			Description = "SCRIPT:GDI_1_2_Obj_1_Detail">
+			<PresentationSettings
+			   ID = "GDI_ToW_1_2_Objective_1"
+			   Dialog = "MG12_GDIEVA02">
+				<Duration>7s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+
+		<!-- 2 Rescue Air Fields -->
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_TOW_1_2_Objective_2"
+			Description = "SCRIPT:GDI_1_2_Obj_2_Detail">
+			<PresentationSettings
+				   ID = "GDI_ToW_1_2_Objective_2"
+				   Dialog = "MG12_GDIEVA17">
+				<Duration>4s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+			   ID = "GDI_ToW_1_2_Objective_2b">
+				<Duration>4s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+
+		<!-- 3 Kill Nod Bizzase -->
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_TOW_1_2_Objective_3"
+			Description="SCRIPT:GDI_1_2_Obj_3_Detail">
+			<PresentationSettings
+			   ID = "GDI_ToW_1_2_Objective_3"
+				Dialog = "MG12_GDIEVA04">
+				<Duration>4s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_ToW_1_2_Objective_3b">
+				<Duration>3s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+
+		<!-- 4 Find Snipers -->
+		<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:GDI_TOW_1_2_BonusObjective_2" 
+			Description="SCRIPT:GDI_TOW_1_2_BonusObjective_2_Detail">
+			<PresentationSettings
+			   ID = "GDI_ToW_1_2_BonObjective_2"
+			   Dialog = "MG12_GDIEVA01">
+				<Duration>3s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_ToW_1_2_BonObjective_2b"
+				>
+				<Duration>2s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>	
+			</PresentationSettings>
+		</MissionObjectiveTag>
+
+		<!-- was 5 before it was cut capture Compost 
+		<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:GDI_TOW_1_2_BonusObjective_1"
+			Description="SCRIPT:GDI_TOW_1_2_BonusObjective_1_Detail" >
+			<PresentationSettings
+			   ID = "GDI_ToW_1_2_BonObjective_1"
+			   Dialog = "MG12_GDIEVA19">
+				<Duration>7s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		-->
+
+		<!-- 5 Cap Tib Refienry -->
+		<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:GDI_TOW_1_2_BonusObjective_3" 
+			Description="SCRIPT:GDI_TOW_1_2_BonusObjective_3_Detail">
+			<PresentationSettings
+			   ID = "GDI_ToW_1_2_BonObjective_3"
+			   Dialog = "MG12_GDIEVA22">
+				<Duration>7s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>
+			</PresentationSettings>
+		</MissionObjectiveTag>
+	</MissionObjectiveList>
+  
+  <!-- Start in Explore mode; timeout of zero -->
+  <MusicScriptConditionNugget_TimeFromStartOfLevel
+		id="MusicScriptCondition_ExploreCheckTime"
+		Timeout="-1s" />
+
+</AssetDeclaration>

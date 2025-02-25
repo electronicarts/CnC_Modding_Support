@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:FXObeliskLaser.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+	</Includes>
+	
+	<GameObject
+		id="NODStructureGLaserScatterNodeManager"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="1s"
+				MaxLifetime="1s" />
+
+			<!-- This manages the complete Scattering effect of a weapon -->
+			<WeaponScatterEffectUpdate
+					 id="Base_ScatterEffect"
+					 WeaponTemplate="NODStructureGLaserScatter_Weapon"
+					 Options="ATTACK_GROUND_IF_NO_MORE_TARGETS NO_DUPLICATE_TARGETS STOP_SCATTER_IF_NO_TARGET_OBJECTS_HIT">
+				<!-- Define the prioritization of the targets to scatter to -->
+				<TargetSelection>
+					<ObjectPriorityFilter
+						 Rule="ALL"
+						 Relationship="ENEMIES" />
+				</TargetSelection>
+
+				<!-- Define the specifics for each scatter of the weapon -->
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="5"
+						ScatterDistance="100"
+						NodeOCL="OCL_NODStructureGLaserScatter_DisplayNode" />
+				</ScatterSettings>
+
+			</WeaponScatterEffectUpdate>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+
+
+	<GameObject
+		id="NODStructureGLaserScatterNode_Laser"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="20"
+				WeaponSlotID="1"
+				LaserStateID="1">
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXObeliskLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+						<Float Name="ColorEmissive">
+							<Value>4.000000</Value>
+							<Value>4.000000</Value>
+							<Value>4.000000</Value>
+						</Float>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<LaserScatterUpdate
+				id="ModuleTag_LaserScatterUpdate"
+				LaserLifetime="0.75s" />
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		WEAPONS							-->
+	<!-- //////////////////////////////////////	-->
+	<WeaponTemplate
+		id="NODStructureGLaserScatter_Weapon"
+		inheritFrom="BaseLaserWeapon" 
+		AttackRange="125.0"
+		AcceptableAimDelta="180d"
+		FireFX="FX_NODLaserMedium_Fire">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="2.0s"
+			MaxSeconds="2.0s" />
+		<Nuggets>
+			<LineDamageNugget
+				Damage="35.0"
+				LineWidth="5.0"
+				DamageType="LASER"
+				DamageFXType="NOD_LASER"
+				DeathType="LASERED"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		OBJECT CREATION LISTS								-->
+	<!-- //////////////////////////////////////	-->
+	<ObjectCreationList
+		id="OCL_NODStructureGLaserScatter_DisplayNode">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS CREATE_AT_TARGET"
+			Disposition="DISPOSITION_NONE">
+			<CreateObject>NODStructureGLaserScatterNode_Laser</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+
+</AssetDeclaration>

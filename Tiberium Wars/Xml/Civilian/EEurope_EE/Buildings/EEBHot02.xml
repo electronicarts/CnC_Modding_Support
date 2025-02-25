@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:EEBHot02.w3x" />
+		<Include
+			type="all"
+			source="ART:EEBHot02_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:EEBHot02_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:EEBHot02_D3.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructure.xml" />
+	</Includes>
+	<GameObject
+		id="Eastern_Europe_Hotel_02"
+		inheritFrom="BaseCivilianStructure"
+		EditorName="Eastern_Europe_Hotel_02"
+    		EditorSorting="STRUCTURE"
+		Browser="REGION Eastern_Europe_EE STRUCTURE">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false"
+				AffectedByStealth="false"
+				ExtraPublicBone="BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="EEBHot02" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="EEBHot02_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="EEBHot02_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="EEBHot02_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="EEBHot02_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+          <Animation
+						AnimationName="EEBHot02_D2"
+						AnimationMode="MANUAL" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_LAST">
+          <Animation
+						AnimationName="EEBHot02_D1"
+						AnimationMode="MANUAL" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_Damaged" and Prev ~= "TRANS_IntoDamaged" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoDamaged")
+            end
+          </Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoDamaged">
+					<Animation
+						AnimationName="EEBHot02_D1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="EEBHot02_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="EEBHot02_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="false" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="false" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<xi:include
+				href="DATA:Includes/GarrisonFlagArmorDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonArmorDraws/child::*)" />
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					FX="FX_ScorchLarge" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_XLARGE" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="36.5492"
+				MinorRadius="44.5173"
+				Height="103.689"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="-93.0546"
+					y="-104.067"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="31.1794"
+				MinorRadius="31.6991"
+				Height="103.886"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="-98.4244"
+					y="-30.6218"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="51.6193"
+				MinorRadius="40.8797"
+				Height="97.6332"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="-74.5201"
+					y="29.8317"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="58.2016"
+				MinorRadius="63.0517"
+				Height="54.7372"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="-27.0581"
+					y="86.3013"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="47.1156"
+				MinorRadius="56.123"
+				Height="68.9412"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="62.3229"
+					y="58.9327"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="53.6979"
+				MinorRadius="45.5566"
+				Height="62.3589"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="80.3328"
+					y="-3.59925"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="32.3896"
+				MinorRadius="32.3896"
+				Height="4.15726"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="-13.454"
+					y="-37.2422"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+	</GameObject>
+</AssetDeclaration>

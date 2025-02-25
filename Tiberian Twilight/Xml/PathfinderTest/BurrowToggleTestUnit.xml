@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<!-- NOD D Transport Vehicle T2 / Nod Vehicle M Reckoner -->
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NUReckoner_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NUReckoner_D.w3x" />
+		<Include
+			type="all"
+			source="ART:NUReckoner_R.w3x" />
+		<Include
+			type="all"
+			source="ART:NUReckoner_UPAK.w3x" />
+		<Include
+			type="all"
+			source="ART:NUReckoner_DEPL.w3x" />			
+		<Include
+			type="all"
+			source="ART:NUReckoner.xml" />
+		<Include
+			type="all"
+			source="ART:NUReckoner_D.xml" />	
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseMediumVehicle.xml" />
+		<Include
+			type="instance"
+			source="DATA:GlobalData/ExperienceLevels.xml" />
+	</Includes>
+
+	<GameObject
+		id="BurrowToggleTestUnit"
+		inheritFrom="BaseMediumVehicle"
+		SelectPortrait="Portrait_NODVehicleM"
+		ButtonImage="Portrait_NODVehicleM"
+		Side="NOD"
+		BuildTime="8"
+		CommandSet="BurrowToggleTestUnitCommandSet"
+		CommandPoints="2" 
+		KindOf="+TRANSPORT"
+		ThreatLevel="10"
+		VoicePriority="176"
+		EditorName="BurrowToggleTestUnit"
+		Description="Desc:NODVehicleM"
+		TypeDescription="Type:NODVehicleM">
+
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">BurrowToggleTestUnit</DisplayName>
+		
+		<LocomotorSet
+			Locomotor="BurrowToggleTestUnitLocomotor"
+			Condition="NORMAL"
+			Speed="120.0" />
+
+		<LocomotorSet
+			Locomotor="BurrowToggleTestUnitBurrowingLocomotor"
+			Condition="BURROWING"
+			Speed="60.0" />
+
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				TrackMarksOnlyWhenCorneringQuickly="true"
+				TrackMarksLeftBone="Bone_TireLR"
+				TrackMarksRightBone="Bone_TireRR"			
+				TireRotationMultiplier="0.2"
+				PowerslideRotationAddition="1.25"
+				InitialRecoilSpeed="0.1"
+				MaxRecoilDistance="0.1"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				MaximumWheelExtension="-2.3"
+				MaximumWheelCompression="1.4"
+				ExtraPublicBone="FXWeapon BoneGarrison01 BoneGarrison02 BoneGarrison03">
+
+				<TireBoneGroup
+					TireGroupSettings="FRONT"
+					LeftTireBone="Bone_TireLF"
+					RightTireBone="Bone_TireRF"
+					WheelTurnAngle="35d"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="Bone_TireLR"
+					RightTireBone="Bone_TireRR"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="Bone_TireLR1"
+					RightTireBone="Bone_TireRR1"/>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUReckoner_SKN" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NUReckoner_R" />
+					<ParticleSysBone
+						BoneName="BoneGarrison04"
+						FXParticleSystemTemplate="NODDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_SteamJet_Front"
+						FXParticleSystemTemplate="NODDamagedFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="bone_RightTread"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<!-- packing -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DEPLOYED UNPACKING">
+					<Animation
+						AnimationName="NUReckoner_UPAK"
+						AnimationMode="ONCE_BACKWARDS" />
+					<Script>
+						CurDrawableShowSubObjectPermanently("TreadsStop")
+						CurDrawableShowSubObjectPermanently("TreadsMove")
+						CurDrawableShowSubObjectPermanently("TreadsTurnLeft")
+						CurDrawableShowSubObjectPermanently("TreadsTurnRight")
+					</Script>
+				</AnimationState>
+
+				<!-- unpacking -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName="NUReckoner_UPAK"
+						AnimationMode="ONCE" />
+					<Script>
+						CurDrawableHideSubObjectPermanently("TreadsStop")
+						CurDrawableHideSubObjectPermanently("TreadsMove")
+						CurDrawableHideSubObjectPermanently("TreadsTurnLeft")
+						CurDrawableHideSubObjectPermanently("TreadsTurnRight")
+					</Script>
+
+					<ParticleSysBone
+						BoneName="Bone_LeftTread"
+						FXParticleSystemTemplate="NODReckonerDust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_RightTread"
+						FXParticleSystemTemplate="NODReckonerDust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_TireLF"
+						FXParticleSystemTemplate="NODReckonerDust_half"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_TireLR"
+						FXParticleSystemTemplate="NODReckonerDust_half"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_TireRF"
+						FXParticleSystemTemplate="NODReckonerDust_half"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_TireRR"
+						FXParticleSystemTemplate="NODReckonerDust_half"
+						FollowBone="true" />
+					<FXEvent
+						Frame="76"
+						Effect="FX_NODReckonerUnpackingSteam"
+						Bone="FX_SteamJet_Front" />
+					<FXEvent
+						Frame="76"
+						Effect="FX_NODReckonerUnpackingSteam"
+						Bone="FX_SteamJet_Rear" />
+					<FXEvent
+						Frame="40"
+						Effect="FX_NODReckonerUnpackingSteam"
+						Bone="Bone_RightTread" />
+					<FXEvent
+						Frame="40"
+						Effect="FX_NODReckonerUnpackingSteam"
+						Bone="Bone_LeftTread" />
+					<!-- Rear Detaching Panel -->
+					<FXEvent
+						Frame="67"
+						Effect="FX_NODReckonerUnpackingExplosion"
+						Bone="Bone_Tdetach" />
+					<!-- Front Detaching Panel -->
+					<FXEvent
+						Frame="62"
+						Effect="FX_NODReckonerUnpackingExplosion"
+						Bone="BoneGarrison01" />
+				</AnimationState>
+
+				<!-- deployed state -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DEPLOYED"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NUReckoner_UPAK"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUReckoner_SKN" />
+					<Texture
+						Original="NUReckoner"
+						New="NUReckoner_D" />
+					<ParticleSysBone
+						BoneName="BoneGarrison04"
+						FXParticleSystemTemplate="NODDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_SteamJet_Front"
+						FXParticleSystemTemplate="NODDamagedFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="bone_RightTread"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+			</TruckDraw>
+
+			<TreadScrollDraw
+				id="ModuleTag_TreadDraw">
+				<TreadScrollingMap
+					LeftTrack="Bone_LeftTread"
+					RightTrack="Bone_RightTread"
+					SpeedMultiplier="-0.06"
+					TreadDriveSpeedFraction="10%"/>
+			</TreadScrollDraw>
+
+			<ScriptedModelDraw
+				id="ModuleTag_FX">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TreadDustPred"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TreadDirt"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+
+		<Behaviors>
+
+			<Physics
+				id="ModuleTag_Physics" />
+
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.0"
+				DestructionDelay="5s">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="TOPPLED" />
+				<Sound
+					Type="INITIAL"
+					List="GDI_Generic_VoiceDieMS" />
+			</SlowDeath>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplodeNoScorch" />
+			</FXListBehavior>
+
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODVehicleMFunctions" />
+
+			<SpecialPower
+				id="ModuleTag_ToggleBurrowingTrigger"
+				SpecialPowerTemplate="SpecialPower_BurrowVehicle"/>
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleBurrowing"
+				SpecialPowerTemplate="SpecialPower_BurrowVehicle">
+				<ToggleState
+					LocomotorSet="NORMAL">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_DEFAULT"
+						NeverUseWhenClear="true">
+					</SkirmishAiInfo>
+				</ToggleState>
+
+				<ToggleState
+					LocomotorSet="BURROWING"
+					AttributeModifier="Modifier_BurrowingVehicle">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_TRANSFORM">
+					</SkirmishAiInfo>
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+		</Behaviors>
+
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					SympathyRange="100.0"
+					RotateToTargetWhenAiming="false" />
+			</AIUpdate>
+		</AI>
+
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="6000"/>
+		</Body>
+
+		<ClientBehaviors>
+		</ClientBehaviors>
+
+		<Geometry>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "20.0812"
+				MinorRadius = "10.71"
+				Height = "13.3875"
+				ContactPointGeneration="VEHICLE">
+			</Shape>
+		</Geometry>
+
+		<AudioArrayVoice>
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="400" />
+	</GameObject>
+
+	<LocomotorTemplate
+		id="BurrowToggleTestUnitLocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		CanReverseMove="true"
+		TurnTimeSeconds="0.6s"
+		TurnTimeDamagedSeconds="1.6s"
+		MaxSpeedDamaged="75%"
+		AccelerationSeconds="0.3s"
+		BrakingSeconds="0.3s"
+		SlowTurnRadius="25.0"
+		FastTurnRadius="50.0"
+		UseTerrainSmoothing="true"
+
+		MinTurnSpeed="20%"
+		TurnPivotOffset="-0.1"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="FOUR_WHEELS"
+
+		AccelPitchLimit="10d"
+		BounceKick="0d"
+		PitchStiffness="0.5"
+		RollStiffness="0.5"
+		PitchDamping="0.5"
+		RollDamping="0.75"
+		ForwardAccelerationPitchFactor="0.025"
+		LateralAccelerationRollFactor="1.0"
+		HasSuspension="true"
+		
+		ClampOrientationToPathTangent="true" />
+
+	<LocomotorTemplate
+		id="BurrowToggleTestUnitBurrowingLocomotor"
+		inheritFrom="BurrowToggleTestUnitLocomotor"
+		Surfaces="GROUND CLIFF CRUSHABLE_OBSTACLE" />
+
+	<LogicCommandSet
+		id="BurrowToggleTestUnitCommandSet">
+		<Cmd>Command_Burrow</Cmd>
+		<Cmd>Command_Stop</Cmd>
+	</LogicCommandSet>
+
+</AssetDeclaration>

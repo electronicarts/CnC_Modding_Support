@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags/>
+	<Includes>
+		<Include type="instance" source="DATA:GDI/Units/GDIVehicleAB.xml" />
+		<Include type="instance" source="DATA:GDI/Units/GDIVehicleV.xml" />
+		<Include type="instance" source="DATA:GDI/Units/GDIVehicleP.xml" />
+		<Include type="instance" source="DATA:Neutral/Units/TiberiumLifterDrill.xml" />
+		<Include type="instance" source="DATA:Neutral/Units/TiberiumLifter.xml" />
+		<Include type="instance" source="ART:EXTnkTrack.xml" />
+		<Include type="instance" source="DATA:System/PlayerSpellBook.xml" />
+		<Include type="instance" source="DATA:GlobalData/PlayerClassTemplates.xml" />
+		<Include type="instance" source="DATA:GlobalData/BaseGameplayMode.xml" />
+		<Include type="instance" source="DATA:Sounds/BaseSoundEffect.xml"/> <!-- necessary for overriding AudioEvents -->
+		<Include type="instance" source="DATA:Sounds/SoundEffects.xml"/> <!-- necessary for overriding AudioEvents -->
+		<Include type="instance" source="DATA:GlobalData/SpecialPowerObjectFilters.xml" />
+	</Includes>
+
+	<GameplayMode
+		id="COOP_GDI_1_1"
+		inheritFrom="COOP_Base"
+		MaxRespawnCount="-1"
+		TimeLimit="0s"/>
+
+	<ObjectFilterAsset
+		 id="GenericAllEnemyObjectSpecialPowerObjectFilter"
+		 inheritFrom="GenericAllEnemyObjectSpecialPowerObjectFilter">
+		<Filter
+			Rule="ANY"
+			Relationship="ENEMIES"
+			Include="AIRCRAFT VEHICLE INFANTRY STRUCTURE"
+			Exclude="DEBRIS">
+			<ExcludeThing>PADestructableRock01</ExcludeThing>
+		</Filter>
+	</ObjectFilterAsset>
+
+	<GameObject
+		id="GDIVehicleAB"
+		inheritFrom="GDIVehicleAB"
+		BuildTime="4"
+		MaxSimultaneousOfType="3">
+		<GameDependency xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" />
+	</GameObject>
+
+	<GameObject
+		id="GDIVehicleV"
+		inheritFrom="GDIVehicleV"
+		BuildTime="4"
+		MaxSimultaneousOfType="3">
+		<GameDependency xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" />
+	</GameObject>
+
+	<GameObject
+		id="GDIVehicleP"
+		inheritFrom="GDIVehicleP"
+		BuildTime="4"
+		CommandPoints="7"
+		MaxSimultaneousOfType="3">
+		<GameDependency xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" />
+	</GameObject>
+
+	<LocomotorTemplate
+		id="TiberiumLifterDrill"
+		inheritFrom="TiberiumLifterDrill"
+		BehaviorZ="ABSOLUTE_HEIGHT"
+		PreferredHeight="380" />
+
+	<LocomotorTemplate
+		id="TiberiumLifter"
+		inheritFrom="TiberiumLifter"
+		BehaviorZ="ABSOLUTE_HEIGHT"
+		PreferredHeight="380" />
+
+	<PlayerEntitlement
+		id="mapPlayerProgressionTest"
+		PlayerEntitlementEnabled="false">
+	</PlayerEntitlement>
+
+	<PlayerClassTemplate
+		id="PlayerClass_GDIOffense"
+		DisplayName="PlayerClass:GDIOffense"
+		PlayerClassType="HEAVY"
+		PlayerTechDependencies="PlayerTechDependencyGroup_GDIOffense"
+		Faction="GDI">
+		<!-- Tier 1 -->
+		<PlayerThreatTracker>BasePlayerThreatTracker</PlayerThreatTracker>
+		<GameObjectAllowed>GDIVehicleAB</GameObjectAllowed>
+		<GameObjectAllowed>GDIVehicleV</GameObjectAllowed>
+		<GameObjectAllowed>GDIVehicleP</GameObjectAllowed>
+		<!-- Upgrades -->
+		<StartingUpgrade>Upgrade_OffenseClass</StartingUpgrade>
+	</PlayerClassTemplate>
+
+	<GameObject
+		id="PlayerSpellBook"
+		inheritFrom="PlayerSpellBook"
+		CommandSet="PlayerSpellBookCommandSetFull"/>
+
+	<Texture id="CAMP_GDI_1_1_Stewart_Orange" File="CAMP_GDI_1_1_Stewart_Orange.tga"  GenerateMipMaps="false" AllowAutomaticResize="false"/>
+
+	<RadarTerrainImage
+		id="OrangeBorderTerrain"
+		MapBorder="Orange"
+		Texture="CAMP_GDI_1_1_Stewart_Orange">
+		<ImageSize x="256" y="256"/>
+		<ImagePosition x="0" y="0"/>
+		<TextureSize x="256" y="256"/>
+	</RadarTerrainImage>
+
+	<Weather id="Weather">		
+		<Lightning			
+			LightningDuration = "30"
+			LightningChance = "0.1">
+			<LightningFactor 
+				Type = "UNIFORM"
+				Low = "0.5"
+				High = "3.0"/>
+		</Lightning>		
+		<Cloud>
+			<CloudTextureSize x="660.0" y="660.0"/>
+      <CloudOffsetPerSecond x="-0.02" y="0.00"/>
+		</Cloud>
+		<WeatherData id="LIGHT_RAIN">
+			<WeatherParticle 
+				DiffuseTexture = "FXRainDrop"
+				NumParticlesPerBox="1000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="1.0" High="4.0"/>
+				<Height			Low="10.0" High="50.0"/>
+				<Alpha			Low="0.2" High="0.5"/>
+				<MotionSpeed	Low="250.0" High="450.0"/>
+				<MotionDir		x="0.0" y="0.0" z="-1.0"/>
+				<RandomDir      x="0.0" y="0.0" z="0.0"/>
+				<Stretch>1.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="HEAVY_RAIN">
+			<WeatherParticle 
+				DiffuseTexture = "FXRainDrop"
+				NumParticlesPerBox="2000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="1.0" High="4.0"/>
+				<Height			Low="25.0" High="100.0"/>
+				<Alpha			Low="0.2" High="0.5"/>
+				<MotionSpeed	Low="250.0" High="450.0"/>
+				<MotionDir		x="0.0" y="0.0" z="-1.0"/>
+				<RandomDir      x="0.0" y="0.0" z="0.0"/>
+				<Stretch>1.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="STORM" HasLightning="true" >
+			<WeatherParticle 
+				DiffuseTexture = "FXRainDrop"
+				NumParticlesPerBox="1024"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="1.0" High="4.0"/>
+				<Height			Low="25.0" High="100.0"/>
+				<Alpha			Low="0.4" High="0.7"/>
+				<MotionSpeed	Low="250.0" High="450.0"/>
+				<MotionDir		x="1.0" y="0.0" z="-1.0"/>
+				<RandomDir      x="0.0" y="0.0" z="0.0"/>
+				<Stretch>1.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="LIGHT_SNOW">
+			<WeatherParticle 
+				DiffuseTexture = "FXSnowflake"
+				NumParticlesPerBox="1000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="4.0" High="4.0"/>
+				<Height			Low="4.0" High="4.0"/>
+				<Alpha			Low="0.2" High="0.6"/>
+				<MotionSpeed	Low="10.0" High="100.0"/>
+				<MotionDir		x="0.5" y="0.5" z="-0.5"/>
+				<RandomDir      x="0.2" y="0.2" z="0.2"/>
+				<Stretch>0.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="HEAVY_SNOW">
+			<WeatherParticle 
+				DiffuseTexture = "FXSnowflake"
+				NumParticlesPerBox="2000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="5.0" High="5.0"/>
+				<Height			Low="5.0" High="5.0"/>
+				<Alpha			Low="0.2" High="0.6"/>
+				<MotionSpeed	Low="10.0" High="100.0"/>
+				<MotionDir		x="1.0" y="1.0" z="-1.0"/>
+				<RandomDir      x="0.5" y="0.5" z="0.5"/>
+				<Stretch>0.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="BLIZZARD">
+			<WeatherParticle 
+				DiffuseTexture = "FXSnowflake"
+				NumParticlesPerBox="3000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="3.0" High="6.0"/>
+				<Height			Low="3.0" High="6.0"/>
+				<Alpha			Low="0.4" High="0.8"/>
+				<MotionSpeed	Low="10.0" High="150.0"/>
+				<MotionDir		x="2.5" y="0.4" z="-1.0"/>
+				<RandomDir      x="1.4" y="1.3" z="0.7"/>
+				<Stretch>0.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+		<WeatherData id="ASH">
+			<WeatherParticle
+				DiffuseTexture = "FXAsh"
+				NumParticlesPerBox="1000"
+				>
+				<BoxSize		x="1000.0" y="1000.0" z="50.0"/>
+				<Width			Low="1.0" High="4.0"/>
+				<Height			Low="1.0" High="4.0"/>
+				<Alpha			Low="0.2" High="0.5"/>
+				<MotionSpeed	Low="1.0" High="3.0"/>
+				<MotionDir		x="2" y="2" z="-2"/>
+				<RandomDir      x="4" y="4" z="3.0"/>
+				<Stretch>0.0</Stretch>
+			</WeatherParticle>
+		</WeatherData>
+
+	</Weather>
+	<!-- BEGIN AUDIO OVERRIDES -->
+	<!-- BEGIN AUDIO OVERRIDES -->
+
+<AudioEventOverridable  id="Infantry_GroupSmall_MoveLoop"
+inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+Volume="=$INFANTRYMOVELOOP_VOLUME + 25"
+VolumeShift="-2"
+Limit="3"
+Type="WORLD SHROUDED EVERYONE"
+Control="LOOP FADE_ON_START FADE_ON_KILL"
+SubmixSlider="SOUNDFX"
+Buss="SDetail">
+<PitchShift Low="-3" High="3"/>
+<Sound>GUZoneT_moveG1L2a</Sound> <Sound>GUZoneT_moveG1L2b</Sound> <Sound>GUZoneT_moveG1L2c</Sound>
+<Sound>GUZoneT_moveG1L2d</Sound> <Sound>GUZoneT_moveG1L2e</Sound> <Sound>GUZoneT_moveG1L2f</Sound>
+<Sound>GUZoneT_moveG1L2g</Sound> <Sound>GUZoneT_moveG1L2h</Sound>
+</AudioEventOverridable>
+
+<AudioEventOverridable id="GDI_Engineer_InfJ_MoveLoop"
+inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+Volume="=$MOVE_VOLUME - 35"
+VolumeShift="-5"
+Limit="3"
+Control="LOOP IMMEDIATE_DECAY_ON_KILL"
+Priority="LOW"
+Type="WORLD SHROUDED EVERYONE"
+SubmixSlider="SOUNDFX"
+Buss="SDetail">
+<PitchShift Low="-5" High="5"/>
+<Sound>GUInf_J_moveLoop2a</Sound>
+<Sound>GUInf_J_moveLoop2b</Sound>
+<Sound>GUInf_J_moveLoop2c</Sound>
+<Sound>GUInf_J_moveLoop2d</Sound>
+<Sound>GUInf_J_moveLoop2e</Sound>
+<Sound>GUInf_J_moveLoop2f</Sound>
+<Decay>GUInf_J_moveLoop3a</Decay>
+<Decay>GUInf_J_moveLoop3b</Decay>
+<Decay>GUInf_J_moveLoop3c</Decay>
+<Decay>GUInf_J_moveLoop3d</Decay>
+<Decay>GUInf_J_moveLoop3e</Decay>
+</AudioEventOverridable>
+
+<AudioEventOverridable
+id="GDI_Engineer_InfJ_MoveStart"
+inheritFrom="AudioEventOverridable:BaseSoundEffectOverridable"
+Volume="=$MOVE_VOLUME - 20"
+VolumeShift="-5"
+Limit="3"
+Type="WORLD SHROUDED EVERYONE"
+SubmixSlider="SOUNDFX"
+Buss="SDetail">
+<Delay Low="0" High="200"/>
+<PitchShift
+Low="-5"
+High="5"/>
+<Sound>GUInf_J_moveStarta</Sound>
+<Sound>GUInf_J_moveStartb</Sound>
+<Sound>GUInf_J_moveStartc</Sound>
+<Sound>GUInf_J_moveStartd</Sound>
+<Sound>GUInf_J_moveStarte</Sound>
+<Sound>GUInf_J_moveStartf</Sound>
+</AudioEventOverridable>
+
+	<!-- END AUDIO OVERRIDES -->
+	<!-- END AUDIO OVERRIDES -->
+
+</AssetDeclaration>

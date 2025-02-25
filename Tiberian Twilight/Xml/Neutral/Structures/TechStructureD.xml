@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<!-- model conditions set by included CaptureStructureBehavior.xml -->
+	<!-- USER 1: Captured by anyone -->
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:NB_TechStructD_SKN.w3x" />
+		<Include type="all"	source="ART:NB_TechStructD_CPTR.w3x" />
+		<Include type="all"	source="ART:NB_TechStructD_UNCPTR.w3x" />
+		<Include type="all"	source="ART:NB_TechStructD_FX_IDLA.w3x" />
+		<Include type="all"	source="ART:NB_TechStructD_FX_CPTR.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseTechStructure.xml" />
+        <Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+        <Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="TechStructureD"
+		inheritFrom="BaseTechStructure"
+		HealthBoxHeightOffset="59"
+		SubGroupPriority="466"
+		SelectPortrait="Portrait_Neutral_TechStr_D_GDI"
+		ButtonImage="Portrait_Neutral_TechStr_D_GDI"
+		Side="Neutral"
+        ParticipationValue="=$NEUTRALTECHSTRUCTURED_PARTICIPATION_VALUE"
+		CommandSet="EmptyCommandSet"
+		KindOf="+CAN_HAVE_BUILDABILITY +PROJECT_BUILDABILITY_FOR_ALLIES +NO_HEALTH_BAR"
+		RadarPriority="STRUCTURE"
+		EditorName="NEUTRAL_Struct_Utility(Build+Deploy Radius)"
+		EditorSorting="STRUCTURE" 
+		Description="DESC:TechStructureD">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:TechStructureD</DisplayName>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone=""
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechStructD_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NB_TechStructD_SKN" />
+					<Texture
+						Original="NB_TechStructD"
+						New="NB_TechStructD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NB_TechStructD_SKN" />
+					<Texture
+						Original="NB_TechStructD"
+						New="NB_TechStructD" />
+				</ModelConditionState>
+
+        		<ModelConditionState
+				 ParseCondStateType="PARSE_NORMAL"
+				 ConditionsYes="USER_1">
+					<Model
+						Name="NB_TechStructD_SKN" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="UNCAPTURED_IDLE">
+					<Animation
+						AnimationName="NB_TechStructD_UNCPTR"
+						AnimationMode="LOOP"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "CAPTURED" or Prev == "USER_1" then
+						CurDrawableSetTransitionAnimState("Transition_ToNeutral")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="CAPTURED">
+					<Animation
+						AnimationName="NB_TechStructD_CPTR"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToNeutral"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NB_TechStructD_CPTR"
+						AnimationMode="ONCE_BACKWARDS"/>
+				</AnimationState>
+
+		</ScriptedModelDraw>
+		<!-- Ion fx dissolve on when captured -->
+		<ScriptedModelDraw
+			id="ModuleTag_Draw_CaptureFX">
+			<ModelConditionState
+				ParseCondStateType="PARSE_DEFAULT">
+				<Model
+					Name="" />
+			</ModelConditionState>
+			<AnimationState
+				ParseCondStateType="PARSE_DEFAULT" />
+			<ModelConditionState
+				ParseCondStateType="PARSE_NORMAL"
+				ConditionsYes="USER_1">
+				<Model
+					Name="" />
+			</ModelConditionState>
+			<AnimationState
+				ParseCondStateType="PARSE_NORMAL"
+				ConditionsYes="USER_1"
+				StateName="SPIKE_CAPTURED">
+				<Animation
+					AnimationName="NB_TechStructD_FX_IDLA"
+					AnimationMode="LOOP" />
+					<Script>
+					Prev = CurDrawablePrevAnimationState()
+					if Prev ~= "SPIKE_CAPTURED" and Prev ~= "Transition_ToCaptured" then
+					CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+					end
+					</Script>
+			</AnimationState>
+			<AnimationState
+				ParseCondStateType="PARSE_TRANSITION"
+				StateName="Transition_ToCaptured">
+				<Animation
+					AnimationName="NB_TechStructD_FX_CPTR"
+					AnimationMode="ONCE" />
+			</AnimationState>
+		</ScriptedModelDraw>
+
+			<xi:include href="DATA:Includes/CaptureStructureFeedbackDraw.xml" />
+		</Draws>
+    
+		<Behaviors>
+			<SpawnZoneBehavior
+				id="ModuleTag_SpawnZone"
+				Size="=$BUILDABILITY_RADIUS_NORMAL" />
+			<ProjectedBuildabilityOverrideBehavior
+				id="ModuleTag_BuildabilityOverride">
+				<!-- Only use the buildability when captured -->
+				<Override
+					ModelConditionsToReject="STRUCTURE_UNPACKING RUBBLE"
+					ModelConditionsToAccept="USER_1"					
+					StatusToReject="NOT_IN_WORLD">
+					<ProjectedBuildabilityInfo
+						Radius="=$BUILDABILITY_RADIUS_NORMAL"
+						BuildPlacementTypes="MAIN_STRUCTURE" />
+				</Override>
+			</ProjectedBuildabilityOverrideBehavior>
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="200" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="StructureLarge_DieExplosionMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<RebuildHoleExposeDie
+				id="ModuleTag_RebuildHoleExposeDie"
+				HoleObject="TechStructureDHole"
+				FadeInTimeSeconds="3.0s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</RebuildHoleExposeDie>
+			<!-- allows object to be captured -->
+			<xi:include	href="DATA:Includes/CaptureStructureBehavior.xml" />
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="2.0s" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="TechStructureEFunctions" />
+
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_NONE" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_NONE" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_NONE" />
+				<Event
+					Index="onDeath"
+					FX="FX_NONE" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				InitialHealth="1.0"
+				MaxHealth="1000.0"/>
+		</Body>
+			<Geometry>
+				<PlacementShape
+					Type="BOX"
+					MajorRadius="30.0"
+					MinorRadius="30.0"
+					Height="5.0"/>
+				<Shape
+					Type="BOX"
+					MajorRadius="17.889"
+					MinorRadius="18.281"
+					Height="68.8869">
+					<Offset
+						x="0.0"
+						y="0.0"
+						z="17.9483" />
+				</Shape>
+				<Shape
+					Type="BOX"
+					MajorRadius="46.0929"
+					MinorRadius="47.1028"
+					Height="18.4735">
+					<Offset
+						x="-2.05226"
+						y="0.468147"
+						z="0.0" />
+				</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="45"
+				Height="55.0"/>
+			<ContactPoint>
+				<Pos
+					x="-27.487"
+					y="-27.6517"
+					z="58.0303" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="28.3569"
+					y="-27.6517"
+					z="71.5467" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="28.3569"
+					y="28.1922"
+					z="58.0303" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-27.487"
+					y="28.1922"
+					z="71.5467" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-27.487"
+					y="-27.6517"
+					z="71.5467" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="28.3569"
+					y="-27.6517"
+					z="58.0303" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="28.3569"
+					y="28.1922"
+					z="71.5467" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-27.487"
+					y="28.1922"
+					z="58.0303" />
+			</ContactPoint>
+		</Geometry>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_CapturedSound">
+				<ModelConditionSound Sound="NEU_Panopticon_StrD_Captured" RequiredFlags="USER_1" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NEU_Panopticon_StrD_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<VisionInfo
+			VisionRange="500"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

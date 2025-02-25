@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+	</Includes>
+	<GameObject
+		id="BaseRepairDrone"
+		inheritFrom="BaseObject" 
+		EditorSorting="SYSTEM"
+		ShockwaveResistance="120.0"
+		KindOf="=$BASE_REPAIR_DRONE_KINDOF"
+		VoicePriority="5">	
+		<DisplayName>NAME:RepairDrone</DisplayName>
+		<LocomotorSet
+			Locomotor="BaseRepairDroneLocomotor"
+			Condition="NORMAL"
+			Speed="150.0" />
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+		</Draws>
+		<Behaviors>
+			<SlavedUpdate
+				id="ModuleTag_SlavedUpdate"
+				LeashRange="=$REPAIR_DRONE_LEASH_DISTANCE"
+				GuardMaxRange="=$REPAIR_DRONE_LEASH_DISTANCE"
+				GuardWanderRange="50"
+				AttackRange="0"
+				UseSlaverAsControlForEvaObjectSightedEvents="false" />
+			<PassiveAreaEffectBehavior
+				id="ModuleTag_PassiveAreaEffect"
+				EffectRadius="0"
+				HealingPointsPerSecond="20"
+				AffectAttached="true"
+				AffectUnderAttack="true"
+				NonStackable="false"
+				HealFX="FX_Repair" >
+				<AllowFilter
+					Rule="ANY"
+					Include="VEHICLE AIRCRAFT HUGE_VEHICLE"
+					StatusBitFlagsExclude="NOT_IN_WORLD" 
+					Relationship="ALLIES" />
+			</PassiveAreaEffectBehavior>
+			<SlowDeath
+				id="ModuleTag_Death"
+				DestructionDelay="3s"
+				Fade="true"
+				FadeTime="3s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Range="=$REPAIR_DRONE_LEASH_DISTANCE"
+				CloseEnoughRange="20.0"
+				InitialAttachDelay="0.25s"
+				ParentStatusToPrefer="BOOBY_TRAPPED"
+				ParentStatus="TARGETED_FOR_REPAIR" 
+				ParentStatusAttached="UNDERGOING_REPAIR"
+				ForbiddenParentStatus="NOT_IN_WORLD"
+				Flags="STICK_TO_PARENT DETACH_WHEN_PARENT_OUT_OF_SLAVE_RANGE PARENT_MUST_BE_FULL_HEALTH_TO_DETACH SCAN_FOR_NEW_PARENT_WHEN_DETACHED FIND_BEST_PARENT UNCONTAINED_ONLY ONE_ATTACH_PER_PARENT USE_GEOMETRY DETACH_WHEN_PARENT_HEALED"
+				>
+				<ObjectFilter
+					Rule="ANY"
+					Include="VEHICLE AIRCRAFT HUGE_VEHICLE"
+					StatusBitFlagsExclude="NOT_IN_WORLD" 
+					Relationship="ALLIES" />
+			</AttachUpdate>
+			<Physics
+				id="ModuleTag_Physics" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_JetAIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="UnitAIStateMachine"	/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="200.0"/>
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="5.0"
+				Height="5.0"></Shape>
+		</Geometry>
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="20" />
+	</GameObject>
+</AssetDeclaration>

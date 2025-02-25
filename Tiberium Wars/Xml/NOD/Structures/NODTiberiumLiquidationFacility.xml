@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBChemicalPt.w3x" />
+		<Include
+			type="all"
+			source="ART:NBChemicalPt_ASN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBChemicalPt_AAN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBChemicalPt_D2SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBChemicalPt_D2AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBChemicalPt_D3SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBChemicalPt_D3AN.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="NODTiberiumLiquidationFacility"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_NODTiberiumChemicalPlant"
+		ButtonImage="Portrait_NODTiberiumChemicalPlant"
+		Side="NOD"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="3000"
+		BuildTime="30"
+		EnergyProduction="-15"
+		CommandSet="NODTiberiumLiquidationFacilityCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY POWERED NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="315d"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="NODTiberiumLiquidationFacility"
+		Description="Desc:NODTiberiumLiquidationFacility"
+		TypeDescription="Type:NODTiberiumLiquidationFacility">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODTiberiumLiquidationFacility</DisplayName>
+		<GameDependency>
+			<RequiredObject>NODTechAssemblyPlant</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="NODTiberiumLiquidationFacilityArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="SPREAD" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBChemicalPt" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXBONE01" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBChemicalPt_ASN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NBChemicalPt_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBChemicalPt_D2SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBChemicalPt" />
+					<Texture
+						Original="NBChemicalPt"
+						New="NBChemicalPtD" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBChemicalPt_AAN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBChemicalPt_D3AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBChemicalPt_D2AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NBChemicalPt_D2AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NBChemicalPt_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+
+			<SpecialPower
+				id="ModuleTag_MissileLauncherSP"
+				SpecialPowerTemplate="SpecialPowerLaunchCatalystMissile"
+				UpdateModuleStartsAttack="true"
+			/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_MissileLauncherSPUpdate"
+				SpecialPowerTemplate="SpecialPowerLaunchCatalystMissile"
+				SpecialWeapon="NODCatalystMissileLauncher"
+				UnpackTime="1s"
+				UnpackSound="NOD_CatalystMissile_TargetCursor"
+				PackTime="1s"
+				StartAbilityRange="50000.0"
+				BusyForDuration="2s"
+				WhichSpecialWeapon="1" 
+			/>
+			<AISpecialPowerUpdate
+				id="ModuleTag_TiberiumFacilityCatalystMissile"
+				CommandButtonName="Command_LaunchCatalystMissile"
+				SpecialPowerRadius="999999.0"
+				UnitKindOf="SUPPLY_GATHERING_CENTER"
+				SpecialPowerAIType="SPECIAL_POWER_ENEMY_TYPE_KILLER_STRUCTURES" 
+			/>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				UnpackTime="1.5s" />
+
+			<!-- Seed Tiberium -->
+			<OCLSpecialPower
+				id="ModuleTag_OCLSpecialPowerSeedTiberium"
+				SpecialPowerTemplate="SpecialPowerSeedTiberium"
+				OCL="OCL_NODSeedTiberium"
+				CreateLocation="CREATE_AT_EDGE_NEAR_SOURCE"
+				DestinationOCL="OCL_NODSeedTiberiumBeacon"
+			/>
+			<AISpecialPowerUpdate
+				id="ModuleTag_TiberiumFacilitySeedToberium"
+				CommandButtonName="Command_TiberiumFacilitySeedTiberium"
+				SpecialPowerAIType="SPECIAL_POWER_SEED_TIBERIUM" 
+			/>
+
+
+			<!-- Air Dispersion -->
+			<OCLSpecialPower
+				id="ModuleTag_OCLSpecialPowerAirDispersion"
+				SpecialPowerTemplate="SpecialPowerAirDispersion"
+				OCL="OCL_NODAirDispersion"
+				CreateLocation="CREATE_AT_EDGE_NEAR_SOURCE"
+				DestinationOCL="OCL_NODTiberiumVaporBeacon"
+			/>
+			<AISpecialPowerUpdate
+				id="ModuleTag_TiberiumFacilityAirDispersion"
+				CommandButtonName="Command_TiberiumFacilityAirDispersion"
+				SpecialPowerRadius="999999.0"
+				UnitKindOf="FS_POWER"
+				SpecialPowerAIType="SPECIAL_POWER_ENEMY_TYPE_KILLER_STRUCTURES"
+			/>
+
+			
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/AdvancedNODBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/AdvancedNODBuildingSuicide.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"
+				AILuaEventsList="BuildingPowerFunctions">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="40.0"
+				MinorRadius="7.0"
+				Height="24.0"
+				ContactPointGeneration="VEHICLE">
+				<Offset
+					x="-4"
+					y="0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="48.0"
+				MinorRadius="42.0"
+				Height="10.0"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="0"
+					y="0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="10.0"
+				Height="36.0"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="-15.0"
+					y="30.0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="16.0"
+				Height="36.0"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="-15.0"
+					y="0.0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="10.0"
+				Height="36.0"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					x="-15.0"
+					y="-30.0"
+					z="0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_TiberiumLiquidationFacilitySelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="175"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

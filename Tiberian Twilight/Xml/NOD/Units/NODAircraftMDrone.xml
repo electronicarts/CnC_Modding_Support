@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<Tags></Tags>
+
+	<!-- NOD Aircraft M Drone / Nod Support Blast Tier 3 Drone -->
+
+	<Includes>
+		<Include type="all" source="ART:NUL_AircraftM_Drone.w3x" />
+		<Include type="all" source="ART:FXNodMachineGunTracer.xml" />
+		<Include type="all" source="ART:FXNodMachineGunTracer_Veteran.xml" />
+
+		<!-- Other Includes -->
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseLightAircraft.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		
+	</Includes>
+	
+	<GameObject
+		id="NODAircraftMDrone"
+		inheritFrom="BaseLightAircraft"
+		SelectPortrait="Portrait_NODAvatarWarmech"
+		ButtonImage="Portrait_NODAvatarWarmech"
+		Side="NOD"
+		BuildTime="0"
+		PathPriority="90"
+		JustBuiltTime="0.25s"
+		CommandSet="EmptyCommandSet"
+		CommandPoints="0"
+		KindOf="-SELECTABLE -CAN_BE_FAVORITE_UNIT -CONTROL_GROUP_ALLOWABLE +PASS_EXPERIENCE_TO_SLAVER +NO_COLLIDE +AUTO_ACQUIRABLE_BY_AI +DRONE -SCORE"
+		RadarPriority="UNIT"
+		ProductionQueueType="INFANTRY"
+		UnitCategory="AIRCRAFT"
+		WeaponCategory="GUN"
+		VoicePriority="224"
+		EditorName="NOD_S3_Heavy_Blast_Drone(MCF Drone)"
+		EditorSorting="UNIT"
+		Description="Desc:NODAircraftMDrone"
+		TypeDescription="Type:NODAircraftMDrone">
+
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODAircraftMDrone</DisplayName>
+
+		<LocomotorSet
+			Locomotor="NODAircraftMDroneLocomotor"
+			Condition="NORMAL"
+			Speed="200.0" />
+		
+		<Draws>
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUL_AircraftM_Drone" />
+				</ModelConditionState>
+
+			</ScriptedModelDraw>
+
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw_Primary"
+				MinLength="25.0"
+				MaxLength="25.0"
+				Width="7.0"
+				MinSpeed="30"
+				MaxSpeed="30"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame=".08"
+				MaxTracersPerFrame=".12"
+				FrameLifeTime="35"
+				WeaponSlotType="PRIMARY_WEAPON"
+				Texture="FXNodMachineGunTracer"
+				UseAdditiveBlending="true"
+				TracerEmitFx="FX_NOD_LeviathanDrone_AirMDrone_LaserWeaponFire_AudioOnly"
+				TracerHitFx="FX_NODMachineGun_Medium_Hit"
+				CombatChainCounter="EQUAL WEAK"
+				WeaponSlotID="1">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="0.0"
+					g="0.0"
+					b="0.0"
+					a="0.0" />
+			</TracerModelDraw>
+
+			<!-- strong counter tracer -->
+
+			<TracerModelDraw
+				id="ModuleTag_TracerModelDraw_Primary_Strong"
+				MinLength="25.0"
+				MaxLength="25.0"
+				Width="7.0"
+				MinSpeed="30"
+				MaxSpeed="30"
+				SweepSpeed="1.0"
+				SpreadAngle="2.0"
+				MinTracersPerFrame=".08"
+				MaxTracersPerFrame=".12"
+				FrameLifeTime="35"
+				WeaponSlotType="PRIMARY_WEAPON"
+				Texture="FXNodMachineGunTracer_Veteran"
+				UseAdditiveBlending="true"
+				TracerEmitFx="FX_NOD_LeviathanDrone_AirMDrone_LaserWeaponFire_AudioOnly"
+				TracerHitFx="FX_NODMachineGun_Medium_Hit"
+				CombatChainCounter="STRONG"
+				WeaponSlotID="1">
+				<HeadColor
+					r="1.0"
+					g="1.0"
+					b="1.0"
+					a="1.0" />
+				<TailColor
+					r="0.0"
+					g="0.0"
+					b="0.0"
+					a="0.0" />
+			</TracerModelDraw>
+			
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODAircraftMDroneWeapon"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIAirVehicleExplode" />
+				<Event Index="onDeath" FX="FX_NOD_LeviathanDrone_AirMDrone_DieExplosion_AudioOnly"/> <!-- please add visuals to another FXList, thanks! -->
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Aircraft_Small_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<!-- Put this unit as slave-->
+			<SlavedUpdate
+				id="ModuleTag_SlavedUpdate"
+				AttackRange="200" 
+				LeashRange="50"
+				GuardMaxRange="50"
+				GuardWanderRange="100"
+				DieOnMastersDeath="true" />
+			
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_JetAI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				CirclesForAttack="true"
+				StateMachine="JetAIStateMachine"
+				DefaultLocomotorSet="NORMAL"
+				SpawnOffsetRadius="100.0">
+				<UnitAITargetChooserData/>
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="50.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_AttackandMoveLoop">
+				<ModelConditionSound Sound="NOD_LeviathanDrone_AirMDrone_AggresiveByLoop" RequiredFlags="ATTACKING" ExcludedFlags="RECYCLED DYING"/>
+				<ModelConditionSound Sound="NOD_LeviathanDrone_AirMDrone_MoveByLoop" ExcludedFlags="RECYCLED DYING ATTACKING"/>
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "7.5"
+					 MinorRadius = "5.5"
+					 Height = "7.0"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+		</Geometry>
+		<!-- <AudioArraySound>
+			<AudioEntry Sound="NOD_LeviathanDrone_AirMDrone_MoveByLoop" AudioType="soundMoveLoop"/>
+		</AudioArraySound> -->
+		<EvaEventArray>
+			<EvaEntry EvaEvent="" EvaType="dieOwner" /> <!-- don't care about drones dying -->
+			<EvaEntry EvaEvent="UnitConstructionStarted" EvaType="productionStarted" />
+			<EvaEntry EvaEvent="UnitUnderAttack" EvaType="damagedOwner" />
+			<EvaEntry EvaEvent="UnitUnderAttackFromShroudedUnit" EvaType="damagedFromShroudedSourceOwner" />
+			<EvaEntry EvaEvent="GenericUnitBeingBurned" EvaType="damagedByFireOwner" />
+			<EvaEntry EvaEvent="UnitAmbushed" EvaType="ambushed" />
+			<EvaEntry EvaEvent="GenericEnemyUnitSighted" EvaType="enemyObjectSighted" />
+			<EvaEntry EvaEvent="EnemyStealthUnitDiscovered" EvaType="detectedEnemy" />
+			<EvaEntry EvaEvent="NewConstructionOptions" EvaType="availableForProduction" />
+			<EvaEntry EvaEvent="BuildOnHold" EvaType="buildOnHold" />
+			<EvaEntry EvaEvent="BuildCancelled" EvaType="buildCancelled" />
+			<EvaEntry EvaEvent="UnitPromoted" EvaType="promotedOwner" />
+		</EvaEventArray>
+
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+
+	<WeaponTemplate
+		id="NODAircraftMDroneWeapon"
+		inheritFrom="BaseGunWeapon" 
+		AttackRange="200.0"
+		ChaseWeapon="true"
+		AcceptableAimDelta="45d"
+		FireFX="FX_NODMachineGun_Medium_Fire"
+		FireStrongCounterFX="FX_NODMachineGun_Medium_Fire_Veteran"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_BUILDINGS"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<DamageNugget
+				Damage="4.0"
+				DamageType="GUN"
+				DamageFXType="GDI_MACHINEGUN"
+				DeathType="NORMAL" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<LocomotorTemplate
+		id="NODAircraftMDroneLocomotor"
+		Name="NODAircraftMDroneLocomotor"
+		Surfaces="AIR"
+		TurnTimeSeconds="0.3s"
+		TurnTimeDamagedSeconds="1.0s"
+		AccelerationSeconds="0.01s"
+		BrakingSeconds="0.01s"
+		Lift="220%"
+		LiftDamaged="80%"
+		SlowTurnRadius="20.0"
+		FastTurnRadius="25.0"
+		MinTurnSpeed="20%"
+		PreferredHeight="115"
+		PreferredHeightDamping=".1"
+		PreferredHeightPitchingEpsilon="9"
+		LookAheadMult="2.0"
+		AllowMotiveForceWhileAirborne="true"
+		BehaviorZ="SURFACE_RELATIVE_HEIGHT"
+		Appearance="WINGS"
+
+		MinRandomTurnRadiusScale="0.6"
+		MaxRandomTurnRadiusScale="1.7"
+
+		AttackPathTrailDistanceMinScale="0.8"
+		AttackPathTrailDistanceMaxScale="1.2"
+		
+		PitchStiffness="0.5"
+		RollStiffness="0.1"
+		PitchDamping="0.9"
+		RollDamping="0.9"
+		ForwardVelocityPitchFactor="-0.4"
+		LateralVelocityRollFactor="-0.3"
+		Apply2DFrictionWhenAirborne="true"
+		AirborneTargetingHeight="30"
+		LocomotorWorksWhenDead="true"
+		
+		TakeOffAndLandingSpeed="20.0"
+		TakeOffAndLandingSlowDownDelta="25.0"
+		TakeOffAndLandingSlowDownTime=".1s"
+
+		AttackPathTrailDistance="200"
+		RudderCorrectionDegree="0.169"
+		RudderCorrectionRate="0.027"
+		ElevatorCorrectionDegree="0.103"
+		ElevatorCorrectionRate="0.016"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true" />
+	
+</AssetDeclaration>

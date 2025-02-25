@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="FXParticleDrawBase">
+		<xs:complexContent>
+			<xs:extension base="FXParticleBaseModule">
+				<xs:sequence />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="FXParticleDrawGpu">
+		<xs:complexContent>
+			<xs:extension base="FXParticleDrawBase">
+				<xs:attribute name="Shader" type="AssetId" default="GPUParticle.fx" />
+				<xs:attribute name="FramesPerRow" type="SageInt" default="1" />
+				<xs:attribute name="TotalFrames" type="SageInt" default="1" />
+				<xs:attribute name="DetailTexture" type="TextureRef" />
+				<xs:attribute name="SpeedMultiplier" type="SageReal" default="1.0" />
+				<xs:attribute name="GeometryType" type="FXParticleSystem_GeometryType" default="SIMPLE_QUAD" />
+				<xs:attribute name="SortParticles" type="SageBool" default="false" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="FXParticleDrawLightning">
+		<xs:complexContent>
+			<xs:extension base="FXParticleDrawBase">
+                <xs:sequence>
+
+                    <xs:element name="StartPoint" type="Coord3D" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="EndPoint" type="Coord3D" minOccurs="1" maxOccurs="1" />
+
+                    <xs:element name="RandomSet" minOccurs="2" maxOccurs="2">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="StartAmplitude" type="ClientRandomVariable" minOccurs="0" maxOccurs="1" xas:byValue="true"/>
+                                <xs:element name="EndAmplitude" type="ClientRandomVariable" minOccurs="0" maxOccurs="1" xas:byValue="true"/>
+                                <xs:element name="StartFrequency" type="ClientRandomVariable" minOccurs="0" maxOccurs="1" xas:byValue="true"/>
+                                <xs:element name="EndFrequency" type="ClientRandomVariable" minOccurs="0" maxOccurs="1" xas:byValue="true"/>
+                                <xs:element name="StartPhase" type="ClientRandomVariable" minOccurs="0" maxOccurs="1" xas:byValue="true"/>
+                                <xs:element name="EndPhase" type="ClientRandomVariable" minOccurs="0" maxOccurs="1" xas:byValue="true"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+
+                </xs:sequence>
+            </xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="FXParticleDrawRenderObject">
+		<xs:complexContent>
+			<xs:extension base="FXParticleDrawBase">
+				<xs:sequence>
+					
+					<xs:element name="ObjectSet" minOccurs="3" maxOccurs="3">
+						<xs:complexType>
+							<xs:attribute name="RenderGroup" type="AssetId" />
+							<xs:attribute name="NumObjects" type="SageInt" default="0" />
+							<xs:attribute name="Percent" type="Percentage" default="0.0" />
+							<xs:attribute name="Shader" type="FXParticleSystem_ShaderType" default="W3D_DIFFUSE" />
+						</xs:complexType>
+					</xs:element>
+					
+				</xs:sequence>
+				<xs:attribute name="SinkRate" type="SageReal" default="0.0" />
+				<xs:attribute name="MultiRenderObjects" type="SageBool" default="false" />
+				<xs:attribute name="SinkOnTerrainCollision" type="SageBool" default="false" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="FXParticleDrawStreak">
+		<xs:complexContent>
+			<xs:extension base="FXParticleDrawBase" />
+		</xs:complexContent>
+	</xs:complexType>
+
+    <xs:complexType name="FXParticleDrawSwarm">
+        <xs:complexContent>
+            <xs:extension base="FXParticleDrawBase" >
+                <xs:attribute name="OpaqueSpeed" type="SageReal" default="0" />
+                <xs:attribute name="TransparentSpeed" type="SageReal" default="100.0" />
+                <xs:attribute name="SpeedStretchAmount" type="SageReal" default="1.0" />
+                <xs:attribute name="AttractStrength" type="SageReal" default="0.0" />
+                <xs:attribute name="EnvironmentTexture" type="TextureRef" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="FXParticleDrawTrail">
+		<xs:complexContent>
+			<xs:extension base="FXParticleDrawBase" >
+				<xs:attribute name="TrailLife" type="SageInt" default="30" />
+				<xs:attribute name="UTile" type="SageReal" default="1.0" />
+				<xs:attribute name="VTile" type="SageReal" default="1.0" />
+				<xs:attribute name="UScrollRate" type="SageReal" default="0.0" />
+				<xs:attribute name="VScrollRate" type="SageReal" default="0.0" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="FXParticleDrawModule">
+		<xs:choice minOccurs="0" maxOccurs="1">
+			<xs:element name="Default" type="FXParticleDrawBase" />
+			<xs:element name="Gpu" type="FXParticleDrawGpu" />
+			<xs:element name="Lightning" type="FXParticleDrawLightning" />
+			<xs:element name="RenderObject" type="FXParticleDrawRenderObject" />
+			<xs:element name="Streak" type="FXParticleDrawStreak" />
+            <xs:element name="Swarm" type="FXParticleDrawSwarm" />
+            <xs:element name="Trail" type="FXParticleDrawTrail" />
+		</xs:choice>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration 
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xai="uri:ea.com:eala:asset:instance">
+	
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GBArtill.W3X" />
+		<Include
+			type="all"
+			source="ART:GBArtill_D1.w3x" />
+		<Include
+			type="all"
+			source="ART:GBArtill_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:GBArtill_D3.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+	</Includes>
+	<GameObject
+		id="GDI_ArtilleryEmplacements"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		SelectPortrait="Portrait_ArtilleryEmplacement"
+		ButtonImage="Portrait_ArtilleryEmplacement"
+		Side="GDI"
+		Browser="REGION GDI_Structures STRUCTURE"
+		BuildCost="400"
+		BuildTime="15"
+		CommandSet="EmptyCommandSet"
+		KindOf="PRELOAD SELECTABLE CAN_CAST_REFLECTIONS SCORE STRUCTURE IMMOBILE KEEP_CLASSIFIED_WHEN_DEAD"
+		RadarPriority="STRUCTURE"
+		ThreatLevel="10"
+		ProductionQueueType="MAIN_STRUCTURE"
+		EditorName="GDI_ArtilleryEmplacements">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIArtilleryEmplacements</DisplayName>
+		<ArmorSet
+			xai:joinAction="Replace"
+			id="DefaultArmor"
+			Armor="TechStructureArmor"
+			DamageFX="VehicleDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				ExtraPublicBone="fx_weapon"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBArtill" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="fx_weapon" />
+					<WeaponMuzzleFlash
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="fx_weapon" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="fx_weapon" />
+					<Turret
+						TurretNameKey="turret"
+						TurretPitch="turret_pitch"
+						TurretID="1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBArtill_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBArtill_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBArtill_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBArtill_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBArtill_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GBArtill_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBArtill_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDISPArtilleryEmplacement" />
+					<TurretSettings
+						TurretTurnRate="25"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-75d"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="45.0">
+						<TurretAITargetChooserData />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+<!--
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="8s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+-->			
+<!--
+			<DestroyDie
+				id="ModuleTag_12">
+				<DieMuxData
+					DeathTypes="NONE CRUSHED SPLATTED" />
+			</DestroyDie>
+-->			
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_ScorchMedium" />
+			</FXListBehavior>	
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericGDIBuildingDestructionNoSpawn.xml" />
+			<xi:include
+				href="DATA:Includes/GenericGDIBuildingSuicideNoSpawn.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_02"
+				MaxHealth="5800.0"/>
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="28.8829"
+				MinorRadius="2.6559"
+				Height="8.29967">
+				<Offset
+					x="14.9547"
+					y="2.61552"
+					z="75.143" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="13.3797"
+				MinorRadius="13.3797"
+				Height="69.3986">
+				<Offset
+					x="-0.482642"
+					y="2.44953"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="26.7595"
+				MinorRadius="26.7595"
+				Height="17.2633">
+				<Offset
+					x="-0.482643"
+					y="2.44953"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-8.14684"
+					y="-5.65446"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="6.83545"
+					y="-5.65445"
+					z="66.2588" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="6.83545"
+					y="9.32784"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.14684"
+					y="9.32784"
+					z="66.2588" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.14684"
+					y="-5.65445"
+					z="66.2588" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="6.83545"
+					y="-5.65446"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="6.83545"
+					y="9.32784"
+					z="66.2588" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-8.14684"
+					y="9.32784"
+					z="0.0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="5000"
+			ShroudClearingRange="5000" />
+	</GameObject>
+</AssetDeclaration>

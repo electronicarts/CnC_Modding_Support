@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include
+			type="all"
+			source="ART:JBConstructionYard_SKN.w3x" />		
+		<Include
+			type="all"
+			source="ART:JBConstructionYard_IDLA.w3x" />		
+			<Include
+			type="all"
+			source="ART:JBConstructionYard_LIGHTS.w3x" />		
+		<Include
+			type="all"
+			source="ART:JUMCV_TRANS.w3x" />	
+		<Include
+			type="all"
+			source="ART:JBConstructionYard_FX.w3x" />
+		<Include
+			type="all"
+			source="ART:JBConstructionYard_Platform_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:JBConstructionYard_Platform_BLD.w3x" />
+								
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="JapanConstructionYard"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_JapanConYard"
+		ButtonImage="Button_JapanConYard"
+		Side="Japan"
+		EditorSorting="STRUCTURE"
+		
+		BuildTime="25"
+		HealthBoxHeightOffset="60"
+		PlacementViewAngle="315d"
+		CommandSet="JapanConstructionYardCommandSet"		
+		EnergyProduction="50" 
+		KindOf="+CONSTRUCTION_YARD +FS_FACTORY +AUTO_RALLYPOINT +ACTIVATE_AFTER_UNPACK"
+		RadarPriority="STRUCTURE"
+		CampnessValue="=$CAMPNESS_CONYARD"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="JapanConstructionYard"
+		Description="Desc:JapanConstructionYard"
+		TypeDescription="Type:JapanConstructionYard">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:JapanConstructionYard</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="5000"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietConYardArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="CENTER" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JBConstructionYard_SKN" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="JBConstructionYard_IDLA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING REALLYDAMAGED">
+					<Model
+						Name="JUMCV_TRANS" />
+					<Texture
+						Original="JUMCV"
+						New="JUMCV_D" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Model
+						Name="JUMCV_TRANS" />
+				</ModelConditionState>
+
+
+
+				<AnimationState
+				ParseCondStateType="PARSE_NORMAL"
+				ConditionsYes="FROZEN"
+				Flags="START_FRAME_FIRST">
+				</AnimationState>
+				
+				<!-- UNPACKING -->
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER UNPACKING">
+          <Animation
+						AnimationName="JUMCV_TRANS"
+						AnimationMode="ONCE" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+
+        </AnimationState>
+
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName="JUMCV_TRANS"
+						AnimationMode="ONCE" />
+          <ParticleSysBone
+              BoneName="NONE"
+              FXParticleSystemTemplate="Con_Big"
+              FollowBone="true" />
+          <ParticleSysBone
+            BoneName="NONE"
+            FXParticleSystemTemplate="Con_Flash"
+            FollowBone="true" />
+          <ParticleSysBone
+            BoneName="NONE"
+            FXParticleSystemTemplate="Con_Lights"
+            FollowBone="true" />
+        </AnimationState>
+
+      </ScriptedModelDraw>
+
+<!-- DRAW PLATFORM -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JBConstructionYard_Platform_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING">
+					<Model
+						Name="JBConstructionYard_Platform_SKN" />
+<!-- template reference invalid
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="JBConstructionYardWakeSplash"
+						FollowBone="true" />
+-->						
+					<Material ShaderName="BasicW3DHolographic.fx" TechniqueName="Default">
+						<Constants>
+							<Float Name="ColorAmbient">
+								<Value>0.000000</Value>
+								<Value>0.000000</Value>
+								<Value>0.000000</Value>
+							</Float>
+							<Float Name="ColorDiffuse">
+								<Value>0.000000</Value>
+								<Value>0.000000</Value>
+								<Value>0.000000</Value>
+							</Float>
+							<Float Name="ColorSpecular">
+								<Value>0.000000</Value>
+								<Value>0.000000</Value>
+								<Value>0.000000</Value>
+							</Float>
+							<Float Name="Shininess">
+								<Value>1.000000</Value>
+							</Float>
+							<Float Name="ColorEmissive">
+								<Value>1.000000</Value>
+								<Value>1.000000</Value>
+								<Value>1.000000</Value>
+							</Float>
+							<Texture Name="Texture_0">
+								<Value>FXJapanBuildMask</Value>
+							</Texture>
+							<Bool Name="DepthWriteEnable">
+								<Value>true</Value>
+							</Bool>
+							<Bool Name="AlphaTestEnable">
+								<Value>true</Value>
+							</Bool>
+							<Bool Name="CullingEnable">
+								<Value>true</Value>
+							</Bool>
+							<Int Name="BlendMode">
+								<Value>1</Value>
+							</Int>
+						</Constants>
+					</Material>						          
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="STRUCTURE_UNPACKING OVER_WATER">
+					<Animation
+						AnimationName="JBConstructionYard_Platform_BLD"
+						AnimationMode="MATCH_UNPACKING" />
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>						
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+						CurDrawableHideSubObjectPermanently("Bib")
+					</Script>
+				</AnimationState>																				
+			</ScriptedModelDraw>
+			
+			<!-- Lights-->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_LIGHTS"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JBConstructionYard_LIGHTS" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+					CurDrawableHideSubObjectPermanently("Glow")
+					</Script>
+				</AnimationState>
+
+        <AnimationState
+            ParseCondStateType="PARSE_NORMAL"
+            ConditionsYes="PARALYZED">
+          <Script>
+            CurDrawableHideSubObjectPermanently("Glow")
+          </Script>
+        </AnimationState>
+        <AnimationState
+            ParseCondStateType="PARSE_NORMAL"
+            ConditionsYes="AFFECTED_BY_EMP">
+          <Script>
+            CurDrawableHideSubObjectPermanently("Glow")
+          </Script>
+        </AnimationState>
+        
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACTIVELY_CONSTRUCTING">
+					<Script>
+					CurDrawableShowSubObjectPermanently("Glow")
+					</Script>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+<!-- DRAW BUILD UP PLATFORM -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform_Buildup"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING">
+					<Model
+						Name="JBConstructionYard_Platform_SKN" />
+<!-- template reference invalid
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="JBConstructionYardWakeSplash"
+						FollowBone="true" />
+-->
+					<Material ShaderName="BuildingsJapanBuildup.fx" TechniqueName="Default">
+						<Constants>
+							<Texture Name="DiffuseTexture">
+								<Value>JBPlatform</Value>
+							</Texture>
+							<Texture Name="NormalMap">
+								<Value>JBPlatform_NRM</Value>
+							</Texture>
+							<Texture Name="SpecMap">
+								<Value>JBPlatform_SPM</Value>
+							</Texture>
+							<Float Name="EnvMult">
+								<Value>1.000000</Value>
+							</Float>
+							<Bool Name="AlphaTestEnable">
+								<Value>true</Value>
+							</Bool>
+						</Constants>
+					</Material>						          
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="STRUCTURE_UNPACKING OVER_WATER">
+					<Animation
+						AnimationName="JBConstructionYard_Platform_BLD"
+						AnimationMode="MATCH_UNPACKING" />
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>						
+				</AnimationState>	
+			</ScriptedModelDraw>
+
+<!-- DRAW PARTICLES -->
+
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JBConstructionYard_FX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="JBConstructionYard_FX" />
+					<ParticleSysBone
+						BoneName="FX_BONE01"
+						FXParticleSystemTemplate="JapanVehicleDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE01"
+						FXParticleSystemTemplate="JapanVehicleDamagedSparks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE01"
+						FXParticleSystemTemplate="JapanVehicleDamagedFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="JBConstructionYard_FX" />
+					<ParticleSysBone
+						BoneName="FX_BONE01"
+						FXParticleSystemTemplate="JapanVehicleDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE01"
+						FXParticleSystemTemplate="JapanVehicleDamagedSparks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE01"
+						FXParticleSystemTemplate="JapanVehicleDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE02"
+						FXParticleSystemTemplate="JapanVehicleDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE02"
+						FXParticleSystemTemplate="JapanVehicleDamagedSparks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE02"
+						FXParticleSystemTemplate="JapanVehicleDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE03"
+						FXParticleSystemTemplate="JapanVehicleDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE03"
+						FXParticleSystemTemplate="JapanVehicleDamagedSparks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_BONE03"
+						FXParticleSystemTemplate="JapanVehicleDamagedFire"
+						FollowBone="true" />													
+				</ModelConditionState>	
+			</ScriptedModelDraw>	
+									
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>		
+			<RadarBehavior
+				id="ModuleTag_RadarBehavior" />
+						
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />		
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="JapanStructureHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+				<Event
+					Index="onDeath"
+					FX="FX_LargeBuildingDieExplosionRumble" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_LargeBuildingDieExplosion" /> <!-- do not put visuals on this FX!  Create another FXListBehavior module! -->
+			</FXListBehavior>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="JBConstructionYard_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="OVER_WATER" />
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_Platform_CreateObjectDie"
+				CreationList="JBConstructionYard_Platform_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="OVER_WATER" />
+			</CreateObjectDie>
+
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="2.0s" />
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				Type="MAIN_STRUCTURE"
+				MaxQueueEntries="1" />
+			<ProductionUpdate
+				id="ModuleTag_OtherProductionUpdate"
+				Type="OTHER_STRUCTURE"
+				MaxQueueEntries="1" />
+			<ProductionUpdateInfo
+				id="ModuleTag_ProductionUpdateInfo"/>
+			<QueueProductionExitUpdate
+				id="ModuleTag_QueueProduction"
+				ExitDelaySeconds="0.07s">
+				<UnitCreatePoint
+					x="-3.0"
+					y="0.0"
+					z="0.0" />
+				<NaturalRallyPoint
+					x="80.0"
+					y="0.0"
+					z="0.0" />
+			</QueueProductionExitUpdate>
+
+			<xi:include
+				href="DATA:Includes/GenericPackPower.xml" />
+
+			<ReplaceSelfSpecialAbility
+				id="ModuleTag_ReplaceSelf"
+				SpecialPowerTemplate="SpecialPower_PackReplaceSelf"
+				Options="RECONSTITUTE_STORED_COMMAND"
+				NewObjectUnpackTime="2.0s"
+				ReplaceOptions="COPY_UPGRADES DISABLE_DURING_REPLACE DISABLE_NEW_OBJECT_DURING_UNPACK">
+				<ReplacementTemplate>JapanMCV</ReplacementTemplate>
+			</ReplaceSelfSpecialAbility>
+
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/JapanConYardDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/JapanConYardSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainVision.xml" />				
+			<xi:include
+				href="DATA:Includes/InfiltratorContainRadarFreeze.xml" />				
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions"
+			/>
+<!--			
+			<GrantUpgradeCreate
+				id="ModuleTag_AddJapanRadarDishUpgrade"
+				UpgradeToGrant="Upgrade_JapanRadarDish" />
+			<SubStructureBuild
+				 id="ModuleTag_SubStructureBuild">				
+				<TriggeredBy>Upgrade_JapanRadarDish</TriggeredBy>
+				<TriggeredBy>Upgrade_JapanRepairBay</TriggeredBy>
+				
+				<AvailableSubStructure>
+					<UpgradeTrigger>Upgrade_JapanRadarDish</UpgradeTrigger>
+					<ObjectTemplate>JapanRadarDish</ObjectTemplate>
+				</AvailableSubStructure>
+				<AvailableSubStructure>
+					<UpgradeTrigger>Upgrade_JapanRepairBay</UpgradeTrigger>
+					<ObjectTemplate>JapanWarFactoryRepairBay</ObjectTemplate>
+				</AvailableSubStructure>
+
+				<StructureOffset
+					ModelCondition="USER_6">
+					<Offset
+						x="4.56"
+						y="-62.211"
+						z="0"/>
+				</StructureOffset>
+				<StructureOffset
+					ModelCondition="USER_7">
+					<Offset
+						x="30.095"
+						y="-62.211"
+						z="0"/>
+				</StructureOffset>
+			</SubStructureBuild>
+-->			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO" 
+				StateMachine="StructureAIStateMachine"
+			/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="4000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "49.005"
+				MinorRadius = "36.48"
+				Height = "55.47"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-10.1006"
+					y = "-0.552521"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "22.464"
+				MinorRadius = "49.7008"
+				Height = "31.0208"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-33.1786"
+					y = "-0.552521"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "9.18982"
+				MinorRadius = "39.4178"
+				Height = "9.61645"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "18.0628"
+					y = "-0.552521"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "15.2"
+				MinorRadius = "46.5"
+				Height = "10.0"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "36.0329"
+					y = "-0.552521"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "17.1751"
+				MinorRadius = "12.3441"
+				Height = "83.721"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-33.1275"
+					y = "-0.552521"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_StructureConstructionAudio">
+				<ModelConditionSound
+					Sound="JAP_Nanocore_DeployStructureLand"
+					RequiredFlags="STRUCTURE_UNPACKING"
+					ExcludedFlags="OVER_WATER"/>
+				<ModelConditionSound
+					Sound="JAP_Nanocore_DeployStructureWaterMS"
+					RequiredFlags="STRUCTURE_UNPACKING OVER_WATER"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<AnimationSoundClientBehavior id="AnimationSoundCB" >
+				<Sound Sound="JAP_MCV_Animation_TRANS1_WaterMS" RequiredMC="OVER_WATER STRUCTURE_UNPACKING" Animation="JUMCV_TRANS" Frame="1" />
+				<Sound Sound="JAP_MCV_Animation_TRANS1" RequiredMC="STRUCTURE_UNPACKING" Animation="JUMCV_TRANS" Frame="1" />
+				<Sound Sound="JAP_MCV_Animation_TRANS2" RequiredMC="STRUCTURE_UNPACKING" Animation="JUMCV_TRANS" Frame="15" />
+				<Sound Sound="JAP_MCV_Animation_TRANS3" RequiredMC="STRUCTURE_UNPACKING" Animation="JUMCV_TRANS" Frame="24" />
+			</AnimationSoundClientBehavior>		
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="JAP_ConstructionYard_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+		<AudioEntry Sound="JAP_Nanocore_DeployLoop" AudioType="soundUnderConstruction" />
+<!--
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+
+		<EvaEventArray>
+			<EvaEntry EvaEvent="ConstructionYardUnderAttack" EvaType="damagedOwner" />
+		</EvaEventArray>
+		
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="1000" />
+		<ProjectedBuildabilityInfo
+			Radius="120"
+			RadiusY="105" 
+			BuildPlacementTypes="OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

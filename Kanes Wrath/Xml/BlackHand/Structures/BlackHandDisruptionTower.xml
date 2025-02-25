@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBDistTwr.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_ASN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_AAN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_D2SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_D2AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_D3SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_D3AN.w3x" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="BlackHandDisruptionTower"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_NODDisruptionTower"
+		ButtonImage="Portrait_NODDisruptionTower"
+		Side="BlackHand"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="500"
+		BuildTime="5"
+		EnergyProduction="-10"
+		CommandSet="NODBaseDefenseCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_BASE_DEFENSE POWERED NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER BROADCASTS_INVISIBILITY"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		CampnessValue="=$CAMPNESS_DEFENSIVE_STRUCTURE"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="BlackHandDisruptionTower"
+		Description="Desc:NODDisruptionTower"
+		TypeDescription="Type:NODDisruptionTower">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODDisruptionTower</DisplayName>
+		<GameDependency>
+			<RequiredObject>BlackHandSecretShrine</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="NODBaseDefenceArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="CENTER" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBDistTwr" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBDistTwr_ASN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NBDistTwr_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBDistTwr_D2SN" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBDistTwr" />
+					<Texture
+						Original="NBDistTwr"
+						New="NBDistTwrD" />
+					
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBDistTwr_AAN"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBDistTwr_D3AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBDistTwr_D2AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NBDistTwr_D2AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NBDistTwr_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_DisruptionTower_Die" />
+				<Event
+					Index="onCreate"
+					ForceUseDoFXObj="true"
+					FX="FX_DisruptionTower_Created" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			<InvisibilityUpdate
+				id="ModuleTag_Invisibility"
+				Options="BROADCAST STARTS_ACTIVE"
+				BroadcastRange="450"
+				UpdatePeriod="1.0s">
+				<InvisibilityNugget />
+				<BroadcastObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE INFANTRY VEHICLE AIRCRAFT">
+					<ExcludeThing>NODDisruptionTower</ExcludeThing>
+					<ExcludeThing>Viceroid</ExcludeThing>
+				</BroadcastObjectFilter>
+			</InvisibilityUpdate>
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericNODBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/GenericNODBuildingSuicide.xml" />
+			<xi:include
+				href="../../Includes/RepairAlliesEngineerContain.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"></AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3000.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_NOD_DisruptionTower_OnLoop">
+				<ModelConditionSound Sound="NOD_DisruptionTower_OnLoop" ExcludedFlags="UNDERPOWERED" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="20.0"
+				Height="55.0"
+				ContactPointGeneration="INFANTRY" />
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_DisruptionTowerSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+			<AudioEntry 
+				Sound="NOD_DisruptionTower_OnlineMS"
+				AudioType="soundReenabled" />
+			<AudioEntry 
+				Sound="NOD_DisruptionTower_OfflineMS"
+				AudioType="soundDisabled" />
+			<AudioEntry 
+				Sound="BuildingGenericPowerOffMS"
+				AudioType="soundDisabledOnCreation" />
+		</AudioArraySound> 
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="0.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

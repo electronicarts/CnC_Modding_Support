@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include type="all"	source="ART:ABConYard_FX.w3x" />
+		<Include type="all"	source="ART:ABConYard_SKN.w3x" />	
+		<Include type="all"	source="ART:ABConYard_IDLA.w3x" />	
+		<Include type="all"	source="ART:ABConYard_Platform.w3x" />	
+		<Include type="all"	source="ART:ABConYard_Platform_BLD.w3x" />	
+		<Include type="all" source="ART:ABConYard_Platform_BLDW.w3x" />
+		<Include type="all" source="ART:ABConYard_LIGHTS.w3x" />
+		<Include type="all"	source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="all"	source="ART:AUMCV_TRANS.w3x" />
+    
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseStructure.xml" />
+    
+	</Includes>
+	<Defines>
+		<Define name="ALLIED_CONYARD_LOCAL_UNPACK_TIME" value="2.0s" />
+	</Defines>	
+	<GameObject
+		id="AlliedConstructionYard"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_AlliedConstructionYard"
+		ButtonImage="Button_AlliedConstructionYard_on"
+		Side="Allies"
+		EditorSorting="STRUCTURE"
+		BuildTime="25"
+		PlacementViewAngle="315d"
+		CommandSet="AlliedConstructionYardCommandSet"
+		EnergyProduction="50"
+		KindOf="+CONSTRUCTION_YARD +FS_FACTORY"
+		RadarPriority="STRUCTURE"
+		CampnessValue="=$CAMPNESS_CONYARD"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="AlliedConstructionYard"
+		Description="Desc:AlliedConstructionYard"
+		TypeDescription="Type:AlliedConstructionYard">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:AlliedConstructionYard</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="5000"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="AlliedConYardArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="CENTER" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABConYard_SKN" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING REALLYDAMAGED">
+					<Model
+						Name="AUMCV_TRANS" />
+					<Texture
+						Original="AUMCV"
+						New="AUMCV_D" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Model
+						Name="AUMCV_TRANS" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Big"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Flash"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Lights"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="ABConYard_IDLA"
+						AnimationMode="LOOP" />
+				</AnimationState>				
+				<!-- UNPACKING -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName="AUMCV_TRANS"
+						AnimationMode="ONCE"
+						AnimationAbsoluteTime="=$ALLIED_CONYARD_LOCAL_UNPACK_TIME" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			
+			<!-- Lights-->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_LIGHTS"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABConYard_Lights" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+					CurDrawableHideSubObjectPermanently("FX_LightsBuilding")
+					</Script>
+				</AnimationState>
+
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="PARALYZED">
+          <Script>
+            CurDrawableHideSubObjectPermanently("FX_LightsBuilding")
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="AFFECTED_BY_EMP">
+          <Script>
+            CurDrawableHideSubObjectPermanently("FX_LightsBuilding")
+          </Script>
+        </AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACTIVELY_CONSTRUCTING">
+					<ParticleSysBone
+						BoneName="FX_Steam01"
+						FXParticleSystemTemplate="AlliedRefinerySteam"
+						FollowBone="true" />
+						<ParticleSysBone
+						BoneName="FX_Steam02"
+						FXParticleSystemTemplate="AlliedRefinerySteam"
+						FollowBone="true" />
+					<Script>
+					CurDrawableShowSubObjectPermanently("FX_LightsBuilding")
+					</Script>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+<!-- DRAW PLATFORM -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABConYard_Platform" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FROZEN">
+					<Model
+						Name="ABConYard_Platform" />
+					<Material
+						ShaderName="ObjectsFrozen.fx"
+						TechniqueName="Default">
+					<Constants>
+					<Texture Name="DiffuseTexture">
+						<Value>AUMCV</Value>
+					</Texture>
+					<Texture Name="NormalMap">
+						<Value>AUMCV_NRM</Value>
+					</Texture>
+					<Texture Name="SpecMap">
+						<Value>AUMCV_SPM</Value>
+					</Texture>
+					<Float Name="EnvMult">
+						<Value>1.000000</Value>
+					</Float>
+					<Bool Name="AlphaTestEnable">
+						<Value>false</Value>
+					</Bool>
+					</Constants>
+				</Material>
+				</ModelConditionState>
+        
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING">
+					<Model
+						Name="ABConYard_Platform_BLDW" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedConyardWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedConyardWaterBuildupMist"
+						FollowBone="true" />
+					
+					
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABConyardWakeSplash"
+						FollowBone="true" />          
+				</ModelConditionState>	
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="" />
+				</ModelConditionState>						
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="STRUCTURE_UNPACKING OVER_WATER">
+					<Animation
+						AnimationName="ABConYard_Platform_BLDW"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Object51")
+						CurDrawableHideSubObjectPermanently("Object52")
+						CurDrawableHideSubObjectPermanently("Object53")
+					</Script>
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Object51")
+						CurDrawableHideSubObjectPermanently("Object52")
+						CurDrawableHideSubObjectPermanently("Object53")						
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="ABConYard_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>				
+
+			</ScriptedModelDraw>
+
+<!-- Draw Hover skirt, just plays packing up animation once when over water. -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Hover">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING OVER_WATER">
+					<Model
+						Name="AUMCV_Hover" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING OVER_WATER" >
+					<Animation
+						AnimationName="AUMCV_Hover"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+<!-- DRAW PARTICLES -->
+
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABConYard_FX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ABConYard_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ABConYard_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE02"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+
+				</ModelConditionState>
+			</ScriptedModelDraw>						
+
+		</Draws>
+		<Behaviors>			
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />		
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+        <Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+				<Event
+					Index="onDeath"
+					FX="FX_LargeBuildingDieExplosionRumble" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_LargeBuildingDieExplosion" />
+			</FXListBehavior>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieOnLand"
+				CreationList="ABConyard_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="OVER_WATER" />
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ABConyardPlatform_Die_OCL"
+				CreationList="ABConyardPlatform_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="OVER_WATER" />
+			</CreateObjectDie>
+						
+			<TechUpgrade
+				id="ModuleTag_TechUpgrade_Tech3"
+				Radius="600.0"
+				DistanceType="RECTANGULAR"
+				FXLineBoneName="fx_bone_upgrade_dish">
+				<TriggeredBy>Upgrade_AlliedTech3</TriggeredBy>
+				<ObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES" >
+					<IncludeThing>AlliedAirfield</IncludeThing>
+					<IncludeThing>AlliedBarracks</IncludeThing>
+					<IncludeThing>AlliedNavalYard</IncludeThing>
+					<IncludeThing>AlliedWarFactory</IncludeThing>
+				</ObjectFilter>
+			</TechUpgrade>
+			<TechUpgrade
+				id="ModuleTag_TechUpgrade_Tech2"
+				Radius="600.0"
+				DistanceType="RECTANGULAR"
+				FXLineBoneName="fx_bone_upgrade_dish">
+				<TriggeredBy>Upgrade_AlliedTech2</TriggeredBy>
+				<ObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES" >
+					<IncludeThing>AlliedAirfield</IncludeThing>
+					<IncludeThing>AlliedBarracks</IncludeThing>
+					<IncludeThing>AlliedNavalYard</IncludeThing>
+					<IncludeThing>AlliedWarFactory</IncludeThing>
+				</ObjectFilter>
+			</TechUpgrade>
+			<CommandSetUpgrade
+				id="ModuleTag_CommandSetUpgrade"
+				CommandSet="AlliedConstructionYardCommandSetLevel2">
+				<TriggeredBy>Upgrade_AlliedTech2</TriggeredBy>
+			</CommandSetUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_Upgrade_Tech2">
+				<TriggeredBy>Upgrade_AlliedTech2</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Upgrade_02"
+					HideSubObjects="Upgrade_01 Upgrade_03"
+					Upgrade="Upgrade_AlliedTech2">
+				</Nugget>
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_Upgrade_Tech3">
+				<TriggeredBy>Upgrade_AlliedTech3</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Upgrade_03"
+					HideSubObjects="Upgrade_01 Upgrade_02"
+					Upgrade="Upgrade_AlliedTech3">
+				</Nugget>
+			</SubObjectsUpgrade>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="AlliedConstructionYardFunctions" />
+
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="2.0s" />
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				Type="MAIN_STRUCTURE"
+				MaxQueueEntries="1" />
+			<ProductionUpdate
+				id="ModuleTag_OtherProductionUpdate"
+				Type="OTHER_STRUCTURE"
+				MaxQueueEntries="1" />
+			<ProductionUpdateInfo
+				id="ModuleTag_ProductionUpdateInfo"/>
+			<QueueProductionExitUpdate
+				id="ModuleTag_QueueProduction"
+				ExitDelaySeconds="0.07s">
+				<UnitCreatePoint
+					x="-3.0"
+					y="0.0"
+					z="0.0" />
+				<NaturalRallyPoint
+					x="0.0"
+					y="0.0"
+					z="0.0" />
+			</QueueProductionExitUpdate>
+
+			<xi:include
+				href="DATA:Includes/GenericPackPower.xml" />
+			
+			<ReplaceSelfSpecialAbility
+				id="ModuleTag_ReplaceSelf"
+				SpecialPowerTemplate="SpecialPower_PackReplaceSelf"
+				Options="RECONSTITUTE_STORED_COMMAND"
+				NewObjectUnpackTime="=$ALLIED_CONYARD_LOCAL_UNPACK_TIME"
+				ReplaceOptions="COPY_UPGRADES DISABLE_DURING_REPLACE DISABLE_NEW_OBJECT_DURING_UNPACK">
+				<ReplacementTemplate>AlliedMCV</ReplacementTemplate>
+			</ReplaceSelfSpecialAbility>
+			
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/AlliedConYardDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/AlliedConYardSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainVision.xml" />				
+			<xi:include
+				href="DATA:Includes/InfiltratorContainRadarFreeze.xml" />				
+<!--
+			<GrantUpgradeCreate
+				id="ModuleTag_AddAlliedRadarDishUpgrade"
+				UpgradeToGrant="Upgrade_AlliedRadarDish" />
+			<SubStructureBuild
+					 id="ModuleTag_SubStructureBuild">
+				<TriggeredBy>Upgrade_AlliedCrane</TriggeredBy>
+				<TriggeredBy>Upgrade_AlliedRadarDish</TriggeredBy>
+				<TriggeredBy>Upgrade_AlliedConstructionYardRepairBay</TriggeredBy>
+
+				<AvailableSubStructure>
+					<UpgradeTrigger>Upgrade_AlliedCrane</UpgradeTrigger>
+					<ObjectTemplate>AlliedCrane</ObjectTemplate>
+				</AvailableSubStructure>
+				<AvailableSubStructure>
+					<UpgradeTrigger>Upgrade_AlliedRadarDish</UpgradeTrigger>
+					<ObjectTemplate>AlliedRadarDish</ObjectTemplate>
+				</AvailableSubStructure>
+				<AvailableSubStructure>
+					<UpgradeTrigger>Upgrade_AlliedConstructionYardRepairBay</UpgradeTrigger>
+					<ObjectTemplate>AlliedConstructionYardRepairBay</ObjectTemplate>
+				</AvailableSubStructure>
+
+				<StructureOffset
+							ModelCondition="USER_6">
+					<Offset
+								x="4.56"
+								y="-62.211"
+								z="0"/>
+				</StructureOffset>
+				<StructureOffset
+							ModelCondition="USER_7">
+					<Offset
+								x="30.095"
+								y="-62.211"
+								z="0"/>
+				</StructureOffset>
+			</SubStructureBuild>
+-->			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO" 
+				StateMachine="StructureAIStateMachine"
+			/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="4000.0" />
+		</Body>
+		<ClientBehaviors>
+<!--
+			<AnimationSoundClientBehavior id="AnimationSoundCB" >
+				<Sound Sound="GDI_MCVUnpack1MS" Animation="AUMCV_TRANS" Frame="75" />
+				<Sound Sound="GDI_MCVUnpack2" Animation="AUMCV_TRANS" Frame="50" />
+				<Sound Sound="GDI_MCVUnpack3" Animation="AUMCV_TRANS" Frame="25" />
+				<Sound Sound="GDI_MCVUnpack4" Animation="AUMCV_TRANS" Frame="1" />
+			</AnimationSoundClientBehavior>
+-->
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Packing">
+				<ModelConditionSound Sound="ALL_MCV_PackWater" RequiredFlags="OVER_WATER STRUCTURE_UNPACKING" />
+				<ModelConditionSound Sound="ALL_MCV_PackLand" RequiredFlags="STRUCTURE_UNPACKING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "60.0"
+				MinorRadius = "60.0"
+				Height = "5.0"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "12.3947"
+				MinorRadius = "9.57462"
+				Height = "84.9016"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "25.7067"
+				MinorRadius = "9.57462"
+				Height = "61.3178"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "36.0772"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "41.8857"
+				MinorRadius = "41.49"
+				Height = "56.0139"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "4.39383"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="ALL_ConstructionYard_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+<!--
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+
+		<EvaEventArray>
+			<EvaEntry EvaEvent="ConstructionYardUnderAttack" EvaType="damagedOwner" />
+		</EvaEventArray>
+		
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="1000" />
+		<ProjectedBuildabilityInfo
+			Radius="600"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+		<ProjectedBuildabilityInfo
+			Radius="600"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE"
+			AllowedBuildabilityHeightVariation="-1.0">
+			<AllowedObjectFilter
+				 Rule="NONE">
+				<IncludeThing>AlliedNavalYard</IncludeThing>
+				<IncludeThing>SovietNavalYard</IncludeThing>
+				<IncludeThing>JapanNavalYard</IncludeThing>
+			</AllowedObjectFilter>
+		</ProjectedBuildabilityInfo>
+	</GameObject>
+</AssetDeclaration>

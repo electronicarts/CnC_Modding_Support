@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+    <Include type="all" source="ART:NULimo1.w3x" />
+		<Include type="instance" source="DATA:Allied/Props/AlliedLimo1_Collapse.xml" />
+		<Include type="all" source="ART:NULimo1_D.xml" />	
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="AlliedLimo1"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_PresidentLimo"
+		ButtonImage="Button_PresidentLimo"
+		Side="Allies"
+		EditorSorting="CAMPAIGN_UNITS"
+		BuildTime="15"
+		CommandSet="AlliedAntiStructureVehicleCommandSet"
+		KindOf="SELECTABLE CAN_ATTACK CAN_CAST_REFLECTIONS SCORE VEHICLE CAN_BE_FAVORITE_UNIT"
+		WeaponCategory="CANNON"
+		VoicePriority="188"
+		EditorName="AlliedLimo1"
+		Description="DESC:PresidentLimo"
+		TypeDescription="TYPE:PresidentLimo">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:PresidentLimo</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_AlliedTech2</NeededUpgrade>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="1400"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="AlliedAntiStructureVehicleArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			Locomotor="AlliedAntiStructureVehicleLocomotor"
+			Condition="NORMAL"
+			Speed="30.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="false" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NULimo1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NULimo1" />
+					<Texture
+						Original="NULimo1"
+						New="NULimo1_D" />
+					<ParticleSysBone
+						BoneName="Bone_D_02"
+						FXParticleSystemTemplate="VehicleDamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_D_01"
+						FXParticleSystemTemplate="VehicleDamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_D_10"
+						FXParticleSystemTemplate="VehicleDamageFire02"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NULimo1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="NULimo1" />
+				</ModelConditionState>
+
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NULimo1_Collapse_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"/>
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_AlliedChieftanDie" />
+			</FXListBehavior>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="300" />
+		</Body>
+		<Geometry>
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="14.0"
+				Height="12.0"
+				ContactPointGeneration="VEHICLE">
+				<Offset
+					x="-7.0"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+<!--
+		<AudioArrayVoice>
+			<AudioEntry Sound="TEMP_RA2_AlliedVehicle_VoiceAttack" AudioType="voiceAttack" />
+			<AudioEntry Sound="TEMP_RA2_AlliedVehicle_VoiceCreate" AudioType="voiceCreated" />
+			<AudioEntry Sound="TEMP_RA2_AlliedVehicle_VoiceMove" AudioType="voiceMove" />
+			<AudioEntry Sound="TEMP_RA2_AlliedVehicle_VoiceSelect" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+-->
+		<AudioArraySound>
+			<AudioEntry Sound="A06_Limo_MoveStart" AudioType="soundMoveStart" />	
+			<AudioEntry Sound="A06_Limo_MoveLoop" AudioType="soundMoveLoop" />	
+			<AudioEntry Sound="VehicleCrush" AudioType="soundCrushing" />	
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="500"
+			ShroudClearingRange="300" />
+	</GameObject>
+	<ObjectCreationList
+		id="NULimo1_Collapse_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>AlliedLimo1_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+</AssetDeclaration>

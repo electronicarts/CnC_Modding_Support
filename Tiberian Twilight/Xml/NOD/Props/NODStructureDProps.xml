@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+		<Include type="instance" source="DATA:BaseObjects\BaseObject.xml" />
+
+		<!-- Art -->	
+		<Include type="all"	source="ART:GDIHeavyMissileProjectile_Veteran.w3x" />
+		<Include type="all" source="ART:NODRocketMedium.w3x" />
+		<Include type="all"	source="ART:FX_RPGHeroic.w3x" />
+		
+	</Includes>
+	<GameObject
+		id="NODStructureDPrimaryProjectile"
+		inheritFrom="BaseTargetableProjectile" 
+		EditorName="NODStructureDPrimaryProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NODRocketMedium" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODRocketMedium_Trail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODRocketMedium_Fire"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_NOD_RocketPod_StrD_RocketWeaponImpactExplosion_AudioOnly" /> <!-- audio only, please add visuals to a separate event, thanks -->
+				<Event Index="onDeath" FX="FX_NODRocketMediumHit_AOE" />
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="10"
+				FirstHeightMax="25"
+				SecondHeightMin="30"
+				SecondHeightMax="40"
+				FirstPercentIndent="20"
+				SecondPercentIndent="90"
+				GroundHitFX=""
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH"
+				CurveFlattenMinDist="300"
+				SidewaysDrift="20"
+				FlightPathAdjustDistPerSecond="100"/>
+		</Behaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0.8"></Shape>
+		</Geometry>
+		<!-- 
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_StealthTank_RocketZipBy" AudioType="soundAmbient" />
+		</AudioArraySound>
+		 -->
+	</GameObject>
+
+</AssetDeclaration>

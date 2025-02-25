@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+		<Include
+			type="all"
+			source="ART:NB_Temple.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_Temple_D2SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_Temple_D2AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_Temple_D3SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_Temple_D3AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TempleFX.w3x" />
+	</Includes>
+	<GameObject
+		id="NOD_TemplePrime"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		EditorName="NOD_TemplePrime"
+		SelectPortrait="Portrait_NodTemplePrime"
+		ButtonImage="Portrait_NodTemplePrime"
+		Browser="REGION NOD_Structures STRUCTURE">
+		<DisplayName
+			xai:joinAction="Replace">Name:NODTemplePrime</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				AffectedByStealth="false"> <!-- DONT TAKE THIS OUT THIS BUILDING SHOULD NEVER STEALTH -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_Temple" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NB_Temple_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NB_Temple_D2SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NB_Temple" />
+					<Texture
+						Original="NB_Temple"
+						New="NB_Temple_D1" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableHideSubObject("FXOBJECT01")
+						CurDrawableHideSubObject("FXOBJECT02")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NB_Temple_D3AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						CurDrawableHideSubObject("FXOBJECT01")
+						CurDrawableHideSubObject("FXOBJECT02")
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NB_Temple_D2AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						CurDrawableHideSubObject("FXOBJECT01")
+						CurDrawableHideSubObject("FXOBJECT02")
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NB_Temple_D2AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NB_Temple_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_IONCannonShield">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="NB_TempleFX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<ArmorSet
+			id="DefaultArmor"
+			xai:joinAction="Replace"
+			Armor="TemplePrimeArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Behaviors>
+<!--		
+			<StructureCollapseUpdate
+				id="ModuleTag_Collapse"
+				MinCollapseDelay="0"
+				MaxCollapseDelay="0"
+				CollapseDamping="0.5"
+				MaxShudder="0.6"
+				MinBurstDelay="250"
+				MaxBurstDelay="800"
+				BigBurstFrequency="4"
+				DestroyObjectWhenDone="true"
+				CollapseHeight="155" />
+-->				
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_ScorchLarge" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="30000.0"
+				InitialHealth="30000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="90.33"
+				MinorRadius="32.2"
+				Height="108.9">
+				<Offset
+					x="-21.3283"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="42.351"
+				MinorRadius="62.433"
+				Height="35.018">
+				<Offset
+					x="5.766"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-32.8188"
+					y="-31.3764"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="20.287"
+					y="-31.3764"
+					z="26.668" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="20.287"
+					y="21.7293"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-32.8188"
+					y="21.7293"
+					z="26.668" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-32.8188"
+					y="-31.3764"
+					z="26.668" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="20.287"
+					y="-31.3764"
+					z="0.0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="20.287"
+					y="21.7293"
+					z="26.668" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-32.8188"
+					y="21.7293"
+					z="0.0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="700" />
+		<ProjectedBuildabilityInfo
+			Radius="800.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

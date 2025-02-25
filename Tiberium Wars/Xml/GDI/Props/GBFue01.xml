@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:GBFue01.w3x" />
+		<Include type="all"	source="ART:GBFue01_D1.w3x" />
+		<Include type="all"	source="ART:GBFue01_D2.w3x" />
+		<Include type="all"	source="ART:GBFue01_D3.w3x" />
+	</Includes>
+	<GameObject
+		id="GDIFuelDepot"
+		Side="GDI"
+		KindOf="STRUCTURE IMMOBILE SELECTABLE CAN_CAST_REFLECTIONS NOT_AUTOACQUIRABLE KEEP_CLASSIFIED_WHEN_DEAD"
+		EditorName="GDIFuelDepot"
+		SelectPortrait="Portrait_NeutralFuelDepot"
+		ButtonImage="Portrait_NeutralFuelDepot"
+		EditorSorting="STRUCTURE"
+		Description="Desc:ExplodingBarrel">
+		<DisplayName>Name:FuelDepot</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" 
+		/>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GBFue01" 
+					/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GBFue01_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GBFue01_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GBFue01_D1" />
+				</ModelConditionState>		
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GBFue01_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GBFue01_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>		
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+<!--		
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="2.0"
+				DestructionDelay="7.1s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+-->
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_AwesomeXplosion" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_ScorchLarge" />
+			</FXListBehavior>
+			<FireWeaponWhenDead
+				id="ModuleTag_DeathWeapon"
+				InitiallyActive="true"
+				DeathWeapon="GDIFuelDepotWeapon"
+				ContinueToBezierDestination="false">
+				<DieMuxData
+					DeathTypes="ALL"
+				/>
+			</FireWeaponWhenDead>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="150" 
+			/>
+		</Body>
+		<Geometry
+		IsSmall="false">
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "21.7921"
+				MinorRadius = "18.6379"
+				Height = "22.0788" >
+				<Offset
+					x = "-0.666677"
+					y = "-63.3389"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "CYLINDER"
+				MajorRadius = "39.6839"
+				MinorRadius = "39.6839"
+				Height = "81.7202" >
+				<Offset
+					x = "-0.0932007"
+					y = "0.316803"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<ShadowInfo
+			Type="VOLUME" />		
+		<CrusherInfo
+			CrusherLevel="0"
+			CrushableLevel="0" 
+		/>
+	</GameObject>
+</AssetDeclaration>

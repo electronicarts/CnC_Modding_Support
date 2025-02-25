@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GUJugg_SKNH.W3X" />
+		<Include
+			type="all"
+			source="ART:GUJugg_DIEA.W3X" />
+		<Include
+			type="all"
+			source="ART:GUJugg_K.xml" />
+		<Include
+			type="all"
+			source="ART:GUJuggD_K.xml" />			
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="GDIJuggernaughtHusk"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_GDIJuggernautHusk"
+		ButtonImage="Portrait_GDIJuggernautHusk"
+		Side="GDI"
+		EditorSorting="UNIT"
+		CommandSet="EmptyCommandSet"
+		KindOf="PRELOAD SELECTABLE CAN_CAST_REFLECTIONS NOT_AUTOACQUIRABLE IMMOBILE HUSK VALID_TARGET_FOR_C4"
+		RadarPriority="UNIT"
+		EditorName="GDIJuggernaughtHusk"
+		Description="Desc:JuggernautHusk">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:JuggernautHusk</DisplayName>
+		<ArmorSet
+			Armor="NoArmor"
+			DamageFX="NormalDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUJugg_SKNH" />
+					<ParticleSysBone
+						BoneName="B_SHELL01"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6">
+					<Model
+						Name="GUJugg_SKNH" />
+					<Texture
+						Original="GUJugg_D"
+						New="GUJuggD_K" />						
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST"
+					StateName="STATE_Default">
+					<Animation
+						AnimationName="GUJugg_DIEA"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="0" />					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2">
+					<Animation
+						AnimationName="GUJugg_DIEA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_07" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="8s">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<OCL
+					Type="INITIAL">
+					<OCL>OCL_GDIJuggernaughtHuskDebris</OCL>
+				</OCL>					
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplodeNoScorch" />
+			</FXListBehavior>			
+			<ModelConditionUpgrade
+				id="ModuleTag_AllFactionUpgrade"
+				AddConditionFlags="USER_6">
+				<TriggeredBy>Upgrade_AllFactionUpgrade</TriggeredBy>
+			</ModelConditionUpgrade>
+			<EngineerContain
+				id="ModuleTag_EngineerContain"
+				NameOfVoiceToUseForFriendlyEnter="VoiceCaptureHusk"
+				NameOfVoiceToUseForHostileEnter="VoiceCaptureHusk"
+				EvaEventForReplace="HuskRepaired"
+				EvaEventForCaptureAndReplace="HuskRepaired"
+				FXForReplace="FX_Husk_Repaired" 
+				FXForCapture="FX_Husk_Captured"
+				FXForCaptureAndReplace="FX_Husk_Captured" 
+				ReplaceWith="GDIJuggernaughtHuskReplace">
+				<CanEnterFilter
+					Rule="NONE">
+					<IncludeThing>GDIEngineer</IncludeThing>
+					<IncludeThing>NODSaboteur</IncludeThing>
+					<IncludeThing>BlackHandSaboteur</IncludeThing>
+					<IncludeThing>MarkedOfKaneSaboteur</IncludeThing>
+					<IncludeThing>AlienAssimilator</IncludeThing>
+					<IncludeThing>Traveler59Assimilator</IncludeThing>					
+					<IncludeThing>SteelTalonsCombatEngineer</IncludeThing>
+					<IncludeThing>ZOCOMEngineer</IncludeThing>
+				</CanEnterFilter>
+			</EngineerContain>			
+			<xi:include
+				href="DATA:Includes/GenericHuskLifetimeUpdate.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AILuaEventsList="GDIJuggernaughtFunctions" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_03"
+				MaxHealth="=$MECH_HUSK_HEALTH" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "13.3097"
+				MinorRadius = "21.4112"
+				Height = "20.8325" >
+				<Offset
+					x = "10.468"
+					y = "14.1743"
+					z = "0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos x= "0.931331" y = "15.8128" z = "1.29834" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "20.9746" y = "15.8128" z = "19.0627" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "20.9746" y = "35.8561" z = "1.29834" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "0.931331" y = "35.8561" z = "19.0627" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "0.931331" y = "15.8128" z = "19.0627" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "20.9746" y = "15.8128" z = "1.29834" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "20.9746" y = "35.8561" z = "19.0627" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos x= "0.931331" y = "35.8561" z = "1.29834" />
+			</ContactPoint>			
+		</Geometry>
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="25"
+			ShroudClearingRange="50" />
+		<CrusherInfo
+			CrusherLevel="0" 
+			CrushEqualLevelProps="true"
+			CrushableLevel="0" />
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GUOut_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUOut_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUOutD2_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUOutD2_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUOutD3_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUOutD3_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUSuvUPAK_SN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUSuvUPAK_AN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUSUVUPAK_UPK1.w3x" />
+		<Include
+			type="all"
+			source="ART:GUSUVUPAK_UPK2.w3x" />
+		<Include
+			type="all"
+			source="ART:GUSUVUPAK_UPK3.w3x" />
+		<Include
+			type="all"
+			source="ART:GUSUVUPAK_IDLA.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GDIMiniMCVOutpost"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_GDIOutpost"
+		ButtonImage="Portrait_GDIOutpost"
+		Side="GDI"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="1500"
+		BuildTime="15"
+		CommandSet="EmptyCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER CONSTRUCTION_YARD OUTPOST"
+		RadarPriority="STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="GDISurveyorOutpost"
+		Description="DESC:ALIENOutpost">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIOutpost</DisplayName>
+		<ArmorSet
+			Armor="GDIMiniMCVOutpostArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUSuvUPAK_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="GUSuvUPAK_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GUOutD3_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUOutD2_SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUSuvUPAK_SN" />
+					<Texture
+						Original="GB_Suv"
+						New="GU_Suv_D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GUSUVUPAK_IDLA"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_StartUnpak" then
+						CurDrawableSetTransitionAnimState("TRANS_UPakToIdle")
+						end
+					</Script>						
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING"
+					StateName="STATE_StartUnpak">
+					<Animation
+						AnimationName="GUSUVUPAK_UPK2"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_StartUnpak" and Prev ~= "TRANS_IntoUPak" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoUPak")
+						end
+					</Script>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small_Light"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoUPak">
+					<Animation
+						AnimationName="GUSUVUPAK_UPK1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+						
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_UPakToIdle">
+					<Animation
+						AnimationName="GUSUVUPAK_UPK3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GUOutD3_AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GUOutD2_AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GUSUVUPAK_IDLA"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GUOutD2_AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GUOutD3_AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Des_Medium"
+						FollowBone="false" />
+				</AnimationState>
+				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Medium" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				UnpackCompleteSound="GDI_Outpost_UnpackCompleteMS"
+				UnpackTime="30s" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericGDIBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericGDIBuildingSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="2300.0" />
+		</Body>
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior
+				id="AnimationSoundCB" >
+				<Sound
+					Sound="GDI_Surveyor_Unpack1"
+					Animation="GUSUVUPAK_UPK1"
+					Frame="5" />
+				<Sound
+					Sound="GDI_Surveyor_Unpack2"
+					Animation="GUSUVUPAK_UPK1"
+					Frame="52" />
+				<Sound
+					Sound="GDI_Surveyor_Unpack3"
+					Animation="GUSUVUPAK_UPK1"
+					Frame="59" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore1"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="2" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore2"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="26" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore3"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="35" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore4"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="48" />
+				<Sound
+					Sound="GDI_Surveyor_UnpackMore5"
+					Animation="GUSUVUPAK_UPK3"
+					Frame="71" />
+			</AnimationSoundClientBehavior>		
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="15.0"
+				Height="25.0"
+				ContactPointGeneration="VEHICLE" />
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="GDI_Outpost_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_Surveyor_Deploy" AudioType="soundUnderConstruction" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="360"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE"
+			ModelConditionsToReject="STRUCTURE_UNPACKING" />
+	</GameObject>
+</AssetDeclaration>

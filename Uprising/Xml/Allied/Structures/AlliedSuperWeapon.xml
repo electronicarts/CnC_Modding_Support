@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include type="all"	source="ART:ABSuperweapon_SKN.w3x" />				
+		<Include type="all"	source="ART:ABSuperweapon_IDLA.w3x" />				
+		<Include type="all"	source="ART:ABSuperweapon_RDY.w3x" />				
+		<Include type="all"	source="ART:ABSuperweapon_FX.w3x" />	
+		<Include type="all"	source="ART:ABSuperWeapon_Platform.w3x" />	
+		<Include type="all"	source="ART:ABSuperWeapon_Platform_BLD.w3x" />	
+		<Include type="all"	source="ART:ABSuperweapon_BLD_SKN.w3x" />			
+		<Include type="all"	source="ART:ABSuperweapon_BLD_BLD.w3x" />
+		<Include type="all"	source="ART:ABSuperweapon_BLD_BLDW.w3x" />
+									
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="AlliedSuperWeapon"
+		inheritFrom="BaseStructure"
+		ButtonImage="Button_AlliedSuperweapon_on"
+		SelectPortrait="Portrait_AlliedSuperweapon"
+		Side="Allies"
+		EditorSorting="STRUCTURE"		
+		BuildTime="30"
+		EnergyProduction="-75"
+		CommandSet="AlliedSuperWeaponCommandSet"
+		KindOf="+POWERED +REVEAL_TO_ALL +UNIQUE_UNIT +SUPER_WEAPON"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="AlliedSuperWeapon"
+		Description="Desc:AlliedSuperWeapon"
+		TypeDescription="Type:AlliedSuperWeapon"
+		MaxSimultaneousOfType="1">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:AlliedSuperWeapon</DisplayName>
+		<GameDependency>
+			<RequiredObject>AlliedAirfield</RequiredObject>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="3000"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="AlliedSuperWeaponArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="CENTER">
+      <ConstructionBaseSelectionCriteria
+        ExcludedBaseTypes="NO_BUILD_RADIUS CAPTURED"
+        PreferredBaseTypes="MAIN_BASE"
+        SortOrder="PREFER_OLDEST" />
+    </SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABSuperweapon_SKN" />					
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="ABSuperweapon_SKN" />
+					<Texture
+						Original="SBBuilding_Holes"
+						New="SBBuilding_FP" />						
+					<Texture
+						Original="SBBuilding_Filler"
+						New="SBBuilding_FP" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="ABSuperweapon_BLD_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="ABSuperweapon_BLD_SKN" />
+				</ModelConditionState>										
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="ABSuperweapon_IDLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_Attacking" or Prev == "STATE_Ready" then
+						CurDrawableSetTransitionAnimState("TRANS_ReadyToIdle")
+						end
+					</Script>					
+				</AnimationState>				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING OVER_WATER"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="ABSuperweapon_BLD_BLDW"
+						AnimationMode="ONCE"
+						AnimationAbsoluteTime="3s"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Med"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Lights"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Flash"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="ABSuperweapon_BLD_BLD"
+						AnimationMode="ONCE" 
+						AnimationAbsoluteTime="3s"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Med"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Lights"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Flash"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABSuperweapon_BLD_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>	
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPECIALPOWER1_READY"
+					Flags="START_FRAME_LAST"
+					StateName="STATE_Ready">
+					<Animation
+						AnimationName="ABSuperweapon_RDY"
+						AnimationMode="ONCE"	
+						AnimationBlendTime="0" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_Idle" then
+						CurDrawableSetTransitionAnimState("TRANS_IdleToReady")
+						end
+					</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IdleToReady" >
+					<Animation
+						AnimationName="ABSuperweapon_RDY"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_ReadyToIdle"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABSuperweapon_RDY"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationBlendTime="0" />
+				</AnimationState>							
+			</ScriptedModelDraw>
+			
+<!-- DRAW PLATFORM -->
+			
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABSuperWeapon_Platform" />
+				</ModelConditionState>
+
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FROZEN">
+          <Model
+						Name="ABSuperWeapon_Platform" />
+          <Material
+					  ShaderName="ObjectsFrozen.fx"
+					  TechniqueName="Default">
+            <Constants>
+              <Texture Name="DiffuseTexture">
+                <Value>ABPlatform</Value>
+              </Texture>
+              <Texture Name="NormalMap">
+                <Value>ABPlatform_NRM</Value>
+              </Texture>
+              <Texture Name="SpecMap">
+                <Value>ABPlatform_SPM</Value>
+              </Texture>
+              <Float Name="EnvMult">
+                <Value>1.000000</Value>
+              </Float>
+              <Bool Name="AlphaTestEnable">
+                <Value>false</Value>
+              </Bool>
+            </Constants>
+          </Material>
+        </ModelConditionState>
+
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING">
+					<Model
+						Name="ABSuperWeapon_Platform_BLD"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABPowerPlantWakeSplash"
+						FollowBone="true" />  						
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER SOLD">
+					<Model
+						Name="ABSuperWeapon_Platform_BLD" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABPowerPlantWakeSplash"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="ABSuperWeapon_Platform_BLD"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="ABSuperWeapon_Platform_BLD" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING ">
+					<Animation
+						AnimationName="ABSuperWeapon_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>	
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupFlashes"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupSparksSeed"
+						FollowBone="true" />          
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="ABSuperWeapon_Platform_BLD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupFlashes"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantBuildupSparksSeed"
+						FollowBone="true" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABSuperWeapon_Platform_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABSuperWeapon_Platform_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>							
+			</ScriptedModelDraw>
+			
+			<!-- DRAW PARTICLES -->		
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_particles"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL">
+					<Model
+						Name="ABSuperweapon_FX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ABSuperweapon_FX" />
+					<ParticleSysBone 
+						BoneName="fx_bone01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="fx_bone01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ABSuperweapon_FX" />
+					<ParticleSysBone 
+						BoneName="fx_bone01"
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="fx_bone01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="fx_bone02"
+ 						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="fx_bone02" 
+						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>	
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+				
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" 
+				id="ModuleTag_FXList"> 
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+        <Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData DeathTypes="ALL" DeathTypesForbidden="SUICIDED" />
+					<Event Index="onDeath" FX="FX_ALL_Chronosphere_Die" />
+					<Event Index="onDeath" FX="FX_LargeBuildingDieExplosion" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="ABSuperWeapon_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"
+					ExemptStatus="OVER_WATER" />
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_Platform_CreateObjectDie"
+				CreationList="ABSuperWeapon_Platform_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"
+					RequiredStatus="OVER_WATER" />
+			</CreateObjectDie>			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+			</DestroyDie>	
+				
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="3.0s" />
+
+			<!-- Chronosphere Object power behaviors -->           
+            <StoreObjectsSpecialPower
+				id="ModuleTag_StoreObjectsSpecialPower"
+				SpecialPowerTemplate="SpecialPowerChronosphereObjectSelect"
+				Radius="100"
+				TeleportLinkID="1"
+				AvailableAtStart="false"
+                OCL="OCL_ChronospherePersistent"
+				CanAffectObjectFilter="AlliedChronosphereSpecialPowerObjectFilter"
+			/>
+           
+            <TeleportStoredObjectsSpecialPower
+				id="ModuleTag_CloneStoredObjectsSpecialPower"
+				SpecialPowerTemplate="SpecialPowerChronosphereObjectSpawn"
+				StoreObjectsLinkID="1"
+				AvailableAtStart="false"
+                OCL="OCL_Chronosphere"
+				CanAffectObjectFilter="GenericNoObjectSpecialPowerObjectFilter"
+			/>
+			
+            <TeleportStoredObjectsUpdate
+				id="ModuleTag_CloneStoredObjectsSpecialPowerUpdate"
+				SpecialPowerTemplate="SpecialPowerChronosphereObjectSpawn"
+				GetObjectsCurrentlyAtStorePosition="true"
+				Telefrag="INSTANT_DEATH_TELEPORTER_ONLY"
+				TargetFX="FX_None"
+				FadeInTime="2s"
+				DelayTime="0s"
+				DisabledTypesToProcess="FROZEN USER_PARALYZED EMP HELD PARALYZED UNDERPOWERED TEMPORARILY_BUSY">
+                <InstaKillObjectFilter
+					Rule="ANY"
+					Include="INFANTRY">
+                    <ExcludeThing>SovietScoutVehicle</ExcludeThing>
+                </InstaKillObjectFilter>
+                <CollidesWithOnTeleport
+                    Rule="ANY"
+                    Include="INFANTRY STRUCTURE VEHICLE"
+					Exclude="BRIDGE BRIDGE_SEGMENT BRIDGE_ENDCAP">                    
+					<ExcludeThing>NanoSwarmHiveEffect</ExcludeThing>
+                </CollidesWithOnTeleport>
+            </TeleportStoredObjectsUpdate>
+
+            <!--Monitors when this special power template is ready to fire and sets a model condition-->
+			<MonitorSpecialPowerTimerUpdate
+				id="ModuleTag_ChronosphereObjectReadyToFireUpdate"
+				SpecialPowerTemplate="SpecialPowerChronosphereObjectSelect"
+				ReadyCondition="SPECIALPOWER1_READY"
+			/>
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericAlliedBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericAlliedBuildingSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainSuperWeapon.xml" />				
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="4000.0" />
+		</Body>
+   		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_AlliedSuperWeapon_StartUp">
+				<ModelConditionSound Sound="ALL_Chronosphere_Ready" RequiredFlags="SPECIALPOWER1_READY" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+    <ClientUpdates>
+		<EvaAnnounceSpecialPowerReadyClientUpdate
+			id="SuperWeaponReady"
+			AnnouncementEventOwner="ChronosphereReady"
+			SpecialPowerTemplate="SpecialPowerChronosphereObjectSelect"
+			JustMonitorPercentReady="true" 
+			/>
+		<EvaAnnounceClientCreate
+          id="SuperWeaponDetected" 
+          AnnouncementEventEnemy="WarnChronosphereDetected"
+          UseObjectsPosition="true" />
+          <!-- AnnouncementEventAlly="AlliedIonCannonDetected" -->
+    </ClientUpdates>
+    
+		<Geometry
+			IsSmall="false">
+			<PlacementShape
+				Type= "BOX"
+				MajorRadius = "60.0"
+				MinorRadius = "45.0"
+				Height = "5.0" />
+			<Shape
+				Type= "BOX"
+				MajorRadius = "55.0"
+				MinorRadius = "35.0"
+				Height = "5.0" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "31.098"
+				MinorRadius = "28.35"
+				Height = "36.25"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "11.4441"
+				MinorRadius = "19.845"
+				Height = "26.4625"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "29.5104"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="ALL_Chronosphere_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+<!--
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="100" />
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<!-- model conditions set by included CaptureStructureBehavior.xml -->
+	<!-- USER 1: Captured by anyone -->
+	
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:NB_TechStructAA_SKN.w3x" />
+		<Include type="all" source="ART:NB_TechStructAA_ATKA.w3x" />
+		<Include type="all" source="ART:NB_TechStructAA_CPTR.w3x" />
+		<Include type="all" source="ART:NB_TechStructAA_UNCPTR.w3x" />
+		
+		<Include type="instance" source="DATA:BaseObjects/BaseTechStructure.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:Neutral/Props/TechStructureAAProps.xml" />
+        <Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+        <Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+	</Includes>
+	
+	<GameObject
+		id="TechStructureAA"
+		inheritFrom="BaseTechStructure"
+		HealthBoxHeightOffset="35"
+		SubGroupPriority="47"
+		SelectPortrait="Portrait_Neutral_TechStr_E_NOD"
+		ButtonImage="Portrait_Neutral_TechStr_E_NOD"
+		Side="Neutral"
+		KindOf="+NO_HEALTH_BAR"
+        ParticipationValue="=$NEUTRALTECHSTRUCTUREAA_PARTICIPATION_VALUE"
+		CommandSet="EmptyCommandSet"
+		RadarPriority="STRUCTURE"
+		EditorName="NEUTRAL_Struct_AntiAircraft(AA Launcher)"
+		EditorSorting="STRUCTURE" 
+		Description="Desc:MissileSilo">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:MissileSilo</DisplayName>
+		<ArmorSet
+			Armor="TechStructureArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="CTRL_Rot_MovTurret Pitch FXVent01 FXVent02 FXLaunch01 FXLaunch02 FXLaunch03 FXLaunch04 FXLaunch05 FXLaunch06 FXExhaust01 FXExhaust02 FXExhaust03 FXExhaust04 FXExhaust05 FXExhaust06"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechStructAA_SKN" />
+					<ParticleSysBone
+						BoneName="FXVent01"
+						FXParticleSystemTemplate="NukeLauncher_VentSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="FXVent02"
+						FXParticleSystemTemplate="NukeLauncher_VentSmoke"
+						FollowBone="true"/>
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXLaunch" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXLaunch" />
+					<Turret
+						TurretNameKey="CTRL_Rot_MovTurret"
+						TurretPitch="Pitch"
+						TurretID="1" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="UNCAPTURED_IDLE">
+					<Animation
+						AnimationName="NB_TechStructAA_UNCPTR"
+						AnimationMode="LOOP"/>
+					<Script>
+						CurDrawableShowSubObjectPermanently("FXTopLightRED")
+						CurDrawableShowSubObjectPermanently("FXTopLightRED_Bulb")
+						CurDrawableHideSubObjectPermanently("FXTopLightGREEN")
+						CurDrawableHideSubObjectPermanently("FXTopLightGREEN_Bulb")
+					</Script>
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+							if Prev == "CAPTURED_READY" or Prev == "USER_1" then
+								CurDrawableSetTransitionAnimState("Transition_ToNeutral")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="NB_TechStructAA_ATKA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="CAPTURED_READY">
+					<Animation
+						AnimationName="NB_TechStructAA_CPTR"
+						AnimationMode="ONCE"/>
+					<Script>
+						CurDrawableHideSubObjectPermanently("FXTopLightRED")
+						CurDrawableHideSubObjectPermanently("FXTopLightRED_Bulb")
+						CurDrawableShowSubObjectPermanently("FXTopLightGREEN")
+						CurDrawableShowSubObjectPermanently("FXTopLightGREEN_Bulb")
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToNeutral"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NB_TechStructAA_CPTR"
+						AnimationMode="ONCE_BACKWARDS"/>
+					<Script>
+						CurDrawableShowSubObjectPermanently("FXTopLightRED")
+						CurDrawableShowSubObjectPermanently("FXTopLightRED_Bulb")
+						CurDrawableHideSubObjectPermanently("FXTopLightGREEN")
+						CurDrawableHideSubObjectPermanently("FXTopLightGREEN_Bulb")
+						CurDrawablePlaySound("NEU_MissileSilo_StrE_Lost")
+					</Script>
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+			<xi:include href="DATA:Includes/CaptureStructureFeedbackDraw.xml" />
+			
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="TechStructureAAPrimary_GDI"
+						Upgrade="Upgrade_GDIFaction"/>
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="TechStructureAAPrimary_NOD"
+						Upgrade="Upgrade_NODFaction"/>
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="0d"
+						PitchHeight="10%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0"
+						IdleRequiresModelConditions="USER_1">
+						<TurretAITargetChooserData
+							CanPickDynamicTargets="true"
+							CanAutoAcquireNonAutoAcquirable="true"/>
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="StructureLarge_DieExplosionMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			
+			<RebuildHoleExposeDie
+				id="ModuleTag_RebuildHoleExposeDie"
+				HoleObject="TechStructureAAHole"
+				FadeInTimeSeconds="3.0s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</RebuildHoleExposeDie>
+
+			<!-- allows object to be captured -->
+			<xi:include	href="DATA:Includes/CaptureStructureBehavior.xml" />
+			
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="2.0s" />
+			
+			<!-- indestructible by default (set in LUA) but becomes attackable as soon 
+			as someone captures us -->
+			<StatusBitsUpgrade
+				id="ModuleTag_StatusBitUpgrade"
+				StatusToClear="UNATTACKABLE">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+			</StatusBitsUpgrade>
+
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_NONE" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_NONE" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_NONE" />
+				<Event
+					Index="onDeath"
+					FX="FX_NONE" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				InitialHealth="1.0"
+				MaxHealth="1000.0"/>
+		</Body>
+		<Geometry>
+			<PlacementShape
+				Type="BOX"
+				MajorRadius="30.0"
+				MinorRadius="30.0"
+				Height="5.0"/>
+			<Shape
+				Type="BOX"
+				MajorRadius="17.889"
+				MinorRadius="18.281"
+				Height="68.8869">
+				<Offset
+					x="0.0"
+					y="0.0"
+					z="17.9483" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="46.0929"
+				MinorRadius="47.1028"
+				Height="18.4735">
+				<Offset
+					x="-2.05226"
+					y="0.468147"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_Footsteps">
+				<Sound Sound="NEU_MissileSilo_StrE_Captured" RequiredMC="USER_1" Animation="NB_TechStructAA_CPTR" Frame="4"/>
+				<!-- <Sound Sound="NEU_MissileSilo_StrE_Prelaunch" Animation="NB_TechStructAA_CPTR4" Frame="0"/> -->
+				<!-- <Sound Sound="NEU_MissileSilo_StrE_LaunchMissileMS" Animation="NB_TechStructAA_ENDA" Frame="0"/> -->
+				<!-- <Sound Sound="NEU_MissileSilo_StrE_Postlaunch" Animation="NB_TechStructAA_ENDA" Frame="25"/> -->
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NEU_RocketTurret_StrAA_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<VisionInfo
+			VisionRange="900"
+			ShroudClearingRange="1000" />
+	</GameObject>
+
+	<WeaponTemplate
+		id="TechStructureAAPrimary"
+		inheritFrom="BaseRocketWeapon" 
+		AttackRange="750.0"
+		AcceptableAimDelta="1d"
+		ClipSize="1"
+		FireSound="NEU_RocketTurret_StrAA_RocketWeaponFire"
+		RequiredAntiMask="ANTI_AIRBORNE_VEHICLE">
+		<FiringDuration
+			MinSeconds="1s"
+			MaxSeconds="1s" />
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="TechStructureAAPrimary_GDI"
+		FireFX="FX_GDITechStructureAA_Fire"
+		inheritFrom="TechStructureAAPrimary">
+		<Nuggets>
+			<ProjectileNugget
+				id="NuggetTag_ProjectileNugget"
+				WarheadTemplate="TechStructureAAPrimaryWarhead_GDI"
+				ProjectileTemplate="TechStructureAAPrimaryWeaponProjectile_GDI">
+				<CombatChainProjectiles
+					CombatChain="STRONG"
+					ProjectileTemplate="TechStructureAAPrimaryWeaponProjectile_Veteran_GDI"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="TechStructureAAPrimary_NOD"
+		FireFX="FX_NodTechStructureAA_Fire"
+		inheritFrom="TechStructureAAPrimary">
+		<Nuggets>
+			<ProjectileNugget
+				id="NuggetTag_ProjectileNugget"
+				WarheadTemplate="TechStructureAAPrimaryWarhead_NOD"
+				ProjectileTemplate="TechStructureAAPrimaryWeaponProjectile_NOD">
+				<CombatChainProjectiles
+					CombatChain="STRONG"
+					ProjectileTemplate="TechStructureAAPrimaryWeaponProjectile_Veteran_NOD"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="TechStructureAAPrimaryWarhead"
+		RequiredAntiMask="ANTI_AIRBORNE_VEHICLE ">
+		<Nuggets>
+			<DamageNugget
+				id="NuggetTag_DamageNugget" 
+				Damage="30.0"
+				Radius="10.0"
+				DamageType="ROCKET"
+				DeathType="EXPLODED" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="TechStructureAAPrimaryWarhead_GDI"
+		inheritFrom="TechStructureAAPrimaryWarhead">
+		<Nuggets>
+			<DamageNugget
+				id="NuggetTag_DamageNugget"
+				DamageFXType="GDI_MISSILE"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="TechStructureAAPrimaryWarhead_NOD"
+		inheritFrom="TechStructureAAPrimaryWarhead">
+		<Nuggets>
+			<DamageNugget
+				id="NuggetTag_DamageNugget"
+				DamageFXType="NOD_MISSILE"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<ExperienceLevelTemplate
+		id="TechStructureAA_ExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_01"
+		ExperienceAward="10">
+		<Target>TechStructureAA</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="TechStructureAA_ExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_02"
+		Prerequisite="TechStructureAA_ExperienceLevel_1"
+		RequiredExperience="20"
+		ExperienceAward="12">
+		<Target>TechStructureAA</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="TechStructureAA_ExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_03"
+		Prerequisite="TechStructureAA_ExperienceLevel_2"
+		RequiredExperience="50"
+		ExperienceAward="14">
+		<Target>TechStructureAA</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="TechStructureAA_ExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_04"
+		Prerequisite="TechStructureAA_ExperienceLevel_3"
+		RequiredExperience="90"
+		ExperienceAward="16">
+		<Target>TechStructureAA</Target>
+	</ExperienceLevelTemplate>
+
+</AssetDeclaration>

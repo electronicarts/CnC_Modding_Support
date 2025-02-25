@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:GDI/Units/GDIGrenadeSoldier.xml" />
+		<Include
+			type="all"
+			source="ART:GUGrendr_UGTS_SKN.w3x" />
+	</Includes>
+	<GameObject
+		id="ZOCOMGrenadeSoldier"
+		Side="ZOCOM"
+		EditorName="ZOCOMGrenadeSoldier"
+		EditorSorting="UNIT"
+		inheritFrom="GDIGrenadeSoldier"
+		WorldMapArmoryUpgradesAllowed="Upgrade_ZOCOMFieldSuits Upgrade_EMPGrenades"
+		Description="DESC:ZOCOMGrenadierSquad">
+		
+	<DisplayUpgrade id="ModuleTag_DisplayCompositeArmorUpgrade" xai:joinAction="Replace">Upgrade_GDICompositeArmor</DisplayUpgrade>
+   
+   <ArmorSet xmlns="uri:ea.com:eala:asset"
+      xai:joinAction="Remove"
+      id="GDIUpgradeArmor"  />
+   
+   <ArmorSet xmlns="uri:ea.com:eala:asset"
+      xai:joinAction="Remove"
+      id="ModuleTag_CompositeArmorUpgrade"  />
+
+	<ArmorSet
+		xai:joinAction="Replace"
+		id="UpgradeTag_UnitArmor"
+		Conditions="PLAYER_UPGRADE"
+		Armor="ZOCOMGrenadeSoldierFieldSuits"
+		DamageFX="NormalDamageFX" />
+<Draws>
+			<ScriptedModelDraw xai:joinAction="Replace"
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUGrendr_SKN" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="Props0" />
+				</ModelConditionState>
+				<xi:include
+					href="DATA:Includes/GDIUnitFormationPreviewStates.xml"
+					xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:FormationPreviewStates/child::*)" />
+				<!-- invisible when garrisoned -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="INSIDE_GARRISON">
+					<Model
+						Name="" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UPGRADED_ARMOR">
+					<Model
+						Name="GUGrendr_UGTS_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="INSIDE_GARRISON">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="true"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="GUGrendr_BIDA"
+						AnimationMode="ONCE"
+						AnimationPriority="50" />
+					<Animation
+						AnimationName="GUGrendr_BIDB"
+						AnimationMode="ONCE"
+						AnimationPriority="20" />
+					<Animation
+						AnimationName="GUGrendr_BIDC"
+						AnimationMode="ONCE"
+						AnimationPriority="20" />
+					<Animation
+						AnimationName="GUGrendr_BIFA"
+						AnimationMode="ONCE"
+						AnimationPriority="25" />
+					<Animation
+						AnimationName="GUGrendr_BIFB"
+						AnimationMode="ONCE"
+						AnimationPriority="20" />
+					<Animation
+						AnimationName="GUGrendr_BIFC"
+						AnimationMode="ONCE"
+						AnimationPriority="20" />
+					<Animation
+						AnimationName="GUGrendr_BIFD"
+						AnimationMode="ONCE"
+						AnimationPriority="20" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_Suppressed" then
+						CurDrawableSetTransitionAnimState("TRANS_fromSuppressed")
+						end
+						if Prev == "STATE_SelectedPose" then
+						CurDrawableSetTransitionAnimState("TRANS_SelectedToIdle")
+						end
+						if Prev == "STATE_stunned_flailing" then
+						CurDrawableSetTransitionAnimState("STATE_stunned_landing")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STUNNED_FLAILING"
+					StateName="STATE_stunned_flailing">
+					<Animation
+						AnimationName="GUGrendr_FLYA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					StateName="STATE_stunned_landing">
+					<Animation
+						AnimationName="GUGrendr_LNDA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FRONTCRUSHED">
+					<Animation
+						AnimationName="GUGrendr_CDTA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BACKCRUSHED">
+					<Animation
+						AnimationName="GUGrendr_CDTB"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SUPPRESSED DYING"
+					StateName="STATE_Suppressed">
+					<Animation
+						AnimationName="GUGrendr_SDIA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="COVER DYING"
+					StateName="STATE_Cover">
+					<Animation
+						AnimationName="GUGrendr_KDIA"
+						AnimationMode="ONCE" />
+					<Animation
+						AnimationName="GUGrendr_KDIB"
+						AnimationMode="ONCE" />
+					<Animation
+						AnimationName="GUGrendr_KDIC"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="GUGrendr_DIEA"
+						AnimationMode="ONCE" />
+					<Animation
+						AnimationName="GUGrendr_DIEB"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<!-- SUPPRESSED -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SUPPRESSED MOVING"
+					StateName="STATE_Suppressed"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="GUGrendr_SMVA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SUPPRESSED FIRING_OR_PREATTACK_A"
+					FrameForPristineBonePositions="24"
+					StateName="STATE_Suppressed">
+					<Animation
+						AnimationName="GUGrendr_SATA"
+						AnimationMode="ONCE"
+						UseWeaponTiming="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SUPPRESSED"
+					Flags="RANDOMSTART RESTART_ANIM_WHEN_COMPLETE"
+					StateName="STATE_Suppressed">
+					<Animation
+						AnimationName="GUGrendr_SIDA"
+						AnimationMode="ONCE" />
+					<Animation
+						AnimationName="GUGrendr_SIFA"
+						AnimationMode="ONCE" />
+					<Animation
+						AnimationName="GUGrendr_SIFB"
+						AnimationMode="ONCE" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "STATE_Suppressed" and Prev ~= "TRANS_toSuppressed" then
+						CurDrawableSetTransitionAnimState("TRANS_toSuppressed")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_toSuppressed">
+					<Animation
+						AnimationName="GUGrendr_SDVA"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Animation
+						AnimationName="GUGrendr_SDVB"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_fromSuppressed">
+					<Animation
+						AnimationName="GUGrendr_SGTB"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+				</AnimationState>
+				<!-- COVER -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="COVER FIRING_OR_PREATTACK_A"
+					FrameForPristineBonePositions="22"
+					StateName="STATE_Cover">
+					<Animation
+						AnimationName="GUGrendr_KAKA"
+						AnimationMode="ONCE"
+						UseWeaponTiming="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="COVER ATTACKING"
+					StateName="STATE_Cover">
+					<Animation
+						AnimationName="GUGrendr_KAIA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="COVER"
+					AllowRepeatInRandomPick="true"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					StateName="STATE_Cover">
+					<Animation
+						AnimationName="GUGrendr_KBIA"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2"
+						AnimationPriority="10" />
+					<Animation
+						AnimationName="GUGrendr_KBIB"
+						AnimationMode="ONCE"
+						AnimationPriority="1" />
+					<Animation
+						AnimationName="GUGrendr_KBFA"
+						AnimationMode="ONCE"
+						AnimationPriority="1" />
+					<Animation
+						AnimationName="GUGrendr_KBFB"
+						AnimationMode="ONCE"
+						AnimationPriority="1" />
+					<Animation
+						AnimationName="GUGrendr_KBFC"
+						AnimationMode="ONCE"
+						AnimationPriority="1" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING FIRING_OR_PREATTACK_A"
+					FrameForPristineBonePositions="31">
+					<Animation
+						AnimationName="GUGrendr_RUNA"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableSetTransitionAnimState("TRANS_AttackingRunning")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_OR_PREATTACK_A"
+					FrameForPristineBonePositions="31">
+					<Animation
+						AnimationName="GUGrendr_ATKA"
+						AnimationMode="ONCE"
+						UseWeaponTiming="true" />
+					<!--<Animation
+						AnimationName="GUGrendr_ATKB"
+						AnimationMode="ONCE"
+						UseWeaponTiming="true" />
+					<Animation
+						AnimationName="GUGrendr_ATKC"
+						AnimationMode="ONCE"
+						UseWeaponTiming="true" />
+					<Animation
+						AnimationName="GUGrendr_ATKD"
+						AnimationMode="ONCE"
+						UseWeaponTiming="true" />-->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="GUGrendr_RUNA"
+						AnimationMode="LOOP"
+						Distance="75" />
+					<Animation
+						AnimationName="GUGrendr_RUNB"
+						AnimationMode="LOOP"
+						Distance="75" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ATTACKING">
+					<Animation
+						AnimationName="GUGrendr_AIDA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<!-- CELEBRATING -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="EMOTION_CELEBRATING">
+					<Animation
+						AnimationName="GUGrendr_CHRA"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Animation
+						AnimationName="GUGrendr_CHRB"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Animation
+						AnimationName="GUGrendr_CHRC"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+				</AnimationState>
+				<!-- SELECTED -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					StateName="STATE_SelectedPose">
+					<Animation
+						AnimationName="GUGrendr_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="10" />
+					<Animation
+						AnimationName="GUGrendr_AIDB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+					<Animation
+						AnimationName="GUGrendr_AIFA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+					<Animation
+						AnimationName="GUGrendr_AIFB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+					<Animation
+						AnimationName="GUGrendr_AIFC"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" then
+							CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ATTACKING">
+					<Animation
+						AnimationName="GUGrendr_AIFA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<!-- TRANSITIONS -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_AttackingRunning">
+					<Animation
+						AnimationName="GUGrendr_ATRA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IdleToSelected">
+					<Animation
+						AnimationName="GUGrendr_BATA"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+					<Animation
+						AnimationName="GUGrendr_BATB"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_SelectedToIdle">
+					<Animation
+						AnimationName="GUGrendr_ABTA"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+					<Animation
+						AnimationName="GUGrendr_ABTA2"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+
+		<ArmorUpgrade xmlns="uri:ea.com:eala:asset"
+			xai:joinAction="Remove"
+			id="ModuleTag_CompositeArmorUpgrade" />
+
+		<ModelConditionUpgrade xmlns="uri:ea.com:eala:asset"
+			xai:joinAction="Remove"
+			id="ModuleTag_ArmorCompositeModelCondition" />
+
+			<xi:include
+				href="../../Includes/ZOCOMFieldSuitsUpgradeModelCondition.xml" />
+			<xi:include
+				href="../../Includes/ZOCOMFieldSuitsUpgrade.xml" />
+
+			<StatusBitsUpgrade
+				StatusToSet="SHIELDBODY_ENABLED">
+				<TriggeredBy>Upgrade_ZOCOMFieldSuits</TriggeredBy>
+			</StatusBitsUpgrade>
+
+		</Behaviors>
+	</GameObject>
+</AssetDeclaration>

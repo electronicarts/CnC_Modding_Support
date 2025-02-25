@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:ABAVTower.w3x" />
+		<Include
+			type="all"
+			source="ART:FXObeliskLaser.xml" />
+		<Include
+			type="all"
+			source="ART:FXLaserOverlay.xml" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="ABAVTower"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_GDIWatchTower"
+		ButtonImage="Button_GDIWatchTower"
+		Side="ALIEN"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="400"
+		BuildTime="10.0"
+		EnergyProduction="-10"
+		CommandSet="GDIWatchTowerCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_BASE_DEFENSE POWERED AUTO_ACQUIRABLE_BY_AI NOT_AUTOACQUIRABLE COVER"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		CampnessValue="=$CAMPNESS_DEFENSIVE_STRUCTURE"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="ABAVTower"
+		WeaponCategory="CANNON"
+		Description="Desc:ALIENAVTower"
+		TypeDescription="Type:AlienAVTower">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:ALIENAVTower</DisplayName>
+		<ArmorSet
+			Armor="GDIWatchTowerArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="SPREAD" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABAVTower" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="WeaponFX" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="WeaponFX" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="20">
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXObeliskLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_AlienBuildingDamagedL" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_AlienBuildingDamagedL" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_AlienBuildingRubbleL" />
+			</FXListBehavior>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="ALIENLaser" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<SpecialPower
+				id="ModuleTag_ALIENTurretBeamSpecialPower"
+				SpecialPowerTemplate="ALIENTurretBeamSpecialPower"
+				UpdateModuleStartsAttack="true" />
+			<BeamSpecialAbilityUpdate
+				id="ModuleTag_ALIENTurretBeamSpecialPowerUpdate"
+				SpecialPowerTemplate="ALIENTurretBeamSpecialPower"
+				JoinWithOtherBeams="false"
+				DissapateWhenTargetDead="false"
+				SweepFX="FX_NodLaserSweep"
+				UnpackTime="2s"
+				UnpackSound="NOD_Obelisk_LaserChargeUp"
+				PreparationTime="1s"
+				PrepSoundLoop="NOD_Obelisk_LaserFireMS"
+				PackTime="0.1s"
+				StartAbilityRange="1000000.0"
+				DamagePerSecond="0.0"></BeamSpecialAbilityUpdate>
+			<!-- slow death must be defined before the structure topple. -->
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="5s"
+				SinkRate="2.4"
+				DestructionDelay="10s">
+				<Sound Type="INITIAL" List="ALI_Building_Die" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_TEMPLarge" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Small" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				UnpackTime="1.5s" />
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="100" />
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericGDIBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/GenericGDIBuildingSuicide.xml" />
+			<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+		</Behaviors>
+		<AI>
+			<DeployStyleAIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				UnpackTime="1s"
+				PackTime="1s"
+				MustDeployToAttack="true">
+				<UnitAITargetChooserData
+					CheckVisionRange="false"
+					CanPickDynamicTargets="true" />
+			</DeployStyleAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1500.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="9"
+				Height="65.0">
+				<Offset
+					x="-3.0"
+					y="0"
+					z="0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-14.0"
+					y="7.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="11.0"
+					y="7.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="11.0"
+					y="-7.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="11.0"
+					y="7.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-14.0"
+					y="-4.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="11.0"
+					y="7.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-14.0"
+					y="-4.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-14.0"
+					y="7.0"
+					z="0" />
+			</ContactPoint>
+		</Geometry>
+<!--
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="AudioEvent:GDI_WatchTowerSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+-->
+		<AudioArraySound>
+			<AudioEntry Sound="ALI_Building_LightDamage" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="ALI_Building_HeavyDamage" AudioType="soundOnReallyDamaged" />
+			<AudioEntry Sound="ALI_Building_Placed" AudioType="soundUnderConstruction" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

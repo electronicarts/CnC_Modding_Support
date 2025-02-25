@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:GUM_ConquerVehicle_SKN.W3X" />
+		<Include type="all" source="ART:GUM_ConquerVehicle_AIDA.W3X" />
+		<Include type="all" source="ART:GUM_ConquerVehicle_MOVA.W3X" />
+		<Include type="all" source="ART:GUM_ConquerVehicle_DMG.xml" />
+		
+		<Include type="instance" source="DATA:BaseObjects/BaseConquerVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="GDIConquerVehicle"
+		inheritFrom="BaseConquerVehicle"
+		HealthBoxHeightOffset="43"
+		SelectPortrait="Portrait_GDI_ConquerVehicle"
+		ButtonImage="Btn_GDI_ConquerVehicle"
+		Side="GDI"
+		EditorName="GDI_All_Light_Truck(Rig)"
+		Description="Desc:GDIConquerVehicle"
+		TypeDescription="Type:GDIConquerVehicle">		
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIConquerVehicle</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUM_ConquerVehicle_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUM_ConquerVehicle_SKN" />
+					<Texture
+						Original="GUM_ConquerVehicle"
+						New="GUM_ConquerVehicle_DMG" />
+					<ParticleSysBone
+						BoneName="GCV_bed"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUM_ConquerVehicle_SKN" />
+					<Texture
+						Original="GUM_ConquerVehicle" 
+						New="GUM_ConquerVehicle_DMG" />
+					<ParticleSysBone
+						BoneName="GCV_cab"
+						FXParticleSystemTemplate="NodVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Tire01"
+						FXParticleSystemTemplate="NodVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Tire05"
+						FXParticleSystemTemplate="NodVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GCV_cab"
+						FXParticleSystemTemplate="NodVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GUM_ConquerVehicle_AIDA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING ACCELERATE">
+					<Animation
+						AnimationName="GUM_ConquerVehicle_MOVA"
+						AnimationMode="LOOP" />
+					<ParticleSysBone
+						BoneName="FXExhaustR"
+						FXParticleSystemTemplate="GDIConqExhaust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaustL"
+						FXParticleSystemTemplate="GDIConqExhaust"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimNickName="MOV"
+						AnimationName="GUM_ConquerVehicle_MOVA"
+						AnimationMode="LOOP" />
+					<ParticleSysBone
+						BoneName="FXTireDustL"
+						FXParticleSystemTemplate="TreadDust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTireDustR"
+						FXParticleSystemTemplate="TreadDust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTireDustR"
+						FXParticleSystemTemplate="TreadDirt"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTireDustL"
+						FXParticleSystemTemplate="TreadDirt"
+						FollowBone="true" />
+				</AnimationState>
+				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>		
+			<ReplaceSelfUpgrade
+				id="ModuleTag_ReplaceSelf"
+				Delay="0.5s">
+				<TriggeredBy>Upgrade_Docked</TriggeredBy>
+				<ReplacementTemplate>GDIConquerVehicleDeployed</ReplacementTemplate>
+			</ReplaceSelfUpgrade>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_GDIConquerVehicleDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			
+			<!-- Conquer vehicles are not guards -->
+			<SkirmishAIGuardTrackingBehavior
+				id="ModuleTag_SkirmishAIGuardTrackingBehavior"
+				xai:joinAction="Remove"
+				xmlns:xai="uri:ea.com:eala:asset:instance"
+			/>
+		</Behaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type= "BOX"
+				MajorRadius = "24.298"
+				MinorRadius = "11.9346"
+				Height = "25.2969"
+				ContactPointGeneration = "VEHICLE" >
+				<Offset
+					x = "4.5"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+			<AudioArrayVoice>
+			</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry
+				Sound="GDI_ConquerVehicleA_MoveStart"
+				AudioType="soundMoveStart" />
+			<AudioEntry
+				Sound="GDI_ConquerVehicleA_MoveLoop"
+				AudioType="soundMoveLoop" />
+			<AudioEntry
+				Sound="GDI_ConquerVehicleA_IdleLoop"
+				AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+		
+	<ObjectCreationList
+		id="OCL_GDIConquerVehicleDie">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIConquerVehicle_Collapse</ObjectTemplate>
+					<ObjectTemplate>GDIDebrisSmall_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<SubModules>
+						<CreateObject/>
+						<SetLifetime
+							MinLifetime="1.0s"
+							MaxLifetime="3.0s"/>
+						<FlingObject
+							MinForceMagnitude="2.0"
+							MaxForceMagnitude="7.0"
+							MinForcePitch="90d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	
+</AssetDeclaration>

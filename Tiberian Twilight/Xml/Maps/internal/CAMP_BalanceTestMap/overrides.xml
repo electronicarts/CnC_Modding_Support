@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Base Object -->		
+		<Include type="all" source="ART:NPCrate01_Blue.xml" />
+		<Include type="all" source="ART:VeterancyCrate.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseCrate.xml" />
+	</Includes>
+
+	
+	<!--Override the UpgradeCrate game object for this map so that 'multiple human players' can pick up the crates.-->
+	<GameObject
+		id="UpgradeCrate"
+		inheritFrom="BaseCrate"
+		EditorName="UpgradeCrate"
+		KindOf="+UPGRADE_CRATE"
+		Description="DESC:UpgradeCrate">
+
+		<Behaviors>
+
+			<UpgradeCrateCollide
+				id="ModuleTag_UpgradeCrateCollide"
+				Flags="IGNORE_COLLECTOR_CHECK"
+				PlayerClassFlags="HEAVY"
+				UpgradeTemplate="Upgrade_Crate_Level1"
+				HealBonusPerLevel="10"
+				HealBonusAtMaxLevel="10">
+				<AllowedCollectorObjectFilter
+					Rule="ALL"
+					Exclude="ENGINEER CRAWLER"/>
+			</UpgradeCrateCollide>
+
+			<!-- special collide just for offense class engineers (who can't use the upgrade) -->
+			<VeterancyCrateCollide
+				id="ModuleTag_VeterancyCrateCollideOffenseEngineer"
+				Flags="IGNORE_COLLECTOR_CHECK"
+				PlayerClassFlags="HEAVY"
+				HealBonusPerLevel="5"
+				HealBonusAtMaxLevel="10">
+				<AllowedCollectorObjectFilter
+					Rule="NONE"
+					Include="ENGINEER"/>
+			</VeterancyCrateCollide>
+
+			<!-- collide for non-offense class units (except crawlers) -->
+			<VeterancyCrateCollide
+				id="ModuleTag_VeterancyCrateCollide"
+				Flags="IGNORE_COLLECTOR_CHECK"
+				PlayerClassFlags="DEFENSE SUPPORT"
+				HealBonusPerLevel="10"
+				HealBonusAtMaxLevel="20">
+				<AllowedCollectorObjectFilter
+					Rule="ALL"
+					Exclude="CRAWLER"/>
+			</VeterancyCrateCollide>
+		</Behaviors>
+	</GameObject>
+	
+</AssetDeclaration>

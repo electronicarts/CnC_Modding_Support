@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBContNode.w3x" />
+		<Include
+			type="all"
+			source="ART:NBContNode_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:NBContNode_D3.w3x" />
+		<Include
+			type="all"
+			source="ART:NBContNode_DOOR.w3x" />
+
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+	</Includes>
+	<GameObject
+		id="NOD_NBContNode"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		EditorName="NOD_NBContNode"
+		SelectPortrait="Portrait_NBContNode"
+		ButtonImage="Portrait_NBContNode"
+		KindOf="FACE_AWAY_FROM_CASTLE_KEEP NOT_SELLABLE GARRISON SELECTABLE STRUCTURE PRELOAD IMMOBILE CAN_CAST_REFLECTIONS"
+		Browser="REGION NOD_Structures STRUCTURE">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:MOKControlNode</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false"
+				AffectedByStealth="false"
+				ExtraPublicBone="BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBContNode" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NBContNode_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBContNode_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBContNode" />
+					<Texture
+						Original="NBContNode"
+						New="NBContNodeD" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBContNode_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBContNode_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NBContNode_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NBContNode_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIImpDist"
+						FollowBone="false" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="false" />
+				</AnimationState>
+			</ScriptedModelDraw>
+<!-- DRAW DOOR -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Door"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBContNode_DOOR" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NBEmpty_ABLD" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="NBContNode_DOOR"
+						AnimationMode="ONCE_BACKWARDS" />
+				</AnimationState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBEmpty_ABLD"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_WAITING_OPEN"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBContNode_DOOR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_OPENING"
+					StateName="STATE_Open">
+					<Animation
+						AnimationName="NBContNode_DOOR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_CLOSING"
+					Flags="START_FRAME_LAST"
+					StateName="STATE_Closed">
+					<Animation
+						AnimationName="NBContNode_DOOR"
+						AnimationMode="ONCE_BACKWARDS" />
+				</AnimationState>
+			</ScriptedModelDraw>		
+			
+			<xi:include
+				href="../../Includes/GarrisonableStructureFlagDraw.xml" />
+		</Draws>
+		<Behaviors>
+			<ProductionUpdate
+				id="ModuleTag_06"
+				GiveNoXP="true"
+				Type="INVALID"
+				NumDoorAnimations="1"
+				DoorOpeningTime="0.66s"
+				DoorWaitOpenTime="1.0s"
+				DoorCloseTime="0.66s" />
+			<QueueProductionExitUpdate
+				id="ModuleTag_07"
+				PlacementViewAngle="0d"
+				ExitDelay="1">
+				<UnitCreatePoint
+					x="0.0"
+					y="-5.0" />
+				<NaturalRallyPoint
+					x="0.0"
+					y="25.0" />
+			</QueueProductionExitUpdate>		
+<!--	
+			<StructureCollapseUpdate
+				id="ModuleTag_Collapse"
+				MinCollapseDelay="0"
+				MaxCollapseDelay="0"
+				CollapseDamping="0.5"
+				MaxShudder="0.6"
+				MinBurstDelay="250"
+				MaxBurstDelay="800"
+				BigBurstFrequency="4"
+				DestroyObjectWhenDone="true"
+				CollapseHeight="155" />
+-->				
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Medium" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"					
+					FX="FX_ScorchMedium" />
+			</FXListBehavior>
+				<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModulTag_AIForLua"
+				AILuaEventsList="NeutralGarrisonableBuildingFunctions" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="25000.0" />
+		</Body>
+    <Geometry
+			IsSmall="false">
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "14.4124"
+           MinorRadius = "11.9879"
+           Height = "24"
+           ContactPointGeneration="STRUCTURE">
+        <Offset
+            x = "-2.57971"
+            y = "0.617354"
+            z = "0.0" />
+      </Shape>
+
+    </Geometry>
+	<AudioArrayVoice>
+		<AudioEntry Sound="NOD_ControlNode_Select" AudioType="voiceSelect" />
+	</AudioArrayVoice>
+    <AudioArraySound>
+      <AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+      <AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+    </AudioArraySound>
+  </GameObject>
+</AssetDeclaration>

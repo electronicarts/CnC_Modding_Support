@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<!--	Nod Megalisk Obelisk / Instant Upgraded Obelisk Of Light  -->
+	<Includes>
+
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:NOD/Structures/NODStructureG.xml" />
+	</Includes>
+
+	<!-- This is a free Obelisk of light that comes upgraded and only lasts for a limited amount of time -->
+	<GameObject
+		id="NODMegaliskObelisk"
+		inheritFrom="NODStructureG"
+		EditorName="NOD_PlayerPower_Struct_Laser_(Obelisk Of Light)"
+		EditorSorting="STRUCTURE"
+		CommandPoints="0"
+		EnergyProduction="0"
+		KindOf="-SKIRMISH_AI_DELETE_TO_FREE_UP_ENERGY -POWERED"
+		CommandSet="NODMegaliskObeliskCommandSet"
+		Description="Desc:NODMegalisk"
+		TypeDescription="Type:NODMegalisk">
+		<SkirmishAIInformation
+			MethodOfRemoving="CANNOT_REMOVE"/>
+		<Behaviors>
+
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate"
+				xai:joinAction="Replace" >
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODMegaliskWeapon"
+						ForbiddenObjectStatus="WEAPON_UPGRADED_01"/>
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODMegaliskWeapon_Upgraded" 
+						ObjectStatus="WEAPON_UPGRADED_01"/>					
+					<Weapon
+						Ordering="SECONDARY_WEAPON"
+						Template="NODStructureGLaserLink"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="90s"
+				MaxLifetime="90s"
+				Flags="DRAW_LIFETIME_BAR"
+				DeathType="SUICIDED" />
+
+			<GrantUpgradeCreate
+				id="ModuleTag_GrantUpgradeCreate"
+				UpgradeToGrant="UpgradeNODStructureG" />
+			
+			<!-- No selling! -->
+			<StructureSellUpdate
+				id="ModuleTag_StructureSellUpdate"
+				xai:joinAction="Remove" />
+			<SellSpecialPower
+				id="ModuleTag_SellSpecialPower"
+				xai:joinAction="Remove" />
+
+			<!-- No building! -->
+			<ProductionUpdate
+				id="ModuleTag_DefenseStructureProductionUpdate"
+				xai:joinAction="Remove" />
+
+			<!--No consuming energy!-->
+			<EnergyPointsUpgrade
+				id="ModuleTag_EnergyPointsUpgrade"
+				xai:joinAction="Remove"/>
+
+			<!-- No unpack bar for UI -->
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				DisplayInUI="false" />
+				
+		</Behaviors>
+
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_LaserWeaponChargeUp" xai:joinAction="Replace">
+				<ModelConditionSound Sound="NOD_Megalisk_LaserWeaponFireChargeUp" RequiredFlags="PREATTACK_A" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Unpacking">
+				<ModelConditionSound Sound="NOD_Megalisk_Unpacking" RequiredFlags="STRUCTURE_UNPACKING" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_Megalisk_SelectMS" AudioType="voiceSelect"/>
+		</AudioArrayVoice>
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS									-->
+	<!-- ////////////////////////////////////////	-->
+	<WeaponTemplate
+		id="NODMegaliskWeapon"
+		inheritFrom="BaseNODStructureGWeapon"
+		FireSound="NOD_Megalisk_LaserWeaponFireMS"/>
+
+	<WeaponTemplate
+		id="NODMegaliskWeapon_Upgraded"
+		inheritFrom="BaseNODStructureGWeapon_Upgraded"
+		FireSound="NOD_Megalisk_LaserWeaponFireMS"/>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET					-->
+	<!-- ////////////////////////////////////////	-->
+	<LogicCommandSet
+		id="NODMegaliskObeliskCommandSet">
+		<Cmd>Command_Stop</Cmd>
+	</LogicCommandSet>
+	
+</AssetDeclaration>

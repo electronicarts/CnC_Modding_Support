@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:balance="uri:ea.com:eala:balance" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+
+	<xs:simpleType name="PlayerThreatTrackerOptions">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CLEAR_THREAT_ON_CRAWLER_DEATH" />
+			<xs:enumeration value="REQUIRE_PLAYER_CRAWLER_FOR_THREAT_GAIN" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PlayerThreatTrackerOptionsBitFlags">
+		<xs:list itemType="PlayerThreatTrackerOptions"></xs:list>
+	</xs:simpleType>
+	
+	<xs:complexType name="CommandPointThreatDecayRates">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="CommandPointPercentage" type="Percentage" />
+		<xs:attribute name="ThreatDecay" type="SageInt" />
+	 </xs:complexType>
+
+	<xs:complexType name="ThreatChangePerSecondModifier">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="RequiredUpgrade" type="UpgradeTemplateWeakRef" use="required" />
+		<!--This will change the exisiting BaseThreatChangePerSecond value.-->
+		<xs:attribute name="ThreatChangePerSecond" type="SageReal" />
+	</xs:complexType>
+	 
+	<xs:complexType name="PlayerThreatTrackerTemplate" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="ThreatDecayRate" type="CommandPointThreatDecayRates" minOccurs="1" maxOccurs="unbounded"/>
+					<xs:element name="AllowedThreatGiverObjectsFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="AllowedThreatObjectsFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="ThreatChangePerSecondModifier" type="ThreatChangePerSecondModifier" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="MaxAllowedThreat" type="SageUnsignedInt" default="0"/>
+				<xs:attribute name="KillThreatMultiplier" type="SageReal" default="0.167"/>
+				<xs:attribute name="HealingThreatMultiplier" type="SageReal" default="1.0" />
+				<xs:attribute name="BuffDebuffDamageMultiplier" type="SageReal" default="0.167" />
+				<xs:attribute name="BuffDebuffThreatValue" type="SageReal" default="0.833" />
+
+				<xs:attribute name="Options" type="PlayerThreatTrackerOptionsBitFlags" default="CLEAR_THREAT_ON_CRAWLER_DEATH" />
+
+				<xs:attribute name="YellowAreaThreatChangePerSecond" type="SageInt" default="0"/>
+				<xs:attribute name="OrangeAreaThreatChangePerSecond" type="SageInt" default="0"/>
+				<xs:attribute name="RedAreaThreatChangePerSecond" type="SageInt" default="0"/>
+				<xs:attribute name="BaseThreatChangePerSecond" type="SageReal" default="0"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

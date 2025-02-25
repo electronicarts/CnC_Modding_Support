@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Tags></Tags>
+	<!--Using Temp projectile art for missile object.-->
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="all" source="ART:FXNukeProjectile_FLYA.w3x" />
+		<Include
+			type="instance"
+			source="ART:ShadowI.xml" />
+	</Includes>
+
+	<GameObject
+		id="TechStructureEMissileObject"
+		Side="Neutral"
+		EditorSorting="UNIT"
+		CommandSet="TechStructureEMissileCommandSet"
+		KindOf="SELECTABLE NO_COLLIDE HAS_HEALTH_BAR AIRCRAFT PASS_EXPERIENCE_TO_PRODUCER"
+		SelectPortrait="Portrait_Neutral_AuroraMissile"
+		ButtonImage="Portrait_Neutral_AuroraMissile"
+		RadarPriority="UNIT"
+		WeaponCategory="MISSILE"
+		EditorName="TechStructureEMissile">
+    <DisplayName>Name:CampaignMissileTechStructE</DisplayName>
+		<ArmorSet
+			Armor="NoArmor"/>
+		<LocomotorSet
+			Locomotor="Locomotor_TechStructureEMissile"
+			Condition="NORMAL"
+			Speed="100.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXNukeProjectile_FLYA" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_Trail"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="TechStructureEMissileWeapon"
+						ForbiddenObjectStatus="NO_ATTACK"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<Physics
+				id="ModuleTag_Physics" />
+			
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="60.0s"
+				MaxLifetime="60.0s" 
+				Flags="DRAW_LIFETIME_BAR"/>
+			<FireWeaponWhenDead
+				id="ModuleTag_DetonateWeapon"
+				InitiallyActive="true"
+				DeathWeapon="TechStructureEMissileDetonateWeapon">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+
+			<!-- Put this unit as slave-->
+			<SlavedUpdate
+				id="ModuleTag_SlavedUpdate"
+				AttackRange="300"
+				DieOnMastersDeath="true" />
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="0"
+				FirstHeightMax="0"
+				SecondHeightMin="0"
+				SecondHeightMax="0"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				Flags="ORIENT_TO_FLIGHT_PATH DETONATE_CALLS_KILL CAN_BE_REFLECTED"
+				FlightPathAdjustDistPerSecond="100"
+				GroundHitFX="FX_SensorDeath">
+			</BezierProjectile>
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_JetAIUpdate"
+				StateMachine="AirstrikeJetAIStateMachine"
+				CirclesForAttack="true">
+				<UnitAITargetChooserData
+					SympathyRange="100.0" />
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="100" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Afterburner">
+				<ModelConditionSound Sound="NEU_MissileSiloMissile_Afterburner" RequiredFlags="ENGAGED" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="7.0"
+				Height="13.0"></Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NEU_MissileSiloMissile_SoundMove" AudioType="voiceSelect"/>
+			<AudioEntry Sound="NEU_MissileSiloMissile_SoundMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="NEU_MissileSiloMissile_SoundMove" AudioType="voiceAttack"/>
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="NEU_MissileSiloMissile_IdleLoop" AudioType="soundAmbient"/>
+			<AudioEntry Sound="NEU_MissileSiloMissile_MoveStart" AudioType="soundMoveStart"/>
+		</AudioArraySound>
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="600"
+			ShroudClearingRange="601" />
+	</GameObject>
+
+	<!-- Detonate weapon on the Missile.-->
+	<WeaponTemplate
+		id="TechStructureEMissileDetonateWeapon"
+		AttackRange="300.0"
+		WeaponSpeed="1250"
+		ClipSize="1"
+		AutoReloadsClip="AUTO"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_ENEMY_BUILDINGS CAN_FIRE_ON_GROUND"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		FireFX="FX_NukeExpl">
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<Nuggets>
+			<DamageNugget
+				Damage="600.0"
+				Radius="100.0"
+				DamageType="BLAST"
+				DamageFXType="GDI_BOMB"
+				DeathType="EXPLODED">
+			</DamageNugget>
+
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="TechStructureEMissileWeapon"
+		AttackRange="300.0"
+		WeaponSpeed="500"
+		MinWeaponSpeed="500"
+		MaxWeaponSpeed="500"
+		FireFX="FX_GDILightMissileLaunch"
+		AcceptableAimDelta="360d"
+		ClipSize="1"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		CanFireWhileMoving="true"
+		ProjectileCollidesWith="ENEMIES NEUTRAL"
+		ProjectileSelf="true"
+		ChaseWeapon="true">
+		<FiringDuration
+			MinSeconds="=$EPSILON_SECONDS"
+			MaxSeconds="=$EPSILON_SECONDS" />
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="TechStructureEDummyWeaponWarhead" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="TechStructureEDummyWeaponWarhead"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"/>	
+
+	<LogicCommandSet
+		id="TechStructureEMissileCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+	</LogicCommandSet>
+	
+	<!--Fixed wing Aircraft locomotor-->
+	<LocomotorTemplate
+		id="Locomotor_TechStructureEMissile"
+		AccelerationSeconds="0.5s"
+		ActiveModelConditions="FLYING"
+		AirborneTargetingHeight="30"
+		AllowMotiveForceWhileAirborne="true"
+		Appearance="WINGS"
+		Apply2DFrictionWhenAirborne="true"
+		AttackPathTrailDistance="100"
+		BehaviorZ="SURFACE_RELATIVE_HEIGHT"
+		BrakingSeconds="0.5s"
+		CirclingRadius="120"
+		CirclingSpeed="90%"
+		ClampOrientationToPathTangent="true"
+		ElevatorCorrectionDegree="0.103"
+		ElevatorCorrectionRate="0.016"
+		FastTurnRadius="20.0"
+		ForwardVelocityPitchFactor="0.0"
+		LateralVelocityRollFactor="-0.075"
+		LocomotorWorksWhenDead="true"
+		Lift="120%"
+		LiftDamaged="80%"
+		MinTurnSpeed="100%"
+		PreferredHeight="150"
+		PreferredHeightPitchingEpsilon="9"
+		PitchByZVelCoef="1.0"
+		PitchStiffness="0.75"
+		PitchDamping="1.0"
+		ReorientIfTurnTooSharp="true"
+		RollStiffness="0.75"
+		RollDamping="1.0"
+		RudderCorrectionDegree="0.169"
+		RudderCorrectionRate="0.027"
+		SlowTurnRadius="20.0"
+		Surfaces="AIR"
+		TakeOffAndLandingSpeed="6.0"
+		TakeOffAndLandingSlowDownDelta="25.0"
+		TakeOffAndLandingSlowDownTime=".5s"
+		TurnTimeSeconds="1.0s"
+		TurnTimeDamagedSeconds="1.0s"
+	/>
+
+	<ObjectCreationList
+		id="TechStructureEMissile">
+		<OCLModule>
+			<Modules>
+				<ParentRelativePrePosition>
+					<Offset z="300.0" />
+				</ParentRelativePrePosition>
+				<CreateObject
+					ObjectTemplate="TechStructureEMissileObject"/>
+				<EnslaveToParent/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+</AssetDeclaration>

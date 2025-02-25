@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	
+	<!-- Nod Defense Shield Structure T3 / Disruption Tower -->
+	<!-- 
+		'USER_1' - object status/model condition used for stealth mode.
+		'USER_2' - object status/model condition used for stealth upgrade.
+		'USER_3' - object status/model condition used for advanced shield upgrade.
+	-->
+
+	<Includes>
+		<Include type="all"	source="ART:NSL_StructureI_AIDA.w3x" />
+		<Include type="all"	source="ART:NSL_StructureI_SKN.w3x" />
+		<Include type="all"	source="ART:NSL_StructureI_SHLD.w3x" />
+		<Include type="all"	source="ART:NSL_StructureI_SHLD2.w3x" />
+		<Include type="all"	source="ART:NSL_StructureI_SHLD3.w3x" />
+		<Include type="all"	source="ART:NSL_StructureI_SHLD4.w3x" />
+		<Include type="all"	source="ART:NSL_StructureI_STLT.w3x" />
+		<Include type="all"	source="ART:NSL_StructureI_BLDA.w3x" />
+		<Include type="all"	source="ART:NSL_StructureI_DMG.xml" />
+		<Include type="all"	source="ART:FXTracerGDI.xml" />
+		<Include type="all"	source="ART:Decal_Sensor_CO.xml" />
+		<Include type="all"	source="ART:FXInvisBone.w3x" />
+		<Include type="all"	source="ART:FXShieldLargeNod.w3x" />
+		<Include type="all"	source="ART:FXShieldLargeNodUpgrade.w3x" />
+		
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+	</Includes>
+
+	<Defines>
+		<Define name="NOD_STRUCTURE_I_SHIELD_RANGE" value="200"/>
+		<Define name="NOD_STRUCTURE_I_SHIELD_DECAL_SIZE" value="=$NOD_STRUCTURE_I_SHIELD_RANGE * 2 * 1.1"/>
+		
+		<Define name="NOD_STRUCTURE_I_STEALTH_RANGE" value="200"/>
+		<Define name="NOD_STRUCTURE_I_STEALTH_DECAL_SIZE" value="=$NOD_STRUCTURE_I_STEALTH_RANGE * 2 * 1.1"/>
+
+		<Define name="NOD_STRUCTURE_I_UPGRADEDSTEALTH_RANGE" value="300"/>
+		<Define name="NOD_STRUCTURE_I_UPGRADEDSTEALTH_DECAL_SIZE" value="=$NOD_STRUCTURE_I_UPGRADEDSTEALTH_RANGE * 2 * 1.1"/>
+
+	</Defines>
+
+	<GameObject
+		id="NODStructureI"
+		inheritFrom="BaseDefensiveStructure"
+		SubGroupPriority="409"
+		HealthBoxHeightOffset="100"
+		HealthBar="Structure"
+		SelectPortrait="Portrait_NOD_Structure_I"
+		ButtonImage="Btn_NOD_Structure_I"
+		Side="NOD"
+		ParticipationValue="=$NODSTRUCTUREI_PARTICIPATION_VALUE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildTime="20.0"
+		EnergyProduction="=$NOD_STRUCTURE_I_COMMANDPOINT_COST"
+		CommandSet="NODStructureICommandSet"
+		KindOf="+CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING -CAN_ATTACK"
+		RadarPriority="STRUCTURE"
+		EditorName="NOD_D3_Struct_Shield(Disruption Tower)"
+		EditorSorting="STRUCTURE"
+		Description="Desc:NODStructureI"
+		TypeDescription="Type:NODStructureI">
+		<DisplayName
+			xai:joinAction="Replace"
+			xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODStructureI</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BuildingPlacementType="CenterDefault" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				ExtraPublicBone="DIGIN"
+				OkToChangeModelColor="true"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NSL_StructureI_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NSL_StructureI_SKN"	/>
+					<Texture
+						Original="NSL_StructureI"
+						New="NSL_StructureI_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage03"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="NSL_StructureI_SKN" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$GDI_CRAWLER_A_SHIELD_DECAL_SIZE - 100"
+						SizeY="=$GDI_CRAWLER_A_SHIELD_DECAL_SIZE - 100"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NSL_StructureI_SKN"	/>
+					<Texture
+						Original="NSL_StructureI"
+						New="NSL_StructureI_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<!-- BUILD UP	-->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NSL_StructureI_SKN"	/>
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Animation
+						AnimationName="NSL_StructureI_AIDA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING"
+					StateName="STATE_BeingBuilt">
+					<Animation
+						AnimationName="NSL_StructureI_BLDA"
+						AnimationBlendTime="0"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true"	/>
+				</AnimationState>
+				<!-- NORMAL IDLE -->
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle"
+					Flags="DO_NOT_PLAY_WHEN_UNPOWERED">
+					<Animation
+						AnimationName="NSL_StructureI_SHLD2"
+						AnimationBlendTime="10"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_Idle" or Prev == "TRANS_FromStealthMode" or Prev == "STATE_BeingBuilt" then
+						--Do Nothing and Re-Pick Animation
+						else
+						CurDrawableSetTransitionAnimState("TRANS_FromStealthMode")
+						end
+					</Script>
+				</AnimationState>
+				<!-- STEALTH MODE IDLE -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					StateName="STATE_IdleStealthMode"
+					ConditionsYes="USER_1"
+					Flags="DO_NOT_PLAY_WHEN_UNPOWERED">
+					<Animation
+						AnimationName="NSL_StructureI_SHLD4"
+						AnimationBlendTime="10"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_IdleStealthMode" or Prev == "TRANS_ToStealthMode" then
+						--Do Nothing and Re-Pick Animation
+						elseif Prev == "STATE_IdleShieldUpgraded" or Prev == "STATE_Idle" then
+						CurDrawableSetTransitionAnimState("TRANS_ToStealthMode")
+						end
+					</Script>
+				</AnimationState>
+				<!-- SHIELD UPGRADED IDLE -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					StateName="STATE_IdleShieldUpgraded"
+					ConditionsYes="USER_3"
+					Flags="DO_NOT_PLAY_WHEN_UNPOWERED">
+					<Animation
+						AnimationName="NSL_StructureI_SHLD3"
+						AnimationBlendTime="10"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_IdleShieldUpgraded" or Prev == "STATE_Idle" or Prev == "TRANS_FromStealthMode" or Prev == "STATE_BeingBuilt" then
+						--Do Nothing and Re-Pick Animation
+						else
+						CurDrawableSetTransitionAnimState("TRANS_FromStealthMode")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_ToStealthMode"
+					Flags="DO_NOT_PLAY_WHEN_UNPOWERED">
+					<Animation
+						AnimationName="NSL_StructureI_SHLD"
+						AnimationBlendTime="10"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_FromStealthMode"
+					Flags="DO_NOT_PLAY_WHEN_UNPOWERED">
+					<Animation
+						AnimationName="NSL_StructureI_STLT"
+						AnimationBlendTime="10"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+
+			<!-- Shield Geometry -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawShield"
+				Options="IGNORE_FLASH_SHADER">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name=""/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPHERE_MODULE_ACTIVE USER_3">
+					<Model
+						Name="FXShieldLargeNodUpgrade"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPHERE_MODULE_ACTIVE">
+					<Model
+						Name="FXShieldLargeNod"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+			<!-- temporary decal to represent stealth -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawStealthDecal"
+				OkToChangeModelColor="true"
+				Options="IGNORE_FLASH_SHADER">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+				</ModelConditionState>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RECYCLED">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 USER_2 SELECTED">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$NOD_STRUCTURE_I_UPGRADEDSTEALTH_DECAL_SIZE"
+						SizeY="=$NOD_STRUCTURE_I_UPGRADEDSTEALTH_DECAL_SIZE"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="false"
+						LocalPlayerOnly="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 SELECTED">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$NOD_STRUCTURE_I_STEALTH_DECAL_SIZE"
+						SizeY="=$NOD_STRUCTURE_I_STEALTH_DECAL_SIZE"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Behaviors>
+
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event Index="onDeath" FX="FX_GDIArtilleryHitBIG"/>
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+
+			<!-- Shield Modules -->
+			<ShieldSphereUpdate
+				id="ModuleTag_Shield"
+				Options="ALLOW_ALLIES_PROJECTILE_GOTHROUGH MAINTAIN_DAMAGE_WHEN_DEACTIVATED ABSORB_ALL_DAMAGE_ON_KILLING_BLOW"
+				RadiusMin="=$NOD_STRUCTURE_I_SHIELD_RANGE"
+				RadiusMax="=$NOD_STRUCTURE_I_SHIELD_RANGE"
+				ScanFrequency="2s"
+				MaxDamage="750"
+				DamageChangePerSecond="-5"
+				DamageTypesToAbsorb="LASER CANNON GUN BLAST ROCKET"
+				ShieldRegenerateThresholdPercent="90%">
+				<ObjectFilter
+					Rule="ALL"/>
+				<DamageTypeFXMap
+					DamageType="GUN"
+					DamageFX="FX_GDIShieldHit">
+				</DamageTypeFXMap>
+				<DamageTypeFXMap
+					DamageType="LASER"
+					DamageFX="FX_GDIShieldHit_Laser">
+				</DamageTypeFXMap>
+				<DamageTypeFXMap
+					DamageType="ROCKET"
+					DamageFX="FX_GDIShieldHit_Rocket">
+				</DamageTypeFXMap>
+				<DamageTypeFXMap
+					DamageType="BLAST"
+					DamageFX="FX_GDIShieldHit_Blast">
+				</DamageTypeFXMap>
+			</ShieldSphereUpdate>
+
+			<ShieldSphereUpgrade
+				id="ModuleTag_ShieldSphereUpgrade">
+				<TriggeredBy>Upgrade_NODStructureI_Shield_DummyUpgrade</TriggeredBy>
+			</ShieldSphereUpgrade>
+
+			<ShieldSphereDamageUpgrade
+				id="ModuleTag_ShieldSphereDamageUpgrade"
+				MaxDamageModifier="750">
+				<TriggeredBy>Upgrade_NODDefenseAdvancedShields</TriggeredBy>
+			</ShieldSphereDamageUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_AdvancedShieldUpgrade"
+				AddConditionFlags="USER_3">
+				<TriggeredBy>Upgrade_NODDefenseAdvancedShields</TriggeredBy>
+			</ModelConditionUpgrade>
+			<FXListBehavior
+				id="ModuleTag_FXListShields">
+				<TriggeredBy>Upgrade_NODDefenseAdvancedShields</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeNODEnhancedShields" />
+			</FXListBehavior>
+
+			<!-- Toggle Stealth Ability -->
+			<SpecialPower
+				id="ModuleTag_ToggleStealthTrigger"
+				SpecialPowerTemplate="SpecialPower_NODStructureIToggleStealth" />
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleStealth"
+				SpecialPowerTemplate="SpecialPower_NODStructureIToggleStealth">
+				<ToggleState
+					Upgrade="Upgrade_NODStructureI_Shield_DummyUpgrade"
+					InitiateIntentToExitStateSound="NOD_DisruptionTower_StrI_StealthOn">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_DEFAULT"
+						NeverUseWhenClear="true">
+					</SkirmishAiInfo>
+				</ToggleState>
+
+				<ToggleState
+					ObjectStatus="USER_1"
+					ModelConditions="USER_1"
+					InitiateIntentToExitStateSound="NOD_DisruptionTower_StrI_StealthOff">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_SHIELD_NOT_STEALTH"
+						NeverUseInState="COMBAT"
+						NeverUseWhenHealthIsBelow="200"
+						StealthOthersInvisibilityModuleId="ModuleTag_InvisibilityBroadcast" />
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+			<InvisibilityBroadcastUpdate
+				id="ModuleTag_InvisibilityBroadcast"
+				InvisibilityTemplate="NODStructureIInvisibilityTemplate"
+				AffectsSelf="true"
+				UpdatePeriod="0.5s"
+				BroadcastRange="=$NOD_STRUCTURE_I_STEALTH_RANGE">
+				<ObjectStatusValidation
+					RequiredStatus="USER_1"
+					ForbiddenStatus="USER_2"/>
+				<BroadcastObjectFilter
+					Rule="ALL"
+					Relationship="ALLIES"
+					Exclude="AIRCRAFT DO_NOT_STEALTH"/>
+			</InvisibilityBroadcastUpdate>
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_DodgeBonusAura"
+				AttributeModifierName="Modifier_StealthDodgeTemporary"
+				Range="=$NOD_STRUCTURE_I_STEALTH_RANGE"
+				PartitionFilterTestType="CIRCLE"
+				InitiallyActive="true"
+				AllowSelf="true"
+				RefreshDelay="=$ATTRIBUTE_MODIFIER_AURA_REFRESH_INTERVAL">
+				<UpdateStatusValidation
+					RequiredStatus="USER_1"
+					ForbiddenStatus="USER_2"/>
+				<ObjectFilter
+					Relationship="ALLIES"
+					Rule="ALL"
+					Exclude="AIRCRAFT DO_NOT_STEALTH" />
+			</AttributeModifierAuraUpdate>
+
+			<!-- Player-Level Stealth Upgrade -->
+			<AttributeModifierUpgrade
+				id="Upgrade_ImprovedStealth"
+				AttributeModifier="Modifier_NODStructureIStealthUpgraded">
+				<TriggeredBy>Upgrade_NODDefenseImprovedStealth</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<InvisibilityBroadcastUpdate
+				id="ModuleTag_InvisibilityBroadcast_Upgraded"
+				InvisibilityTemplate="NODStructureIInvisibilityTemplate"
+				AffectsSelf="true"
+				UpdatePeriod="0.5s"
+				BroadcastRange="=$NOD_STRUCTURE_I_UPGRADEDSTEALTH_RANGE">
+				<ObjectStatusValidation
+					RequiredStatus="USER_1 USER_2"
+					/>
+				<BroadcastObjectFilter
+					Rule="ALL"
+					Relationship="ALLIES"
+					Exclude="AIRCRAFT DO_NOT_STEALTH"/>
+			</InvisibilityBroadcastUpdate>
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_DodgeBonusAuraUpgraded"
+				AttributeModifierName="Modifier_AdvancedStealthDodgeTemporary"
+				Range="=$NOD_STRUCTURE_I_UPGRADEDSTEALTH_RANGE"
+				PartitionFilterTestType="CIRCLE"
+				InitiallyActive="true"
+				AllowSelf="true"
+				RefreshDelay="=$ATTRIBUTE_MODIFIER_AURA_REFRESH_INTERVAL">
+				<UpdateStatusValidation
+					RequiredStatus="USER_1 USER_2"
+					ForbiddenStatus="DISABLED_FOR_RECYCLE" />
+				<ObjectFilter
+					Relationship="ALLIES"
+					Rule="ALL"
+					Exclude="AIRCRAFT DO_NOT_STEALTH" />
+			</AttributeModifierAuraUpdate>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NODStructureI_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIBombExpl"	/>
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosionMS"/>
+			</FXListBehavior>
+
+			<SelectiveVisibilityBehavior
+				id="ModuleTag_SelectiveVisibility"
+				DrawModuleId="ModuleTag_DrawStealthDecal"
+				AllowedPlayers="ALLIES"
+				UpdateRate="0.5s" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500.0" />
+		</Body>
+		<Geometry>
+			<PlacementShape
+				Type="CYLINDER"
+				MajorRadius="60.0"
+				Height="70.0"/>
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "60.0"
+					 MinorRadius = "60.0"
+					 Height = "30.0"
+					 ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="0.0"
+					y="26.97"
+					z="11.63" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-21.34"
+					y="-11.23"
+					z="11.63" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="11.79"
+					y="-12.65"
+					z="39.82" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="21.04"
+					y="-13.99"
+					z="11.63" />
+			</ContactPoint>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "60.0"
+					 MinorRadius = "60.0"
+					 Height = "25.0">
+			</Shape>
+		</Geometry>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ShieldLoop">
+				<ModelConditionSound Sound="NOD_DisruptionTower_StrI_OnLoopMS" RequiredFlags="SPHERE_MODULE_ACTIVE" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="NOD_DisruptionTower_StrI_Deploy1" Animation="NSL_StructureI_BLDA" Frame="25" />
+				<Sound Sound="NOD_DisruptionTower_StrI_Deploy2" Animation="NSL_StructureI_BLDA" Frame="26" />
+				<Sound Sound="NOD_DisruptionTower_StrI_Deploy3_Spin" Animation="NSL_StructureI_BLDA" Frame="30" />
+				<Sound Sound="NOD_DisruptionTower_StrI_EndImpactMS" Animation="NSL_StructureI_BLDA" Frame="53" />
+			</AnimationSoundClientBehavior>				
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_DisruptionTower_StrI_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<!-- <AudioEntry Sound="Fire1_StructureMedium_LoopMS" AudioType="soundAmbientReallyDamaged" /> -->
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureMedium_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_NODDefenseAdvancedShields</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_NODDefenseImprovedStealth</DisplayUpgrade>
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET			-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LogicCommand
+		id="Command_NODStructureIToggleStealth"
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPower_NODStructureIToggleStealth</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo	Heuristic="TOGGLE"/>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="NODStructureICommandSet">
+		<Cmd>Command_NODStructureIToggleStealth</Cmd>
+		<Cmd>Command_NODSellSelf</Cmd>
+	</LogicCommandSet>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    TEMPLATES								-->
+	<!-- ////////////////////////////////////////	-->
+	
+	<SpecialPowerTemplate
+		id="SpecialPower_NODStructureIToggleStealth"
+		TargetType="NONE"
+		ReloadTime="5.0s"
+		Flags="CAN_NOT_BE_SCRAMBLED"
+		WaypointModeTerminal="false" />
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    MODIFIERS AND UPGRADES					-->
+	<!-- ////////////////////////////////////////	-->
+
+	<!-- applied to the structure when player-level upgrade detected -->
+	<AttributeModifier
+		 id="Modifier_NODStructureIStealthUpgraded"
+		 Category="NONE"
+		 ObjectStatusToSet="USER_2"
+		 StartFX="FX_UpgradeNODImprovedConceal"
+		 ModelConditionsSet="USER_2">
+	</AttributeModifier>
+
+	<!-- OCL -->
+	<ObjectCreationList
+		id="NODStructureI_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectOffset	x="0.0"	y="0.0"	z="0.0"	/>
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   EXPERIENCE LEVELS						-->
+	<!-- ////////////////////////////////////////	-->
+
+	<ExperienceLevelTemplate
+		id="ExperienceTemplate_NODStructureI"
+		inheritFrom="ExperienceLevelTemplate_NOD_Rank_01"
+		ExperienceAward="10"
+		BountyValue="10">
+		<Target>NODStructureI</Target>
+		<Decal>
+			<Component
+				Texture="decal_S_level1"
+				Texture2="Decal_Struct_CO"
+				Style="MERGE_DECAL"
+				OpacityMin="80"
+				OpacityMax="100"
+				MinRadius="100"
+				MaxRadius="200">
+			</Component>
+		</Decal>
+	</ExperienceLevelTemplate>
+
+	<UpgradeTemplate id="Upgrade_NODStructureI_Shield_DummyUpgrade"
+		Type="OBJECT"
+	/>
+
+</AssetDeclaration>

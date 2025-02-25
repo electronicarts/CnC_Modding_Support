@@ -1,0 +1,119 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2008 Electronic Arts Inc
+//
+// Scrape script for deferred lighting
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_DEFERRED_LIGHTING_SCRAPEH
+#define SCRAPE_SCRIPT_DEFERRED_LIGHTING_SCRAPEH
+
+#define ENABLE_DEFERRED_LIGHTING_DEBUG
+
+// we re-use the post effect frame buffer texture as the diffuse target, thus we only need to create a
+// target for the specular texture
+// 
+// TODO : (pjb) this could be optimized to share a texture with the post effects frame buffer texture
+//
+var texture DiffuseLightTexture fromscope static DiffuseLightTexture
+var texture SpecularLightTexture fromscope static SpecularLightTexture
+
+#if defined(ENABLE_DEFERRED_LIGHTING_DEBUG)
+	var texture OverdrawTexture fromscope static OverdrawTexture
+	var shader DebugShader Debug.fx
+#endif
+
+#if defined(EA_PLATFORM_WINDOWS)
+	#define SpecularLightTarget SpecularLightTexture
+	#define DiffuseLightTarget DiffuseLightTexture
+	#define OverdrawTarget OverdrawTexture
+#else
+	var surface SpecularLightTarget edram $WW3D.DeferredLighting.BufferSize.x $WW3D.DeferredLighting.BufferSize.y $WW3D.FrameRenderTargetSurfaceFormat
+	var surface DiffuseLightTarget edram $WW3D.DeferredLighting.BufferSize.x $WW3D.DeferredLighting.BufferSize.y $WW3D.FrameRenderTargetSurfaceFormat
+
+	#if defined(ENABLE_DEFERRED_LIGHTING_DEBUG)
+		var surface OverdrawTexture edram $WW3D.DeferredLighting.BufferSize.x $WW3D.DeferredLighting.BufferSize.y A8R8G8B8
+	#endif
+#endif
+
+var shader DeferredLightingShader 	DeferredLighting.fx
+
+proc updateDefferedLighting
+	if WW3D DeferredLighting.IsEnabled
+		beginevent UpdateDeferredLighting
+
+#if defined(EA_PLATFORM_XENON)
+		setgpr 20 108
+#endif
+		settexture WW3D DeferredLighting.NormalSpec NormalSpecTexture
+		settexture WW3D DeferredLighting.DiffuseLightTexture DiffuseLightTexture
+		settexture WW3D DeferredLighting.SpecularLightTexture SpecularLightTexture
+		
+		setdepth DepthBuffer
+		settarget 0 DiffuseLightTarget
+		settarget 1 SpecularLightTarget
+		
+		setclearcolor 0 0 0 0
+		clearcolor
+	
+		setcamera Viewer
+		
+		setshader DeferredLightingShader Directional
+		renderfullquad
+
+		renderDeferredLights
+		
+#if defined(EA_PLATFORM_XENON)
+		resolve DiffuseLightTexture 0 0 HDR_RESOLVE_EXPONENT color0		
+		resolve SpecularLightTexture 0 0 HDR_RESOLVE_EXPONENT color1
+#endif
+		settarget 0 NULL
+		settarget 1 NULL
+		
+		callproc updateDeferredLightingOverdrawBuffer
+				
+		endevent UpdateDeferredLighting
+	endif
+endproc
+
+proc updateDeferredLightingOverdrawBuffer
+#if defined(ENABLE_DEFERRED_LIGHTING_DEBUG)
+	if WW3D DeferredLighting.IsEnabled
+		if WW3D DeferredLighting.RenderOverdraw
+			settarget 0 OverdrawTarget
+			
+			setclearcolor 0 0 0 0
+			clearcolor
+		
+			renderDeferredLightsOverdraw
+			
+		#if defined(EA_PLATFORM_XENON)
+			resolve OverdrawTexture
+		#endif
+			settarget 0 NULL
+		endif
+	endif
+#endif
+endproc
+
+proc renderDeferredLightingDebugInfo2D
+#if defined(ENABLE_DEFERRED_LIGHTING_DEBUG)
+	if WW3D DeferredLighting.IsEnabled
+		renderDefferedLightingDebug2D
+
+		if WW3D DeferredLighting.RenderOverdraw
+			settexture WW3D MiscTexture OverdrawTexture
+			setshader DebugShader DebugOverdrawVisualize
+			renderfullquad
+		endif
+	endif
+#endif
+endproc
+
+proc renderDeferredLightingDebugInfo3D
+#if defined(ENABLE_DEFERRED_LIGHTING_DEBUG)
+	if WW3D DeferredLighting.IsEnabled
+		renderDefferedLightingDebug3D
+	endif
+#endif
+endproc
+
+#endif // SCRAPE_SCRIPT_DEFERRED_LIGHTING_SCRAPEH

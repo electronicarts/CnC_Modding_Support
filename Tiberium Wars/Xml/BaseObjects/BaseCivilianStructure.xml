@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GUGarFlag.w3x" />
+		<Include
+			type="all"
+			source="ART:NUGarFlag.w3x" />
+		<Include
+			type="all"
+			source="ART:AUGarFlag.w3x" />
+		<Include
+			type="all"
+			source="ART:GUGarArmor.w3x" />
+		<Include
+			type="all"
+			source="ART:NUGarArmor.w3x" />
+		<Include
+			type="all"
+			source="ART:AUGarArmor.w3x" />
+		<Include
+				type="all"
+				source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<GameObject
+		id="BaseCivilianStructure"
+		SelectPortrait="Portrait_NeutralGarrisonableStructure"
+		ButtonImage="Portrait_NeutralGarrisonableStructure"
+		CommandSet="GarrisonableNeutralBuildingCommandSet"
+		Side="Civilian"
+		EditorSorting="STRUCTURE"
+		KindOf="SELECTABLE STRUCTURE PRELOAD IMMOBILE CAN_CAST_REFLECTIONS GARRISON COVER KEEP_CLASSIFIED_WHEN_DEAD IGNORE_FOR_VICTORY CIVILIAN_BUILDING NOT_SELLABLE"
+		RadarPriority="STRUCTURE"		
+		>
+		<DisplayName>Name:CivilianBuildingGarrisonable</DisplayName>
+
+
+
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="StructureArmor"
+			DamageFX="GenericStructureDamageFX" />
+
+
+
+
+
+
+
+
+
+		<Behaviors>
+			<ProductionUpdate
+				id="ModuleTag_Production" />
+			<ModelConditionUpgrade
+				id="ModuleTag_GDIFaction"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_NODFaction"
+				AddConditionFlags="USER_2">
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_AlienFaction"
+				AddConditionFlags="USER_3">
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+			<CommandSetUpgrade
+				id="ModuleTag_SwapCommandSet"
+				CommandSet="GarrisonableNeutralFortifiedBuildingCommandSet"
+				Permanent="true">
+				<TriggeredBy>Upgrade_FortifyBuilding</TriggeredBy>
+			</CommandSetUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowForceField"
+				ShowSubObjects="ARMOR"
+				Permanent="true">
+				<TriggeredBy>Upgrade_FortifyBuilding</TriggeredBy>
+			</SubObjectsUpgrade>
+			<AttributeModifierUpgrade
+				id="ModuleTag_AddAttributes"
+				AttributeModifier="FortifiedBuilding_Bonus"
+				Permanent="true">
+				<TriggeredBy>Upgrade_FortifyBuilding</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+
+
+
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_AttributeModifierAura" 
+				InitiallyActive="true"
+				AttributeModifierName="AttributeModifier_Garrisoned"
+				RefreshDelay="0.5s"
+				AllowSelf="false"
+				AffectContainedOnly="true">
+				<ObjectFilter
+					Rule="ALL"
+					Exclude="SURPRISE_ATTACKER"/>
+			</AttributeModifierAuraUpdate>
+
+			<HordeGarrisonContain
+				id="ModuleTag_HordeGarrison"
+				ObjectStatusOfContained="UNSELECTABLE CAN_ATTACK"
+				ContainMax="3"
+				EnterSound="GenericBuilding_Garrison"
+				ExitSound="GenericBuilding_Ungarrison"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="false"
+				AllowNeutralInside="true"
+				AllowOwnPlayerInsideOverride="true"
+				ShowPips="true"
+				KillPassengersOnDeath="false">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY">
+					<ExcludeThing>GDIZoneTrooperSquad</ExcludeThing>
+					<ExcludeThing>AlienShockTrooperSquad</ExcludeThing>
+					<ExcludeThing>AlienRazorDroneSquad</ExcludeThing>
+				</PassengerFilter>
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="BONEGARRISON">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</PassengerData>
+				<MemberTemplateStatusInfo
+					ThingTemplate="GDISniperSquad"
+					ObjectStatus="CAN_SPOT_FOR_BOMBARD" />
+				<ExitOffset
+					y="-80" />
+			</HordeGarrisonContain>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_ScorchMedium" />
+			</FXListBehavior>
+
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />
+
+			<!-- Garrisoned units with the STEALTH_GARRISON kindof are invisible when they are inside a building, this InvisibilityUpdate is the module that contols it. -->
+			<InvisibilityUpdate
+				id="ModuleTag_Invisibility"
+				UpdatePeriod="0.5s" >
+				<InvisibilityNugget />
+			</InvisibilityUpdate>
+
+		</Behaviors>
+
+		<Body>
+			<ActiveBody
+				id="DefaultBody" />
+		</Body>
+		<AudioArrayVoice>
+			<AudioEntry Sound="GenericBuilding_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+		<ShadowInfo
+			Type="VOLUME" />
+
+		<VisionInfo
+			VisionRange="600"
+			ShroudClearingRange="600" />
+
+	</GameObject>
+
+</AssetDeclaration>

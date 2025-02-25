@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" xmlns:balance="uri:ea.com:eala:balance" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!--	Filter - Defines what objects are able to receive the scalar.
+				Scalar - The amount the damage is scaled if applied to victim.
+	-->
+	<xs:complexType name="ScalarInfo">
+		<xs:sequence>
+			<xs:element name="Filter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+			<xs:element name="RequiredUpgrade" type="UpgradeTemplateWeakRef" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="Scalar" type="Percentage" default="100%" />
+	</xs:complexType>
+
+	<xs:complexType name="TargetHealthScalarInfo">
+		<xs:complexContent>
+			<xs:extension base="ScalarInfo">
+				<xs:sequence></xs:sequence>
+				<xs:attribute name="RequiredTargetHealth" type="Percentage" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="DamageNuggetType">
+		<xs:complexContent>
+			<xs:extension base="WeaponEffectNugget">
+				<xs:sequence>
+					<xs:element name="DamageScalarDetails" type="ScalarInfo" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="TargetHealthScalarDetails" type="TargetHealthScalarInfo" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Damage" balance:field="Damage" type="SageReal" default="0" balance:snapshot="true"/>
+				<xs:attribute name="DamageTaperOff" type="SageReal" default="-1.0"/>
+				<xs:attribute name="MinRadius" type="SageReal" default="0.0"/>
+				<xs:attribute name="DamageArc" type="Angle" default="360d" />
+				<xs:attribute name="DamageArcInverted" type="SageBool" default="false"/>
+				<xs:attribute name="DamageMaxHeight" type="SageReal" default="-1"/>
+				<xs:attribute name="DamageMaxHeightAboveTerrain" type="SageReal" default="-1"/>
+				<xs:attribute name="AcceptDamageAdd" type="SageBool" default="true"/>
+				<xs:attribute name="FlankingBonus" type="SageReal" default="0"/>
+				<xs:attribute name="FlankedScalar" type="SageReal" default="1"/>
+				<xs:attribute name="DelayTimeSeconds" balance:field="DelayTimeSeconds" type="Time" default="0s"/>
+				<xs:attribute name="DamageType" balance:field="DamageType" type="DamageType" default="UNDEFINED"/>
+				<xs:attribute name="DeathType" balance:field="DeathType" type="DeathType" default="NORMAL"/>
+				<xs:attribute name="DamageFXType" type="DamageFXType" default="UNDEFINED"/>
+				<xs:attribute name="DamageSubType" type="DamageSubType" default="NORMAL"/>
+				<xs:attribute name="OnlyKillOwnerWhenTriggered" type="SageBool" default="false" />
+				<xs:attribute name="DrainLifeMultiplier" type="SageReal" default="1"/>
+				<xs:attribute name="DrainLife" type="SageBool" default="false"/>
+				<xs:attribute name="DamageSpeed" type="SageReal" default="0"/>
+				<xs:attribute name="UnderAttackOverrideEvaEvent" type="EvaEventRef" default=""/>
+				<xs:attribute name="VictimShroudRevealer" type="GameObjectRef"/>
+				<xs:attribute name="NotifyOwnerOnVictimDeath" type="SageBool" default="false" />
+				<!-- [Currently] for use with the SecondaryObjectListener -->
+				<xs:attribute name="NotifyObserversOnPreDamageEffectPosition" type="SageBool" default="false" />
+				<!-- [Currently] for use with the GlobaalWeaponObserver -->
+				<xs:attribute name="ForceFXPositionToVictim" type="SageBool" default="false" />
+				<!-- if an object is affected by a weapon with radius, and doesn't have a detail position, use the target position to play FX at. -->
+				<xs:attribute name="RadiusAffectsBridges" type="SageBool" default="false" />
+				<xs:attribute name="InvalidTargetStatus" type="ObjectStatusBitFlags" default="INSIDE_GARRISON UNATTACKABLE UNDER_IRON_CURTAIN" />
+				<xs:attribute name="ForceKill" type="SageBool" default="false" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

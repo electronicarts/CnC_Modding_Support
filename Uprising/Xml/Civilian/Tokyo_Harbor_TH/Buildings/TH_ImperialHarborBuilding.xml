@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+		<Include type="all"	source="ART:TH_ImperialHarborBuilding.W3X" />
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="instance" source="DATA:Civilian/Tokyo_Harbor_TH/Props/TH_ImperialHarborBuilding_Collapse.xml" />
+    
+    <Include type="instance" source="DATA:Japan/Units_SinglePlayerCampaign/J04_ImperialHarborRepairDrone.xml" />
+  </Includes>
+
+	<GameObject
+		id="TH_ImperialHarborBuilding"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		EditorName="TH_ImperialHarborBuilding"	
+		CommandSet="JapanNavalYardCommandSet" 
+		KindOf="-CIVILIAN_BUILDING +CAN_BUILD_ON_WATER +CAN_BUILD_ON_DEEP_WATER"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorSorting="STRUCTURE"
+		Browser="REGION Tokyo_Harbor_TH STRUCTURE"
+		SelectPortrait="Portrait_JapanHarborBuilding"
+		ButtonImage="Button_JapanHarborBuilding"
+		TypeDescription="TYPE:ImperialHarborBuilding"
+		Description="DESC:ImperialHarborBuilding">
+		<DisplayName xai:joinAction="Replace">Name:ImperialHarborBuilding</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18 BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TH_ImperialHarborBuilding" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="FX_BuildingDebrisExplosion"
+					CreationObject="YU_HotelDebris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_XLarge" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="TH_ImperialHarborBuilding_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>	
+			
+			<!-- civ buildings should have a CreateObjectDie to make a collapse version. -->
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+      <!-- This structure needs to be repairable via engineers and the repair tool -->
+      <xi:include href="DATA:Includes/GenericBuildingRepair.xml" />
+      <xi:include href="DATA:Includes/GenericEngineerContain.xml" />
+
+      <AssignSlavesTargetObjectSpecialPower
+        id="ModuleTag_SpecialPowerRepairVehicle"
+        SpecialPowerTemplate="SpecialPower_TargetedRepairVehicle" />
+      <SpawnBehavior
+				id="ModuleTag_SpawnRepairDrones"
+				SpawnNumberData="5"
+				InitialBurst="5"
+				SpawnReplaceDelayData="10s"
+				SpawnedRequireSpawner="true"
+				KillSpawnsOnCaptured="true"
+				SpawnInsideBuilding="true"
+				KillSpawnsOnDisabled="true">
+        <Die
+					DeathTypes="ALL" />
+        <SpawnTemplate>J04_ImperialHarborRepairDrone</SpawnTemplate>
+      </SpawnBehavior>
+      
+      <ProductionUpdate
+        id="ModuleTag_ProductionUpdate"
+        GiveNoXP="true"
+        Type="WATERCRAFT"
+        NumDoorAnimations="1"
+        DoorOpeningTime="0.66s"
+        DoorWaitOpenTime="3.00s"
+        DoorCloseTime="0.66s">
+        <GiveUpgradeToProduced>
+          <UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_VETERAN"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_VETERAN" />
+          <UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_ELITE"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_ELITE" />
+          <UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_HEROIC"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_HEROIC" />
+        </GiveUpgradeToProduced>
+      </ProductionUpdate>
+      <QueueProductionExitUpdate
+				id="ModuleTag_QueueProduction"
+				ExitDelaySeconds="0.07s">
+        <UnitCreatePoint
+					x="0.0"
+					y="0.0"
+					z="0.0" />
+        <NaturalRallyPoint
+					x="90.0"
+					y="0.0"
+					z="0.0" />
+      </QueueProductionExitUpdate>
+
+      <SubObjectsUpgrade
+        id="ModuleTag_SubObjectsUpgrade">
+        <TriggeredBy>Upgrade_JapanNavalYardTech2</TriggeredBy>
+        <Nugget
+					ShowSubObjects="Upgrade_02"
+					HideSubObjects="Upgrade_01 Upgrade_03"
+					Upgrade="Upgrade_JapanNavalYardTech2">
+          <CustomAnimAndDuration AnimState="USER_2"/>
+        </Nugget>
+      </SubObjectsUpgrade>
+      <SubObjectsUpgrade
+				id="ModuleTag_SubObjectsUpgrade2">
+        <TriggeredBy>Upgrade_JapanNavalYardTech3</TriggeredBy>
+        <Nugget
+					ShowSubObjects="Upgrade_03"
+					HideSubObjects="Upgrade_01 Upgrade_02"
+					Upgrade="Upgrade_JapanNavalYardTech3">
+          <CustomAnimAndDuration AnimState="USER_3"/>
+        </Nugget>
+      </SubObjectsUpgrade>
+
+      <AttributeModifierUpgrade
+        id="ModuleTag_BuildFast"
+        AttributeModifier="AttributeModifier_RedAlert_Affect">
+        <TriggeredBy>Upgrade_JapanNavalYardTech3</TriggeredBy>
+      </AttributeModifierUpgrade>
+
+    </Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="7500"
+				/>
+		</Body>
+
+    <EvaEventArray>
+      <EvaEntry EvaEvent="CriticalStructureUnderAttack" EvaType="damagedAlly" />
+    </EvaEventArray>
+    
+		<Geometry
+			IsSmall="false">
+<Shape 
+     Type= "BOX"
+     MajorRadius = "58.9922"
+     MinorRadius = "118.276"
+     Height = "126.948"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "-51.9728"
+        y = "-48.2972"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "116.232"
+     MinorRadius = "51.6912"
+     Height = "145.508"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "7.01944"
+        y = "101.812"
+        z = "0.0" />
+</Shape>
+<Shape 
+     Type= "BOX"
+     MajorRadius = "45.2663"
+     MinorRadius = "63.0808"
+     Height = "145.084"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "78.5694"
+        y = "20.9164"
+        z = "0.0" />
+</Shape>
+<!-- Special geometry to fix L shaped structure issue -->
+<Shape 
+     Type= "BOX"
+     MajorRadius = "60"
+     MinorRadius = "60"
+     Height = "50" >
+    <Offset
+        x = "60"
+        y = "-60"
+        z = "0.0" />
+</Shape>
+
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+
+	<ObjectCreationList
+		id="TH_ImperialHarborBuilding_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>TH_ImperialHarborBuilding_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>	
+</AssetDeclaration>

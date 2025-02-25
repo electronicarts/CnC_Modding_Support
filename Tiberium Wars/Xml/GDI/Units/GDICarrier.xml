@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GUCarrier.w3x" />
+		<Include
+			type="all"
+			source="ART:GUCarrier_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:GUCarrier_D3.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="GDICarrier"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_GDICarrier"
+		ButtonImage="Portrait_GDICarrier"
+		Side="GDI"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildCost="400"
+		BuildTime="4"
+		CommandSet="EmptyCommandSet"
+		KindOf="PRELOAD SELECTABLE STRUCTURE CAN_ATTACK ATTACK_NEEDS_LINE_OF_SIGHT CAN_CAST_REFLECTIONS SCORE TRANSPORT VEHICLE NOT_AUTOACQUIRABLE"
+		RadarPriority="UNIT"
+		ThreatLevel="10"
+		ProductionQueueType="VEHICLE"
+		VoicePriority="52"
+		EditorName="GDICarrier">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:GDSPathe</DisplayName>
+		<ArmorSet
+			id="ModuleTag_ArmorSet"
+			Armor="GDIGuardianAPCArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			Locomotor="LargeShipLocomotor"
+			Condition="NORMAL"
+			Speed="20" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="Runway0Park0Han Runway0Park1Han Runway1Park0Han Runway1Park1Han">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUCarrier" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GUCarrier_D3" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="GDIC_Water"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUCarrier_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUCarrier" />
+					<Texture
+						Original="GUCarrier"
+						New="GUCarrierD" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="GUCarrier"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GUCarrier_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GUCarrier_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GUCarrier_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+						
+					<ParticleSysBone
+						BoneName="Bone_D2005"
+						FXParticleSystemTemplate="GDIDebrisSmallFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_D2005"
+						FXParticleSystemTemplate="GDIDebrisSmallFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_D2005"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_D2001"
+						FXParticleSystemTemplate="GDIDebrisSmallFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_D2001"
+						FXParticleSystemTemplate="GDIDebrisSmallFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Bone_D2001"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+						
+					<FXEvent
+						Frame="18"
+						FireWhenSkipped="true"
+						Effect="FX_NodCraneWater"
+						Bone="Bone_D2008" />
+					<FXEvent
+						Frame="21"
+						FireWhenSkipped="true"
+						Effect="FX_NodCraneWater"
+						Bone="Bone_D2002" />
+					<FXEvent
+						Frame="46"
+						FireWhenSkipped="true"
+						Effect="FX_NodCraneWater"
+						Bone="Bone_D2007" />
+					<FXEvent
+						Frame="48"
+						FireWhenSkipped="true"
+						Effect="FX_NodCraneWater"
+						Bone="Bone_D2004" />
+					<FXEvent
+						Frame="36"
+						FireWhenSkipped="true"
+						Effect="FX_NodCraneWater"
+						Bone="Bone_D2010" />	
+					<FXEvent
+						Frame="15"
+						FireWhenSkipped="true"
+						Effect="FX_NodCraneWater"
+						Bone="Bone_D2008" />
+					
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIBattleshipExplode"
+						Bone="Bone_D2007" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIBattleshipExplode"
+						Bone="Bone_D2006" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIBattleshipExplode"
+						Bone="Bone_D2010" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDIBattleshipExplode"
+						Bone="Bone_D2008" />
+				
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GUCarrier_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="GDIBS_Water"
+						FollowBone="true" />
+				</AnimationState>
+				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_04" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="8s">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Sound
+					Type="INITIAL"
+					List="NOD_Battleship_DieMS" />
+			</SlowDeath>
+			<DestroyDie
+				id="ModuleTag_12">
+				<DieMuxData
+					DeathTypes="NONE CRUSHED SPLATTED" />
+			</DestroyDie>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_02"
+				MaxHealth="650.0" />
+		</Body>
+		<Geometry>			
+			<Shape
+				Type="BOX"
+				MajorRadius="271.951"
+				MinorRadius="68.5591"
+				Height="63.9885">
+				<Offset
+					x="-70.8215"
+					y="-5.42836"
+					z="0.0" />
+			</Shape>			
+			<Shape
+				Type="BOX"
+				MajorRadius="63.9885"
+				MinorRadius="21.7104"
+				Height="38.8502">
+				<Offset
+					x="267.403"
+					y="-2.00041"
+					z="0.0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="38.7588"
+				MinorRadius="21.7104"
+				Height="38.8502">
+				<Offset
+					x="-265.849"
+					y="0.0"
+					z="59.593" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-326.22"
+					y="-50.305"
+					z="25.4509" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="187.613"
+					y="-50.305"
+					z="51.3737" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="187.613"
+					y="49.695"
+					z="25.4509" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-326.22"
+					y="49.695"
+					z="51.3737" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-326.22"
+					y="-50.305"
+					z="51.3737" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="187.613"
+					y="-50.305"
+					z="25.4509" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="187.613"
+					y="49.695"
+					z="51.3737" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-326.22"
+					y="49.695"
+					z="25.4509" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry EvaEvent="BuildingStolen" AudioType="voiceDefectingAway" />
+			<AudioEntry EvaEvent="EnemyBuildingCaptured" AudioType="voiceDefectingTowards" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_BuildingPlaced" AudioType="soundUnderConstruction" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+		<EvaEvents
+			EvaEventDamagedOwner="StructureUnderAttack" 	
+			EvaEventRepairingOwner="StructureRepairing" />
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="320" />
+		<CrusherInfo
+			CrusherLevel="2"
+			CrushableLevel="2" />
+	</GameObject>
+</AssetDeclaration>

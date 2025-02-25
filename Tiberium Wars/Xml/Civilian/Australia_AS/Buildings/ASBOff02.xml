@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructure.xml" />
+		<Include type="all"	source="ART:ASBOff02.W3X" />
+		<Include type="all"	source="ART:ASBOff02_D1.w3x" />
+		<Include type="all"	source="ART:ASBOff02_D2.w3x" />
+		<Include type="all"	source="ART:ASBOff02_D3.w3x" />			
+	</Includes>
+	<GameObject
+		id="Australian_Office_Building_02"
+		inheritFrom="BaseCivilianStructure"
+		EditorName="Australian_Office_Building_02"	
+    		EditorSorting="STRUCTURE"
+		Browser="REGION Australia_AS STRUCTURE">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false"
+				AffectedByStealth="false"
+				ExtraPublicBone="BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ASBOff02" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="ASBOff02_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ASBOff02_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ASBOff02_D1" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ASBOff02_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+            end
+          </Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ASBOff02_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED"
+					StateName="STATE_Damaged"
+					Flags="START_FRAME_LAST">
+          <Animation
+						AnimationName="ASBOff02_D1"
+						AnimationMode="MANUAL" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_Damaged" and Prev ~= "TRANS_IntoDamaged" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoDamaged")
+            end
+          </Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoDamaged">
+					<Animation
+						AnimationName="ASBOff02_D1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="ASBOff02_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="ASBOff02_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="false" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="false" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			
+			<xi:include
+				href="DATA:Includes/GarrisonFlagArmorDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonArmorDraws/child::*)" />		
+			
+		</Draws>
+		<Behaviors>
+		<!--
+			<StructureCollapseUpdate
+				id="ModuleTag_Collapse"
+				MinCollapseDelay="0"
+				MaxCollapseDelay="0"
+				CollapseDamping="0.5"
+				MaxShudder="0.6"
+				MinBurstDelay="250"
+				MaxBurstDelay="800"
+				BigBurstFrequency="4"
+				DestroyObjectWhenDone="true"
+				CollapseHeight="155" />
+		-->
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModulTag_AIForLua"
+				AILuaEventsList="NeutralGarrisonableBuildingFunctions" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_LARGE"
+				/>
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "14.3298"
+				MinorRadius = "27.1983"
+				Height = "123.699"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "37.0109"
+				MinorRadius = "39.7707"
+				Height = "25.22"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "-37.5491"
+					y = "59.2888"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "37.2759"
+				MinorRadius = "13.1916"
+				Height = "125.29"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "24.6867"
+				MinorRadius = "38.1538"
+				Height = "70.5784"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "-37.9538"
+					y = "62.7257"
+					z = "0.245907" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "22.0359"
+				MinorRadius = "60.1501"
+				Height = "3.01576"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "-36.748"
+					y = "58.2416"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "29.2447"
+				MinorRadius = "47.1105"
+				Height = "4.63938"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "-40.5275"
+					y = "58.7453"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "43.3782"
+				MinorRadius = "34.628"
+				Height = "2.87965"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "-36.9222"
+					y = "58.969"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "9.87803"
+				MinorRadius = "6.67209"
+				Height = "72.4165"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "-38.3873"
+					y = "108.908"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "25.3582"
+				MinorRadius = "20.7638"
+				Height = "123.699"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "9.87803"
+				MinorRadius = "6.67209"
+				Height = "24.6216"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "-38.3873"
+					y = "118.187"
+					z = "4.05595e-007" />
+			</Shape>			
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+</AssetDeclaration>

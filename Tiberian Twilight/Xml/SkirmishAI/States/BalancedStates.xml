@@ -1,0 +1,2450 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Tags></Tags>
+  <Includes></Includes>
+	<Defines />
+
+	<AICheatStateDefinition
+		 id="EasySkirmishAICheats">
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic"	Weight="1.0" />
+		</Heuristic>
+		<Cheat CheatType="ResourceMultiplier" Percentage="90%" />
+		<Cheat CheatType="ThreatMultiplier" Percentage="75%" />
+	</AICheatStateDefinition>
+
+	<AICheatStateDefinition
+		id="HardSkirmishAICheats_Tier1">
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic"	Weight="1.0" />
+			<Not id="Tag_NotTechUpgradeHeuristic">
+				<Heuristic>
+					<PlayerLevelUpgradeHeuristic>
+						<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+						<UpgradeToVerify>Upgrade_Tech_Up_Rank2</UpgradeToVerify>
+					</PlayerLevelUpgradeHeuristic>
+				</Heuristic>
+			</Not>
+		</Heuristic>
+		<Cheat CheatType="ResourceMultiplier" Percentage="120%" />
+		<Cheat CheatType="ThreatMultiplier" Percentage="150%" />
+		<Cheat CheatType="BuildTimeMultiplier" Percentage="85%" />
+	</AICheatStateDefinition>
+
+	<AICheatStateDefinition
+		id="HardSkirmishAICheats_Tier2">
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic"	Weight="1.0" />
+			<PlayerLevelUpgradeHeuristic>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+			</PlayerLevelUpgradeHeuristic>
+			<Not id="Tag_NotTechUpgradeHeuristic">
+				<Heuristic>
+					<PlayerLevelUpgradeHeuristic>
+						<UpgradeToVerify>Upgrade_Tech_Up_Rank2</UpgradeToVerify>
+					</PlayerLevelUpgradeHeuristic>
+				</Heuristic>
+			</Not>
+		</Heuristic>
+		<Cheat CheatType="ThreatMultiplier" Percentage="150%" />
+		<Cheat CheatType="BuildTimeMultiplier" Percentage="85%" />
+	</AICheatStateDefinition>
+
+
+	<AICheatStateDefinition
+		id="HardSkirmishAICheats_Tier3">
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic"	Weight="1.0" />
+			<PlayerLevelUpgradeHeuristic>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank2</UpgradeToVerify>
+			</PlayerLevelUpgradeHeuristic>
+		</Heuristic>
+		<Cheat CheatType="ThreatMultiplier" Percentage="150%" />
+		<Cheat CheatType="BuildTimeMultiplier" Percentage="90%" />
+	</AICheatStateDefinition>
+	
+	<AICheatStateDefinition
+		 id="BrutalSkirmishAICheats">
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic"	Weight="1.0" />
+		</Heuristic>
+		<Cheat CheatType="ResourceMultiplier" Percentage="150%" />
+		<Cheat CheatType="ThreatMultiplier" Percentage="200%" />
+		<Cheat CheatType="BuildTimeMultiplier" Percentage="60%" />
+	</AICheatStateDefinition>
+
+	<!-- Picks up tiberium crystals for upgrades -->
+	<AIStrategicStateDefinition
+		id="BaseUpgradeCrystalController"
+		MaxTargets="1"
+		MaxInactiveCopies="1">
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic" Weight="1.0"/>
+			<Not id="Tag_NotTechUpgradeHeuristic">
+				<Heuristic>
+					<PlayerLevelUpgradeHeuristic>
+						<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+						<UpgradeToVerify>Upgrade_Tech_Up_Rank2</UpgradeToVerify>
+					</PlayerLevelUpgradeHeuristic>
+				</Heuristic>
+			</Not>
+		</Heuristic>
+		<TargetHeuristic id="UndefendedSuperUpgradeCrystal" TargetHeuristic="UndefendedSuperUpgradeCrystal" Priority="20"/>
+		<TargetHeuristic id="UndefendedUpgradeCrystal" TargetHeuristic="UndefendedUpgradeCrystal" Priority="15"/>
+		<TargetHeuristic id="SuperUpgradeCrystal" TargetHeuristic="SuperUpgradeCrystal" Priority="10"/>
+		<TargetHeuristic id="UpgradeCrystal" TargetHeuristic="UpgradeCrystal" Priority="5"/>
+		<!-- Since this also hunts enemies, trying to avoid them is probably not really a good idea -->
+		<Tactic
+			id="Tag_Tactic"
+			Tactic="Retrieval"
+			CountForFrontLines="false"
+			UseTeamMoveAvoidance="false">
+			<TeamTemplate id="Tag_TeamTemplate"
+										MinUnits="1" MaxUnits="1" AlwaysRecruit="true" MinPowerAdvantage="0.1"
+										ExcludeKindOf="AIRCRAFT"
+										SortByDistance="true"
+										RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+										Priority="COOP" ReleaseType="NEVER_RELEASE"
+										AllowRecruitUnitsInCombat="true">
+				<MicroManager 
+					id="Tag_MicroManager" 
+					MicroManager="CrystalCollectionMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="BaseUpgradeCrystalController_MEDIUM"
+		inheritFrom="BaseUpgradeCrystalController">
+		<TargetHeuristic id="UndefendedSuperUpgradeCrystal" TargetHeuristic="UndefendedSuperUpgradeCrystal_Hesitant" Priority="20"/>
+		<TargetHeuristic id="UndefendedUpgradeCrystal" TargetHeuristic="UndefendedUpgradeCrystal_Hesitant" Priority="15"/>
+		<TargetHeuristic id="SuperUpgradeCrystal" TargetHeuristic="SuperUpgradeCrystal_Hesitant" Priority="10"/>
+		<TargetHeuristic id="UpgradeCrystal" TargetHeuristic="UpgradeCrystal_Hesitant" Priority="5"/>
+		<Tactic
+			id="Tag_Tactic"
+			Tactic="Retrieval"
+			CountForFrontLines="false"
+			UseTeamMoveAvoidance="false">
+			<TeamTemplate id="Tag_TeamTemplate"
+										MinUnits="1" MaxUnits="1" AlwaysRecruit="true" MinPowerAdvantage="0.2"
+										ExcludeKindOf="AIRCRAFT"
+										SortByDistance="true"
+										RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+										Priority="COOP" ReleaseType="NEVER_RELEASE"
+										AllowRecruitUnitsInCombat="true">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="CrystalCollectionMicroManager_MEDIUM" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="BaseUpgradeCrystalController_EASY"
+		inheritFrom="BaseUpgradeCrystalController">
+		<TargetHeuristic id="UndefendedSuperUpgradeCrystal" TargetHeuristic="UndefendedSuperUpgradeCrystal_Slow" Priority="20"/>
+		<TargetHeuristic id="UndefendedUpgradeCrystal" TargetHeuristic="UndefendedUpgradeCrystal_Slow" Priority="15"/>
+		<TargetHeuristic id="SuperUpgradeCrystal" xai:joinAction="Remove"/>
+		<TargetHeuristic id="UpgradeCrystal" xai:joinAction="Remove"/>
+		<Tactic
+			id="Tag_Tactic"
+			Tactic="Retrieval"
+			CountForFrontLines="false"
+			UseTeamMoveAvoidance="false">
+			<TeamTemplate id="Tag_TeamTemplate"
+										MinUnits="1" MaxUnits="1" AlwaysRecruit="true" MinPowerAdvantage="0.5"
+										ExcludeKindOf="AIRCRAFT"
+										SortByDistance="true"
+										RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+										Priority="COOP" ReleaseType="NEVER_RELEASE"
+										AllowRecruitUnitsInCombat="true">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="CrystalCollectionMicroManager_EASY" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalController_Offense"
+		inheritFrom="BaseUpgradeCrystalController">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="HEAVY" />
+			<PlayerClassHeuristic id="AlliesPlayerClass" Relation="ALLIES" PlayerClasses="HEAVY" minOccurs="3" />
+		</Heuristic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalController_Offense_MEDIUM"
+		inheritFrom="BaseUpgradeCrystalController_MEDIUM">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="HEAVY" />
+			<PlayerClassHeuristic id="AlliesPlayerClass" Relation="ALLIES" PlayerClasses="HEAVY" minOccurs="3" />
+		</Heuristic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalController_Offense_EASY"
+		inheritFrom="BaseUpgradeCrystalController_EASY">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="HEAVY" />
+			<PlayerClassHeuristic id="AlliesPlayerClass" Relation="ALLIES" PlayerClasses="HEAVY" minOccurs="3" />
+		</Heuristic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalController_Support"
+		inheritFrom="BaseUpgradeCrystalController">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="SUPPORT" />
+		</Heuristic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalController_Support_MEDIUM"
+		inheritFrom="BaseUpgradeCrystalController_MEDIUM">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="SUPPORT" />
+		</Heuristic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalController_Support_EASY"
+		inheritFrom="BaseUpgradeCrystalController_EASY">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="SUPPORT" />
+		</Heuristic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalController_Offense_MultipleCopies"
+		inheritFrom="UpgradeCrystalController_Offense" 
+		MaxTargets="2"
+		MaxInactiveCopies="2">
+		<Heuristic>
+				<PlayerClassHeuristic id="AlliesPlayerClass" Relation="ALLIES" PlayerClasses="HEAVY" minOccurs="0" maxOccurs="2" />			
+		</Heuristic>
+		<TargetHeuristic id="UndefendedSuperUpgradeCrystal" TargetHeuristic="UndefendedSuperUpgradeCrystal_UniqueTarget" Priority="20"/>
+		<TargetHeuristic id="UndefendedUpgradeCrystal" TargetHeuristic="UndefendedUpgradeCrystal_UniqueTarget" Priority="15"/>
+		<TargetHeuristic id="SuperUpgradeCrystal" TargetHeuristic="SuperUpgradeCrystal_UniqueTarget" Priority="10"/>
+		<TargetHeuristic id="UpgradeCrystal" TargetHeuristic="UpgradeCrystal_UniqueTarget" Priority="5"/>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalController_Offense_MultipleCopies_MEDIUM"
+		inheritFrom="BaseUpgradeCrystalController_MEDIUM">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="HEAVY" />
+			<PlayerClassHeuristic id="AlliesPlayerClass" Relation="ALLIES" PlayerClasses="HEAVY" minOccurs="0" maxOccurs="2" />
+		</Heuristic>
+		<TargetHeuristic id="UndefendedSuperUpgradeCrystal" TargetHeuristic="UndefendedSuperUpgradeCrystal_UniqueTarget_Hesitant" Priority="20"/>
+		<TargetHeuristic id="UndefendedUpgradeCrystal" TargetHeuristic="UndefendedUpgradeCrystal_UniqueTarget_Hesitant" Priority="15"/>
+		<TargetHeuristic id="SuperUpgradeCrystal" TargetHeuristic="SuperUpgradeCrystal_UniqueTarget_Hesitant" Priority="10"/>
+		<TargetHeuristic id="UpgradeCrystal" TargetHeuristic="UpgradeCrystal_UniqueTarget_Hesitant" Priority="5"/>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalController_Offense_MultipleCopies_EASY"
+		inheritFrom="BaseUpgradeCrystalController_EASY">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="HEAVY" />
+			<PlayerClassHeuristic id="AlliesPlayerClass" Relation="ALLIES" PlayerClasses="HEAVY" minOccurs="0" maxOccurs="2" />
+		</Heuristic>
+		<TargetHeuristic id="UndefendedSuperUpgradeCrystal" TargetHeuristic="UndefendedSuperUpgradeCrystal_UniqueTarget_Slow" Priority="20"/>
+		<TargetHeuristic id="UndefendedUpgradeCrystal" TargetHeuristic="UndefendedUpgradeCrystal_UniqueTarget_Slow" Priority="15"/>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="BaseUpgradeCrystalControllerHighTech"
+		inheritFrom="BaseUpgradeCrystalController" >
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic" Weight="0.2"/>
+			<Not id="Tag_NotTechUpgradeHeuristic" xai:joinAction="Remove"/>
+			<PlayerLevelUpgradeHeuristic>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank2</UpgradeToVerify>
+			</PlayerLevelUpgradeHeuristic>
+		</Heuristic>
+		<Tactic	id="Tag_Tactic">
+			<TeamTemplate id="Tag_TeamTemplate"	AlwaysRecruit="false" />
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="BaseUpgradeCrystalControllerHighTech_MEDIUM"
+		inheritFrom="BaseUpgradeCrystalController_MEDIUM" >
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic" Weight="0.2"/>
+			<Not id="Tag_NotTechUpgradeHeuristic" xai:joinAction="Remove"/>
+			<PlayerLevelUpgradeHeuristic>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank2</UpgradeToVerify>
+			</PlayerLevelUpgradeHeuristic>
+		</Heuristic>
+		<Tactic	id="Tag_Tactic">
+			<TeamTemplate id="Tag_TeamTemplate"	AlwaysRecruit="false" />
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="BaseUpgradeCrystalControllerHighTech_EASY"
+		inheritFrom="BaseUpgradeCrystalController_EASY" >
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic" Weight="0.2"/>
+			<Not id="Tag_NotTechUpgradeHeuristic" xai:joinAction="Remove"/>
+			<PlayerLevelUpgradeHeuristic>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank2</UpgradeToVerify>
+			</PlayerLevelUpgradeHeuristic>
+		</Heuristic>
+		<Tactic	id="Tag_Tactic">
+			<TeamTemplate id="Tag_TeamTemplate"	AlwaysRecruit="false" />
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalControllerHighTech_Offense"
+		inheritFrom="BaseUpgradeCrystalControllerHighTech">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="HEAVY" />
+			<PlayerClassHeuristic id="AlliesPlayerClass" Relation="ALLIES" PlayerClasses="HEAVY" minOccurs="3" />
+		</Heuristic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalControllerHighTech_Offense_MEDIUM"
+		inheritFrom="BaseUpgradeCrystalControllerHighTech_MEDIUM">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="HEAVY" />
+			<PlayerClassHeuristic id="AlliesPlayerClass" Relation="ALLIES" PlayerClasses="HEAVY" minOccurs="3" />
+		</Heuristic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalControllerHighTech_Offense_EASY"
+		inheritFrom="BaseUpgradeCrystalControllerHighTech_EASY">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="HEAVY" />
+			<PlayerClassHeuristic id="AlliesPlayerClass" Relation="ALLIES" PlayerClasses="HEAVY" minOccurs="3" />
+		</Heuristic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalControllerHighTech_Support"
+		inheritFrom="BaseUpgradeCrystalControllerHighTech">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="SUPPORT" />
+		</Heuristic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalControllerHighTech_Support_MEDIUM"
+		inheritFrom="BaseUpgradeCrystalControllerHighTech_MEDIUM">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="SUPPORT" />
+		</Heuristic>	
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalControllerHighTech_Support_EASY"
+		inheritFrom="BaseUpgradeCrystalControllerHighTech_EASY">
+		<Heuristic>
+			<PlayerClassHeuristic PlayerClasses="SUPPORT" />
+		</Heuristic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalControllerHighTech_Offense_MultipleCopies"
+		inheritFrom="UpgradeCrystalController_Offense_MultipleCopies">
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic" Weight="0.2"/>
+			<Not id="Tag_NotTechUpgradeHeuristic" xai:joinAction="Remove"/>
+			<PlayerLevelUpgradeHeuristic>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank2</UpgradeToVerify>
+			</PlayerLevelUpgradeHeuristic>
+		</Heuristic>
+		<Tactic
+			id="Tag_Tactic">
+			<TeamTemplate id="Tag_TeamTemplate"
+										AlwaysRecruit="false" />
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+	id="UpgradeCrystalControllerHighTech_Offense_MultipleCopies_Medium"
+	inheritFrom="UpgradeCrystalController_Offense_MultipleCopies_MEDIUM">
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic" Weight="0.2"/>
+			<Not id="Tag_NotTechUpgradeHeuristic" xai:joinAction="Remove"/>
+			<PlayerLevelUpgradeHeuristic>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank2</UpgradeToVerify>
+			</PlayerLevelUpgradeHeuristic>
+		</Heuristic>
+		<Tactic
+			id="Tag_Tactic">
+			<TeamTemplate id="Tag_TeamTemplate"
+										AlwaysRecruit="false" />
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="UpgradeCrystalControllerHighTech_Offense_MultipleCopies_EASY"
+		inheritFrom="UpgradeCrystalController_Offense_MultipleCopies_EASY">
+		<Heuristic>
+			<ConstantHeuristic id="ConstantHeuristic" Weight="0.2"/>
+			<Not id="Tag_NotTechUpgradeHeuristic" xai:joinAction="Remove"/>
+			<PlayerLevelUpgradeHeuristic>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank2</UpgradeToVerify>
+			</PlayerLevelUpgradeHeuristic>
+		</Heuristic>
+		<Tactic
+			id="Tag_Tactic">
+			<TeamTemplate id="Tag_TeamTemplate"
+										AlwaysRecruit="false" />
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="OpportunisticUpgradeCrystalController_LocalRadius"
+		MaxTargets="1"
+		MaxInactiveCopies="1">
+		<Heuristic>
+			<ConstantHeuristic Weight="100"/>
+		</Heuristic>
+		<TargetHeuristic id="LooseUpgradeCrystal" TargetHeuristic="LooseUpgradeCrystal" Priority="20"/>
+		<!-- Since this also hunts enemies, trying to avoid them is probably not really a good idea -->
+		<Tactic
+			id="Tag_Tactic"
+			Tactic="Retrieval"
+			CountForFrontLines="false"
+			UseTeamMoveAvoidance="false">
+			<TeamTemplate id="Tag_TeamTemplate"
+										MinUnits="1" MaxUnits="1" AlwaysRecruit="true"
+										ExcludeKindOf="AIRCRAFT"
+										SortByDistance="true"
+										RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+										Priority="COOP" ReleaseType="NEVER_RELEASE"
+										AllowRecruitUnitsInCombat="true">
+				<MicroManager id="Tag_MicroManager"	MicroManager="CrystalCollectionMicroManager" />
+				<MaximumDistanceFromTarget MaxDistanceToTarget="500" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="OpportunisticUpgradeCrystalController_LocalRadius_Medium"
+		inheritFrom="OpportunisticUpgradeCrystalController_LocalRadius">
+		<Tactic
+			id="Tag_Tactic"
+			Tactic="Retrieval"
+			CountForFrontLines="false"
+			UseTeamMoveAvoidance="false">
+			<TeamTemplate id="Tag_TeamTemplate"
+										MinUnits="1" MaxUnits="1" AlwaysRecruit="true"
+										ExcludeKindOf="AIRCRAFT"
+										SortByDistance="true"
+										RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+										Priority="COOP" ReleaseType="NEVER_RELEASE"
+										AllowRecruitUnitsInCombat="true">
+				<MicroManager id="Tag_MicroManager"	MicroManager="CrystalCollectionMicroManager_Medium" />
+				<MaximumDistanceFromTarget MaxDistanceToTarget="500" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<!-- Shared Symmetric AI states -->
+
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureCaptureEarlyGame"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="120s"
+		CoordinatedAttackPriority="1">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="0s" EndTime="120s" CountFrom="AI_START"/>
+			<GoalStructureHeuristic
+				TeamPercentageBelow="50%"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="UndefendedGoalStructureHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="LosingGoalStructureForCaptureHeuristic_EarlyGame" Priority="20"/>
+		<!-- Want to do something with the units if there are no unique targets -->
+		<TargetHeuristic TargetHeuristic="OpenGoalStructureHeuristic_EarlyGame" Priority="2"/>
+		<TargetHeuristic TargetHeuristic="LosingGoalStructureForCaptureHeuristic" Priority="1"/>
+		<Tactic
+			id="LosingGoalStructureCaptureEarlyGame"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<IndicatorObjectPlacementCriteria
+				PlaceIfCommandPointAdvantageIsBelow="1.0"
+				RemoveIfCommandPointAdvantageIsAbove="1.2"
+				IndicatorObjectOCL="CaptureBeaconOCL"/>
+			<TeamTemplate
+				id="Tag_TeamTemplate" 
+				MinCommandPoints="15"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.1"
+				MinCommandPointAdvantage="1.0"
+				RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="DEFENSE_HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER"/>
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager"/>
+				<!-- Near the target, difficulty-specific micromanagers take over -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedCrawlerScuttleFocusedMicroManager"
+					MaximumRange="600"/>
+				<!-- Support will help us out if this is a big coordinated attack -->
+				<AdditionalForcesInfo
+					id="Tag_SupportHelpers"
+					OwningPlayer="ALLIES"
+					RecruitingType="COORDINATED_ATTACK_RECRUIT"
+					OwningPlayerClass="SUPPORT"
+					OwningPlayerType="COMPUTER"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ALL" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<ObjectCreationList
+		id="CaptureBeaconOCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>CaptureBeacon</ObjectTemplate>
+					<ObjectOffset />	<!-- The value is not important, since it will be placed at the target -->
+					<SubModules>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureCaptureEarlyGame_MEDIUM"
+		inheritFrom="LosingGoalStructureCaptureEarlyGame">
+		<Tactic
+			id="LosingGoalStructureCaptureEarlyGame"
+			xai:joinAction="Overwrite" 
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="1.0"
+				MinCommandPointAdvantage="0.9"
+				RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="DEFENSE_HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager_MEDIUM"/>
+				<!-- Near the target, difficulty-specific micromanagers take over -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="OverwhelmFocusedMicroManager_MEDIUM"
+					MaximumRange="450"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureCaptureEarlyGame_EASY"
+		inheritFrom="LosingGoalStructureCaptureEarlyGame"
+		CreateMcvPowerCanUse="false">
+		<Tactic
+			id="LosingGoalStructureCaptureEarlyGame"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			EndIfStateTurnsOff="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinPowerAdvantage="0.8"
+				RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="STANDARD">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Easy AI is easily distracted from stuff what matters -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="StandardMicroManager_EASY"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureCapture"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="120s"
+		CoordinatedAttackPriority="1"
+		MaxPowerAdvantageForCoordinatedAttacks="2.0">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="120s" EndTime="-1s" CountFrom="AI_START"/>
+			<Not>
+				<Heuristic>
+					<PlayerLevelUpgradeHeuristic>
+						<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+					</PlayerLevelUpgradeHeuristic>
+				</Heuristic>
+			</Not>
+			<OwnCommandPointLevelHeuristic id="Tag_CPHeuristic" PassIfAbovePercent="70%"/>
+			<GoalStructureHeuristic
+				TeamPercentageBelow="50%"
+				TeamPercentageAbove="30%"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="UndefendedGoalStructureHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="LosingGoalStructureForCaptureHeuristic" Priority="10"/>
+		<!-- Want to do something with the units if there are no unique targets -->
+		<TargetHeuristic TargetHeuristic="OpenGoalStructureHeuristic_NonUnique" Priority="2"/>
+		<TargetHeuristic TargetHeuristic="LosingGoalStructureForCaptureHeuristic_NonUnique" Priority="1"/>
+		<Tactic
+			id="LosingGoalStructureCapture"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<IndicatorObjectPlacementCriteria
+				PlaceIfCommandPointAdvantageIsBelow="1.0"
+				RemoveIfCommandPointAdvantageIsAbove="1.2"
+				IndicatorObjectOCL="CaptureBeaconOCL"/>
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="15"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.3"
+				MinCommandPointAdvantage="1.0"
+				RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager"/>
+				<!-- Near the target, difficulty-specific micromanagers take over -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="OverwhelmCrawlerScuttleFocusedMicroManager"
+					MaximumRange="600"/>
+				<!-- Support will help us out if this is a big coordinated attack -->
+				<AdditionalForcesInfo
+					id="Tag_SupportHelpers"
+					OwningPlayer="ALLIES"
+					RecruitingType="COORDINATED_ATTACK_RECRUIT"
+					OwningPlayerClass="SUPPORT"
+					OwningPlayerType="COMPUTER"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ALL" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureCapture_MEDIUM"
+		inheritFrom="LosingGoalStructureCapture"
+		CoordinatedAttackPriority="1">
+		<!--MaxPowerAdvantageForCoordinatedAttacks="1.8"-->
+		<Tactic
+			id="LosingGoalStructureCapture"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="15"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.3"
+				MinCommandPointAdvantage="1.0"
+				RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+				ExcludeKindOf="ENGINEER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager_MEDIUM"/>
+				<!-- Near the target, difficulty-specific micromanagers take over -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="OverwhelmMicroManager_MEDIUM"
+					MaximumRange="750"/>
+				<!-- Support will help us out if this is a big coordinated attack -->
+				<AdditionalForcesInfo
+					id="Tag_SupportHelpers"
+					OwningPlayer="ALLIES"
+					RecruitingType="COORDINATED_ATTACK_RECRUIT"
+					OwningPlayerClass="SUPPORT"
+					OwningPlayerType="COMPUTER"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ALL" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureCapture_EASY"
+		inheritFrom="LosingGoalStructureCapture">
+		<Heuristic>
+			<OwnCommandPointLevelHeuristic id="Tag_CPHeuristic" xai:joinAction="Remove"	/>
+		</Heuristic>
+		<Tactic
+			id="LosingGoalStructureCapture"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			EndIfStateTurnsOff="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="15"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.0"
+				RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="STANDARD">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Easy AI is easily distracted -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="StandardMicroManager_EASY"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureCapture_WithCrawler"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="120s"
+		CoordinatedAttackPriority="1"
+		MaxPowerAdvantageForCoordinatedAttacks="2.0">
+		<!--		MaxPowerAdvantageForCoordinatedAttacks="2.0" -->
+		<Heuristic>
+			<PlayerLevelUpgradeHeuristic 
+				id="Tag_PlayerLevelUpgradeHeuristic">
+				<UpgradeToVerify>Upgrade_Tech_Up_Rank1</UpgradeToVerify>
+			</PlayerLevelUpgradeHeuristic>
+			<OwnCommandPointLevelHeuristic id="Tag_CPHeuristic"  PassIfAbovePercent="70%"/>
+			<GoalStructureHeuristic
+				TeamPercentageBelow="50%"
+				TeamPercentageAbove="30%"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="UndefendedGoalStructureHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="LosingGoalStructureForCaptureHeuristic" Priority="10"/>
+		<!-- Want to do something with the units if there are no unique targets -->
+		<TargetHeuristic TargetHeuristic="OpenGoalStructureHeuristic_NonUnique" Priority="2"/>
+		<TargetHeuristic TargetHeuristic="LosingGoalStructureForCaptureHeuristic_NonUnique" Priority="1"/>
+		<Tactic
+			id="LosingGoalStructureCapture"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<IndicatorObjectPlacementCriteria
+				PlaceIfCommandPointAdvantageIsBelow="1.0"
+				RemoveIfCommandPointAdvantageIsAbove="1.2"
+				IndicatorObjectOCL="CaptureBeaconOCL"/>
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="15"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.3"
+				MinCommandPointAdvantage="1.0"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager"/>
+				<!-- Near the target, difficulty-specific micromanagers take over -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="OverwhelmMicroManager"
+					MaximumRange="600"/>
+				<!-- Support will help us out if this is a big coordinated attack -->
+				<AdditionalForcesInfo
+					id="Tag_SupportHelpers"
+					OwningPlayer="ALLIES"
+					RecruitingType="COORDINATED_ATTACK_RECRUIT"
+					OwningPlayerClass="SUPPORT"
+					OwningPlayerType="COMPUTER"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ALL" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureCapture_WithCrawler_MEDIUM"
+		inheritFrom="LosingGoalStructureCapture_WithCrawler"
+		CoordinatedAttackPriority="1">
+		<!--MaxPowerAdvantageForCoordinatedAttacks="1.8"-->
+		<Tactic
+			id="LosingGoalStructureCapture"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="15"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.3"
+				MinCommandPointAdvantage="1.0"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager_MEDIUM"/>
+				<!-- Near the target, difficulty-specific micromanagers take over -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="OverwhelmMicroManager_MEDIUM"
+					MaximumRange="750"/>
+				<!-- Support will help us out if this is a big coordinated attack -->
+				<AdditionalForcesInfo
+					id="Tag_SupportHelpers"
+					OwningPlayer="ALLIES"
+					RecruitingType="COORDINATED_ATTACK_RECRUIT"
+					OwningPlayerClass="SUPPORT"
+					OwningPlayerType="COMPUTER"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ALL" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureCapture_WithCrawler_EASY"
+		inheritFrom="LosingGoalStructureCapture_WithCrawler">
+		<Heuristic>
+			<OwnCommandPointLevelHeuristic id="Tag_CPHeuristic" xai:joinAction="Remove"	/>
+		</Heuristic>
+		<Tactic
+			id="LosingGoalStructureCapture"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			EndIfStateTurnsOff="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="15"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.0"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="STANDARD">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Easy AI is easily distracted -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="StandardMicroManager_EASY"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DesperateGoalStructureCapture"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="120s"
+		CoordinatedAttackPriority="1"
+		MaxPowerAdvantageForCoordinatedAttacks="1.5">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="300s" EndTime="-1s" CountFrom="AI_START"/>
+			<OwnCommandPointLevelHeuristic PassIfAbovePercent="50%"/>
+			<GoalStructureHeuristic
+				TeamPercentageBelow="30%"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="UndefendedGoalStructureHeuristic_Desperate" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="LosingGoalStructureForCaptureHeuristic_NonUnique" Priority="10"/>
+		<Tactic
+			id="DesperateGoalStructureCapture"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="15"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.2"
+				MinCommandPointAdvantage="1.0"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager"/>
+				<!-- Support will help us out if this is a big coordinated attack -->
+				<AdditionalForcesInfo
+					id="Tag_SupportHelpers"
+					OwningPlayer="ALLIES"
+					RecruitingType="COORDINATED_ATTACK_RECRUIT"
+					OwningPlayerClass="SUPPORT"
+					OwningPlayerType="COMPUTER"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ALL" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DesperateGoalStructureCapture_MEDIUM"
+		inheritFrom="DesperateGoalStructureCapture">
+		<Tactic
+			id="DesperateGoalStructureCapture"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="15"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.2"
+				MinCommandPointAdvantage="1.0"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager_MEDIUM"/>
+				<!-- Near the target, difficulty-specific micromanagers take over -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="StandardMicroManager_MEDIUM"
+					MaximumRange="750"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="DesperateGoalStructureCapture_EASY"
+		inheritFrom="DesperateGoalStructureCapture">
+		<Tactic
+			id="DesperateGoalStructureCapture"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="20"
+				MaxCommandPoints="100"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="STANDARD">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Easy AI is easily distracted -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="StandardMicroManager_EASY"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="WinningGoalStructureCapture"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="150s">
+		<Heuristic>
+			<OwnCommandPointLevelHeuristic PassIfAbovePercent="80%"/>
+			<PowerAdvantageHeuristic Value="1.25" IncludeOwnDefenses="false" IncludeEnemyDefenses="true"/>
+			<GoalStructureHeuristic
+					TeamPercentageAbove="50%"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="UndefendedGoalStructureHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="GoalStructureForCaptureHeuristic" Priority="15"/>
+		<TargetHeuristic TargetHeuristic="OpenGoalStructureHeuristic" Priority="15"/>
+		<!-- Want to do something with the units if there are no unique targets -->
+		<TargetHeuristic TargetHeuristic="OpenGoalStructureHeuristic_NonUnique" Priority="2"/>
+		<TargetHeuristic TargetHeuristic="GoalStructureForCaptureHeuristic_NonUnique" Priority="1"/>
+		<Tactic
+			id="WinningGoalStructureCapture"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate" 
+				MinCommandPoints="25"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="2.5"
+				MinCommandPointAdvantage="1.1"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="STANDARD">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="WinningGoalStructureCapture_MEDIUM"
+		inheritFrom="WinningGoalStructureCapture">
+		<Tactic
+			id="WinningGoalStructureCapture"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="25"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="2.0"
+				MinCommandPointAdvantage="1.1"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				SortByDistance="false"
+				Priority="STANDARD">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager_MEDIUM"/>
+				<!-- Near the target, attack more normally -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="StandardMicroManager_MEDIUM"
+					MaximumRange="750"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="WinningDefenseGoalStructureCapture"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="150s"
+		CoordinatedAttackPriority="1">
+		<Heuristic>
+			<OwnCommandPointLevelHeuristic PassIfAbovePercent="80%"/>
+			<PowerAdvantageHeuristic Value="1.3" IncludeOwnDefenses="true" IncludeEnemyDefenses="true"/>
+			<GoalStructureHeuristic
+					TeamPercentageAbove="50%"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="OpenGoalStructureHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="GoalStructureForCaptureHeuristic" Priority="10"/>
+		<!-- Want to do something with the units if there are no unique targets -->
+		<TargetHeuristic TargetHeuristic="OpenGoalStructureHeuristic_NonUnique" Priority="2"/>
+		<TargetHeuristic TargetHeuristic="GoalStructureForCaptureHeuristic_NonUnique" Priority="1"/>
+		<Tactic
+			id="WinningGoalStructureCapture"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="25"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.25"
+				MinCommandPointAdvantage="1.0"
+				RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+				ExcludeKindOf="ENGINEER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="false"
+				AllowRecruitUnitsInCombat="false"
+				SortByDistance="false"
+				Priority="HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK" />
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicroManager"/>
+				<!-- Support will help us out if this is a big coordinated attack -->
+				<AdditionalForcesInfo
+					id="Tag_SupportHelpers"
+					OwningPlayer="ALLIES"
+					RecruitingType="COORDINATED_ATTACK_RECRUIT"
+					OwningPlayerClass="SUPPORT"
+					OwningPlayerType="COMPUTER"
+					ROS="UNITS" >
+					<AdditionalForcesObjectFilter
+						Rule="ALL" />
+					<xi:include
+						href="DATA:SkirmishAI/Includes/ExcludeStatesFromAdditionalForces.xml"
+						xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeStatesList/child::*)"/>
+				</AdditionalForcesInfo>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="OpenGoalStructureCapture_EarlyGame"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="100s"
+		MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="0s" EndTime="180s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="GameStartGoalStructureHeuristic" Priority="20" />
+		<!-- Want to do something with the units if there are no unique targets -->
+		<TargetHeuristic TargetHeuristic="GameStartGoalStructureHeuristic_NonUnique" Priority="1" />
+		<Tactic
+			id="OpenGoalStructureCapture_EarlyGame"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<IndicatorObjectPlacementCriteria
+				PlaceIfCommandPointAdvantageIsBelow="1.0"
+				RemoveIfCommandPointAdvantageIsAbove="1.2"
+				IndicatorObjectOCL="CaptureBeaconOCL"/>
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinUnits="1"
+				MaxCommandPoints="10"
+				MinCommandPointAdvantage="1.1"
+				IncludeKindOf="CAN_ATTACK"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				Priority="HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER"
+					Exclude="AIRCRAFT"/>
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager"/>
+				<!-- Near the target, attack more normally -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DeterminedFocusedMicroManager"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="OpenGoalStructureCapture_EarlyGame_MEDIUM"
+		inheritFrom="OpenGoalStructureCapture_EarlyGame"
+		TargetHeuristicReevaluationTime="120s"
+		MaxTargets="1">
+		<Tactic
+			id="OpenGoalStructureCapture_EarlyGame"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinUnits="1"
+				MaxCommandPoints="10"
+				MinCommandPointAdvantage="1.1"
+				IncludeKindOf="CAN_ATTACK"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				Priority="HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER"
+					Exclude="AIRCRAFT"/>
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager_MEDIUM"/>
+				<!-- Near the target, attack more normally -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="OverwhelmFocusedMicroManager_MEDIUM"
+					MaximumRange="450"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="OpenGoalStructureCapture_EarlyGame_EASY"
+		inheritFrom="OpenGoalStructureCapture_EarlyGame"
+		TargetHeuristicReevaluationTime="150s"
+		MaxTargets="1">
+		<Heuristic>
+			<GoalStructureHeuristic
+				TeamPercentageBelow="50%"/>
+		</Heuristic>
+		<Tactic
+			id="OpenGoalStructureCapture_EarlyGame"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinUnits="1"
+				MaxCommandPoints="10"
+				IncludeKindOf="CAN_ATTACK"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="false"
+				Priority="DEFENSE_CRITICAL">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER"
+					Exclude="AIRCRAFT"/>
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="StandardMicroManager_EASY"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="OpenGoalStructureCapture"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="100s"
+		MaxTargets="1">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="UndefendedGoalStructureHeuristic" Priority="20" />
+		<TargetHeuristic TargetHeuristic="OpenGoalStructureHeuristic" Priority="10" />
+		<!-- Want to do something with the units if there are no unique targets -->
+		<TargetHeuristic TargetHeuristic="OpenGoalStructureHeuristic_NonUnique" Priority="1" />
+		<Tactic
+			id="OpenGoalStructureCapture"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<IndicatorObjectPlacementCriteria
+				PlaceIfCommandPointAdvantageIsBelow="1.0"
+				RemoveIfCommandPointAdvantageIsAbove="1.2"
+				IndicatorObjectOCL="CaptureBeaconOCL"/>
+			<TeamTemplate
+				id="Tag_TeamTemplate" 
+				MinUnits="1"
+				MaxCommandPoints="20"
+				MinCommandPointAdvantage="1.1"
+				IncludeKindOf="CAN_ATTACK"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				Priority="DEFENSE_CRITICAL">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" 
+					Exclude="AIRCRAFT"/>
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="OpenGoalStructureCapture_MEDIUM"
+		inheritFrom="OpenGoalStructureCapture" 
+		TargetHeuristicReevaluationTime="120s"
+		MaxTargets="1">
+		<Tactic
+			id="OpenGoalStructureCapture"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinUnits="1"
+				MaxCommandPoints="15"
+				MinCommandPointAdvantage="1.1"
+				IncludeKindOf="CAN_ATTACK"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				Priority="DEFENSE_CRITICAL">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER"
+					Exclude="AIRCRAFT"/>
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager_MEDIUM"/>
+				<!-- Near the target, attack more normally -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="StandardMicroManager_MEDIUM"
+					MaximumRange="750"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="OpenGoalStructureCapture_EASY"
+		inheritFrom="OpenGoalStructureCapture"
+		TargetHeuristicReevaluationTime="150s"
+		MaxTargets="1">
+		<Tactic
+			id="OpenGoalStructureCapture"
+			xai:joinAction="Overwrite"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinUnits="1"
+				MaxCommandPoints="10"
+				IncludeKindOf="CAN_ATTACK"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="false"
+				Priority="DEFENSE_CRITICAL">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER"
+					Exclude="AIRCRAFT"/>
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="StandardMicroManager_EASY"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="OpenGoalStructureCapture_LocalRadius"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="40s"
+		MaxInactiveCopies="2">
+		<Heuristic>
+			<TimerHeuristic StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="UndefendedGoalStructureHeuristic" Priority="20" />
+		<Tactic
+			id="OpenGoalStructureCapture"
+			Tactic="ProximityCapture"
+			Distance="350"
+			AvoidTargetDistance="200"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<IndicatorObjectPlacementCriteria
+				PlaceIfCommandPointAdvantageIsBelow="1.0"
+				RemoveIfCommandPointAdvantageIsAbove="1.2"
+				IndicatorObjectOCL="CaptureBeaconOCL"/>
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinUnits="1"
+				MaxCommandPoints="30"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				AllowRecruitUnitsInCombat="true"
+				Priority="COOP">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER ENGINEER"
+					Exclude="AIRCRAFT"
+					StatusBitFlagsExclude="UPGRADE_CRYSTAL_ATTACHED"/>
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FocusedMicroManager"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="800" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="OpenGoalStructureCapture_LocalRadius_Medium"
+		inheritFrom="OpenGoalStructureCapture_LocalRadius">
+		<Tactic
+			id="OpenGoalStructureCapture"
+			Tactic="ProximityCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FocusedMicroManager_Medium"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="800" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<!-- Support can't capture with aircraft, so it gets decap states instead -->
+	
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureDecapitation">
+		<Heuristic>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+				<ObjectFilter
+					Rule="NONE"
+					Include="GOAL_STRUCTURE"
+					Relationship="ENEMIES">
+				</ObjectFilter>
+			</ObjectOfTypeExistsHeuristic>
+			<GoalStructureDisadvantageHeuristic
+				GoalStructureDisadvantageIsAtLeast="0" />
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="OpenEnemyGoalHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="SafestAirToEnemyGoalHeuristic" Priority="10"/>
+		<TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="5"/>
+		<Tactic
+			id="LosingGoalStructureDecapitation"
+			Tactic="DefenseAvoidanceAttack"
+			Distance="300"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="9"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.1"
+				RegisteredObjectSet="AIRCRAFT"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="false"
+				SortByDistance="false"
+				AllowRecruitUnitsInCombat="true"
+				Priority="DEFENSE_HIGH">
+				<ObjectFilter
+					Rule="NONE"
+					Include="AIRCRAFT CAN_ATTACK" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureDecapitation_MEDIUM"
+		inheritFrom="LosingGoalStructureDecapitation">
+		<Tactic
+			id="LosingGoalStructureDecapitation"
+			xai:joinAction="Overwrite"
+			Tactic="SimpleAttack"
+			Distance="300"
+			EndBehavior="DISBAND"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="9"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="1.0"
+				RegisteredObjectSet="AIRCRAFT"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="false"
+				SortByDistance="false"
+				AllowRecruitUnitsInCombat="true"
+				Priority="DEFENSE_HIGH">
+				<ObjectFilter
+					Rule="NONE"
+					Include="AIRCRAFT CAN_ATTACK" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager_MEDIUM"/>
+				<!-- Near the target, attack more normally -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="StandardMicroManager_MEDIUM"
+					MaximumRange="750"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingGoalStructureDecapitation_EASY"
+		inheritFrom="LosingGoalStructureDecapitation">
+		<Tactic
+			id="LosingGoalStructureDecapitation"
+			xai:joinAction="Overwrite"
+			Tactic="SimpleAttack"
+			Distance="300"
+			EndBehavior="DISBAND"
+			EndIfStateTurnsOff="true"
+			UseTeamMoveAvoidance="true"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="9"
+				MaxCommandPoints="100"
+				MinPowerAdvantage="0.9"
+				RegisteredObjectSet="AIRCRAFT"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="false"
+				SortByDistance="false"
+				AllowRecruitUnitsInCombat="true"
+				Priority="DEFENSE_HIGH">
+				<ObjectFilter
+					Rule="NONE"
+					Include="AIRCRAFT CAN_ATTACK" />
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="StandardMicroManager_EASY"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="HuskCapture"
+		MaxTargets="1">
+		<Heuristic>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+				<ObjectFilter
+					Rule="NONE"
+					Include="HUSK">
+				</ObjectFilter>
+			</ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="LandHuskHeuristic"/>
+		<!-- Tactic on inheriting state -->
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="TechStructureCapture"
+		MaxTargets="1">
+		<Heuristic>
+			<ObjectOfTypeExistsHeuristic
+				PassIfExists="true">
+				<ObjectFilter
+					Rule="NONE"
+					Include="NEUTRAL_TECH"
+					Exclude="GOAL_STRUCTURE">
+				</ObjectFilter>
+			</ObjectOfTypeExistsHeuristic>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestCapturableTechBuildingHeuristic"/>
+		<Tactic
+			id="TechStructureCapture"
+			Tactic="ProximityCapture"
+			Distance="150"
+			AvoidTargetDistance="50"
+			EndBehavior="DISBAND"
+			DisbandAfterRetreatTeamSize="99">
+			<TeamTemplate
+				id="Tag_TeamTemplate" 
+				MinUnits="1"
+				MaxCommandPoints="10"
+				MinPowerAdvantage="1.1"
+				MinCommandPointAdvantage="1.0"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="false"
+				AllowRecruitUnitsInCombat="false"
+				SortByDistance="true"
+				Priority="DEFENSE_HIGH">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" 
+					Exclude="AIRCRAFT"/>
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager" 
+					MicroManager="FocusedMicromanager"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="1500" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="TechStructureCapture_Medium"
+		inheritFrom="TechStructureCapture">
+		<TargetHeuristic TargetHeuristic="ClosestCapturableTechBuildingHeuristic"/>
+		<Tactic
+			id="TechStructureCapture"
+			Tactic="ProximityCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FocusedMicroManager_MEDIUM"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="1500" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="TechStructureCapture_Easy"
+		inheritFrom="TechStructureCapture">
+		<TargetHeuristic TargetHeuristic="ClosestCapturableTechBuildingHeuristic"/>
+		<Tactic
+			id="TechStructureCapture"
+			Tactic="ProximityCapture">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="StandardMicromanager_EASY"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="1500" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="EngineerEscort"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		MaxInactiveCopies="1"
+		MaxTargets="1">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ReallyDamagedFriendlyGroundUnitHeuristic" Priority="25"/>
+		<TargetHeuristic TargetHeuristic="DamagedFriendlyGroundUnitHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="ClosestFriendlyUnitHealerHeuristic" Priority="15"/>
+		<TargetHeuristic TargetHeuristic="OwnMobileCrawlerHeuristic" Priority="10"/>
+		<TargetHeuristic TargetHeuristic="OwnDeployedCrawlerHeuristic" Priority="10"/>
+		<!-- Tactic on inheriting state -->
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="HealerEscort"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="100s"
+		MaxTargets="1">
+		<Heuristic>
+			<OwnCommandPointLevelHeuristic PassIfAbovePercent="40%"/>
+		</Heuristic>
+		<!-- Target heuristics and Tactic on inheriting state -->
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		 id="ScuttleCollectionState"
+		 MaxInactiveCopies="1">
+		<Heuristic>
+			<ConstantHeuristic Weight="25.0"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="OwnSpawnZone_PostTarget" Priority="25"/>
+		<Tactic
+			id="GDIScuttle"
+			Tactic="RepairMovement"
+			CountForFrontLines="false"
+			EndBehavior="DISBAND"
+			RepairMovementReleaseHealthPercentage="50%">
+			<TeamTemplate id="Tag_TeamTemplate" MinUnits="1" MaxUnits="1"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL"
+				Priority="DEFENSE_CRITICAL" ReleaseType="RELEASE_TO_PRIORITY" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true" SortByDistance="false" >
+				<ObjectFilter Rule="ANY"
+					Include="CAN_ATTACK"
+					Exclude="STRUCTURE"
+					StatusBitFlags="REALLYDAMAGED">
+					<ExcludeThing>NODCommandoA</ExcludeThing>
+					<ExcludeThing>GDIVehicleY</ExcludeThing>
+				</ObjectFilter>
+				<MicroManager
+					MicroManager="ScuttleStateMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<!-- Handles non-Aircraft that haven't been picked up for an offensive team -->
+	<AIStrategicStateDefinition
+		id="StaticGoalDefense"
+		MaxTargets="1"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="60s">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="FriendlyGoalHeuristic" Priority="30"/>
+		<TargetHeuristic TargetHeuristic="GameStartGoalStructureHeuristic" Priority="20"/>
+		<TargetHeuristic TargetHeuristic="OwnMobileCrawlerHeuristic" Priority="15"/>
+		<TargetHeuristic TargetHeuristic="OwnDeployedCrawlerHeuristic" Priority="10"/>
+		<Tactic id="StaticGoalDefense" Tactic="StaticDefense" Distance="500" AvoidTargetDistance="150" EndIfStateTurnsOff="true" EndBehavior="DISBAND"  UseAestheticsManager="true">
+			<TeamTemplate
+					id="StaticGoalDefense" 
+					MinUnits="1"  
+					RegisteredObjectSet="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+					IncludeKindOf="CAN_ATTACK" 
+					ExcludeKindOf="CRAWLER IGNORES_SELECT_ALL AIRCRAFT"
+					Priority="LOW"
+					ReleaseType="RELEASE_TO_PRIORITY"
+					AlwaysRecruit="true" AllowRecruitUnitsInCombat="true" SortByDistance="false">
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager"/>
+				<!-- Near the target, defend more more normally -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DefenseMicroManager"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="StaticGoalDefense_Medium"
+		inheritFrom="StaticGoalDefense">
+		<Tactic id="StaticGoalDefense" Tactic="StaticDefense">
+			<TeamTemplate
+				id="StaticGoalDefense">
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="FocusedMicromanager_Medium"/>
+				<!-- Near the target, defend more more normally -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DefenseMicroManager_Medium"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="StaticGoalDefense_Easy"
+		inheritFrom="StaticGoalDefense">
+		<Tactic id="StaticGoalDefense" Tactic="StaticDefense">
+			<TeamTemplate
+				id="StaticGoalDefense">
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="StandardMicromanager_Easy"/>
+				<!-- Near the target, defend more more normally -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DefenseMicroManager_EASY"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<!-- Handles Aircraft that havne't been picked up for an offensive team -->
+	<AIStrategicStateDefinition
+    id="ScoutAircraft"
+    MaxTargets="1"		
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="30s">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestFriendlyMobileCrawlerHeuristic" Priority="15"/>
+		<TargetHeuristic TargetHeuristic="ClosestFriendlyDeployedCrawlerHeuristic" Priority="10"/>
+		<Tactic
+			id="Attack"
+			Tactic="StaticDefense"
+			Distance="500"
+			AvoidTargetDistance="150"
+			CountForFrontLines="false"
+			EndBehavior="DISBAND"
+			UseAestheticsManager="true">
+			<TeamTemplate 
+					id="ScoutAircraft"
+					MinUnits="1"
+          RegisteredObjectSet="AIRCRAFT"
+          IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL"
+					ReleaseType="RELEASE_TO_PRIORITY"
+          Priority="LOW" AlwaysRecruit="true" AllowRecruitUnitsInCombat="true" SortByDistance="false">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="ScoutAircraftMicroManager" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+    id="ScoutAircraft_Medium"
+		inheritFrom="ScoutAircraft">
+		<Tactic
+			id="Attack"
+			Tactic="StaticDefense">
+			<TeamTemplate
+				id="ScoutAircraft">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="ScoutAircraftMicroManager_Medium" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+    id="ScoutAircraft_Easy"
+		inheritFrom="ScoutAircraft">
+		<Tactic
+			id="Attack"
+			Tactic="StaticDefense">
+			<TeamTemplate 
+				id="ScoutAircraft">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="ScoutAircraftMicroManager_Easy" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="WinningGoalDefense"
+		TargetHeuristicReevaluationInterval="PERIODICALLY"
+		TargetHeuristicReevaluationTime="60s"
+		MaxTargets="1">
+		<Heuristic>
+			<GoalStructureHeuristic TeamPercentageAbove="50%"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="FriendlyGoalHeuristic" Priority="20"/>
+		<Tactic 
+			id="Defense" 
+			Tactic="StaticDefense" 
+			Distance="500"
+			EndIfStateTurnsOff="true"
+			EndBehavior="DISBAND"
+			UseAestheticsManager="true">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+					 MinCommandPoints="3"
+					 MaxCommandPoints="100"
+					 IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL OBJECTIVE_UNIT"
+					 AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+					 Priority="DEFENSE_HIGH"
+					 ReleaseType="RELEASE_TO_PRIORITY"
+					 AlwaysRecruit="true" AllowRecruitUnitsInCombat="true" SortByDistance="false">
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicromanagerDistant"
+					MicroManager="NoEngageMicroManager"/>
+				<!-- Near the target, defend more more normally -->
+				<MicroManager
+					id="Tag_MicromanagerClose"
+					MicroManager="DefenseMicroManager"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="WinningGoalDefense_Medium"
+		inheritFrom="WinningGoalDefense">
+		<Tactic
+			id="Defense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicromanagerDistant"
+					MicroManager="FocusedMicromanager_MEDIUM"/>
+				<MicroManager
+					id="Tag_MicromanagerClose"
+					MicroManager="DefenseMicroManager_MEDIUM"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="WinningGoalDefense_Easy"
+		inheritFrom="WinningGoalDefense">
+		<Tactic
+			id="Defense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicromanagerDistant"
+					MicroManager="StandardMicromanager_EASY"/>
+				<MicroManager
+					id="Tag_MicromanagerClose"
+					xai:joinAction="Remove" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="LosingGoalDefense"
+			TargetHeuristicReevaluationInterval="PERIODICALLY"
+			TargetHeuristicReevaluationTime="60s"
+			MaxTargets="1">
+		<Heuristic>
+			<GoalStructureHeuristic
+					TeamPercentageBelow="50%"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ThreatenedFriendlyGoalHeuristic" Priority="20"/>
+		<Tactic
+				id="Defense"
+				Tactic="StaticDefense"
+				Distance="500"
+				EndIfStateTurnsOff="true"
+				EndBehavior="DISBAND">
+			<TeamTemplate
+				id="Tag_TeamTemplate" 
+					 MinCommandPoints="3"
+					 MaxCommandPoints="100"
+					 IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL OBJECTIVE_UNIT"
+					 AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+					 Priority="STANDARD"
+					 ReleaseType="RELEASE_TO_PRIORITY"
+					 AlwaysRecruit="true" AllowRecruitUnitsInCombat="true" SortByDistance="false">
+				<MicroManager
+					id="Tag_Micromanager" 
+					MicroManager="FocusedMicromanager"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingGoalDefense_Medium"
+		inheritFrom="LosingGoalDefense">
+		<Tactic
+			id="Defense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_Micromanager"
+					MicroManager="FocusedMicromanager_MEDIUM"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingGoalDefense_Easy"
+		inheritFrom="LosingGoalDefense">
+		<Tactic
+			id="Defense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_Micromanager"
+					MicroManager="StandardMicromanager_EASY"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+			id="WinningReactiveGoalDefense"
+			MaxTargets="3">
+		<Heuristic>
+			<GoalStructureHeuristic
+				TeamPercentageAbove="50%"/>
+			<IntervalHeuristic IntervalTime="1s" ActiveTime="59s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ThreatenedFriendlyGoalHeuristic"/>
+		<Tactic
+				id="Defense"
+				Tactic="StaticDefense"
+				Distance="500"
+				EndIfStateTurnsOff="true"
+				EndBehavior="DISBAND">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="3"
+				MaxCommandPoints="100"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				IncludeKindOf="CAN_ATTACK" ExcludeKindOf="OBJECTIVE_UNIT"
+				AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+				Priority="HIGH" AlwaysRecruit="true" SortByDistance="true">
+				<MicroManager
+					id="Tag_MicroManager_Distant" 
+					MicroManager="NoEngageMicroManager"/>
+				<MicroManager
+					id="Tag_MicroManager_Close" 
+					MicroManager="DefenseMicroManager"
+					MaximumRange="600"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="2000" />
+				<MaximumDistanceFromTarget MaxDistanceToTarget="1200" TargetObjectFilter="BeaconDefenseObjectFilter"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="WinningReactiveGoalDefense_Medium"
+		inheritFrom="WinningReactiveGoalDefense">
+		<Tactic
+				id="Defense"
+				Tactic="StaticDefense"> 
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DefenseMicroManager_MEDIUM"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="WinningReactiveGoalDefense_Easy"
+		inheritFrom="WinningReactiveGoalDefense">
+		<Tactic
+				id="Defense"
+				Tactic="StaticDefense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DefenseMicroManager_EASY"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="LosingReactiveGoalDefense"
+		MaxTargets="2">
+		<Heuristic>
+			<GoalStructureHeuristic
+					TeamPercentageBelow="50%"/>
+			<IntervalHeuristic IntervalTime="1s" ActiveTime="14s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="UnlimitedDefendersThreatenedFriendlyGoalHeuristic"/>
+		<Tactic
+				id="Defense"
+				Tactic="StaticDefense"
+				Distance="500"
+				EndIfStateTurnsOff="true"
+				EndBehavior="DISBAND">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="3"
+				MaxCommandPoints="100"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+				Priority="DEFENSE_HIGH"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true"
+				SortByDistance="true">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<!-- Far away from the target, we just head towards the target without engaging the enemy -->
+				<MicroManager
+					id="Tag_MicroManager_Distant"
+					MicroManager="NoEngageMicroManager"/>
+				<!-- Near the target, defend more more normally -->
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="FearlessMicroManager"
+					MaximumRange="600"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="2000" />
+				<MaximumDistanceFromTarget MaxDistanceToTarget="1200" TargetObjectFilter="BeaconDefenseObjectFilter"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingReactiveGoalDefense_Medium"
+		inheritFrom="LosingReactiveGoalDefense">
+		<Tactic
+				id="Defense"
+				Tactic="StaticDefense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DefenseMicroManager_MEDIUM"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingReactiveGoalDefense_Easy"
+		inheritFrom="LosingReactiveGoalDefense">
+		<Tactic
+				id="Defense"
+				Tactic="StaticDefense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager_Close"
+					MicroManager="DefenseMicroManager_EASY"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="LosingReactiveGoalDefense_LocalRadius"
+		MaxTargets="2">
+		<Heuristic>
+			<GoalStructureHeuristic
+					TeamPercentageBelow="50%"/>
+			<IntervalHeuristic IntervalTime="1s" ActiveTime="14s" CountFrom="AI_START"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="UnlimitedDefendersThreatenedFriendlyGoalHeuristic"/>
+		<Tactic id="Defense" Tactic="StaticDefense" Distance="500" EndIfStateTurnsOff="true" EndBehavior="DISBAND">
+			<TeamTemplate
+				id="Tag_TeamTemplate"
+				MinCommandPoints="3"
+				MaxCommandPoints="100"
+				RegisteredObjectSet="UNITS_AND_CRAWLERS"
+				ExcludeKindOf="ENGINEER"
+				AllowedLocomotorTypes="LAND AMPHIBIOUS AIR"
+				Priority="HIGH"
+				ReleaseType="RELEASE_TO_PRIORITY"
+				AlwaysRecruit="true" SortByDistance="true">
+				<ObjectFilter
+					Rule="ANY"
+					Include="CAN_ATTACK CRAWLER" />
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="FearlessMicroManager"/>
+				<MaximumDistanceFromTarget MaxDistanceToTarget="700" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingReactiveGoalDefense_LocalRadius_Medium"
+		inheritFrom="LosingReactiveGoalDefense_LocalRadius">
+		<Tactic
+				id="Defense"
+				Tactic="StaticDefense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="DefenseMicroManager_MEDIUM"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="LosingReactiveGoalDefense_LocalRadius_Easy"
+		inheritFrom="LosingReactiveGoalDefense_LocalRadius">
+		<Tactic
+				id="Defense"
+				Tactic="StaticDefense">
+			<TeamTemplate
+				id="Tag_TeamTemplate">
+				<MicroManager
+					id="Tag_MicroManager"
+					MicroManager="DefenseMicroManager_EASY"
+					MaximumRange="600"/>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIBuildStateDefinition
+		id="GenericTechBuildState">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+
+		<BuildEntry Upgrade="Upgrade_Tech_Up_Rank1" ScoreAccumulation = "AVERAGE" ScoreMultiplier="400">
+			<BuildHeuristic Type="CONSTANT" />
+		</BuildEntry>
+		<BuildEntry Upgrade="Upgrade_CrawlerTech2" ScoreAccumulation = "AVERAGE" ScoreMultiplier="160">
+			<BuildHeuristic Type="CONSTANT" />
+		</BuildEntry>
+		<BuildEntry Upgrade="Upgrade_Tech_Up_Rank2" ScoreAccumulation = "AVERAGE" ScoreMultiplier="800">
+			<BuildHeuristic Type="CONSTANT" />
+		</BuildEntry>
+		<BuildEntry Upgrade="Upgrade_CrawlerTech3" ScoreAccumulation = "AVERAGE" ScoreMultiplier="150">
+			<BuildHeuristic Type="CONSTANT" />
+		</BuildEntry>
+	</AIBuildStateDefinition>
+
+	<AIBuildStateDefinition
+		id="T2TechBuildState">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+
+		<BuildEntry Upgrade="Upgrade_Tech_Up_Rank1" ScoreAccumulation = "AVERAGE" ScoreMultiplier="400">
+			<BuildHeuristic Type="CONSTANT" />
+		</BuildEntry>
+		<BuildEntry Upgrade="Upgrade_CrawlerTech2" ScoreAccumulation = "AVERAGE" ScoreMultiplier="160">
+			<BuildHeuristic Type="CONSTANT" />
+		</BuildEntry>
+	</AIBuildStateDefinition>
+
+	<AIBuildStateDefinition
+		id="T2TechBuildState_Medium"
+		inheritFrom="T2TechBuildState">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="180s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+	</AIBuildStateDefinition>
+	
+	<AIBuildStateDefinition
+		id="T2TechBuildState_Easy"
+		inheritFrom="T2TechBuildState">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="360s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+	</AIBuildStateDefinition>
+
+	<AIBuildStateDefinition
+		id="T3TechBuildState">
+		<Heuristic>
+			<ConstantHeuristic/>
+		</Heuristic>
+
+		<BuildEntry Upgrade="Upgrade_Tech_Up_Rank2" ScoreAccumulation = "AVERAGE" ScoreMultiplier="800">
+			<BuildHeuristic Type="CONSTANT" />
+		</BuildEntry>
+		<BuildEntry Upgrade="Upgrade_CrawlerTech3" ScoreAccumulation = "AVERAGE" ScoreMultiplier="150">
+			<BuildHeuristic Type="CONSTANT" />
+		</BuildEntry>
+	</AIBuildStateDefinition>
+
+	<AIBuildStateDefinition
+		id="T3TechBuildState_Medium"
+		inheritFrom="T3TechBuildState">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="360s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+	</AIBuildStateDefinition>
+
+	<AIBuildStateDefinition
+		id="T3TechBuildState_Easy"
+		inheritFrom="T3TechBuildState">
+		<Heuristic>
+			<TimerHeuristic id="Tag_TimerHeuristic" StartTime="720s" EndTime="-1s" CountFrom="AI_START"/>
+		</Heuristic>
+	</AIBuildStateDefinition>
+
+	<AIBuildingPlacementStateDefinition 
+		id="BuildingPlacementDefault"
+		BuildingPlacementType="Default">
+		<Heuristic>
+			<!-- give small weight so campaign can override easily -->
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.1"/>
+		</Heuristic>
+
+		<!-- Campaign maps can override this in the personality to force buildings
+			to be built in trigger zones.  For example:
+		<MustBeWithinTrigger>TeamManager1_SpawnZone</MustBeWithinTrigger>
+		<MustBeWithinTrigger>TeamManager2_SpawnZone</MustBeWithinTrigger>
+		-->
+
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition 
+		id="BuildingPlacementDefense"
+		BuildingPlacementType="DefenseDefault"
+		BaseBuildingLocation="DEFENSE"
+		CenterAroundDefenseClassTarget="true"
+		MaxPlacementDistanceFromDefenseClassTarget="500">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.1"/>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition
+		id="BuildingPlacementSpread"
+		BuildingPlacementType="SpreadDefault"
+		BaseBuildingLocation="SPREAD">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.1"/>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition 
+		id="BuildingPlacementCenter"
+		BuildingPlacementType="CenterDefault"
+		BaseBuildingLocation="CENTER">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.1"/>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition
+		id="BuildingPlacementBack"
+		BuildingPlacementType="BackDefault"
+		BaseBuildingLocation="BACK">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.1"/>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+
+	<AIBuildingPlacementStateDefinition 
+		id="BuildingPlacementFront"
+		BuildingPlacementType="FrontDefault"
+		BaseBuildingLocation="FRONT">
+		<Heuristic>
+			<ConstantHeuristic id="Tag_ConstantHeuristic" Weight="0.1"/>
+		</Heuristic>
+	</AIBuildingPlacementStateDefinition>
+
+
+</AssetDeclaration>

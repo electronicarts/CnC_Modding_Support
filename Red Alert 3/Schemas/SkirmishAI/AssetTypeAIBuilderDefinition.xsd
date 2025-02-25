@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="AIBuildHeuristics">
+		<xs:restriction base="xs:string">
+
+      <xs:enumeration value="CONSTANT"/>
+      <xs:enumeration value="BEST_UNIT_EXPECTED"/>
+      <xs:enumeration value="BEST_UNIT_ACTUAL"/>
+      <xs:enumeration value="BEST_UNIT_WEIGHTED"/>
+      <xs:enumeration value="FEWEST_UNIT"/>
+			<xs:enumeration value="RANDOM_UNIT"/>
+      <xs:enumeration value="WORST_UNIT"/>
+      <xs:enumeration value="NEEDED_UNIT"/>
+      <xs:enumeration value="FACTORY"/>
+      <xs:enumeration value="TECH"/>
+      <xs:enumeration value="POWER"/>      
+      <xs:enumeration value="REFINERY"/>
+      <xs:enumeration value="HARVESTER"/>
+      <xs:enumeration value="UNIQUE"/>
+			
+      <xs:enumeration value="UPGRADE"/>
+      <xs:enumeration value="UPGRADE_TECH"/>
+
+      <xs:enumeration value="BUILD_TEST"/>
+      <xs:enumeration value="UPGRADE_TEST"/>
+    
+    </xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="AIBuildEntry">
+
+    <xs:sequence>
+      <xs:element name="BlockIfThingNearFactory" type="ObjectFilter" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+    
+     <!-- This is a weak ref as the AI personalities are in the global list, and objects in the level lists -->
+		<xs:attribute name="Build" type="GameObjectWeakRef"/>
+		<xs:attribute name="Upgrade" type="UpgradeTemplateWeakRef"/>
+		<xs:attribute name="Heuristic" type="AIBuildHeuristics"/>
+    <xs:attribute name="PercentLow" type="Percentage" default="0%"/>
+    <xs:attribute name="PercentHigh" type="Percentage" default="0%"/>
+    <xs:attribute name="ExpectedEfficiencyWeight" type="xs:float" default="0.4"/>
+    <xs:attribute name="ActualEfficiencyWeight" type="xs:float" default="0.6"/>
+    <xs:attribute name="SampleSizeForFullWeight" type="xs:int" default="10000"/>
+    <xs:attribute name="MinTime" type="Time" default="0s"/>
+    <xs:attribute name="ForceTime" type="Time" default="99999s"/>
+    <xs:attribute name="BlockIfThingNearFactoryDistance" type="SageReal" default="150.0"/>
+
+    <!-- Used by the FEWEST_UNIT heuristic. A modifier of 2.0 will make the AI build twice as many of those units
+        (by making the AI think it has half as many as it actually does). -->
+    <xs:attribute name="CountModifier" type="xs:float" default="1.0"/>
+
+    <!-- Used by the CONSTANT heuristic as the return value -->
+    <xs:attribute name="Score" type="xs:float" default="0.0"/>
+
+  </xs:complexType>
+
+</xs:schema>

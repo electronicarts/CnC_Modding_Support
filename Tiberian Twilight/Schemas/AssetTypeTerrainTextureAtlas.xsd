@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+  <xs:complexType name="TerrainTextureCell">
+  	<xs:sequence/>
+  	<xs:attribute name="IndexX" type="xs:unsignedByte" use="required" />
+  	<xs:attribute name="IndexY" type="xs:unsignedByte" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="TerrainTextureTile">
+    <xs:sequence>
+      <xs:element name="Cell" type="TerrainTextureCell" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="TextureID" type="SageUnsignedInt" use="required" />
+    <xs:attribute name="BaseTexture" type="FileReference" use="required" />
+    <xs:attribute name="NormalTexture" type="FileReference" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="TerrainTextureAtlas" xas:runtimeWrapper="::TerrainAtlasInfo" xas:typeGroup="Texture">
+	  <xs:complexContent>
+		  <xs:extension base="BaseAssetType">
+			  <xs:sequence>
+				  <xs:element name="Tile" type="TerrainTextureTile" minOccurs="0" maxOccurs="unbounded" />
+			  </xs:sequence>
+			  <xs:attribute name="AtlasSize" type="SageUnsignedShort" use="optional" default="2048" />
+			  <xs:attribute name="AllowLossyCompression" type="SageBool" default="true" />
+		  </xs:extension>
+	  </xs:complexContent>
+  </xs:complexType>
+
+  <!--  Can be used later if needed
+  <xs:complexType name="TerrainTextureCellRuntime">
+    <xs:sequence>
+      <xs:element name="UV" type="Vector2" />
+    </xs:sequence>
+    <xs:attribute name="IndexX" type="xs:unsignedByte" use="required" />
+    <xs:attribute name="IndexY" type="xs:unsignedByte" use="required" />
+  </xs:complexType> -->
+
+  <xs:complexType name="TerrainTextureTileRuntime">
+	  <!--  Can be used later if needed
+    <xs:sequence>
+      <xs:element name="Cell" type="TerrainTextureCellRuntime" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence> -->
+	  <xs:sequence/>
+	  <xs:attribute name="TextureID" type="SageUnsignedInt" use="required" />
+	  <xs:attribute name="UpperLeftX" type="SageUnsignedShort" use="required" />
+	  <xs:attribute name="UpperLeftY" type="SageUnsignedShort" use="required" />
+	  <xs:attribute name="BottomRightX" type="SageUnsignedShort" use="required" />
+	  <xs:attribute name="BottomRightY" type="SageUnsignedShort" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="TerrainTextureAtlasRuntime" xas:typeGroup="Xml">
+    <xs:complexContent>
+      <xs:extension base="BaseAssetType">
+        <xs:sequence>
+          <xs:element name="Tile" type="TerrainTextureTileRuntime" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="BaseTextureAtlas" type="FileReference" />
+        <xs:attribute name="NormalTextureAtlas" type="FileReference" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>

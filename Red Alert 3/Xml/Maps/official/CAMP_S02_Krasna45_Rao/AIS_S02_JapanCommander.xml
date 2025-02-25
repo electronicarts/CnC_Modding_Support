@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+  </Includes>
+
+<!-- Soviet 02 -->
+
+    <AIBudgetStateDefinition
+      id="AIState_A02_Budget">
+      <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+      </Heuristic>
+      <Budget>
+        <AccountShare Account="PRODUCTION" Percent="100%"/>
+        <AccountShare Account="DEFENSE" Percent="0%"/>
+        <AccountShare Account="SLUSH_FUND" Percent="0%"/>
+      </Budget>
+    </AIBudgetStateDefinition>
+
+   <AIStrategicStateDefinition
+   id="AIState_S02_AttackPlayers"
+   MaxTargets="2">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestUnitHeuristic" Priority="30"/>
+    <Tactic id="Attack" Tactic="SimpleAttack"  EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="3"
+      							MaxUnits="3"
+      							IncludeKindOf="CAN_ATTACK"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER AIRCRAFT COMMANDO"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    MaxTypesOfUnits="1"
+                    MicroManager="FearlessMicroManager_EASY"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+  id="AIState_S02_Commando"
+  MaxTargets="1">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_S02_Yuriko" Priority="30"/>
+    <Tactic id="Defend" Tactic="StaticDefense"  EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="1"
+      							MaxUnits="1"
+      							IncludeKindOf="CAN_ATTACK COMMANDO"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER AIRCRAFT"
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    MaxTypesOfUnits="1"
+                    MicroManager="FearlessMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+    <AIStrategicStateDefinition
+    id="AIState_S02_EggsA"
+    MaxTargets="1">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_S02_UnpackA"/>
+    <Tactic id="Attack" Tactic="SimpleExpansion" Distance="200">
+      <TeamTemplate MinUnits="1" MaxUnits="1" 
+      							IncludeKindOf="EGG UNPACKS_INTO_BUILDING"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="LAND AIR AMPHIBIOUS WATER"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager_EASY">
+        <CreateUnits UnitName="JapanBarracksEgg"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIBuildStateDefinition
+    id="AIState_S02_JapanBarracksBuildState">
+    <Heuristic>
+    	 <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <BuildEntry Build="JapanAntiInfantryInfantry" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="JapanAntiVehicleInfantry" Heuristic="FEWEST_UNIT"/>
+    <BuildEntry Build="JapanInfiltrationInfantry" Heuristic="FEWEST_UNIT"/>
+  </AIBuildStateDefinition>  
+
+  <AIBuildStateDefinition
+  id="AIState_S02_JapanWarfactoryBuildState">
+    <Heuristic>
+    	 <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <BuildEntry Build="JapanAntiAirVehicleTech1" Heuristic="RANDOM_UNIT" PercentLow="0" PercentHigh="75"/>
+    <BuildEntry Build="JapanAntiVehicleVehicleTech1" Heuristic="RANDOM_UNIT" PercentLow="75" PercentHigh="100"/>
+  </AIBuildStateDefinition>
+
+<!-- For Use Later
+      <IntervalHeuristic IntervalTime="45s" ActiveTime="20s" CountFrom="AI_START"/>
+-->
+
+<!-- DEPRECATED STATES - Not Used Below this Line -->
+
+  <AIStrategicStateDefinition
+    id="AIState_S02_ReactiveDefense">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+		<Tactic id="Defense" Tactic="ReactiveDefense" Targetless="true">
+			<TeamTemplate 
+										MinUnits="1" 
+										IncludeKindOf="CAN_ATTACK" 
+										ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER FIGHTER_AIRCRAFT"
+                    Priority="DEFENSE" 
+                    AlwaysRecruit="true" 
+                    SortByDistance="false"
+                    MicroManager="StandardMicroManager_EASY"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+  
+	<AIStrategicStateDefinition
+		id="AIState_S02_Garrison">
+		<Heuristic>
+			<ConstantHeuristic Weight="1.0"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="GarrisonHeuristic"/>
+		<Tactic id="Garrison" Tactic="GarrisonBuilding" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" 
+      							MaxUnits="2" 
+      							IncludeKindOf="CAN_ATTACK INFANTRY" 
+      							ExcludeKindOf="SKIRMISH_AI_DONT_GARRISON IGNORES_SELECT_ALL HARVESTER" 
+      							Priority="STANDARD" 
+      							AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager_EASY"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+  <AIStrategicStateDefinition
+    id="AIState_S02_EggsB"
+    MaxTargets="99">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_S02_UnpackB"/>
+    <Tactic id="Attack" Tactic="SimpleExpansion" Distance="200">
+      <TeamTemplate MinUnits="1" MaxUnits="1" 
+      							IncludeKindOf="EGG UNPACKS_INTO_BUILDING"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="LAND AIR AMPHIBIOUS WATER"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager_EASY">
+        <CreateUnits UnitName="JapanBarracksEgg"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_S02_EggsC"
+    MaxTargets="99">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_S02_UnpackC"/>
+    <Tactic id="Attack" Tactic="SimpleExpansion" Distance="200">
+      <TeamTemplate MinUnits="1" MaxUnits="1" 
+      							IncludeKindOf="EGG UNPACKS_INTO_BUILDING"
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+      							AllowedLocomotorTypes="LAND AIR AMPHIBIOUS WATER"
+                    Priority="HIGH"
+                    AlwaysRecruit="false"
+                    MicroManager="StandardMicroManager_EASY">
+        <CreateUnits UnitName="JapanBarracksEgg"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+</AssetDeclaration>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!-- maps a set of modelcondition bit flags to an object filter.  This determines what modelcondition (and thus animation) Yuriko will play when lifting specific objects -->
+	<xs:complexType name="LiftedUnitModelStateMap">
+		<xs:sequence>
+			<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="ModelState" type="ModelConditionBitFlags" use="required"  />
+	</xs:complexType>
+
+	<xs:complexType name="LiftedObjectModelStateMapList">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element
+				name="LiftedUnitModelState"
+				type="LiftedUnitModelStateMap" />
+		</xs:choice>
+	</xs:complexType>
+	
+	<xs:complexType name="LiftObjectUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="ModelStateObjectFilters"
+								   type="LiftedObjectModelStateMapList"
+								   minOccurs="0"
+								   maxOccurs="1"
+								   xas:byValue="true"/>
+				</xs:sequence>	
+				<xs:attribute name="LiftObjectLinkID" type="SageInt" default="0" />
+				<xs:attribute name="CrusherModifiesVelocity" type="SageBool" />
+				<xs:attribute name="LiftVelocity" type="SageReal" />
+				<xs:attribute name="MaxElevationFromGround" type="SageReal" />				
+				<xs:attribute name="TimeIncrement" type="Time" default="0s" />
+				<xs:attribute name="MaxTimeLifted" type="Time" default="1s" />
+				<xs:attribute name="MaxStructureShakeVelocity" type="SageReal" default="0" />	
+                <xs:attribute name="AirplaneCrashWeapon" type="WeaponRef" />
+				<xs:attribute name="SoftLandingWeapon" type="WeaponRef" />
+				<xs:attribute name="RotationSpeed" type="SageReal" default="1.0" />
+				<xs:attribute name="Shader" type="ShaderOverrideRef" use="optional" />
+				<xs:attribute name="ShakeIntensity" type="SageReal" default="0.0" />
+				<xs:attribute name="ShakeRadius" type="SageReal" default="0.0" />
+				<xs:attribute name="ShakeFade" type="SageReal" default="1.0" />
+				<xs:attribute name="DisabledTypesToProcess" type="DisabledBitFlags" default="HELD PARALYZED EMP" />				
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

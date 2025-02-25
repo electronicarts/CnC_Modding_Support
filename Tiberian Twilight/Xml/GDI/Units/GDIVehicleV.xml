@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<!-- GDI Medium Cannon T1 / Hunter --> 
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GDI/Props/GDICannonProjectiles.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseMediumVehicle.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+
+		<!-- Art -->
+		<Include type="all" source="ART:GUVehicleV_IDLA.w3x" />
+		<Include type="all" source="ART:GUVehicleV_SKN.w3x" />
+		<Include type="all"	source="ART:GUVehicleV_SKL.w3x" />
+		<Include type="all" source="ART:GUVehicleV_MOVA.w3x" />
+		<Include type="all"	source="ART:GUVehicleV_D.xml" />
+		<Include type="instance" source="ART:EXTireTrack2.xml" />
+	</Includes>
+
+	<GameObject
+		id="GDIVehicleV"
+		inheritFrom="BaseMediumVehicle"
+		HealthBoxHeightOffset="30"
+		SubGroupPriority="390"
+		SelectPortrait="Portrait_GDI_Vehicle_V"
+		ButtonImage="Btn_GDI_Vehicle_V"
+		Side="GDI"
+		ParticipationValue="=$GDIVEHICLEV_PARTICIPATION_VALUE"
+		TransportSlotCount="2"
+		CommandSet="GDIVehicleVCommandSet"
+		CommandPoints="=$GDI_VEHICLE_V_COMMANDPOINT_COST"
+		BuildTime="12"
+		PathPriority="65"
+		EditorName="GDI_O1_Medium_Cannon(Hunter)"
+		EditorSorting="UNIT"
+		WeaponCategory="CANNON"
+		Description="Desc:GDIVehicleV"
+		TypeDescription="Type:GDIVehicleV">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIVehicleV</DisplayName>
+		<LocomotorSet
+			Locomotor="GDIVehicleVLocomotor"
+			Condition="NORMAL"
+			Speed="110.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				TrackMarks="EXTireTrack2"
+				TrackMarksOnlyWhenCorneringQuickly="true"
+				TrackMarksLeftBone="Tire07"
+				TrackMarksRightBone="Tire08"
+				TireRotationMultiplier="0.2"
+				PowerslideRotationAddition="1.25"
+				InitialRecoilSpeed="12.0"
+				MaxRecoilDistance="9.0"
+				RecoilDamping="1.0"
+				RecoilSettleSpeed="2.0"
+				ExtraPublicBone="Tire01 Tire02 Tire03 Tire04 Tire05 Tire06 Tire07 Tire08 GH_Turret GH_Pitch FXWeapon BARREL"
+				Options="RENDER_BUFF_EFFECTS">
+
+				<TireBoneGroup
+					TireGroupSettings="FRONT"
+					LeftTireBone="Tire01"
+					RightTireBone="Tire02"
+					WheelTurnAngle="60d"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="Tire03"
+					RightTireBone="Tire04"
+					WheelTurnAngle="60d"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="Tire05"
+					RightTireBone="Tire06"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="Tire07"
+					RightTireBone="Tire08"/>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUVehicleV_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon" />
+					<WeaponRecoilBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="BARREL" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon" />
+					<Turret
+						TurretNameKey="GH_Turret"
+						TurretPitch="GH_Pitch"
+						TurretID="1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUVehicleV_SKN" />
+					<Texture
+						Original="GUVehicleV"
+						New="GUVehicleV_D" />
+					<ParticleSysBone
+						BoneName="GH_Hull"
+						FXParticleSystemTemplate="GDIVehicleV_XtraDamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GH_Hull"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUVehicleV_SKN" />
+					<Texture
+						Original="GUVehicleV"
+						New="GUVehicleV_D" />
+					<ParticleSysBone
+						BoneName="GH_Hull"
+						FXParticleSystemTemplate="GDIVehicleV_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GUVehicleV_IDLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+						<Script>
+									CurDrawableHideSubObjectPermanently( "WEAPON_UPG" )
+									CurDrawableHideSubObjectPermanently( "GUVEHICLE_UPG" )
+						</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="GUVehicleV_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIWheelDustLight"
+						FollowBone="true" />
+				</AnimationState>
+			</TruckDraw>
+
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehicleVPrimary" />
+					<TurretSettings
+						TurretTurnRate="300"
+						TurretPitchRate="40"
+            MinimumPitch="-10d"
+						PitchHeight="90%"
+						AllowsPitch="true"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			
+			<!-- Crate Upgrade -->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleVCrateUpgrade"
+				AttributeModifier="Modifier_GDIVehicleVCrateUpgrade">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Accuracy Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleVAccuracyBoostUpgrade"
+				AttributeModifier="Modifier_GDIWeaponAccuracyUpgrade">
+				<TriggeredBy>Upgrade_GDI_Offense_Accuracy</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Range Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleV_WeaponRangeUpgrade"
+				AttributeModifier="Modifier_Generic_GDIWeaponRange_T1">
+				<TriggeredBy>Upgrade_GDI_Offense_Range</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Speed Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehicleVSpeedBoostUpgrade"
+				AttributeModifier="Modifier_Generic_GDISpeedBoostUpgrade">
+				<TriggeredBy>Upgrade_GDI_Offense_Speed</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- This will hide the upgraded Mines model -->
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIVehicleVFunctions"/>
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowMines">
+				<Nugget
+					ShowSubObjects="GUVehicle_UPG Weapon_UPG"
+					Upgrade="Upgrade_Crate_Level1"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+			</SubObjectsUpgrade>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplode_Medium" />
+				<Event
+					Index="onDeath"
+					FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<xi:include
+				href="DATA:Includes/FXListBehaviorCrateUpgrade.xml" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					SympathyRange="200.0"
+					RotateToTargetWhenAiming="false" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="900" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "37.0"
+					 MinorRadius = "27.0"
+					 Height = "28.0"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+
+		</Geometry>
+		<ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior
+			id="ModuleTag_HiJackedSounds">
+				<Override
+					ExcludedFlags="HIJACKED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="GDI_VehVHunter_VoiceAttack" AudioType="voiceAttack" />
+						<AudioEntry Sound="GDI_VehVHunter_VoiceCreate" AudioType="voiceCreated" />
+						<AudioEntry Sound="GDI_VehVHunter_VoiceCreate" AudioType="voiceFullyCreated" />
+						<AudioEntry Sound="GDI_VehVHunter_VoiceMove" AudioType="voiceGuard" />
+						<AudioEntry Sound="GDI_VehVHunter_VoiceMoveAttack" AudioType="voiceAttackAfterMoving" />
+						<AudioEntry Sound="GDI_VehVHunter_VoiceMove" AudioType="voiceMove" />
+						<AudioEntry Sound="GDI_VehVHunter_VoiceRetreat" AudioType="voiceRetreatToCastle" />
+						<AudioEntry Sound="GDI_VehVHunter_VoiceSelectMS" AudioType="voiceSelect" />
+						<AudioEntry Sound="GDI_VehVHunter_VoiceSelectBattleMS" AudioType="voiceSelectBattle" />
+						<AudioEntry Sound="GDI_VehVHunter_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" />
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleMedium_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry
+				Sound="GDI_VehicleV_MoveStart"
+				AudioType="soundMoveStart" />
+			<AudioEntry
+				Sound="GDI_VehicleV_MoveLoop"
+				AudioType="soundMoveLoop" />
+			<!-- <AudioEntry Sound="GDI_VehicleV_MoveStart" AudioType="soundRotateStart" /> -->
+			<AudioEntry
+				Sound="GDI_VehicleV_IdleLoop"
+				AudioType="soundAmbient" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_GDI_Offense_Accuracy</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDI_Offense_Range</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDI_Offense_Speed</DisplayUpgrade>
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET			-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LogicCommandSet
+		id="GDIVehicleVCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+	</LogicCommandSet>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOCOMOTORS								-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LocomotorTemplate
+		id="GDIVehicleVLocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		TurnTimeSeconds="0.7s"
+		TurnTimeDamagedSeconds="0.7s"
+		MaxSpeedDamaged="100%"
+		AccelerationSeconds="0.2s"
+		BrakingSeconds="0.15s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="20.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="TREADS"
+		UseTerrainSmoothing="true"
+		CanReverseMove="true"
+		ReverseMoveSpeed="100%"
+		AccelPitchLimit="1.8d"
+		BounceKick="0.8d"
+		PitchStiffness="0.4"
+		RollStiffness="0.5"
+		PitchDamping="0.4"
+		RollDamping="0.5"
+		ForwardAccelerationPitchFactor="0.02"
+		LateralAccelerationRollFactor="0.0"
+		HasSuspension="true"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		/>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    MODIFIERS								-->
+	<!-- ////////////////////////////////////////	-->
+
+	<!-- Crate Upgrade Modifier -->
+	<AttributeModifier
+		id="Modifier_GDIVehicleVCrateUpgrade"
+		Category="NONE"
+		StartFX="FX_UpgradeBlue">
+		<Modifier Type="DAMAGE_MULT" Value="125%"/>
+	</AttributeModifier>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS									-->
+	<!-- ////////////////////////////////////////	-->
+
+	<WeaponTemplate
+		id="GDIVehicleVPrimary"
+		inheritFrom="BaseCannonWeapon" 
+		AttackRange="250.0"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		WeaponRecoil="5d"
+		AcceptableAimDelta="1d"
+		FireSound="GDI_Hunter_VehV_CannonFire"
+		FireFX="FX_GDIVehicleVCannon"
+		FireStrongCounterFX="FX_GDIVehicleVCannonHeroic">
+		<FiringDuration
+			MinSeconds="0.75s"
+			MaxSeconds="0.75s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="2.25s"
+			MaxSeconds="2.25s" />
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="GDIVehicleVPrimaryWarhead"
+				ProjectileTemplate="GDIMediumCannonProjectile">
+				<CombatChainProjectiles
+					CombatChain="STRONG"
+					ProjectileTemplate="GDIMediumCannonProjectile_Veteran"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIVehicleVPrimaryWarhead">
+		<Nuggets>
+			<DamageNugget
+				Damage="39.0"
+				DamageType="CANNON"
+				DamageFXType="GDI_CANNON"
+				DeathType="NORMAL">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   EXPERIENCE LEVELS						-->
+	<!-- ////////////////////////////////////////	-->
+
+	<ExperienceLevelTemplate
+		id="GDIVehicleVExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="6">
+		<Target>GDIVehicleV</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleVExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIVehicleVExperienceLevel_1"
+		RequiredExperience="6"
+		ExperienceAward="7">
+		<Target>GDIVehicleV</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleVExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIVehicleVExperienceLevel_2"
+		RequiredExperience="12"
+		ExperienceAward="8">
+		<Target>GDIVehicleV</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleVExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIVehicleVExperienceLevel_3"
+		RequiredExperience="24"
+		ExperienceAward="9">
+		<Target>GDIVehicleV</Target>
+	</ExperienceLevelTemplate>
+
+</AssetDeclaration>

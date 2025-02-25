@@ -1,0 +1,911 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	
+	<!-- GDI Offense Medium Blast T2 / Shatterer /  Shockwave -->
+	<!--
+		'WEAPON_UPGRADED_01' - object status used for crate upgrade    
+		'USER_1' - model condition and object status used for self-resonator upgrade    
+	-->
+	
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseMediumVehicle.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:GDI/Props/GDIVehiclePProps.xml" />
+
+		<!-- ART -->
+		<Include type="all" source="ART:GUM_VehicleP_SKN.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_SKL.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_AIDA.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_AIDD.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_ATKA.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_BATA.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_BIDA.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_DSEL.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_MOVA.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_MOVD.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_DMG.xml" />
+		<Include type="all" source="ART:GUM_VehicleP_JMP1.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_JMP2.w3x" />
+		<Include type="all" source="ART:GUM_VehicleP_JMP3.w3x" />
+
+		<Include type="all" source="ART:FXWhiteSquare.xml" />
+		<Include type="all" source="ART:Decal_Sensor_CO.xml" />
+		<Include type="all" source="ART:FXRailGunCoreMask.xml" />
+		<Include type="all" source="ART:FXRailGunCoreDistortion.xml" />
+		<Include type="instance" source="ART:EXTnkTrack.xml" />
+	</Includes>
+	
+	<GameObject
+		id="GDIVehicleP"
+		inheritFrom="BaseMediumVehicle"
+		HealthBoxHeightOffset="45"
+		SubGroupPriority="242"
+		SelectPortrait="Portrait_GDI_Vehicle_P_tech1"
+		ButtonImage="Btn_GDI_Vehicle_P_tech1"
+		Side="GDI"
+		ParticipationValue="=$GDIVEHICLEP_PARTICIPATION_VALUE"
+		TransportSlotCount="1"		
+		BuildTime="12"
+		PathPriority="75"
+		CommandSet="GDIVehiclePCommandSet"
+		CommandPoints="=$GDI_VEHICLE_P_COMMANDPOINT_COST"
+		ThreatLevel="10"
+		WeaponCategory="BLAST"
+		VoicePriority="184"
+		EditorName="GDI_O2_Medium_Blast(Shockwave)"
+		EditorSorting="UNIT"
+		Description="Desc:GDIVehicleP"
+		TypeDescription="Type:GDIVehicleP">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIVehicleP</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+		<LocomotorSet
+			Locomotor="GDIvehiclePLocomotor"
+			Condition="NORMAL"
+			Speed="120.0" />
+		<LocomotorSet
+			Locomotor="GDIvehiclePUpgradeCrystalLocomotor"
+			Condition="UPGRADE_CRYSTAL_ATTACHED"
+			Speed="120.0" />
+
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true"
+			ConquerMetricsOverrideDPS="14"
+			ConquerMetricsOverrideDamageType="BLAST" />
+		<Draws>
+			<TankDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="12.0"
+				MaxRecoilDistance="6"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="0.7"
+				ExtraPublicBone="GP_HULL GP_TYRE_04 FXWeapon FXDamage01 GP_Barrel"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUM_VehicleP_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon" />
+					
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GP_Barrel" />
+					
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon" />
+				</ModelConditionState>
+				<!--<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="GUM_VehicleP_SKN" />
+				</ModelConditionState>-->
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUM_VehicleP_SKN" />
+					<Texture
+						Original="GUM_VehicleP" 
+						New="GUM_VehicleP_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUM_VehicleP_SKN" />
+					<Texture
+						Original="GUM_VehicleP"
+						New="GUM_VehicleP_DMG" />
+					<ParticleSysBone
+						BoneName="GP_TYRE_04"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GUM_VehicleP_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+						<Script>
+									CurDrawableHideSubObjectPermanently( "GUM_VEHICLEP_UPG" )
+						</Script>
+				</AnimationState>
+        
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="GUM_VehicleP_BIDA"
+						AnimationMode="ONCE"
+						AnimationPriority="10"
+						AnimationBlendTime="5" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "" or Prev == "STATE_bored" then
+						-- do nothing, pick next bored anim
+						else
+						CurDrawableSetTransitionAnimState("STATE_Deselected")
+						end
+					</Script>
+				</AnimationState>
+
+				<!-- Cliff Transition animations -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIFF_TRANSITION_STARTUP">
+					<Animation
+						AnimationName="GUM_VehicleP_JMP1"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIFF_TRANSITION_MID">
+					<Animation
+						AnimationName="GUM_VehicleP_JMP2"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIFF_TRANSITION_LAND">
+					<Animation
+						AnimationName="GUM_VehicleP_JMP3"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="GUM_VehicleP_ATKA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust"
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED REALLYDAMAGED">
+					<Animation
+						AnimationName="GUM_VehicleP_AIDD"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" then
+						CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust"
+						FollowBone="true" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING REALLYDAMAGED">
+					<Animation
+						AnimationName="GUM_VehicleP_MOVD"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust"
+						FollowBone="true" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="GUM_VehicleP_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust"
+						FollowBone="true" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Animation
+						AnimationName="GUM_VehicleP_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" then
+						CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust"
+						FollowBone="true" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ATTACKING">
+					<Animation
+						AnimationName="GUM_VehicleP_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" then
+						CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust"
+						FollowBone="true" />
+				</AnimationState>
+				
+				<!-- TRANSITIONS -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="STATE_Deselected">
+					<Animation
+						AnimationName="GUM_VehicleP_DSEL"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust"
+						FollowBone="true" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IdleToSelected">
+					<Animation
+						AnimationName="GUM_VehicleP_BATA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="GDIHoverDust"
+						FollowBone="true" />
+				</AnimationState>
+
+			</TankDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_Particles"
+				OkToChangeModelColor="true"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT"
+					Skeleton="">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<!-- Self-Resonate FX (USER_1) -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="GDISonicResonator_RingsLarge"
+						FollowBone="true" />
+				</ModelConditionState>
+				<!--
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="GUShatterer_DIEA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 AFFECTED_BY_EMP">
+					<Model
+						Name="" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate=""
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate=""
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Model
+						Name="" />
+					<ParticleSysBone
+						BoneName="none"
+						FXParticleSystemTemplate="GDIShattererHoverDust"
+						FollowBone="true" />
+
+					<ParticleSysBone
+						BoneName="none"
+						FXParticleSystemTemplate="GDIShattererDustRocksDesert"
+						FollowBone="true" />
+					</ModelConditionState>
+				-->
+			</ScriptedModelDraw>
+			
+			<!-- draw a nice 'combined' effect, PLACEHOLDER -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawCombined"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT" />
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="COMBINED_PARENT">
+					<ParticleSysBone
+						BoneName="FXWeapon"
+						FollowBone="true"
+						FXParticleSystemTemplate="AUBuzzerCombine" />
+					<ParticleSysBone
+						BoneName="FXWeapon"
+						FollowBone="true"
+						FXParticleSystemTemplate="AUBuzzerCombineGlow" />						
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+			<!-- STEALTH DETECT RADIUS (temp decal -Aram) when selected -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawStealthDetectDecal"
+				OkToChangeModelColor="true"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 SELECTED">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="500"
+						SizeY="500"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_Weapon01SetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehiclePSonicCannon"
+						ForbiddenObjectStatus="WEAPON_UPGRADED_01" />
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehiclePSonicCannonUpgraded"
+						ObjectStatus="WEAPON_UPGRADED_01" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+
+			<!-- Crate Upgrades -->
+			<StatusBitsUpgrade
+				id="ModuleTag_StatusBitsUpgrade"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+			</StatusBitsUpgrade>
+
+			<!-- Player-level Upgrades -->
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="500"
+				RequiredUpgrade="Upgrade_GDIOffenseSelfResonator" />
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIVehiclePSelfResonator"
+				AttributeModifier="Modifier_GDIVehiclePSelfResonator">
+				<TriggeredBy>Upgrade_GDIOffenseSelfResonator</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIVehiclePFunctions"/>      
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+				<Nugget
+					ShowSubObjects="GUM_VehicleP_UPG"
+					Upgrade="Upgrade_Crate_Level1"
+          FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplode_Medium" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<SelectiveVisibilityBehavior
+				id="ModuleTag_SelectiveVisibility"
+				DrawModuleId="ModuleTag_DrawStealthDetectDecal"
+				AllowedPlayers="ALLIES"
+				UpdateRate="0.5s" />
+			<xi:include
+				href="DATA:Includes/FXListBehaviorCrateUpgrade.xml" />
+
+			<CliffTransitionUpdate
+				id="ModuleTag_CliffTransition"
+				StartupFX="FX_DirtHit"
+				LandFX="FX_DirtHit"
+				LandFXOffsetDistance="12.0"
+				JumpWeaponSlot="TERTIARY_WEAPON">
+				<Transition
+					Type="UPWARD"
+					WeaponTemplate="CliffJumpingWeaponTemplate"
+					TravelDistance="150"
+					StartupDuration="0.3s"
+					LandDuration="0.37s"
+					ProjectileUpdateModuleId="ModuleTag_CliffTransitionProjectile"/>
+				<Transition
+					Type="DOWNWARD"
+					WeaponTemplate="CliffJumpingWeaponTemplate"
+					TravelDistance="150"
+					StartupDuration="0.3s"
+					LandDuration="0.37s"
+					ProjectileUpdateModuleId="ModuleTag_CliffTransitionProjectile"/>
+			</CliffTransitionUpdate>
+
+			<BezierProjectile
+				id="ModuleTag_CliffTransitionProjectile"
+				Flags="NO_DETONATE"
+				FirstHeightMin="40"
+				FirstHeightMax="40"
+				SecondHeightMin="30"
+				SecondHeightMax="30"
+				FirstPercentIndent="20%"
+				SecondPercentIndent="66%"
+				BounceCount="0"/>
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="true"
+					SympathyRange="200.0" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="900" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "30.0"
+					 MinorRadius = "25.0"
+					 Height = "25.0"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+
+		</Geometry>
+		<ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_HiJackedSounds">
+				<Override ExcludedFlags="HIJACKED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="GDI_VehPShockwave_VoiceAttack" AudioType="voiceAttack" />
+						<AudioEntry Sound="GDI_VehPShockwave_VoiceCreate" AudioType="voiceCreated" />
+						<AudioEntry Sound="GDI_VehPShockwave_VoiceCreate" AudioType="voiceFullyCreated" />
+						<AudioEntry Sound="GDI_VehPShockwave_VoiceMove" AudioType="voiceGuard" />
+						<AudioEntry Sound="GDI_VehPShockwave_VoiceMoveAttack" AudioType="voiceAttackAfterMoving" />
+						<AudioEntry Sound="GDI_VehPShockwave_VoiceMove" AudioType="voiceMove" />
+						<AudioEntry Sound="GDI_VehPShockwave_VoiceRetreat" AudioType="voiceRetreatToCastle" />
+						<AudioEntry Sound="GDI_VehPShockwave_VoiceSelectMS" AudioType="voiceSelect" />
+						<AudioEntry Sound="GDI_VehPShockwave_VoiceSelectBattleMS" AudioType="voiceSelectBattle" />
+						<AudioEntry Sound="GDI_VehPShockwave_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" />
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MoveLoop">
+				<ModelConditionSound Sound="GDI_Shockwave_VehP_MoveLoop" RequiredFlags="MOVING" ExcludedFlags="DECELERATE RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleMedium_LoopMS" AudioType="soundAmbientReallyDamaged" />
+		<!--	<AudioEntry Sound="GDI_Shatterer_IdleLoop" AudioType="soundAmbient" /> -->
+			<AudioEntry Sound="GDI_Shockwave_VehP_MoveByLoop" AudioType="soundMoveLoop" />
+			<AudioEntry Sound="GDI_Shockwave_VehP_MoveStart" AudioType="soundMoveStart" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_GDIOffenseSelfResonator</DisplayUpgrade>
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET			-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LogicCommandSet
+		id="GDIVehiclePCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+	</LogicCommandSet>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOCOMOTORS								-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LocomotorTemplate
+		id="GDIvehiclePLocomotor"
+		Surfaces="GROUND CLIFF CRUSHABLE_OBSTACLE"
+		JumpsCliffs="true"
+		TurnTimeSeconds="1.5s"
+		TurnTimeDamagedSeconds="1.5s"
+		MaxSpeedDamaged="100%"
+		AccelerationSeconds="1.0s"
+		BrakingSeconds="1.0s"
+		SlowTurnRadius="15.0"
+		FastTurnRadius="30.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="FOUR_WHEELS"
+		UseTerrainSmoothing="true"
+		UniformAxialDamping="0.1"
+		PitchStiffness="0.5"
+		RollStiffness="0.75"
+		PitchDamping="0.1"
+		RollDamping="0.1"
+		ForwardAccelerationPitchFactor="-0.1"
+		LateralAccelerationRollFactor="-0.2"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="false"
+		LateralVelocityRollFactor="-15"
+		CanReverseMove="true"
+		/>
+
+	<LocomotorTemplate
+		id="GDIVehiclePUpgradeCrystalLocomotor"
+		inheritFrom="GDIVehiclePLocomotor"
+		Surfaces="-CLIFF"
+		JumpsCliffs="false"/>
+	
+	<!-- ////////////////////////////////////////	-->
+	<!--    MODIFIERS AND UPGRADES					-->
+	<!-- ////////////////////////////////////////	-->
+
+	<!-- Player-level Self-Resonator Upgrade Modifier -->
+	<AttributeModifier
+		id="Modifier_GDIVehiclePSelfResonator"
+		Category="NONE"
+		StartFX="FX_UpgradeGDISelfResonator"
+		ModelConditionsSet="USER_1"
+		ObjectStatusToSet="USER_1">
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="50%" />
+	</AttributeModifier>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS									-->
+	<!-- ////////////////////////////////////////	-->
+
+	<WeaponTemplate
+		id="GDIVehiclePSonicCannon"
+		AttackRange="250.0"
+		MinTargetPitch="-5d"
+		MaxTargetPitch="5d"
+		WeaponSpeed="1000"
+		WeaponRecoil="0d"
+		FireSound="GDI_Shockwave_VehP_SonicBlastWeaponFireMS"
+		FireFX="FX_GDISonicBlast_Medium_Fire"
+		FireVeteranFX="FX_GDISonicBlast_Medium_FireVet"
+		CanFireWhileMoving="false"
+		AcceptableAimDelta="1d"
+		ClipSize="1"
+		ReAcquireDetailType="PER_CLIP"
+		RequiredAntiMask="ANTI_GROUND"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT CAN_FIRE_ON_GROUND"
+ 		>
+		<FiringDuration
+			MinSeconds="0.25s"
+			MaxSeconds="0.25s" />
+		<ClipReloadTime
+			MinSeconds="2.75s"
+			MaxSeconds="2.75s" />
+		<Nuggets>
+			<ProjectileNugget
+				id="Nugget_Projectile" 
+				ProjectileTemplate="GDIVehiclePSonicShell"
+				WarheadTemplate="GDIVehiclePSonicWarhead">
+				<CombatChainProjectiles
+					CombatChain="STRONG"
+					ProjectileTemplate="GDIVehiclePSonicShellUpgraded"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="GDIVehiclePSonicCannonUpgraded"
+		inheritFrom="GDIVehiclePSonicCannon"
+		>
+		<Nuggets>
+			<ProjectileNugget
+				id="Nugget_Projectile" 
+				ProjectileTemplate="GDIVehiclePSonicShellUpgraded"
+				WarheadTemplate="GDIVehiclePSonicWarheadUpgraded">
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="GDIVehiclePSonicWarhead"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		>
+		<Nuggets>
+			<DamageNugget
+				Damage="0.1"
+				DamageType="BLAST"
+				DamageFXType="GDI_SONIC"
+				DeathType="EXPLODED" />
+			<WeaponOCLNugget
+				id="Nugget_OCL" 
+				WeaponOCL="OCL_GDIVehiclePSonicCharge"
+				TargetAsPrimaryObject="false"
+				ForbiddenSourceObjectStatus="CLONED">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES ENEMIES NEUTRAL"
+					Include="VEHICLE INFANTRY STRUCTURE"/>
+			</WeaponOCLNugget>
+		</Nuggets>		
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="GDIVehiclePSonicWarheadUpgraded"
+		inheritFrom="GDIVehiclePSonicWarhead"
+		>
+		<Nuggets>
+			<DamageNugget
+				Damage="0.1"
+				DamageType="BLAST"
+				DamageFXType="GDI_SONIC"
+				DeathType="EXPLODED" />
+			<WeaponOCLNugget
+				id="Nugget_OCL" 
+				WeaponOCL="OCL_GDIVehiclePSonicChargeUpgraded"
+				ForbiddenSourceObjectStatus="CLONED">
+			</WeaponOCLNugget>
+		</Nuggets>
+	</WeaponTemplate>	
+
+	<!-- used by the sonic charge to inflict damage over time -->
+	<WeaponTemplate
+		id="GDIVehiclePSonicChargeAttached"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		ReAcquireDetailType="PRE_FIRE"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		FiringLoopSound=""
+		FireFX="FX_GDISonicBlast_DamageOverTime"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		AcceptableAimDelta="180d"
+		CanFireWhileMoving="true"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_GROUND ANTI_WATER ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE"
+		FinishAttackOnceStarted="true"
+		MeleeWeapon="true">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage" 
+				Damage="5.0"
+				DamageType="BLAST"
+				DeathType="EXPLODED">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="GDIVehiclePSonicChargeAttachedUpgraded"
+		inheritFrom="GDIVehiclePSonicChargeAttached"
+		>
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage" 
+				Damage="5.0">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- used by the sonic charge when it is detonated -->
+	<WeaponTemplate
+		id="GDIVehiclePSonicChargeExplosion"
+		FireFX=""
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RadiusDamageAffects="ENEMIES NEUTRALS">
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage" 
+				Damage="20.0"
+				Radius="50.0"
+				DelayTimeSeconds="0.1s"
+				DamageType="BLAST"
+				DamageFXType="GDI_SONIC"
+				DeathType="EXPLODED"
+				PartitionFilterTestType="CIRCLE"/>
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="GDIVehiclePSonicChargeExplosionUpgraded"
+		inheritFrom="GDIVehiclePSonicChargeExplosion"
+		>
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage" 
+				Damage="35.0"
+				Radius="50.0"/>
+		</Nuggets>		
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="GDIVehiclePSonicChargeBonusExplosion"
+		inheritFrom="GDIVehiclePSonicChargeExplosion">
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage"
+				Damage="20.0"
+				Radius="50.0"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   OBJECT CREATION LISTS					-->
+	<!-- ////////////////////////////////////////	-->
+
+	<ObjectCreationList
+		id="OCL_GDIVehiclePSonicCharge">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="GDIVehiclePSonicCharge"/>
+				<AttachToTarget/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_GDIVehiclePSonicChargeUpgraded">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="GDIVehiclePSonicChargeUpgraded"/>
+				<AttachToTarget/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>	
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   EXPERIENCE LEVELS						-->
+	<!-- ////////////////////////////////////////	-->
+	<ExperienceLevelTemplate
+		id="GDIVehiclePExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="6">
+		<Target>GDIVehicleP</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehiclePExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIVehiclePExperienceLevel_1"
+		RequiredExperience="12"
+		ExperienceAward="7">
+		<Target>GDIVehicleP</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehiclePExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIVehiclePExperienceLevel_2"
+		RequiredExperience="30"
+		ExperienceAward="8">
+		<Target>GDIVehicleP</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehiclePExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIVehiclePExperienceLevel_3"
+		RequiredExperience="54"
+		ExperienceAward="9">
+		<Target>GDIVehicleP</Target>
+	</ExperienceLevelTemplate>
+
+</AssetDeclaration>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Tags></Tags>
+  <Includes></Includes>
+  
+    <AIStrategicStateDefinition
+		id="SP_AlienAttackImminent"
+		UnitUpgradeMultiplier="0.0"
+		UnitBuilderSimpleUnitCap="30">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="BaseDefenseHeuristic"/>
+    <Tactic Tactic="SimpleDefense" TargetType="Defensive">
+    		<TeamTemplate MinUnits="10" MaxUnits ="10" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="" AutoReinforce="false" AlwaysRecruit="false"/>
+    </Tactic>
+    <Tactic Tactic="RoamingDefense" TargetType="Targetless">
+    		<TeamTemplate MinUnits="8" MaxUnits ="8" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="" AutoReinforce="false" AlwaysRecruit="false"/>
+    </Tactic>
+    <Tactic Tactic="SimpleDefense" TargetType="Defensive"/>
+    <UnitModifierByName UnitName="AlienRazorDroneSquad" UnitPreferenceOffensiveModifier="125%" UnitPreferenceDefensiveModifier="100%"/>
+  </AIStrategicStateDefinition>
+
+  <!--If opponent is outmatched go after his forces directly-->
+  <AIStrategicStateDefinition
+		id="SP_AlienOverpower"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <OverpowerHeuristic
+        PowerAdvantageWeight="0.75"
+        PenetrabilityWeight="0.25">
+        <PowerAdvantageHeuristic/>
+        <PenetrabilityHeuristic/>
+      </OverpowerHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ConstructionKillHeuristic"/>
+    <Tactic Tactic="SimpleAttack" TargetType="Structure"/>
+    <Tactic Tactic="Hunt" TargetType="Targetless"/>
+    <!--No Unit Preferences-->
+  </AIStrategicStateDefinition>
+
+  <!--If opponent is low on funds cripple his economy-->
+  <AIStrategicStateDefinition
+		id="SP_AlienResourceSqueeze"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <ResourceSqueezeHeuristic
+        PenetrabilityWeight="0.25"
+        OpponentFundsWeight="0.75">
+        <PenetrabilityHeuristic/>
+        <OpponentFundsHeuristic/>
+      </ResourceSqueezeHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ResourceSqueezeHeuristic"/>
+    <Tactic Tactic="FlankAttack" TargetType="Structure"/>
+    <Tactic Tactic="Hunt" TargetType="Targetless"/>
+    <UnitModifierByName UnitName="AlienSeekerTank" UnitBonus="10"/>
+  </AIStrategicStateDefinition>
+
+  <!--If opponent is nearly matched in forces, take out his production capacity-->
+  <AIStrategicStateDefinition
+		id="SP_AlienProductionHalt"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <ProductionHaltHeuristic
+        BalanceOfPowerWeight="0.75"
+        PenetrabilityWeight="0.25">
+        <PenetrabilityHeuristic/>
+        <BalanceOfPowerHeuristic/>
+      </ProductionHaltHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ProductionHaltHeuristic"/>
+    <Tactic Tactic="FlankAttack" TargetType="Structure"/>
+    <Tactic Tactic="Hunt" TargetType="Targetless"/>
+    <UnitModifierByName UnitName="AlienSeekerTank" UnitBonus="10"/>
+  </AIStrategicStateDefinition>
+
+  <!--If opponent is turtling, siege his base-->
+  <AIStrategicStateDefinition
+		id="SP_AlienBaseCrack"
+		UnitUpgradeMultiplier="0.0">
+    <Heuristic>
+      <BaseCrackHeuristic>
+        <LateGameHeuristic/>
+        <PenetrabilityHeuristic/>
+      </BaseCrackHeuristic>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ProductionHaltHeuristic"/>
+    <Tactic Tactic="SimpleSiege" TargetType="Structure"/>
+    <UnitModifierByName UnitName="AlienSeekerTank" UnitBonus="10"/>
+  </AIStrategicStateDefinition>
+
+</AssetDeclaration>

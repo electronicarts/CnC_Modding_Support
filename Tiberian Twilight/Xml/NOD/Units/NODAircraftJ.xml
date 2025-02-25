@@ -1,0 +1,805 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- NOD Aircraft J / Shuriken / Nod T1 Medium Caster / Scalpel -->
+	<Includes>
+		<Include type="all"	source="ART:NUM_AircraftJ_FP.w3x" />
+		<Include type="all"	source="ART:NUM_AircraftJ_SKN.w3x" />
+		<Include type="all"	source="ART:NUM_AircraftJ_AIDA.w3x" />
+		<Include type="all"	source="ART:NUM_AircraftJ_AIDD.w3x" />
+		<Include type="all"	source="ART:NUM_AircraftJ_DCLA.w3x" />
+		<Include type="all"	source="ART:NUM_AircraftJ_MOVA.w3x" />
+		<Include type="all"	source="ART:NUM_AircraftJ_MOVD.w3x" />
+		<Include type="all"	source="ART:NUM_AircraftJ_RVRS.w3x" />
+		<Include type="all"	source="ART:NUM_AircraftJ_DMG.xml" />
+		<Include type="instance" source="ART:FXGDIHealingBeam.xml" />
+		<Include type="instance" source="ART:FXLaserOverlay.xml" />
+		<Include type="instance" source="ART:FXNodLaser_Secondary.xml" />
+
+		<Include type="instance" source="DATA:Nod/Props/NODAircraftJProps.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseMediumAircraft.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NODAIRCRAFTJ_PURGE_DEBUFF_RADIUS" value="200.0" />
+	</Defines>
+
+	<GameObject
+		id="NODAircraftJ"
+		inheritFrom="BaseMediumAircraft"
+		HealthBoxHeightOffset="10"
+		SubGroupPriority="318"
+		SelectPortrait="Portrait_NOD_Aircraft_J"
+		ButtonImage="Btn_NOD_Aircraft_J"
+		Side="NOD"
+		ParticipationValue="=$NODAIRCRAFTJ_PARTICIPATION_VALUE"
+		BuildTime="12"
+		CommandSet="NODAircraftJCommandSet"
+		CommandPoints="=$NOD_AIRCRAFT_J_COMMANDPOINT_COST" 
+		KindOf="+NO_COLLIDE +CAN_HEAL_ALLIES"
+		ThreatLevel="10"
+		VoicePriority="148"
+		EditorName="NOD_S1_Medium_Caster(Shuriken)"
+		Description="Desc:NODAircraftJ"
+		TypeDescription="Type:NODAircraftJ">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODAircraftJ</DisplayName>
+		<LocomotorSet
+			Locomotor="BasicHelicopterTaxiLocomotor"
+			Condition="TAXIING"
+			Speed="140.0" />
+		<LocomotorSet
+			Locomotor="NODAircraftJLocomotor"
+			Condition="NORMAL"
+			Speed="140.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="NAJ_Hull NAJ_Right NAJ_Left FXWeapon01 FXWeapon02 FXHealer"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUM_AircraftJ_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXHealer" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXHealer" />
+					<ParticleSysBone
+						BoneName="NAJ_Right"
+						FXParticleSystemTemplate="orcaexhaust-z"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAJ_Left"
+						FXParticleSystemTemplate="orcaexhaust-z"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAJ_Hull"
+						FXParticleSystemTemplate="GDIHoverDust_GST01"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="NUM_AircraftJ_FP"	/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NUM_AircraftJ_SKN" />
+					<Texture
+						Original="NUM_AircraftJ"
+						New="NUM_AircraftJ_DMG" />
+					<ParticleSysBone
+						BoneName="NAJ_Right"
+						FXParticleSystemTemplate="VenomDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAJ_Hull"
+						FXParticleSystemTemplate="VenomDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAJ_Right"
+						FXParticleSystemTemplate="orcaexhaust-z"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAJ_Left"
+						FXParticleSystemTemplate="orcaexhaust-z"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAJ_Hull"
+						FXParticleSystemTemplate="GDIHoverDust_GST01"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUM_AircraftJ_SKN"/>
+					<Texture
+						Original="NUM_AircraftJ"
+						New="NUM_AircraftJ_DMG" />
+					<ParticleSysBone
+						BoneName="NAJ_Right"
+						FXParticleSystemTemplate="VenomDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAJ_Hull"
+						FXParticleSystemTemplate="VenomDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAJ_Right"
+						FXParticleSystemTemplate="orcaexhaust-z"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAJ_Left"
+						FXParticleSystemTemplate="orcaexhaust-z"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAJ_Hull"
+						FXParticleSystemTemplate="GDIHoverDust_GST01"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="NUM_AircraftJ_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING BACKING_UP">
+					<Animation
+						AnimationName="NUM_AircraftJ_RVRS"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE REALLYDAMAGED">
+					<Animation
+						AnimationName="NUM_AircraftJ_MOVD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="FXExhaust01"
+						FXParticleSystemTemplate="NODAircraft_HoverFlamesb"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust02"
+						FXParticleSystemTemplate="NODAircraft_HoverFlamesb"
+						FollowBone="true" />
+				
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE DAMAGED">
+					<Animation
+						AnimationName="NUM_AircraftJ_MOVD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="FXExhaust01"
+						FXParticleSystemTemplate="NODAircraft_HoverFlames"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust02"
+						FXParticleSystemTemplate="NODAircraft_HoverFlames"
+						FollowBone="true" />
+			
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE">
+					<Animation
+						AnimationName="NUM_AircraftJ_MOVA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="FXExhaust01"
+						FXParticleSystemTemplate="NODAircraft_HoverFlamesb"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust02"
+						FXParticleSystemTemplate="NODAircraft_HoverFlamesb"
+						FollowBone="true" />
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE REALLYDAMAGED">
+					<Animation
+						AnimationName="NUM_AircraftJ_DCLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE DAMAGED">
+					<Animation
+						AnimationName="NUM_AircraftJ_DCLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE">
+					<Animation
+						AnimationName="NUM_AircraftJ_DCLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING REALLYDAMAGED">
+					<Animation
+						AnimationName="NUM_AircraftJ_MOVD"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="FXExhaust01"
+						FXParticleSystemTemplate="NODAircraft_HoverFlamesb"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust02"
+						FXParticleSystemTemplate="NODAircraft_HoverFlamesb"
+						FollowBone="true" />
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Animation
+						AnimationName="NUM_AircraftJ_AIDD"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="NUM_AircraftJ_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<ParticleSysBone
+						BoneName="FXExhaust01"
+						FXParticleSystemTemplate="NODAircraft_HoverFlamesb"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXExhaust02"
+						FXParticleSystemTemplate="NODAircraft_HoverFlamesb"
+						FollowBone="true" />
+				
+				</AnimationState>
+
+				<ProceduralAnimationState
+					ConditionsYes=""
+					SourceBoneNameKey="NAJ_Right"
+					TargetBoneNameKey="NAJ_Right"
+					Rotation="ROTATE_Z INFINITE_LOOP"
+					RotationSpeed="12d">
+				</ProceduralAnimationState>
+				<ProceduralAnimationState
+					ConditionsYes=""
+					SourceBoneNameKey="NAJ_Left"
+					TargetBoneNameKey="NAJ_Left"
+					Rotation="ROTATE_Z INFINITE_LOOP"
+					RotationSpeed="-14d">
+				</ProceduralAnimationState>
+				
+			</ScriptedModelDraw>
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile="5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="5"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="5"
+				LightMin="10"
+				LightMax="20"
+				LaserStateID="1">
+				<LightColor R="1.0" G="0.0" B="0.5" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDIHealingBeam</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+			<!--
+			<LaserDraw
+				id="ModuleTag_LaserDraw2"
+				UseDistortionShader="true"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="5"
+				LightMin="5"
+				LightMax="15"
+				LaserStateID="1">
+				<LightColor R="1.0" G="0.0" B="0.5" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser_Secondary</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw> -->
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODAircraftJHealWeapon" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<LaserState
+				id="ModuleTag_LaserState"
+				LaserId="1">
+				<LaserEndParticleSystem>HealingBeamHit</LaserEndParticleSystem>
+			</LaserState>
+			<!-- gravity mult of 30 is temporary -->
+			<Physics
+				id="ModuleTag_Physics"
+				GravityMultiplier="30" />
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NODAircraftJ_Dying_OCL">
+				<DieMuxData
+					DeathTypes="ALL"/>
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODAircraftJFunctions" />
+			<!-- Accuracy Boost upgrade.-->
+
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_NODAircraftJDamageBuff</TriggeredBy>
+				<Nugget
+					ShowSubObjects="NUM_AircraftJ_UPG"
+					Upgrade="Upgrade_NODAircraftJDamageBuff"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>          
+			</SubObjectsUpgrade>
+			<FXListBehavior
+				id="ModuleTag_FXListDamageUpgrade">
+				<TriggeredBy>Upgrade_NODAircraftJDamageBuff</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeNODInfusionEngine" />
+			</FXListBehavior>
+
+			<!-- Range Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_NODAircraftJ_WeaponRangeUpgrade"
+				AttributeModifier="Modifier_Generic_NODWeaponRange_T1">
+				<TriggeredBy>Upgrade_Nod_Support_Range</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Speed Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_NODAircraftJSpeedBoostUpgrade"
+				AttributeModifier="Modifier_NODAircraftJSpeedBoostUpgrade">
+				<TriggeredBy>Upgrade_Nod_Support_Speed</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Damage buff special ability -->
+			<SpecialPower
+				id="ModuleTag_DamageBuff"
+				SpecialPowerTemplate="SpecialPower_NODAircraftJDamageBuff"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="GenericAllAlliedObjectSpecialPowerObjectFilter" />
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_DamageBuffUpdate"
+				SpecialWeapon="NODAircraftJBuffWeapon"
+				SpecialPowerTemplate="SpecialPower_NODAircraftJDamageBuff"
+				UnpackTime="0.3s"
+				PackTime="0.3s"
+				UnpackSound="NOD_Scalpel_AirJ_CrystalChargeFire"
+				FaceTarget="true"
+				WhichSpecialWeapon="1"
+				StartAbilityRange="200" 
+				Options="BUSY_DURING_UNPACK BUSY_DURING_PACK FAIL_WITH_INVALID_APPROACH" />
+
+			<SpecialPower
+				id="ModuleTag_PurgeBuffsUpdateTrigger"
+				SpecialPowerTemplate="SpecialPower_NODAircraftJPurgeBuffs"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="NODAircraftJPurge_ObjectFilter"/>
+			<ActivateModuleSpecialAbilityUpdate
+				id="ModuleTag_PurgeBuffsUpdateUpdate"
+				SpecialPowerTemplate="SpecialPower_NODAircraftJPurgeBuffs"
+				StartAbilityRange="200"
+				FaceTarget="true">
+				<SpecialPowerModules
+					ModuleId="ModuleTag_PurgeBuffsTrigger" />
+			</ActivateModuleSpecialAbilityUpdate>
+			<PurgeBuffsSpecialPower
+				id="ModuleTag_PurgeBuffsTrigger"
+				SpecialPowerTemplate="SpecialPower_NODAircraftJPurgeBuffsTrigger"
+				Radius="=$NODAIRCRAFTJ_PURGE_DEBUFF_RADIUS"
+				Options="INCLUDE_SELF"
+				EnemyBuffsToPurge="OFFENSE_POSITIVE DEFENSE_POSITIVE"
+				AlliedBuffsToPurge="OFFENSE_NEGATIVE DEFENSE_NEGATIVE"
+				MaxBuffsToPurgePerUnit="1"
+				TargetObjectFX="FX_NodCleansePurge"
+				InitiateFX="FX_NODScalpelAirJ_SystemRestoreCast">
+			</PurgeBuffsSpecialPower>
+
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_JetAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="HelicopterAIStateMachine">
+				<UnitAITargetChooserData
+					AutoAcquireAllies="true"
+					CanPickDynamicTargets="true"
+					TargetInvalidAtFullHealth="true"
+					SympathyRange="200.0"
+					TargetingCompareList="HealingUnitTargetingCompareList" />
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="240" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MovingLoop">
+				<ModelConditionSound Sound="NOD_Scalpel_AirJ_MoveLoopMS" RequiredFlags="MOVING" ExcludedFlags="RECYCLED DECELERATE DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_TakeoffLanding">
+				<ModelConditionSound Sound="NOD_Scalpel_AirJ_MoveStartMS" RequiredFlags="LANDING" ExcludedFlags="RECYCLED DYING" />
+				<ModelConditionSound Sound="NOD_Scalpel_AirJ_MoveStartMS" RequiredFlags="TAKING_OFF" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="NOD_Scalpel_AirJ_IdleSpinAnimation" Animation="NUM_AircraftJ_AIDA" Frame="50"/>
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+
+		<xi:include	href="DATA:NOD/Includes/NODAircraftJGeometry.xml" />
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_AirJScalpel_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="NOD_AirJScalpel_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="NOD_AirJScalpel_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="NOD_AirJScalpel_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="NOD_AirJScalpel_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="NOD_AirJScalpel_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="NOD_AirJScalpel_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="NOD_AirJScalpel_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+			<NamedEntry Sound="NOD_AirJScalpel_VoiceAttackSpecial" Name="VoiceAttackSpecialSystemRestore"/>
+			<NamedEntry Sound="NOD_AirJScalpel_VoiceAttackSpecial" Name="voiceSpecialInfusionEngine" />
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleSmall_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="NOD_Scalpel_AirJ_IdleLoopMS" AudioType="soundAmbient" />
+			<!-- <AudioEntry Sound="NOD_Scalpel_AirJ_MoveLoopMS" AudioType="soundMoveLoop" /> moved to ModelConditionAudioLoop to kill on DECELERATE model condition  -->
+			<AudioEntry Sound="NOD_Scalpel_AirJ_MoveStartMS" AudioType="soundMoveStart" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="250"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_Nod_Support_Range</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_Nod_Support_Speed</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_NODAircraftJDamageBuff</DisplayUpgrade>
+	</GameObject>
+
+	<WeaponTemplate
+		id="NODAircraftJHealWeapon"
+		AttackRange="200.0"
+		WeaponSpeed="99999"
+		FireFX="FX_HealingBeam"
+		FireSound="GDI_Spanner_AirO_HealBeamFireMS"
+		AcceptableAimDelta="20d"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT IGNORE_FORCE_FIRE"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		RadiusDamageAffects="ALLIES" 
+		ReAcquireDetailType="PRE_FIRE" 
+		CanFireWhileMoving="true">
+		<NuggetObjectFilter
+			Rule="ALL"
+			Exclude="HUSK" />
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.8s"
+				LaserId="1">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE VEHICLE INFANTRY AIRCRAFT"
+					Exclude="NEUTRAL_TECH"
+					StatusBitFlagsExclude="NO_HEALING">
+				</SpecialObjectFilter>
+			</ActivateLaserNugget>
+			<HOTNugget
+				DamageFXType="NOD_HEAL"
+				HealDuration="1.0s"
+				Damage="24.0"
+				AlwaysActive="true">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE VEHICLE INFANTRY AIRCRAFT"
+					Exclude="NEUTRAL_TECH"
+					StatusBitFlagsExclude="NO_HEALING">
+				</SpecialObjectFilter>
+			</HOTNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODAircraftJBuffWeapon"
+		AttackRange="200.0"
+		WeaponSpeed="99999"
+		FireFX="FX_NODSpecialPowerCast" 
+		AcceptableAimDelta="20d"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		RadiusDamageAffects="ALLIES"
+		CanFireWhileMoving="false">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<AttributeModifierNugget
+				AttributeModifierName="Modifier_DamageBuff"
+				PartitionFilterTestType="CIRCLE"
+				Radius="100" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<AttributeModifier
+		id="Modifier_DamageBuff"
+		Category="NONE"
+		Duration="5.0s"
+		StartFX="FX_NodBuff_CrystalCharge">
+		<BuffInfo Type="OFFENSE_POSITIVE" SourceString="Name:NODAircraftJ" />
+		<Modifier Type="DAMAGE_MULT" Value="200%" />
+	</AttributeModifier>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NODAircraftJDamageBuff"
+		ReloadTime="30s"
+		TargetType="LOCATION"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="voiceSpecialInfusionEngine"
+		RadiusCursorRadius="100">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_NODAircraftJDamageBuff</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NODAircraftJPurgeBuffs"
+		ReloadTime="30s"
+		TargetType="LOCATION"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceAttackSpecialSystemRestore"
+		RadiusCursorRadius="=$NODAIRCRAFTJ_PURGE_DEBUFF_RADIUS"
+		Flags="NEEDS_OBJECT_FILTER">
+		<ObjectFilter
+			Rule="ANY"
+			Relationship="ALLIES ENEMIES"
+			Include="INFANTRY VEHICLE AIRCRAFT CRAWLER STRUCTURE">
+		</ObjectFilter>
+	</SpecialPowerTemplate>
+
+	<ObjectFilterAsset
+		id="NODAircraftJPurge_ObjectFilter">
+		<Filter Rule="ANY"
+			Relationship="ALLIES ENEMIES"
+			Include="INFANTRY VEHICLE AIRCRAFT CRAWLER STRUCTURE" />
+	</ObjectFilterAsset>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NODAircraftJPurgeBuffsTrigger"
+		TargetType="LOCATION"
+	/>
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_NODAircraftJDamageBuff">
+		<SpecialPower>SpecialPower_NODAircraftJDamageBuff</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<SpecialPowerWeapon
+				Weapon="NODAircraftJBuffWeapon"
+				TotalValueGreaterThan="2"				
+				AffectsFriendlies="true"
+				AffectsEnemies="false"
+				AoeAttackPowerType="ALLIED_BUFF"/>
+			<AISpecialPowerInfo	Heuristic="AOE_ATTACK"/>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_NODAircraftJPurgeBuffs">
+		<SpecialPower>SpecialPower_NODAircraftJPurgeBuffs</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo
+				Heuristic="CLEANSE"
+				MinTargetsHit="1"/>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="NODAircraftJCommandSet">
+		<Cmd>Command_AttackMove</Cmd>
+		<Cmd>Command_NODAircraftJPurgeBuffs</Cmd>
+		<Cmd>Command_NODAircraftJDamageBuff</Cmd>
+	</LogicCommandSet>
+
+	<!-- Speed Boost Upgrade Modifier -->
+	<AttributeModifier
+		id="Modifier_NODAircraftJSpeedBoostUpgrade"
+		inheritFrom="Modifier_NODSpeedBoostUpgrade"
+		StartFX="FX_UpgradeNODSpeedBoost">
+		<Modifier Type="SPEED" Value="125%" />
+	</AttributeModifier>
+
+	<ObjectCreationList
+		id="NODAircraftJ_Dying_OCL">
+		<OCLModule>
+			<Modules>
+				<CreateObject
+					ObjectTemplate="NODAircraftJ_Dying"/>
+				<CopyParentLayer/>
+				<CopyParentUpgrades/>
+				<InheritVelocityFromParent/>
+				<FlingObject/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<LocomotorTemplate
+		id="NODAircraftJLocomotor"
+		Surfaces="AIR"
+		TurnTimeSeconds="0.8s"
+		TurnTimeDamagedSeconds="0.8s"
+		AccelerationSeconds="1.0s"
+		Lift="120%"
+		LiftDamaged="80%"
+		BrakingSeconds="0.4s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="40.0"
+		MinTurnSpeed="0%"
+		PreferredHeight="80"
+		PreferredHeightDamping=".1"
+		PreferredHeightPitchingEpsilon="9"
+		PitchByZVelCoef="1.0"
+		AllowMotiveForceWhileAirborne="true"
+		BehaviorZ="SURFACE_RELATIVE_HEIGHT"
+		Appearance="HOVER"
+		PitchStiffness="0.5"
+		RollStiffness=".083"
+		PitchDamping="1.0"
+		RollDamping=".877"
+		ForwardVelocityPitchFactor="-0.2"
+		LateralVelocityRollFactor="-0.024"
+		Apply2DFrictionWhenAirborne="true"
+		AirborneTargetingHeight="30"
+		LocomotorWorksWhenDead="true"
+		
+		LookAheadMult="2.0"
+		TakeOffAndLandingSpeed="=$SMALL_MEDIUM_AIRCRAFT_TAKEOFF_SPEED"
+		TakeOffAndLandingSlowDownDelta="0.25"
+		TakeOffAndLandingSlowDownTime="0.1s"
+
+		RudderCorrectionDegree="0.169"
+		RudderCorrectionRate="0.027"
+		ElevatorCorrectionDegree="0.103"
+		ElevatorCorrectionRate="0.016"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true" 
+		CanReverseMove="true"
+		IgnorePreferredHeightWhenComingOutOfFactory="true"
+		UnitCreateHeight="40.0"/>
+
+	<ExperienceLevelTemplate
+		id="NODAircraftJExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_01"
+		ExperienceAward="6">
+		<Target>NODAircraftJ</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODAircraftJExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_02"
+		Prerequisite="NODAircraftJExperienceLevel_1"
+		RequiredExperience="12"
+		ExperienceAward="7">
+		<Target>NODAircraftJ</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODAircraftJExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_03"
+		Prerequisite="NODAircraftJExperienceLevel_2"
+		RequiredExperience="24"
+		ExperienceAward="8">
+		<Target>NODAircraftJ</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODAircraftJExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_04"
+		Prerequisite="NODAircraftJExperienceLevel_3"
+		RequiredExperience="42"
+		ExperienceAward="9">
+		<Target>NODAircraftJ</Target>
+	</ExperienceLevelTemplate>
+</AssetDeclaration>

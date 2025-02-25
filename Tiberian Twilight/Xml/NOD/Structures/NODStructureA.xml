@@ -1,0 +1,655 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- NOD Outpost -->
+	<!-- Local Object Status Bits:
+			USER_1: upgraded with sight and buildability bonus
+			USER_2: upgraded with invis broadcast
+			USER_3: upgraded with player level invisibility upgrade
+	-->
+	<Includes>
+		<Include type="all"	source="ART:NSL_StructureA_SKN.w3x" />
+		<Include type="all"	source="ART:NSL_StructureA_AIDA.w3x" />
+		<Include type="all"	source="ART:NSL_StructureA_BLDA.w3x" />
+		<Include type="all"	source="ART:NSL_StructureA_DMG.xml" />
+		<Include type="all"	source="ART:Decal_Sensor_CO.xml" />
+		<Include type="all"	source="ART:FXInvisBone.w3x" />
+		<Include type="all"	source="ART:Decal_StealthDetect.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+		<Include type="instance" source="DATA:GlobalData/Upgrade.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<Include type="instance" source="DATA:GlobalData/InvisibilityTemplates.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+	</Includes>
+	
+	<Defines>
+		<Define name="NOD_STRUCTURE_A_STEALTH_RANGE" value="150"/>
+		<Define name="NOD_STRUCTURE_A_STEALTH_DECAL_SIZE" value="=$NOD_STRUCTURE_A_STEALTH_RANGE * 2 * 1.1"/>
+
+		<Define name="NOD_STRUCTURE_A_UPGRADED_STEALTH_RANGE" value="200"/>
+		<Define name="NOD_STRUCTURE_A_UPGRADED_STEALTH_DECAL_SIZE" value="=$NOD_STRUCTURE_A_UPGRADED_STEALTH_RANGE * 2 * 1.1"/>		
+	</Defines>
+
+	<GameObject
+		id="NODStructureA"
+		inheritFrom="BaseDefensiveStructure"
+		SubGroupPriority="445"
+		SelectPortrait="Portrait_NOD_Structure_A_tech2"
+		ButtonImage="Btn_NOD_Structure_A_tech2"
+		Side="NOD"
+		ParticipationValue="=$NODSTRUCTUREA_PARTICIPATION_VALUE"
+		HealthBoxHeightOffset="50"
+		CommandSet="NODStructureACommandSet"
+		KindOf="+AUTO_ACQUIRABLE_BY_AI +CRUSHABLE_BUILDING +CAN_HAVE_BUILDABILITY +OUTPOST -CAN_ATTACK +ENERGY_CHANGES_ON_UPGRADE"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EnergyProduction="=$NOD_STRUCTURE_A_COMMANDPOINT_COST" 
+		Description="Desc:NODStructureA"
+		TypeDescription="Type:NODStructureA"
+		EditorName="NOD_D1_Struct_Utility(Outpost)"
+		EditorSorting="STRUCTURE">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODNODStructureA</DisplayName>
+		<ArmorSet
+			Armor="HeavyStructureArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BuildingPlacementType="SpreadDefault" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NSL_StructureA_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NSL_StructureA_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NSL_StructureA_SKN" />
+					<Texture
+						Original="NSL_StructureA"
+						New="NSL_StructureA_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NSL_StructureA_SKN" />
+					<Texture
+						Original="NSL_StructureA"
+						New="NSL_StructureA_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Animation
+						AnimationName="NSL_StructureA_AIDA"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObjectPermanently( "NSL_STRUCTUREA_UPG" )
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NSL_StructureA_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="5" />
+				</AnimationState>
+
+				<!-- BUILDUP ANIMATION -->
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NSL_StructureA_BLDA"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="0"/>
+					<!--<Script>
+						CurDrawableHideSubObjectPermanently("NSL_StructureA_UPG")
+					</Script>-->
+				</AnimationState>
+
+				
+			</ScriptedModelDraw>
+
+			<!-- temporary decal to represent stealth broadcast -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawStealthDecal"
+				OkToChangeModelColor="true"
+				Options="IGNORE_FLASH_SHADER">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+				</ModelConditionState>
+
+				<!-- Upgraded stealth broadcast-->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_3 SELECTED">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$NOD_STRUCTURE_A_UPGRADED_STEALTH_DECAL_SIZE"
+						SizeY="=$NOD_STRUCTURE_A_UPGRADED_STEALTH_DECAL_SIZE"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2 SELECTED">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$NOD_STRUCTURE_A_STEALTH_DECAL_SIZE"
+						SizeY="=$NOD_STRUCTURE_A_STEALTH_DECAL_SIZE"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+			<!-- STEALTH DETECT RADIUS (temp decal -Aram) when selected -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawStealthDetectDecal"
+				OkToChangeModelColor="true"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+				</ModelConditionState>
+				<!-- no decal while unpacking -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="FXInvisBone"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 SELECTED">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="1400"
+						SizeY="1400"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_StealthDetect"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="1000"
+						SizeY="1000"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_StealthDetect"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+
+
+		</Draws>
+		<Behaviors>
+			<xi:include
+				href="DATA:Includes/GenericDefenseStructureProductionUpdate.xml" />
+			<EnergyPointsUpgrade
+				id="ModuleTag_EnergyPointsUpgradeSightAndBuildability"
+				EnergyPointsToChange="=$ENERGY_DEDUCTED_UPGRADED_STRUCTURE">
+				<TriggeredBy>Upgrade_NODStructureASightAndBuildability</TriggeredBy>
+			</EnergyPointsUpgrade>
+			<EnergyPointsUpgrade
+				id="ModuleTag_EnergyPointsUpgradeInvisBroadcast"
+				EnergyPointsToChange="=$ENERGY_DEDUCTED_UPGRADED_STRUCTURE">
+				<TriggeredBy>Upgrade_NODStructureAInvisBroadcast</TriggeredBy>
+			</EnergyPointsUpgrade>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NODStructureA_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildDamaged_Medium" />
+				<Event Index="onDeath" FX="FX_StructureSmall_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				ForbiddenUpgrade="Upgrade_NODStructureASightAndBuildability"
+				DetectionRange="500" />
+
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetectUpgraded"
+				RequiredUpgrade="Upgrade_NODStructureASightAndBuildability"
+				DetectionRange="700" />			
+
+			<!-- Structure has no buildability when unpacking -->
+			<ProjectedBuildabilityOverrideBehavior
+				id="ModuleTag_BuildabilityOverride" >
+				<Override
+					ModelConditionsToReject="STRUCTURE_UNPACKING RUBBLE"
+					StatusToAccept="USER_1"
+					StatusToReject="NOT_IN_WORLD">
+					<ProjectedBuildabilityInfo
+						Radius="=$BUILDABILITY_RADIUS_UPGRADED"
+						BuildPlacementTypes="MAIN_STRUCTURE" />
+				</Override>
+				<Override
+					ModelConditionsToReject="STRUCTURE_UNPACKING RUBBLE"
+					StatusToReject="NOT_IN_WORLD USER_1">
+					<ProjectedBuildabilityInfo
+						Radius="=$BUILDABILITY_RADIUS_NORMAL"
+						BuildPlacementTypes="MAIN_STRUCTURE" />
+				</Override>
+				<Override>
+					<!-- Otherwise, we have no buildability - not even the default DISPLAY_ONLY buildability 
+							 (e.g. we don't want to display a buildability box when we are full) -->
+				</Override>
+			</ProjectedBuildabilityOverrideBehavior>
+
+			<InvisibilityBroadcastUpdate
+				id="ModuleTag_InvisibilityBroadcast"
+				BroadcastRange="=$NOD_STRUCTURE_A_STEALTH_RANGE"
+				UpdatePeriod="0.5s"
+				InvisibilityTemplate="NODStructureAInvisibilityTemplate">
+				<BroadcastObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE INFANTRY VEHICLE AIRCRAFT CRAWLER"
+					Exclude="DO_NOT_STEALTH"/>
+				<ObjectStatusValidation
+					RequiredStatus="USER_2"
+					ForbiddenStatus="USER_3" />
+			</InvisibilityBroadcastUpdate>
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_DodgeBonusAura"
+				AttributeModifierName="Modifier_StealthDodgeTemporary"
+				Range="=$NOD_STRUCTURE_A_STEALTH_RANGE"
+				PartitionFilterTestType="CIRCLE"
+				InitiallyActive="true"
+				AllowSelf="true"
+				RefreshDelay="=$ATTRIBUTE_MODIFIER_AURA_REFRESH_INTERVAL">
+				<UpdateStatusValidation
+					RequiredStatus="USER_2" 
+					ForbiddenStatus="USER_3" />
+				<ObjectFilter
+					Relationship="ALLIES"
+					Rule="ANY"
+					Include="STRUCTURE INFANTRY VEHICLE AIRCRAFT CRAWLER"
+					Exclude="DO_NOT_STEALTH"/>
+			</AttributeModifierAuraUpdate>
+			
+			<!-- Player-Level Stealth Upgrade -->
+			<AttributeModifierUpgrade
+				id="Upgrade_ImprovedStealth"
+				AttributeModifier="AttributeModifier_NODStructureAInvisBroadcastUpgraded"
+				RequiresAllTriggers="true">
+				<TriggeredBy>Upgrade_NODStructureAInvisBroadcast</TriggeredBy>
+				<TriggeredBy>Upgrade_NODDefenseImprovedStealth</TriggeredBy>
+			</AttributeModifierUpgrade>
+			<InvisibilityBroadcastUpdate
+				id="ModuleTag_InvisibilityBroadcastUpgraded"
+				BroadcastRange="=$NOD_STRUCTURE_A_UPGRADED_STEALTH_RANGE"
+				UpdatePeriod="0.5s"
+				InvisibilityTemplate="NODStructureAInvisibilityTemplate">
+				<BroadcastObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE INFANTRY VEHICLE AIRCRAFT CRAWLER"
+					Exclude="DO_NOT_STEALTH"/>
+				<ObjectStatusValidation
+					RequiredStatus="USER_2 USER_3"/>
+			</InvisibilityBroadcastUpdate>			
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_DodgeBonusAuraUpgraded"
+				AttributeModifierName="Modifier_AdvancedStealthDodgeTemporary"
+				Range="=$NOD_STRUCTURE_A_UPGRADED_STEALTH_RANGE"
+				PartitionFilterTestType="CIRCLE"
+				InitiallyActive="true"
+				AllowSelf="true"
+				RefreshDelay="=$ATTRIBUTE_MODIFIER_AURA_REFRESH_INTERVAL">
+				<UpdateStatusValidation
+					RequiredStatus="USER_2 USER_3"/>
+				<ObjectFilter
+					Relationship="ALLIES"
+					Rule="ANY"
+					Include="STRUCTURE INFANTRY VEHICLE AIRCRAFT CRAWLER"
+					Exclude="DO_NOT_STEALTH"/>
+			</AttributeModifierAuraUpdate>
+			<FXListBehavior
+				id="ModuleTag_FXListImprovedStealth">
+				<TriggeredBy>Upgrade_NODDefenseImprovedStealth</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeNODImprovedConceal" />
+			</FXListBehavior>
+
+			<AttributeModifierUpgrade
+				id="ModuleTag_NODStructureASightAndBuildability"
+				AttributeModifier="AttributeModifier_NODStructureASightAndBuildability">
+				<TriggeredBy>Upgrade_NODStructureASightAndBuildability</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<AttributeModifierUpgrade
+				id="ModuleTag_NODStructureAInvisBroadcast"
+				AttributeModifier="AttributeModifier_NODStructureAInvisBroadcast">
+				<TriggeredBy>Upgrade_NODStructureAInvisBroadcast</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!--This will hide the upgraded model--> 
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODStructureAEvents"/>
+
+			<!--This will unhide the upgraded model--> 
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<Nugget
+					ShowSubObjects="NSL_StructureA_UPG"
+					Upgrade="Upgrade_NODStructureASightAndBuildability"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+				<TriggeredBy>Upgrade_NODStructureASightAndBuildability</TriggeredBy>
+			</SubObjectsUpgrade>
+
+
+			<xi:include
+				href="DATA:Includes/GenericOutpostModules.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:OutpostModules/child::*)" />
+			<!-- override the defaulit AssembleStructureTrackerUpdate settings in the generic outpost file -->
+			<AssembleStructureTrackerUpdate
+				id="ModuleTag_AssembleStructureTracker"
+				HealthMultiplier="=$NOD_STRUCTUREA_MAXHEALTH"
+				ActiveLogicCommandOverride="NODStructureABeingAssembledCommandSet"/>
+
+
+			
+			<!-- modify Crate spawner (in BaseStructure) to not spawn if we're under construction -->
+			<ChanceCreateObjectDie
+				id="ModuleTag_CreateVeterancyCrateOnObjectDie">
+				<DieMuxData
+					ExemptStatus="UNDER_CONSTRUCTION"/>
+			</ChanceCreateObjectDie>
+
+
+			<SelectiveVisibilityBehavior
+				id="ModuleTag_SelectiveVisibilityStealthDetect"
+				DrawModuleId="ModuleTag_DrawStealthDetectDecal"
+				AllowedPlayers="ALLIES"
+				UpdateRate="0.5s" />
+			<SelectiveVisibilityBehavior
+				id="ModuleTag_SelectiveVisibility"
+				DrawModuleId="ModuleTag_DrawStealthDecal"
+				AllowedPlayers="ALLIES"
+				UpdateRate="0.5s" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$NOD_STRUCTUREA_MAXHEALTH"
+				InitialHealth="0.1">
+				<InitialHealthValidation
+					RequiredStatus="UNDER_CONSTRUCTION"/>
+			</ActiveBody>
+		</Body>
+		<Geometry>
+			<PlacementShape
+				Type= "BOX"
+				MajorRadius="30"
+				MinorRadius="15.0"
+				Height="5.0" />
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "15.0"
+					 MinorRadius = "15.0"
+					 Height = "23.6"
+					 ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-2.62"
+					y="0.0"
+					z="34.01" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="22.27"
+					y="0.0"
+					z="9.6" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-21.39"
+					y="0.0"
+					z="9.6" />
+			</ContactPoint>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "30.0"
+					 MinorRadius = "30.0"
+					 Height = "25.0">
+			</Shape>
+		</Geometry>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_FinishedBuilding">
+				<ModelConditionSound Sound="NOD_Outpost_StrA_FinishedConstructionHackedLoopMS" RequiredFlags="STRUCTURE_UNPACKING" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior>			
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ConstructingLoop">
+				<ModelConditionSound Sound="NOD_Outpost_StrA_ConstructingLoop" RequiredFlags="STRUCTURE_UNPACKING" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior>			
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ReallyDamaged">
+				<ModelConditionSound Sound="Fire1_StructureSmall_LoopMS" RequiredFlags="REALLYDAMAGED" ExcludedFlags="STRUCTURE_UNPACKING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<!-- <ModelConditionAudioLoopClientBehavior id="ModuleTag_CommunicationsTower"> moved to researchSound
+				<ModelConditionSound Sound="NOD_Outpost_StrA_CommunicationTowerMS" RequiredFlags="USER_1" ExcludedFlags="STRUCTURE_UNPACKING DYING"/>
+			</ModelConditionAudioLoopClientBehavior> -->
+		</ClientBehaviors>
+		<!-- <ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ShieldLoop">
+				<ModelConditionSound Sound="NOD_Outpost_StrA_Shield_LoopMS" RequiredFlags="USER_2" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors> -->
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_Outpost_StrA_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="" AudioType="soundUnderConstruction"/>
+			<AudioEntry Sound="StructureSmall_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureSmall_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="500" />
+		<!-- Just so that we get feedback when placing the hub, before it is actually created... The real buildability
+			   is controlled by the module -->
+		<ProjectedBuildabilityInfo
+			Radius="=$BUILDABILITY_RADIUS_NORMAL"
+			BuildPlacementTypes="DISPLAY_ONLY" />
+		<DisplayUpgrade>Upgrade_NODDefenseImprovedStealth</DisplayUpgrade>
+	</GameObject>
+
+	<LogicCommandSet
+		id="NODStructureACommandSet">
+		<Cmd>Command_UpgradeSightAndBuildability</Cmd>
+		<Cmd>Command_UpgradeInvisBroadcast</Cmd>
+		<Cmd>Command_NODSellSelf</Cmd>
+	</LogicCommandSet>
+
+	<LogicCommand
+		id="Command_UpgradeSightAndBuildability"
+		Type="OBJECT_UPGRADE">
+		<Upgrade>Upgrade_NODStructureASightAndBuildability</Upgrade>
+	</LogicCommand>
+	<LogicCommand
+		id="Command_UpgradeInvisBroadcast"
+		Type="OBJECT_UPGRADE">
+		<Upgrade>Upgrade_NODStructureAInvisBroadcast</Upgrade>
+	</LogicCommand>
+
+
+	<!-- Sight and Buildability upgrade-->
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_NODStructureASightAndBuildability"
+		DisplayName="UPGRADE:NODStructureASightAndBuildability"
+		Description="UPGRADE:NODStructureASightAndBuildability"
+		ResearchSound="NOD_Outpost_StrA_CommunicationTowerMS"
+		BuildCost="0"
+		BuildTime="5s"/>
+
+
+	<!-- Stealth upgrade-->
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_NODStructureAInvisBroadcast"
+		DisplayName="UPGRADE:NODStructureAInvisBroadcast"
+		Description="UPGRADE:NODStructureAInvisBroadcast"
+		ResearchSound="NOD_Outpost_StrA_StealthOnMS"
+		BuildCost="0"
+		BuildTime="10s">
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+	</UpgradeTemplate>
+
+	<AttributeModifier
+		id="AttributeModifier_NODStructureASightAndBuildability"
+		Category="NONE"
+		ObjectStatusToSet="USER_1"
+		ModelConditionsSet="USER_1"
+		StartFX="FX_UpgradeNOD_CommTower">
+		<Modifier Type="SHROUD_CLEARING" Value="150%"/>
+		<Modifier Type="VISION" Value="150%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_NODStructureAInvisBroadcast"
+		Category="NONE"
+		ObjectStatusToSet="USER_2"
+		ModelConditionsSet="USER_2"
+		StartFX="FX_UpgradeNOD_SwitchToStealthMode">
+	</AttributeModifier>
+	
+	<!-- applied to the structure when player-level upgrade detected -->
+	<AttributeModifier
+		 id="AttributeModifier_NODStructureAInvisBroadcastUpgraded"
+		 Category="NONE"
+		 ObjectStatusToSet="USER_3"
+		 ModelConditionsSet="USER_3">
+	</AttributeModifier>
+
+	<LogicCommandSet
+		id="NODStructureABeingAssembledCommandSet">
+		<Cmd>Command_NODDestroySelf</Cmd>
+	</LogicCommandSet>
+
+	<!-- OCL -->
+	<ObjectCreationList
+		id="NODStructureA_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset x="0" y="0" z="0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+</AssetDeclaration>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes></Includes>
+
+  <AIStrategicStateDefinition
+    id="PCGDemo_KirovAttack"
+    MaxTargets="2">
+    <Heuristic>
+       <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestAircraftHeuristic"/>
+    <Tactic id="Attack" Tactic="SimpleAttack"  EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="4" MaxUnits="4" IncludeKindOf="CAN_ATTACK FIGHTER_AIRCRAFT" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER" AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="FighterAircraftMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+ 
+ 
+    <!--
+			<SriptedFlagHeuristic FlagName="AIFLAG_Bombing"/>
+			-->
+			
+   <AIStrategicStateDefinition
+    id="PCGDemo_BombingRuns"
+    MaxTargets="1">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AIS_AlliedPCGDemoStates_KLF2" Priority="20"/>
+    <Tactic id="Attack" Tactic="SimpleAttack"  EndBehavior="RETURN_HOME_AND_DISBAND">
+      <TeamTemplate MinUnits="2" MaxUnits="2" IncludeKindOf="CAN_ATTACK BOMBER_AIRCRAFT" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER" AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="BomberAircraftMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+  
+
+  <AIBuildStateDefinition
+    id="PCGDemo_AlliedAirfieldCustomBuildState">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+    <BuildEntry Build="AlliedFighterAircraft" Heuristic="RANDOM_UNIT" PercentLow="0%" PercentHigh="100%"/>
+    <BuildEntry Build="AlliedBomberAircraft" Heuristic="RANDOM_UNIT" PercentLow="0%" PercentHigh="0%"/>
+  </AIBuildStateDefinition>
+
+<!-- Boat Patrol -->
+
+  <AIStrategicStateDefinition
+    id="PCGDemo_ReactiveDefense">
+    <Heuristic>
+      <ConstantHeuristic Weight="1.0"/>
+    </Heuristic>
+		<Tactic id="Defense" Tactic="ReactiveDefense" Targetless="true">
+			<TeamTemplate MinUnits="1" IncludeKindOf="SHIP CAN_ATTACK" ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER FIGHTER_AIRCRAFT"
+                    Priority="STANDARD" AlwaysRecruit="true" ReleaseType="NEVER_RELEASE"
+                    MicroManager="ReactiveDefenseMicroManager"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+</AssetDeclaration>

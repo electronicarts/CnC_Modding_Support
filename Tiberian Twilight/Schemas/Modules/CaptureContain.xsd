@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="CaptureContainOptionsType">
+		<xs:restriction base="xs:string">
+			<!-- module will destroy the rider object upon capture -->	  
+			<xs:enumeration value="DESTROY_RIDER" />
+			<!-- module will destroy the container object upon capture -->
+			<xs:enumeration value="DESTROY_CONTAINER" />
+			<!-- module will be enabled by default -->
+			<xs:enumeration value="ENABLE_IMMEDIATELY" />
+			<!-- Container must be disabled to be captured  -->
+			<xs:enumeration value="MUST_BE_DISABLED" />			
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="CaptureContainOptionsBitFlags">
+		<xs:list itemType="CaptureContainOptionsType"/>
+	</xs:simpleType>	
+	
+	<xs:complexType name="CaptureContainModuleData">
+    <xs:complexContent>
+			<xs:extension base="ContainModuleData">
+				<xs:sequence>
+					<!-- Container will only allow capture if it meets this validation -->		 
+					<xs:element name="ContainerStatusValidation" type="ObjectStatusValidationDataType" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<!-- Controls what can capture this object  -->
+				<xs:attribute name="CanEnterFilter" type="ObjectFilterAssetRef" use="optional" />
+				<xs:attribute name="Flags" type="CaptureContainOptionsBitFlags" default=""/>
+				<!-- trigger this OCL on capture  -->
+				<xs:attribute name="OnCaptureOCL" type="ObjectCreationListRef" />
+				<xs:attribute name="OnCaptureNameOfVoiceToUse" type="StringHash" use="optional" />
+				<xs:attribute name="OnCaptureEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="OnCaptureFX" type="FXListRef" use="optional" />
+				<!-- Allow capture of disabled container if it is disabled by one of these types  -->
+				<xs:attribute name="IgnoreDisabledBitsForContainer" type="DisabledBitFlags" default="" />
+				<!-- prevents capture of container if it has been recently captured  -->
+				<xs:attribute name="CaptureLockoutDelay" type="Time" />
+				<!-- delays capture of container, used in MoveToGoalAndEnter -->
+				<xs:attribute name="EntryDelay" type="Time" default="0s" />
+				<xs:attribute name="OnCaptureModelCondition" type="ModelConditionFlagType" default="INVALID"/>
+				<xs:attribute name="OnCaptureModelConditionDuration" type="Time"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

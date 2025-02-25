@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+  </Includes>
+
+  <!-- This state is to control the navy heavy hitters that arrive to destroy the japanese reinforcements -->
+  <AIStrategicStateDefinition
+    id="AIState_J07_SovietBigNavyPatrol"
+    MaxTargets="2">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic> 
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="4" MaxUnits="6"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    MicroManager="FearlessMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- This state targets navy bases -->
+  <AIStrategicStateDefinition
+    id="AIState_J07_SovietAttackNavyBases"
+    MaxTargets="3">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="2" MaxUnits="4"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    MicroManager="FearlessMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- This state sends kirovs -->
+  <AIStrategicStateDefinition
+    id="AIState_J07_SovietKirovRaid"
+    MaxTargets="3">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToAirPowerPlantHeuristic" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE">
+      <TeamTemplate MinUnits="1" MaxUnits="2" 
+                    IncludeKindOf="CAN_ATTACK BOMBER_AIRCRAFT" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER" 
+                    AllowedLocomotorTypes="AIR"
+                    Priority="STANDARD" AlwaysRecruit="true" 
+                    MicroManager="KirovMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+    id="AIState_J07_SovietManCannons"
+    MaxTargets="3">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_2"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestGroundStructureHeuristic" Priority="20"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="4" MaxUnits="6"
+                    IncludeKindOf="CAN_ATTACK INFANTRY" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER SUBMARINE" 
+                    AllowedLocomotorTypes="AMPHIBIOUS LAND"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    MicroManager="FearlessMicroManager_MEDIUM">
+        <CreateUnits UnitName="SovietAntiAirShip" MinUnits="1" MaxUnits="1"/>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- This state guards the relay stations -->
+  <AIStrategicStateDefinition
+    id="AIState_J07_SovietRelayStationGuards"
+    MaxTargets="4">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_3"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Relay_01" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Relay_02" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Relay_03" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="AITarget_J07_Relay_04" Priority="10"/>
+    <Tactic id="Defend" Tactic="StaticDefense" Distance="250" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="4"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="LAND"
+                    Priority="HIGH" AlwaysRecruit="true"
+                    MicroManager="FearlessDefenseMicroManager_MEDIUM"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+  id="AIState_J07_SovietCaptureAttempt"
+  MaxTargets="2">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="f_allied_player_obj_3"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="SafestToWaterStructureHeuristic" Priority="50"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="50"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" MaxUnits="3"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="false"
+                    MicroManager="HarrassmentMicroManager">
+        <ObjectFilter Rule="NONE">
+          <IncludeThing>SovietEngineer</IncludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+
+</AssetDeclaration>
+
+

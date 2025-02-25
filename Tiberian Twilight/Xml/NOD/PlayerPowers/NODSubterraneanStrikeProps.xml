@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="all" source="ART:NODSubterraneanStrike_SKN.w3x" />
+		<Include type="all" source="ART:NODSubterraneanStrike_SKL.w3x" />
+		<Include type="all" source="ART:NODSubterraneanStrike_ATKA.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseSpecialPowerFlare.xml" />
+  </Includes>
+
+  <Defines>
+    <Define name="NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST" value="=$NOD_SUBTERRANEANSTRIKE_DRILL_AOE_RADIUS" />
+		<Define name="NOD_SUBTERRANEAN_STRIKE_DRILL_RING_1_DIST" value="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST * 2" />
+		<!-- ring 2 is on a diagonal so the offsets don't have to be as great as that of ring 1 -->
+		<Define name="NOD_SUBTERRANEAN_STRIKE_DRILL_RING_2_DIST" value="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST * 1.75" />
+		<Define name="NOD_SUBTERRANEAN_STRIKE_AVOID_DIST" value="=$AI_DODGE_SAFETY_BUFFER + ($NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST * 3)" />
+	</Defines>
+
+	<GameObject
+		id="NODSubterraneanStrikeWarningFlare"
+		inheritFrom="BaseSpecialPowerFlare"
+		KindOf="+SKIRMISH_AI_ATTEMPT_TO_DODGE">
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NOD_SUBTERRANEAN_STRIKE_AVOID_DIST" >
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"
+				StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+		</SkirmishAIInformation>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<Event
+					Index="onCreate"
+					FX="FX_NodWarningFlare" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_SubterraneanStrike_Egg">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+		</Behaviors>
+	</GameObject>
+	
+	<GameObject
+		id="NODSubterraneanStrikeEgg"
+		Side="NOD"		
+		EditorSorting="UNIT"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE DO_NOT_CLASSIFY SKIRMISH_AI_ATTEMPT_TO_DODGE"
+		EditorName="NODSubterraneanStrikeEgg">
+		<DisplayName>NODSubterraneanStrikeEgg</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NOD_SUBTERRANEAN_STRIKE_AVOID_DIST" >
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"
+				StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+		</SkirmishAIInformation>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="9s"
+				MaxLifetime="9s" />
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeapon">
+
+				<TerrainRestrictions
+					Radius="=$NOD_SUBTERRANEANSTRIKE_DRILL_AOE_RADIUS"
+					TerrainCellRestrictionFlags="NO_CLIFF NO_IMPASSABLE NO_WATER">
+					<ForbiddenObjectFilter
+						Rule="ANY"
+						Include="STRUCTURE"
+						Relationship="ALLIES NEUTRAL" />
+				</TerrainRestrictions>
+
+				<!-- innermost ring: one at each corners of a square box centered 
+				on our position and aligned to compass dirs -->
+				<!-- ne -->
+				<FireWeaponNugget
+					WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					FireDelay="1s"
+					OneShot="true">
+					<Offset
+						x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST"
+						y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST" />
+				</FireWeaponNugget>
+				<!-- nw -->
+				<FireWeaponNugget
+					   WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					   FireDelay="1.25s"
+					   OneShot="true">
+					<Offset
+						   x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST * -1"
+						   y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST" />
+				</FireWeaponNugget>
+				<!-- sw -->
+				<FireWeaponNugget
+					   WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					   FireDelay="1.5s"
+					   OneShot="true">
+					<Offset
+						   x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST * -1"
+						   y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST * -1" />
+				</FireWeaponNugget>
+				<!-- se -->
+				<FireWeaponNugget
+					   WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					   FireDelay="1.75s"
+					   OneShot="true">
+					<Offset
+						   x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST"
+						   y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST * -1" />
+				</FireWeaponNugget>
+
+				<!-- second ring: one offset in the direction of each compass direction, starting
+                                  with due east (to continue logically from end of previous ring -->
+				<!-- e -->
+				<FireWeaponNugget
+					   WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					   FireDelay="2s"
+					   OneShot="true">
+					<Offset
+						   x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_1_DIST" />
+				</FireWeaponNugget>
+				<!-- n -->
+				<FireWeaponNugget
+					   WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					   FireDelay="2.25s"
+					   OneShot="true">
+					<Offset
+						   y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_1_DIST" />
+				</FireWeaponNugget>
+				<!-- w -->
+				<FireWeaponNugget
+					   WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					   FireDelay="2.5s"
+					   OneShot="true">
+					<Offset
+						   x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_1_DIST * -1" />
+				</FireWeaponNugget>
+				<!-- s -->
+				<FireWeaponNugget
+					   WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					   FireDelay="2.75s"
+					   OneShot="true">
+					<Offset
+						   y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_1_DIST * -1" />
+				</FireWeaponNugget>
+
+				<!-- final ring: another set at the corners of an imaginary box 
+                           centered around our location and aligned to compass dirs -->
+				<!-- se -->
+				<FireWeaponNugget
+					   WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					   FireDelay="3s"
+					   OneShot="true">
+					<Offset
+						   x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_2_DIST"
+						   y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_2_DIST * -1" />
+				</FireWeaponNugget>
+				<!-- ne -->
+				<FireWeaponNugget
+					   WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					   FireDelay="3.25s"
+					   OneShot="true">
+					<Offset
+						   x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_2_DIST"
+						   y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_2_DIST" />
+				</FireWeaponNugget>
+				<!-- nw -->
+				<FireWeaponNugget
+					   WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					   FireDelay="3.5s"
+					   OneShot="true">
+					<Offset
+						   x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_2_DIST * -1"
+						   y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_2_DIST" />
+				</FireWeaponNugget>
+				<!-- sw -->
+				<FireWeaponNugget
+					   WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					   FireDelay="3.75s"
+					   OneShot="true">
+					<Offset
+						   x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_2_DIST * -1"
+						   y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_2_DIST * -1" />
+				</FireWeaponNugget>
+				<!-- e -->
+				<FireWeaponNugget
+						 WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+						 FireDelay="4s"
+						 OneShot="true">
+					<Offset
+							 x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_1_DIST" />
+				</FireWeaponNugget>
+				<!-- n -->
+				<FireWeaponNugget
+						 WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+						 FireDelay="4.25s"
+						 OneShot="true">
+					<Offset
+							 y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_1_DIST" />
+				</FireWeaponNugget>
+				<!-- w -->
+				<FireWeaponNugget
+						 WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+						 FireDelay="4.5s"
+						 OneShot="true">
+					<Offset
+							 x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_1_DIST * -1" />
+				</FireWeaponNugget>
+				<!-- s -->
+				<FireWeaponNugget
+						 WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+						 FireDelay="4.75s"
+						 OneShot="true">
+					<Offset
+							 y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_1_DIST * -1" />
+				</FireWeaponNugget>
+
+				<!-- innermost ring: one at each corners of a square box centered 
+				on our position and aligned to compass dirs -->
+				<!-- ne -->
+				<FireWeaponNugget
+					WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+					FireDelay="5s"
+					OneShot="true">
+					<Offset
+						x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST"
+						y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST" />
+				</FireWeaponNugget>
+				<!-- nw -->
+				<FireWeaponNugget
+						 WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+						 FireDelay="5.25s"
+						 OneShot="true">
+					<Offset
+							 x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST * -1"
+							 y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST" />
+				</FireWeaponNugget>
+				<!-- sw -->
+				<FireWeaponNugget
+						 WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+						 FireDelay="5.5s"
+						 OneShot="true">
+					<Offset
+							 x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST * -1"
+							 y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST * -1" />
+				</FireWeaponNugget>
+				<!-- se -->
+				<FireWeaponNugget
+						 WeaponName="Weapon_SubterraneanStrike_SpawnDrill"
+						 FireDelay="5.75s"
+						 OneShot="true">
+					<Offset
+							 x="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST"
+							 y="=$NOD_SUBTERRANEAN_STRIKE_DRILL_RING_0_DIST * -1" />
+				</FireWeaponNugget>
+			</FireWeaponUpdate>
+
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+		</Behaviors>
+		<Body>
+			<PropBody 
+				id="ModuleTag_Body"/>
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Power_SubterraneanSpikeLoopMS" AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+
+	<GameObject
+		id="NODSubterraneanStrikeDrill"
+		Side="NOD"
+		EditorSorting="UNIT"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE DO_NOT_CLASSIFY"
+		EditorName="NODSubterraneanStrikeDrill">
+		<DisplayName>NODSubterraneanStrikeDrill</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="NU_Drill01 NU_Drill02 NU_Drill03">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NODSubterraneanStrike_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NODSubterraneanStrike_ATKA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_NOD_Drill_UnBurrow"
+						Bone="" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="2s"
+				MaxLifetime="2s" />
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeapon">
+				<FireWeaponNugget
+					WeaponName="Weapon_SubterraneanStrike_Drill"
+					FireDelay="1s"
+					OneShot="true"/>
+			</FireWeaponUpdate>
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body"/>
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Power_SubterraneanSpike_Drill" AudioType="soundAmbient"/>
+		</AudioArraySound>
+	</GameObject>
+
+
+
+
+</AssetDeclaration>

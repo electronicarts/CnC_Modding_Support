@@ -1,0 +1,273 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<!-- Neutral Sonic Fence Network -->
+
+	<!-- 
+		'CAPTURED_BY_GDI' Model Condition - Set when the gate is captured by GDI   
+		'CAPTURED_BY_NOD' Model Condition - Set when the gate is captured by Nod  
+		'USER_3' Object Status & Model Condition - Set when the gate is OPEN
+		'USER_4' Object Status & Model Condition - Set when the gate is CLOSED
+	-->
+	<Includes>
+		<Include type="all" source="ART:TSL_StructureI_640_B_SKN.w3x" />
+		<Include type="all" source="ART:TSL_StructureI_640_B_CPTR.w3x" />
+		<Include type="all" source="ART:TSL_StructureI_640_B_IDLA.w3x" />
+		<Include type="all" source="ART:TSL_StructureI_640_B_RCPTR.w3x" />
+		<!-- Base Object -->
+		<Include type="instance" source="TechStructureI_Base.xml" />
+	</Includes>
+ 
+	<GameObject
+		id="TechStructureI_640_B"
+		inheritFrom="TechStructureI_Base"
+		HealthBoxHeightOffset="30"
+		EditorName="NEUTRAL_Struct_Barrier 640 B(Sonic Fence)"
+		WeaponVictimBoundingCircleRadiusOverride="89">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				Options="RENDER_BUFF_EFFECTS"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TSL_StructureI_640_B_SKN" />
+				</ModelConditionState>
+
+				<!-- Uncaptured (gate must be DOWN) -->
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="UNCAPTURED_IDLE">
+					<Animation
+						AnimationName="TSL_StructureI_640_B_CPTR"
+						AnimationMode="MANUAL"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= null and Prev ~= "TransitionTo_Uncaptured" then
+						CurDrawableSetTransitionAnimState("TransitionTo_Uncaptured")
+						else
+						CurDrawableHideSubObject("FXSonicFenceGDI01")
+						CurDrawableHideSubObject("FXSonicFenceGDI02")
+						CurDrawableHideSubObject("FXSonicFenceGDI03")
+						CurDrawableHideSubObject("FXSonicFenceGDI04")
+						CurDrawableHideSubObject("FXSonicFenceGDI05")
+						CurDrawableHideSubObject("FXSonicFenceNOD01")
+						CurDrawableHideSubObject("FXSonicFenceNOD02")
+						CurDrawableHideSubObject("FXSonicFenceNOD03")
+						CurDrawableHideSubObject("FXSonicFenceNOD04")
+						CurDrawableHideSubObject("FXSonicFenceNOD05")
+						end
+					</Script>
+				</AnimationState>
+
+				<!-- Captured by GDI and gate UP -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CAPTURED_BY_GDI USER_4"
+					StateName="CapturedGDI_GateUp">
+					<Animation
+						AnimationName="TSL_StructureI_640_B_IDLA"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableShowSubObject("FXSonicFenceGDI01")
+						CurDrawableShowSubObject("FXSonicFenceGDI02")
+						CurDrawableShowSubObject("FXSonicFenceGDI03")
+						CurDrawableShowSubObject("FXSonicFenceGDI04")
+						CurDrawableShowSubObject("FXSonicFenceGDI05")
+					</Script>
+				</AnimationState>
+
+				<!-- Captured by GDI and gate DOWN -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CAPTURED_BY_GDI"
+					Flags="START_FRAME_LAST"
+					StateName="CapturedGDI_GateDown">
+					<Animation
+						AnimationName="TSL_StructureI_640_B_CPTR"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "UNCAPTURED_IDLE" then
+						CurDrawableSetTransitionAnimState("TransitionTo_CapturedGDI")
+						else
+						CurDrawableShowSubObject("FXSonicFenceGDI01")
+						CurDrawableShowSubObject("FXSonicFenceGDI02")
+						CurDrawableShowSubObject("FXSonicFenceGDI03")
+						CurDrawableShowSubObject("FXSonicFenceGDI04")
+						CurDrawableHideSubObject("FXSonicFenceGDI05")
+						end
+					</Script>
+				</AnimationState>
+
+				<!-- Captured by Nod and gate UP -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CAPTURED_BY_NOD USER_4"
+					StateName="CapturedNOD_GateUp">
+					<Animation
+						AnimationName="TSL_StructureI_640_B_IDLA"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableShowSubObject("FXSonicFenceNOD01")
+						CurDrawableShowSubObject("FXSonicFenceNOD02")
+						CurDrawableShowSubObject("FXSonicFenceNOD03")
+						CurDrawableShowSubObject("FXSonicFenceNOD04")
+						CurDrawableShowSubObject("FXSonicFenceNOD05")
+					</Script>
+				</AnimationState>
+
+				<!-- Captured by Nod and gate DOWN -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CAPTURED_BY_NOD"
+					Flags="START_FRAME_LAST"
+					StateName="CapturedNOD_GateDown">
+					<Animation
+						AnimationName="TSL_StructureI_640_B_CPTR"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "UNCAPTURED_IDLE" then
+						CurDrawableSetTransitionAnimState("TransitionTo_CapturedNOD")
+						else
+						CurDrawableShowSubObject("FXSonicFenceNOD01")
+						CurDrawableShowSubObject("FXSonicFenceNOD02")
+						CurDrawableShowSubObject("FXSonicFenceNOD03")
+						CurDrawableShowSubObject("FXSonicFenceNOD04")
+						CurDrawableHideSubObject("FXSonicFenceNOD05")
+						end
+					</Script>
+				</AnimationState>
+
+				<!-- Transition to Captured by GDI -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TransitionTo_CapturedGDI">
+					<Animation
+						AnimationName="TSL_StructureI_640_B_CPTR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+				<!-- Transition to Captured by NOD -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TransitionTo_CapturedNOD">
+					<Animation
+						AnimationName="TSL_StructureI_640_B_CPTR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+				<!-- Transition to Uncaptured -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					Flags="START_FRAME_LAST"
+					StateName="TransitionTo_Uncaptured">
+					<Animation
+						AnimationName="TSL_StructureI_640_B_CPTR"
+						AnimationMode="ONCE_BACKWARDS" />
+					<Script>
+						CurDrawableHideSubObject("FXSonicFenceGDI01")
+						CurDrawableHideSubObject("FXSonicFenceGDI02")
+						CurDrawableHideSubObject("FXSonicFenceGDI03")
+						CurDrawableHideSubObject("FXSonicFenceGDI04")
+						CurDrawableHideSubObject("FXSonicFenceGDI05")
+						CurDrawableHideSubObject("FXSonicFenceNOD01")
+						CurDrawableHideSubObject("FXSonicFenceNOD02")
+						CurDrawableHideSubObject("FXSonicFenceNOD03")
+						CurDrawableHideSubObject("FXSonicFenceNOD04")
+						CurDrawableHideSubObject("FXSonicFenceNOD05")
+					</Script>
+				</AnimationState>							
+				
+			</ScriptedModelDraw>
+
+			<xi:include href="DATA:Includes/CaptureStructureFeedbackDraw.xml" />
+
+		</Draws>
+		<Behaviors>
+
+			<!-- Override BASE CLASS module for custom OutOfTheWayPositions -->
+			<GateOpenAndCloseBehavior
+				id="ModuleTag_GateOpenAndCloseBehavior">
+				<OpenStatusValidation
+					RequiredStatus="USER_3" />
+				<GeometriesForClosed>GATE</GeometriesForClosed>
+				<OutOfTheWayPosition x="-95" y="350" z="0" />
+				<OutOfTheWayPosition x="255" y="350" z="0" />
+			</GateOpenAndCloseBehavior>
+
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_NONE" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_NONE" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_NONE" />
+				<Event
+					Index="onDeath"
+					FX="FX_NONE" />
+				<Event Index="onDeath" FX="FX_StructureMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+		</Behaviors>
+		<Geometry>
+
+			<PlacementShape
+				 MajorRadius="40"
+				 MinorRadius="40"
+				 Height="60">				
+			</PlacementShape>
+			
+			<!-- Control Center geo -->
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "89.0"
+				 MinorRadius = "89.0"
+				 Height = "70.0"
+				 ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+			
+			<!-- far end of the gate, intentionally has no contact points -->
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "20.0"
+				 MinorRadius = "20.0"
+				 Height = "70.0"
+				 Options="ACTIVE USED_FOR_HEALTH_BOX IGNORE_FOR_BOUNDING_VOLUME">
+				<Offset
+					x = "80.5016"
+					y = "790.499"
+					z = "0.0" />
+			</Shape>
+
+
+			<!-- The actual 'gate' geo, this becomes active/inactive based on the state of the GateOpenAndCloseBehavior -->
+			<Shape
+				 Name="GATE"
+				 Type="BOX"
+				 MajorRadius = "17.0"
+				 MinorRadius = "345.2"
+				 Height = "70.0"
+				 ContactPointGeneration = "STRUCTURE"
+				 Options="ACTIVE USED_FOR_HEALTH_BOX" >
+				<Offset
+					x = "80.5016"
+					y = "433.36"
+					z = "0.0" />		
+			</Shape>
+
+		</Geometry>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="350" />
+	</GameObject>
+
+</AssetDeclaration>

@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NU_Hrvstr_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NU_Hrvstr_FP.w3x" />			
+		<Include
+			type="all"
+			source="ART:NU_HrvstrD_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NU_HrvstrR_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NU_HrvstrE_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NU_Hrvstr_IDL.w3x" />
+		<Include
+			type="all"
+			source="ART:NU_Hrvstr_HARV.w3x" />
+		<Include
+			type="all"
+			source="ART:NU_Hrvstr_PREP.w3x" />
+		<Include
+			type="all"
+			source="ART:NU_Hrvstr_TIB.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="NODHarvester"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_NODHarvester"
+		ButtonImage="Portrait_NODHarvester"
+		Side="NOD"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildCost="1400"
+		BuildTime="14"
+		CommandSet="NODHarvesterCommandSet"
+		KindOf="PRELOAD SELECTABLE CAN_CAST_REFLECTIONS SCORE VEHICLE HARVESTER IGNORES_SELECT_ALL MOVE_FOR_NOONE CAN_REVERSE_MOVE CAN_BE_FAVORITE_UNIT"
+		RadarPriority="UNIT"
+		ThreatLevel="10"
+		ProductionQueueType="VEHICLE"
+		UnitCategory="VEHICLE"
+		VoicePriority="20"
+		EditorName="NODHarvester"
+		Description="Desc:NODHarvester"
+		TypeDescription="Type:NODHarvester"
+		ReinvisibilityDelay="4s">
+		<DisplayName
+			xai:joinAction="Replace">Name:NODHarvester</DisplayName>
+		<GameDependency>
+			<RequiredObject>NODRefinery</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="NODHarvesterArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			Locomotor="NODHarvesterLocomotor"
+			Condition="NORMAL"
+			Speed="75.0" />
+		<Draws>
+			<TankDraw
+				id="ModuleTag_01"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FXTracksL FXTracksR"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="FXTracksL"
+				TrackMarksRightBone="FXTracksR"				
+				TreadAnimationRate="0.15"
+				TreadDriveSpeedFraction="0.25"
+				TreadPivotSpeedFraction="0.9">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT"
+					RetainSubObjects="true">
+					<Model
+						Name="NU_Hrvstr_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="NU_Hrvstr_FP" />
+				</ModelConditionState>					
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NU_Hrvstr_SKN" />
+					<ParticleSysBone
+						BoneName="FXTracksB"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NU_Hrvstr_SKN" />
+					<Texture
+						Original="NU_Harv"
+						New="NU_Harv_D" />	
+					<ParticleSysBone
+						BoneName="FXTracksB"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />											
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="NU_HrvstrR_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimNickName="IDL"
+						AnimationName="NU_Hrvstr_IDL"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableShowSubObject("TreadsStop")
+						CurDrawableHideSubObject("TreadsMove")
+						CurDrawableHideSubObject("TreadsLeft")
+						CurDrawableHideSubObject("TreadsRight")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="HARVEST_PREPARATION">
+					<Animation
+						AnimNickName="PREP"
+						AnimationName="NU_Hrvstr_PREP"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<Script>
+						CurDrawableShowSubObject("TreadsStop")
+						CurDrawableHideSubObject("TreadsMove")
+						CurDrawableHideSubObject("TreadsLeft")
+						CurDrawableHideSubObject("TreadsRight")
+					</Script>
+					<ParticleSysBone
+						BoneName="BONE_ARMR_03"
+						FXParticleSystemTemplate="HarvesterRocks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="BONE_ARML_03"
+						FXParticleSystemTemplate="HarvesterRocks"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="HARVEST_ACTION">
+					<Animation
+						AnimNickName="HARVEST"
+						AnimationName="NU_Hrvstr_HARV"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableShowSubObject("TreadsStop")
+						CurDrawableHideSubObject("TreadsMove")
+						CurDrawableHideSubObject("TreadsLeft")
+						CurDrawableHideSubObject("TreadsRight")
+					</Script>
+					<ParticleSysBone
+						BoneName="BONE_ARMR_03"
+						FXParticleSystemTemplate="HarvesterRocks"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="BONE_ARML_03"
+						FXParticleSystemTemplate="HarvesterRocks"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_LEFT">
+					<Animation
+						AnimNickName="IDL"
+						AnimationName="NU_Hrvstr_IDL"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObject("TreadsStop")
+						CurDrawableHideSubObject("TreadsMove")
+						CurDrawableShowSubObject("TreadsLeft")
+						CurDrawableHideSubObject("TreadsRight")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_RIGHT">
+					<Animation
+						AnimNickName="IDL"
+						AnimationName="NU_Hrvstr_IDL"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObject("TreadsStop")
+						CurDrawableHideSubObject("TreadsMove")
+						CurDrawableHideSubObject("TreadsLeft")
+						CurDrawableShowSubObject("TreadsRight")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimNickName="IDL"
+						AnimationName="NU_Hrvstr_IDL"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObject("TreadsStop")
+						CurDrawableShowSubObject("TreadsMove")
+						CurDrawableHideSubObject("TreadsLeft")
+						CurDrawableHideSubObject("TreadsRight")
+					</Script>
+				</AnimationState>
+			</TankDraw>
+			<!-- DRAW TIBERIUM METER -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_TIB"
+				OkToChangeModelColor="false">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NU_Hrvstr_TIB" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableHideSubObject("Tib_25")
+						CurDrawableHideSubObject("Tib_50")
+						CurDrawableHideSubObject("Tib_75")
+						CurDrawableHideSubObject("Tib_100")
+						CurDrawableHideSubObject("FXGlows_25")
+						CurDrawableHideSubObject("FXGlows_50")
+						CurDrawableHideSubObject("FXGlows_75")
+						CurDrawableHideSubObject("FXGlows_100")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MONEY_STORED_AMOUNT_1">
+					<Script>
+						CurDrawableShowSubObject("Tib_25")
+						CurDrawableHideSubObject("Tib_50")
+						CurDrawableHideSubObject("Tib_75")
+						CurDrawableHideSubObject("Tib_100")
+						CurDrawableShowSubObject("FXGlows_25")
+						CurDrawableHideSubObject("FXGlows_50")
+						CurDrawableHideSubObject("FXGlows_75")
+						CurDrawableHideSubObject("FXGlows_100")
+
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MONEY_STORED_AMOUNT_2">
+					<Script>
+						CurDrawableHideSubObject("Tib_25")
+						CurDrawableShowSubObject("Tib_50")
+						CurDrawableHideSubObject("Tib_75")
+						CurDrawableHideSubObject("Tib_100")
+						CurDrawableHideSubObject("FXGlows_25")
+						CurDrawableShowSubObject("FXGlows_50")
+						CurDrawableHideSubObject("FXGlows_75")
+						CurDrawableHideSubObject("FXGlows_100")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MONEY_STORED_AMOUNT_3">
+					<Script>
+						CurDrawableHideSubObject("Tib_25")
+						CurDrawableHideSubObject("Tib_50")
+						CurDrawableShowSubObject("Tib_75")
+						CurDrawableHideSubObject("Tib_100")
+						CurDrawableHideSubObject("FXGlows_25")
+						CurDrawableHideSubObject("FXGlows_50")
+						CurDrawableShowSubObject("FXGlows_75")
+						CurDrawableHideSubObject("FXGlows_100")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MONEY_STORED_AMOUNT_4">
+					<Script>
+						CurDrawableHideSubObject("Tib_25")
+						CurDrawableHideSubObject("Tib_50")
+						CurDrawableHideSubObject("Tib_75")
+						CurDrawableShowSubObject("Tib_100")
+						CurDrawableHideSubObject("FXGlows_25")
+						CurDrawableHideSubObject("FXGlows_50")
+						CurDrawableHideSubObject("FXGlows_75")
+						CurDrawableShowSubObject("FXGlows_100")
+					</Script>
+				</AnimationState>
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_FX"
+				ExtraPublicBone="FXTracksLR FXTracksRR FXTracksLF FXTracksRF">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NU_HrvstrE_SKN" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="HarvesterDust"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<ParticleSysBone
+						BoneName="FXHULKFIRE"
+						FXParticleSystemTemplate="GDIMammothHulkFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXHULKFIRE"
+						FXParticleSystemTemplate="GDIMammothHulkFireGlow"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXHULKFIRE"
+						FXParticleSystemTemplate="GDIMammothHulkFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXHULKFIRE"
+						FXParticleSystemTemplate="GDIMammothHulkSmoke"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<!--Return to Dock Button Power-->
+			<ReturnToDockSpecialPower
+				id="ModuleTag_ReturnToDock"
+				SpecialPowerTemplate="SpecialPower_ReturnToDock" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="HarvesterDeathTiberiumOCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<!-- Override the Nod Cloaking Field in BaseVehicle to prevent stealth during docking or harvesting-->
+			<InvisibilityUpdate
+				id="ModuleTag_NodHarvesterInvisibility"
+				xai:joinAction="Replace"
+				UpdatePeriod="0.2s"
+				Options="STARTS_ACTIVE"
+				OpacityMin="30%"
+				OpacityMax="100%">
+				<InvisibilityNugget
+					EnteringStealthFX="FX_NODStealthTransitionOn"
+					LeavingStealthFX="FX_NODStealthTransitionOff"
+					ForbiddenStatus="DOCKING" />			
+			</InvisibilityUpdate>
+			<InvisibilityUpdate
+				id="ModuleTag_Invisibility"
+				xai:joinAction="Remove"
+			/>
+			<Physics
+				id="ModuleTag_04" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				DeathObjectStatusBits="DONT_CLEAR_FOR_BUILD"
+				SinkDelay="3s"
+				SinkRate="1.5"
+				DestructionDelay="7s">
+				<OCL
+					Type="INITIAL">
+					<OCL>OCL_NODHarvesterDebris</OCL>
+				</OCL>
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="TOPPLED" />
+				<Sound Type="INITIAL" List="NOD_Generic_VoiceDieMS" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplodeNoScorch" />
+			</FXListBehavior>
+			<!-- No stances because there's no weapon -->
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				xai:joinAction="Remove" />
+		</Behaviors>
+		<AI>
+			<SupplyTruckAIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				MaxBoxes="200"
+				SupplyWarehouseScanDistance="5000"
+				SupplyCenterActionDelay="100ms"
+				DepletedAnnounceDistance="600"
+				HarvestTiberium="true"
+				HarvestsFromRearEnd="true"
+				HarvestActivationRange="26"
+				HarvestPreparationTime="0.5s"
+				HarvestActionTime="1.7s"
+				CanPathThroughUnitsWhileDocking="true"
+				CanPathThroughUnitsWhileHarvesting="false" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_02"
+				MaxHealth="5000" />
+		</Body>
+		<EvaEvents
+			EvaEventDamagedOwner="HarvesterUnderAttack" />
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="25.0"
+				MinorRadius="17.0"
+				Height="19.0"
+				ContactPointGeneration="VEHICLE">
+				<Offset
+					x="0.84"
+					y="0.0"
+					z="0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_Harvester_VoiceAttack"
+				AudioType="voiceAttack" />
+			<AudioEntry
+				Sound="NOD_Harvester_VoiceCreate"
+				AudioType="voiceCreated" />
+			<AudioEntry
+				Sound="NOD_Harvester_VoiceHarvest"
+				AudioType="voiceSupply" />
+			<AudioEntry
+				Sound="NOD_Harvester_VoiceMove"
+				AudioType="voiceGuard" />
+			<AudioEntry
+				Sound="NOD_Harvester_VoiceMove"
+				AudioType="voiceMove" />
+			<AudioEntry
+				Sound="NOD_Harvester_VoiceMoveAttack"
+				AudioType="voiceAttackAfterMoving" />
+			<AudioEntry
+				Sound="NOD_Harvester_VoiceMoveRefinery"
+				AudioType="voiceDock" />
+			<AudioEntry
+				Sound="NOD_Harvester_VoiceRetreat"
+				AudioType="voiceRetreatToCastle" />
+			<AudioEntry
+				Sound="NOD_Harvester_VoiceSelectMS"
+				AudioType="voiceSelect" />
+			<AudioEntry
+				Sound="NOD_Harvester_VoiceSelectBattleMS"
+				AudioType="voiceSelectBattle" />
+			<NamedEntry
+				Sound="NOD_Harvester_VoiceMoveRefinery"
+				Name="ReturnToDock" />
+			<NamedEntry
+				Sound="NOD_Harvester_VoiceRetreat"
+				Name="ReturnToDockWhileUnderAttack" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry
+				Sound="NOD_Harvester_MoveStart"
+				AudioType="soundMoveStart" />
+			<AudioEntry
+				Sound="NOD_Harvester_AmbientLoopMS"
+				AudioType="soundAmbient" />
+		</AudioArraySound>
+		<EvaEvents
+			EvaEventDieOwner="HarvesterLost" />
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="320" />
+	</GameObject>
+</AssetDeclaration>

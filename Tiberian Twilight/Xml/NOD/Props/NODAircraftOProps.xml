@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Base Objects -->
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+
+		<!-- Art -->
+		<Include type="all"	source="ART:GDIHeavyMissileProjectile_Veteran.w3x" />
+		<Include type="all" source="ART:NodEMPRocketProjectile.w3x" />
+		<Include type="all"	source="ART:FX_RPGHeroic.w3x" />
+		<Include type="all" source="ART:NUL_AircraftO_SKN.w3x" />
+		<Include type="all" source="ART:NUL_AircraftO_DMG.xml" />
+		<Include type="all" source="ART:NUL_AircraftO_AIDD.w3x" />
+	</Includes>
+	
+	<Defines>
+		<Define
+			name="NODAIRCRAFTO_DAMAGE_BONE_NAMES"
+			value="	BONE_CONTACT_POINT_01 
+							BONE_CONTACT_POINT_02 
+							BONE_CONTACT_POINT_03 
+							BONE_CONTACT_POINT_04
+							BONE_CONTACT_POINT_05 
+							BONE_CONTACT_POINT_06
+							BONE_CONTACT_POINT_07 
+							BONE_CONTACT_POINT_08 
+							BONE_CONTACT_POINT_09
+							BONE_CONTACT_POINT_10 
+							BONE_CONTACT_POINT_11 
+							BONE_CONTACT_POINT_12 
+							BONE_CONTACT_POINT_13 
+							BONE_CONTACT_POINT_14 
+							BONE_CONTACT_POINT_15 
+							BONE_CONTACT_POINT_16"/>
+
+	</Defines>
+
+	<GameObject
+		id="NODAircraftORocketProjectile"
+		inheritFrom="BaseTargetableProjectile"
+		Side="NOD"
+		EditorSorting="SYSTEM"
+		KindOf="+DEFLECT_BY_SPECIAL_POWER"
+		EditorName="NODAircraftORocketProjectile">
+		<Draws>
+
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				ExtraPublicBone="=$NODAIRCRAFTO_DAMAGE_BONE_NAMES"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NodEMPRocketProjectile" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODRocketMedium_Trail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NodEMP_RocketTrail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NodEMP_RocketTrailSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+			</ScriptedModelDraw>			
+			
+		</Draws>
+		<Behaviors>
+				  
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_NOD_Medusa_AirO_EMPRocketWeaponImpactExplosion_AudioOnly" /> <!-- audio only, please put visuals in another event, thanks -->
+			</FXListBehavior>
+			
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="1"
+				FirstHeightMax="1"
+				SecondHeightMin="5"
+				SecondHeightMax="5"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				GroundHitFX="FX_NodAircraftO_EMPRocketExplode"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH"
+				SidewaysDrift="25"
+				FlightPathAdjustDistPerSecond="300.0" />
+			
+		</Behaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Medusa_AirO_EMPRocketWeaponIncoming" AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+
+	<!--    /////////////////////////////////////   -->
+	<!--		The Collapsing ship which falls					-->
+	<!--		from the sky when the unit is killed		-->
+	<GameObject
+		id="NODAircraftO_Dying"
+		EditorName="NODAircraftO_Dying"
+		Description="Desc:NODAircraftO_Dying"
+		Side="NOD"
+		KindOf="=$BASE_DYING_AIRCRAFT_KINDOF">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				OkToChangeModelColor="true" 
+				ExtraPublicBone="=$NODAIRCRAFTO_DAMAGE_BONE_NAMES">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUL_AircraftO_SKN" />
+					<ParticleSysBone
+						BoneName="NAO_RcktPD02"
+						FXParticleSystemTemplate="orcadamagefire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAO_RcktPD02"
+						FXParticleSystemTemplate="orcadamagesmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAO_RcktPD02"
+						FXParticleSystemTemplate="orcadamagesmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NUL_AircraftO_AIDD"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.2"
+						AnimationSpeedFactorMax="0.2" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<Physics
+				id="ModuleTag_Physics"
+				TumbleRandomly="true"
+				MaxXRotationVelocity="25"
+				MaxYRotationVelocity="5"
+				MaxZRotationVelocity="0"
+				KillWhenRestingOnGround="true"/>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleLRG_Death" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Aircraft_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+			<FireWeaponWhenDead
+				id="ModuleTag_DeathWeapon"
+				DeathWeapon="NODDyingAircraft_DeathWeapon_Large"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+					  id="ModuleTag_LUAEventList"
+					  EventListName="NODAircraftOFunctions"/>
+
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+					  id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_NODAircraftOEnhancedResearch</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Upgrade"
+					Upgrade="Upgrade_NODAircraftOEnhancedResearch"
+          SkipFlashOnCreate="true"/>
+			</SubObjectsUpgrade>
+
+			<!-- Needed to copy damage from the original object during a swap -->
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="200.0"
+					FX="FX_GDIVehicleL_Damage"/>
+			</BuildingDestructionBehavior>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="Tag_PropBody"/>
+		</Body>
+
+		<xi:include	href="DATA:NOD/Includes/NODAircraftOGeometry.xml" />
+
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+</AssetDeclaration>

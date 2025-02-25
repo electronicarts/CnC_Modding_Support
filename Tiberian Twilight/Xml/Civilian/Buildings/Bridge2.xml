@@ -1,0 +1,402 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:CBBridge2.W3X" />
+		<Include
+			type="all"
+			source="ART:CBBridge2_D2.W3X" />
+		<Include
+			type="all"
+			source="ART:CBBridge2_D3.W3X" />
+		<Include
+			type="all"
+			source="ART:CBBridge2D.xml" />
+		<Include
+			type="all"
+			source="ART:CBBridge2a.W3X" />
+		<Include
+			type="all"
+			source="ART:CBBridge2a_D2.W3X" />
+		<Include
+			type="all"
+			source="ART:CBBridge2a_D3.W3X" />
+		<Include
+			type="all"
+			source="ART:CBBridge2r.W3X" />
+		<Include
+			type="all"
+			source="ART:CBBridge2l.W3X" />
+		<Include
+			type="all"
+			source="ART:CBBridgeG2.W3X" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseBridge.xml" />
+	</Includes>
+	<GameObject
+		id="Bridge2_End"
+		inheritFrom="BaseBridgeEnd">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="CBBridge2l" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="20"
+				MinorRadius="50"
+				Height="12"></Shape>
+		</Geometry>
+	</GameObject>
+	<GameObject
+		id="Bridge2_End2"
+		inheritFrom="BaseBridgeEnd">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="CBBridge2r" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="20"
+				MinorRadius="50"
+				Height="12"></Shape>
+		</Geometry>
+	</GameObject>
+	<GameObject
+		id="Bridge2_Center"
+		inheritFrom="BaseBridgeSegment">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="CBBridge2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="CBBridge2_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="CBBridge2_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="CBBridge2" />
+					<Texture
+						Original="CBBridge2"
+						New="CBBridge2D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBBridge2_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+          <Animation
+						AnimationName="CBBridge2_D2"
+						AnimationMode="MANUAL" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+            end
+          </Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="CBBridge2_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="CBBridge2_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+			</FXListBehavior>
+		</Behaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="30"
+				MinorRadius="70"
+				Height="12"></Shape>
+			<ContactPoint
+				Label="CENTER">
+				<Pos
+					x="0"
+					y="0"
+					z="0" />
+			</ContactPoint>
+		</Geometry>
+	</GameObject>
+	<GameObject
+		id="Bridge2_Center2"
+		inheritFrom="BaseBridgeSegment">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="CBBridge2a" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="CBBridge2a_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="CBBridge2a_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="CBBridge2a" />
+					<Texture
+						Original="CBBridge2"
+						New="CBBridge2D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBBridge2a_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+          <Animation
+						AnimationName="CBBridge2a_D2"
+						AnimationMode="MANUAL" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState();
+            if Prev ~= null and Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+            CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+            end
+          </Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="CBBridge2a_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="CBBridge2a_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+			</FXListBehavior>
+		</Behaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="30"
+				MinorRadius="70"
+				Height="12"></Shape>
+			<ContactPoint
+				Label="CENTER">
+				<Pos
+					x="0"
+					y="0"
+					z="0" />
+			</ContactPoint>
+		</Geometry>
+	</GameObject>
+	<GameObject
+		id="Bridge2_GateHouse"
+		inheritFrom="BaseBridgeGateHouse"
+		SelectPortrait="Portrait_NeutralBridgeGatehouse2"
+		ButtonImage="Portrait_NeutralBridgeGatehouse2">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="CBBridgeG2" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="11.4548"
+				MinorRadius="15.5827"
+				Height="53.1669"
+				ContactPointGeneration="STRUCTURE">
+				<Offset
+					x="-29.6067"
+					y="-70.1643"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+	</GameObject>
+	<GameObject
+		id="Bridge2"
+		inheritFrom="BaseBridge"
+		EditorName="Bridge2">
+		<Behaviors>
+			<BridgeBuilder
+				id="ModuleTag_Bridge"
+				EndCap="Bridge2_End"
+				EndCap2="Bridge2_End2"
+				EndCapLen="25.0"
+				CenterPiece="Bridge2_Center"
+				CenterPieceLen="50.0"
+				CenterPieceB="Bridge2_Center2"
+				CenterPieceBLen="50.0"
+				GateHouse="Bridge2_GateHouse"
+				Width="180.0" />
+		</Behaviors>
+	</GameObject>
+	<GameObject
+		id="Bridge2a"
+		inheritFrom="BaseBridge"
+		EditorName="Bridge2a">
+		<Behaviors>
+			<BridgeBuilder
+				id="ModuleTag_Bridge"
+				EndCap="Bridge2_End"
+				EndCap2="Bridge2_End2"
+				EndCapLen="25.0"
+				CenterPiece="Bridge2_Center2"
+				CenterPieceLen="50.0"
+				CenterPieceB="Bridge2_Center2"
+				CenterPieceBLen="50.0"
+				GateHouse="Bridge2_GateHouse"
+				Width="180.0" />
+		</Behaviors>
+	</GameObject>
+</AssetDeclaration>

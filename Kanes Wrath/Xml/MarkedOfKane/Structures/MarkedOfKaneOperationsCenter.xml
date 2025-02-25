@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:NOD/Structures/NODOperationsCenter.xml" />
+	</Includes>
+	<GameObject
+		id="MarkedOfKaneOperationsCenter"
+		inheritFrom="NODOperationsCenter"
+		Side="MarkedOfKane"
+		EditorSorting="STRUCTURE"
+		CommandSet="MarkedOfKaneOperationsCenterCommandSet"
+		EditorName="MarkedOfKaneOperationsCenter"
+		Description="Desc:MarkedOfKaneOperationsCenter"
+		TypeDescription="Type:MarkedOfKaneOperationsCenter">
+		<GameDependency
+			xai:joinAction="Replace">
+			<RequiredObject>MarkedOfKanePowerPlant</RequiredObject>
+			<RequiredObject>MarkedOfKaneRefinery</RequiredObject>
+		</GameDependency>
+		<Behaviors>
+
+			<!-- Cloaking field -->
+			<GrantUpgradeAreaOfEffectSpecialPower
+				xai:joinAction="Replace"
+				id="ModuleTag_CloakingField"
+				UpdateModuleStartsAttack="true"
+				SpecialPowerTemplate="SpecialPower_MarkedOfKaneCloakingField" 
+				TriggerFX="FX_NodCloakingField"
+				Radius="=$CLOAKING_FIELD_RADIUS">
+				<AcceptObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="VEHICLE HUGE_VEHICLE"
+					Exclude="AIRCRAFT"
+				/>
+				<UpgradeTemplate>Upgrade_CloakingFieldInvisibility</UpgradeTemplate>
+			</GrantUpgradeAreaOfEffectSpecialPower>
+			<WeaponFireSpecialAbilityUpdate
+				xai:joinAction="Replace"
+				id="ModuleTag_WeaponFireSpecialAbilityUpdateCloakingField"
+				SpecialPowerTemplate="SpecialPower_MarkedOfKaneCloakingField"
+				SpecialWeapon="CloakingFieldKillInfantryWeapon"
+				WhichSpecialWeapon="2"
+			/>
+			<AISpecialPowerUpdate
+				xai:joinAction="Replace"
+				id="ModuleTag_NODOpsCloakingFieldAI"
+				CommandButtonName="Command_MarkedOfKaneCloakingField"
+				AllyUnitInclude="VEHICLE"
+				AllyUnitExclude="INFANTRY HARVESTER"
+				SpecialPowerRadius="100.0" 
+				SpecialPowerAIType="SPECIAL_POWER_AOE_BUFF"
+			/>
+			<xi:include
+				xai:joinAction="Remove"
+				href="../../Includes/AdvancedNODBuildingDestruction.xml" />
+			<xi:include
+				xai:joinAction="Remove"
+				href="../../Includes/AdvancedNODBuildingSuicide.xml" />
+			
+			<xi:include
+				href="../../Includes/AdvancedMarkedOfKaneBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/AdvancedMarkedOfKaneBuildingSuicide.xml" />
+		</Behaviors>
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:NSL_Missile.w3x" />
+		<Include type="all" source="ART:FXTiberiumLaser.xml" />
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+
+	<Defines>
+		
+		<Define name="NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_RADIUS" value="=$NODSTRUCTUREJ_SUPERWEAPON_AOE_RADIUS" />
+		<Define name="NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_DURATION" value="10.0s" />
+		<Define name="NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_DOT_DURATION" value="=$NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_DURATION" />
+		<Define name="NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_ARMOR_DURATION" value="=$NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_DURATION" />
+		<Define name="NODSTRUCTUREJ_CHARGE_AMOUNT" value="100" />
+		<Define name="NODSTRUCTUREJ_DODGE_SAFETY_DISTANCE" value="=$NODSTRUCTUREJ_SUPERWEAPON_AOE_RADIUS + $AI_DODGE_SUPERWEAPON_SAFETY_BUFFER" />
+		<Define name="NODSTRUCTUREJ_PING_EFFECT_DURATION" value="6s" />
+	</Defines>
+
+	<!-- This is the seed that is created at the target location when the superweapon is initially fired -->
+	<GameObject
+		id="NODStructureJSuperweaponObjectSeed"
+		Side="NOD"
+		EditorSorting="SYSTEM"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE INERT_SHROUD_REVEALER SKIRMISH_AI_ATTEMPT_TO_DODGE"
+		EditorName="NODStructureJSuperweaponEffectSeed">
+		<DisplayName>NODStructureJSuperweaponEffectSeed</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NODSTRUCTUREJ_DODGE_SAFETY_DISTANCE" >
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"/>
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="=$NODSTRUCTUREJ_PING_EFFECT_DURATION"
+				MaxLifetime="=$NODSTRUCTUREJ_PING_EFFECT_DURATION" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_NODStructureJSuperweapon">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<Event
+					Index="onCreate"
+					FX="FX_NodWarningFlare_WithAudio" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+	</GameObject>
+	
+	<!-- This is the object that triggers the entire superweapon functionality -->
+	<GameObject
+		id="NODStructureJSuperweaponObject"
+		Side="NOD"
+		EditorSorting="UNIT"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE INERT_SHROUD_REVEALER PASS_EXPERIENCE_TO_PRODUCER GRANT_PLAYER_THREAT SKIRMISH_AI_ATTEMPT_TO_DODGE"
+		EditorName="NODStructureJSuperweaponEffect">
+		<DisplayName>NODStructureJSuperweaponEffect</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NODSTRUCTUREJ_DODGE_SAFETY_DISTANCE" >
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"/>
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="MissileAttach Rocket_UPG_1 Rocket_UPG_2 Rocket_UPG_3">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NSL_Missile" />
+					<ParticleSysBone
+						BoneName="MissileAttach"
+						FXParticleSystemTemplate="NodStructureJ_Launch01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="MissileAttach"
+						FXParticleSystemTemplate="NodStructureJ_Launch02"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NSL_Missile"
+						AnimationMode="ONCE" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>				
+			<!-- This will unhide the first upgrade model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade1">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level1</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Rocket_UPG_1"
+					Upgrade="Upgrade_NODStructureJSuperweapon_Level1"
+					HideSubObjectsOnRemove="true"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+
+			<!-- This will unhide the second upgrade model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade2">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level2</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Rocket_UPG_2"
+					Upgrade="Upgrade_NODStructureJSuperweapon_Level2"
+					HideSubObjectsOnRemove="true"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+
+			<!-- This will unhide the third upgrade model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade3">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level3</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Rocket_UPG_3"
+					HideSubObjectsOnRemove="true"
+					Upgrade="Upgrade_NODStructureJSuperweapon_Level3"/>
+			</SubObjectsUpgrade>
+				  
+			<!-- This lifetime needs to match the animation -->
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="2.1s"
+				MaxLifetime="2.1s" />
+
+			<!-- This triggers the initial explosion FX -->
+			
+			<!-- Putting these fx in the weapon 
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Tiberium_Rocket01" />
+			</FXListBehavior>
+				 -->
+
+			<!-- this triggers the actual superweapon weapon when the nuke explodes. Which charge level is controlled by upgrades -->
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel1"
+				InitiallyActive="false"
+				DeathWeapon="NODStructureJSuperweaponEffectWeaponLevel1">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level1</TriggeredBy>
+				<ConflictsWith>Upgrade_NODStructureJSuperweapon_Level2</ConflictsWith>
+				<ConflictsWith>Upgrade_NODStructureJSuperweapon_Level3</ConflictsWith>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel2"
+				InitiallyActive="false"
+				DeathWeapon="NODStructureJSuperweaponEffectWeaponLevel2">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level2</TriggeredBy>
+				<ConflictsWith>Upgrade_NODStructureJSuperweapon_Level3</ConflictsWith>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel3"
+				InitiallyActive="false"
+				DeathWeapon="NODStructureJSuperweaponEffectWeaponLevel3">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level3</TriggeredBy>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			
+			<!-- destroy civilian objects that are dead, so they don't go through kill/death animations -->
+			<DestroyObjectsUpdate
+				id="ModuleTag_DestroyObjectsUpdate"
+				Radius="500">
+				<ObjectFilter Rule="NONE" Include="CIVILIAN_UNIT"/>
+			</DestroyObjectsUpdate>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODStructureJRocketFunctions"/>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="10.0"
+				Height="300.0"></Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_NuclearMissile_Incoming" AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+
+	<!-- This object is part of the tiberium cloud effect -->
+	<GameObject
+		id="NODStructureJSuperweaponCloudEffectObject"
+		EditorName="NODStructureJSuperweaponCloudEffectObject"
+		Side="NOD"
+		EditorSorting="SYSTEM"
+		KindOf="UNATTACKABLE INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER GRANT_PLAYER_THREAT SKIRMISH_AI_ATTEMPT_TO_DODGE">
+		<ArmorSet
+				Armor="NoArmor" />
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_RADIUS + $AI_DODGE_SUPERWEAPON_SAFETY_BUFFER" >
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"/>
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<DestroyDie id="ModuleTag_Die">
+				<DieMuxData DeathTypes="ALL" />
+			</DestroyDie>
+
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+
+			<!-- This defines the duration of the Cloud Damage Effect -->
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="=$NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_DURATION"
+				MaxLifetime="=$NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_DURATION" />
+
+			<!-- Deals the damage -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.2s">
+				<FireWeaponNugget
+					WeaponName="NODStructureJSuperweaponCloudEffectWeapon" />
+			</FireWeaponUpdate>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+
+
+	<!-- This object is part of the chained lightning effect -->
+	<GameObject
+		id="NODStructureJSuperweaponScatterEffectNodeManager"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="1s"
+				MaxLifetime="1s" />
+
+			<!-- This manages the complete Scattering effect of a weapon -->
+			<WeaponScatterEffectUpdate
+				id="Base_ScatterEffect"
+				WeaponTemplate="NODStructureJSuperweaponScatterEffectNode_Weapon"
+				Options="NO_DUPLICATE_TARGETS">
+				<!-- Define the prioritization of the targets to scatter to -->
+				<TargetSelection>
+					<ObjectPriorityFilter
+						 Rule="ANY"
+						 Relationship="ENEMIES"
+						 Include="INFANTRY" />
+
+					<ObjectPriorityFilter
+						 Rule="ALL"
+						 Relationship="ENEMIES" />
+				</TargetSelection>
+
+				<!-- Define the specifics for each scatter of the weapon -->
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="10"
+						ScatterDistance="=$NODSTRUCTUREJ_SUPERWEAPON_AOE_RADIUS"
+						NodeOCL="OCL_NODStructureJSuperweaponScatterEffectNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="140"
+						NodeOCL="OCL_NODStructureJSuperweaponScatterEffectNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="130"
+						NodeOCL="OCL_NODStructureJSuperweaponScatterEffectNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="120"
+						NodeOCL="OCL_NODStructureJSuperweaponScatterEffectNode" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="110"
+						NodeOCL="OCL_NODStructureJSuperweaponScatterEffectNode" />
+				</ScatterSettings>
+
+			</WeaponScatterEffectUpdate>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+	<GameObject
+		id="NODStructureJSuperweaponScatterEffectNode_Laser"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXINVISBONE" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="MESH" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<LaserScatterUpdate
+				id="ModuleTag_LaserScatterUpdate"
+				LaserLifetime="0.75s" />
+
+		</Behaviors>
+		<Body>
+			<PropBody id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS									-->
+	<!-- ////////////////////////////////////////	-->
+
+	<!-- This is triggered when the nuke explodes, and should handle all the nuke effects -->
+	<WeaponTemplate
+		id="NODStructureJSuperweaponEffectWeaponLevel1"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		AttackRange="10000"
+		FireFX="FX_Tiberium_Rocket01"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+				 
+			<!-- The AOE damage -->
+			<DamageNugget
+				id="Nugget_AOEEffect"
+				Damage="300.0"
+				Radius="=$NODSTRUCTUREJ_SUPERWEAPON_AOE_RADIUS"
+				DamageType="BLAST"
+				DeathType="NORMAL"
+				PartitionFilterTestType="CIRCLE" >
+				<DamageScalarDetails Scalar="1000%">
+					<Filter
+						Rule="ANY">
+						<IncludeThing>GDIAircraftS</IncludeThing> <!-- GDI Boss gets extra damage -->
+					</Filter>
+				</DamageScalarDetails>
+			</DamageNugget>
+
+			<!-- crush trees...cause that's what nukes do! -->
+			<WeaponOCLNugget
+				WeaponOCL="OCL_GenericTreeCrusher" />
+
+			<WeaponOCLNugget
+				WeaponOCL="OCL_SuperweaponDestroyCiviliansHumanelyObject" />
+
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="NODStructureJSuperweaponEffectWeaponLevel2"
+		inheritFrom="NODStructureJSuperweaponEffectWeaponLevel1"
+		FireFX="FX_Tiberium_Rocket">
+		<Nuggets>
+			<!-- The tiberium cloud effect -->
+			<WeaponOCLNugget
+				id="Nugget_CloudEffect"
+				WeaponOCL="OCL_NODStructureJSuperweaponCloudEffect" />
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="NODStructureJSuperweaponEffectWeaponLevel3"
+		inheritFrom="NODStructureJSuperweaponEffectWeaponLevel2"
+		FireFX="FX_Tiberium_Rocket_BiggerAudio">
+		<Nuggets>
+			<!-- the chain lightning effect -->
+			<WeaponScatterEffectNugget
+				id="Nugget_ScatterEffect"
+				WeaponOCL="OCL_NODStructureJSuperweaponScatterEffectNodeStart"
+				ModuleId="Base_ScatterEffect"/>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="NODStructureJSuperweaponCloudEffectWeapon"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		ClipSize="1"
+		FireFX="FX_NODStructureJSuperweaponCloudEffectWeapon"
+		FireVeteranFX="FX_NODStructureJSuperweaponCloudEffectWeapon"
+		CanFireWhileMoving="false"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_GROUND"
+		ForbiddenAntiMask="ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		InstantLoadClipOnActivate="true"
+		FinishAttackOnceStarted="true">
+		<FiringDuration
+			MinSeconds="0.12s"
+			MaxSeconds="0.12s" />
+		<ClipReloadTime
+			MinSeconds="0.12s"
+			MaxSeconds="0.12s" />
+		<Nuggets>
+			
+			<!-- cloud DOT effect -->
+			<DOTNugget
+				id="Nugget_DOT"
+				Damage="20.0"
+				Radius="=$NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_RADIUS"
+				DamageInterval="0.5s"
+				DamageDuration="=$NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_DOT_DURATION"
+				DamageType="BLAST"
+				FXListVictim="FX_NODTibCloud_Hit"
+				DeathType="EXPLODED">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES NEUTRAL"
+					Include="INFANTRY VEHICLE STRUCTURE"/>
+				<DamageScalarDetails Scalar="1000%">
+					<Filter
+						Rule="ANY">
+						<IncludeThing>GDIAircraftS</IncludeThing>
+						<!-- GDI Boss gets extra damage -->
+					</Filter>
+				</DamageScalarDetails>				
+			</DOTNugget>
+			
+			<!-- cloud reduced armor effect  -->
+			<AttributeModifierNugget
+				id="Nugget_AttributeModifier"
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifier_NODStructureJSuperweaponCloudEffect"
+				Radius="200.0" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- The scatter effect fires this weapon at it's victims -->
+	<WeaponTemplate
+		id="NODStructureJSuperweaponScatterEffectNode_Weapon"
+		AttackRange="125.0"
+		CanFireWhileMoving="false"
+		WeaponSpeed="999999.0"
+		FireFX="FX_TibCatalystLaser"
+		FireSound="GDI_ZoneRaider_SonicRifleFire"
+		AcceptableAimDelta="180d"
+		ClipSize="1"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		AutoReloadsClip="AUTO"
+		ReAcquireDetailType="PER_CLIP">
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<ClipReloadTime
+			MinSeconds="2.0s"
+			MaxSeconds="2.0s" />
+		<Nuggets>
+			<LineDamageNugget
+				Damage="200.0"
+				Radius="0.0"
+				DamageType="BLAST"
+				FXListVictim="FX_NODTibCloud_Hit"
+				DeathType="NORMAL"
+				Options="USE_DYNAMIC_LENGTH CHECK_VICTIM_GEOMETRY USE_TARGET_DETAIL_POSITION"
+				LineWidth="10.0"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter">
+				<DamageScalarDetails Scalar="1000%">
+					<Filter
+						Rule="ANY">
+						<IncludeThing>GDIAircraftS</IncludeThing><!-- GDI Boss gets extra damage -->
+					</Filter>
+				</DamageScalarDetails>
+			</LineDamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+
+
+	<!-- //////////////////////////////////////	-->
+	<!--		OBJECT CREATION LISTS			-->
+	<!-- //////////////////////////////////////	-->
+
+	<!-- -->
+	<ObjectCreationList
+		id="OCL_NODStructureJSuperweaponCloudEffect">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODStructureJSuperweaponCloudEffectObject"/>
+				<CopyParentUpgrades/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>	
+	
+	<!-- This OCL creates the scatter effect manager, which then uses the OCL_NODStructureJScatterEffectNode to create scatter nodes -->
+	<ObjectCreationList
+		id="OCL_NODStructureJSuperweaponScatterEffectNodeStart">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODStructureJSuperweaponScatterEffectNodeManager"/>
+				<CopyParentUpgrades/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	<ObjectCreationList
+		id="OCL_NODStructureJSuperweaponScatterEffectNode">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODStructureJSuperweaponScatterEffectNode_Laser"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   ATTRIBUTE MODIFIERS						-->
+	<!-- ////////////////////////////////////////	-->
+	<AttributeModifier
+		id="AttributeModifier_NODStructureJSuperweaponCloudEffect"
+		Category="NONE"
+		Duration="=$NODSTRUCTUREJ_SUPERWEAPON_CLOUDEFFECT_ARMOR_DURATION">
+		<Modifier Type="ARMOR" Value="125%"/>
+	</AttributeModifier>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   UPGRADES									-->
+	<!-- ////////////////////////////////////////	-->
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_NODStructureJSuperweapon_Level1"
+		DisplayName="UPGRADE:NODStructureJSuperweapon_Level1"
+		Description="UPGRADE:NODStructureJSuperweapon_Level1"
+		BuildCost="0"
+		BuildTime="0s">
+	</UpgradeTemplate>
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_NODStructureJSuperweapon_Level2"
+		DisplayName="UPGRADE:NODStructureJSuperweapon_Level2"
+		Description="UPGRADE:NODStructureJSuperweapon_Level2"
+		BuildCost="0"
+		BuildTime="0s">
+	</UpgradeTemplate>
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_NODStructureJSuperweapon_Level3"
+		DisplayName="UPGRADE:NODStructureJSuperweapon_Level3"
+		Description="UPGRADE:NODStructureJSuperweapon_Level3"
+		BuildCost="0"
+		BuildTime="0s">
+	</UpgradeTemplate>
+
+	<ObjectCreationList
+		id="OCL_NODStructureJSuperweapon">
+		<CreateObject
+			Disposition="ON_GROUND_ALIGNED CLAMP_TO_GROUND RELATIVE_ANGLE USE_WATER_SURFACE"
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET COPY_CREATORS_UPGRADES COPY_CREATORS_PRODUCER">
+			<CreateObject>NODStructureJSuperweaponObject</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+
+</AssetDeclaration>

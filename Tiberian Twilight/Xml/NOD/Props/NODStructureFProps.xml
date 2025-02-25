@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:GDI_CondorBomb.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseFirestormObject.xml" />
+	</Includes>
+
+	<Defines>
+		<Define name="NOD_STRUCTURE_F_FIRE_RADIUS" value="40" />
+	</Defines>
+	
+	<GameObject
+		id="NODStructureFProjectile"
+		inheritFrom="BaseUnattackableProjectile" 
+		KindOf="+INERT"
+		EditorName="NODStructureFProjectile">
+
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GDI_CondorBomb" />
+				</ModelConditionState>
+<!--
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GDI_CondorBomb"
+						AnimationMode="ONCE" />
+				</AnimationState>
+-->
+			</ScriptedModelDraw>
+		</Draws>
+
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NOD_FuelAirBlast" />
+				<Event Index="onDeath" FX="FX_NOD_FlameColumn_FuelAirBombImpactExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="50" 
+				FirstHeightMax="50" 
+				SecondHeightMin="75" 
+				SecondHeightMax="75" 
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				Flags="ORIENT_TO_FLIGHT_PATH DETONATE_CALLS_KILL DONT_TRACK_TARGET" />
+		</Behaviors>
+
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0.8"/>
+		</Geometry>
+	</GameObject>
+
+	<GameObject
+		id="NODStructureFFireEffectObject"
+		inheritFrom="BaseFirestormAOEObject"
+		KindOf="+GRANT_PLAYER_THREAT" 
+		EditorName="NODStructureFFireEffectObject">
+		<DisplayName>NODStructureFFireEffectObject</DisplayName>
+		<Behaviors>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateNODStructureFFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime=".0s"
+				MaxLifetime="5.0s" />
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="NODStructureFDOTWeapon" />
+			</FireWeaponUpdate>
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate_02">
+				<RequiredObject
+					Range="=$NOD_STRUCTURE_F_FIRE_RADIUS">
+					<ObjectFilter
+						Rule="ANY"
+						Include="FIRESTORM"
+						Relationship="SAME_PLAYER"/>
+				</RequiredObject>
+				<FireWeaponNugget
+					WeaponName="GenericKillOwnerFirestormWeapon"
+					OneShot="true"/>
+			</FireWeaponUpdate>
+
+			<FireGroupCenterUpdate
+				id="ModuleTag_FirestormWeapon"
+				WeaponName="GenericKillOwnerFirestormWeapon"
+				Range="=$NOD_STRUCTURE_F_FIRE_RADIUS"
+				RequiredCount="3">
+				<ObjectFilter
+					Rule="NONE"
+					Relationship="SAME_PLAYER"
+					Include="HAS_FIRE_GROUP_CENTER_UPDATE"/>
+			</FireGroupCenterUpdate>
+
+		</Behaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_STRUCTURE_F_FIRE_RADIUS"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+	</GameObject>
+	
+	<GameObject
+		id="NODStructureFFirestormObject"
+		inheritFrom="BaseFirestormObject"
+		KindOf="+GRANT_PLAYER_THREAT +SKIRMISH_AI_ATTEMPT_TO_DODGE" 
+		EditorName="NODStructureFFirestormObject">
+		<DisplayName>NODStructureFFirestormObject</DisplayName>
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NOD_STRUCTURE_F_FIRE_RADIUS + $AI_DODGE_SAFETY_BUFFER">
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"
+				StatusBitFlagsExclude="AIRBORNE_TARGET">
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="2.0s"
+				MaxLifetime="2.0s" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateNODStructureFFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="2.0s">
+				<FireWeaponNugget
+					WeaponName="NODStructureFFirestormWeapon" />
+				<FireWeaponNugget
+					OneShot="true"
+					WeaponName="NODStructureFOneShotFirestormWeapon" />
+			</FireWeaponUpdate>
+		</Behaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_STRUCTURE_F_FIRE_RADIUS"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+	</GameObject>
+
+</AssetDeclaration>

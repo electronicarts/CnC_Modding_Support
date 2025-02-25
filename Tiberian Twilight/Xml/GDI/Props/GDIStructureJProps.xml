@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:FXIonCannonExplosion.w3x" />
+		<Include type="all" source="ART:FXIonCannon.w3x" />
+		<Include type="all" source="ART:FXSphereDistort.w3x" />
+		<Include type="all" source="ART:FXIonWeaponSphere.w3x" />
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<Defines>
+		<Define name="GDISTRUCTUREJ_DODGE_SAFETY_DISTANCE" value="=$GDISTRUCTUREJ_EFFECT_RADIUS + $AI_DODGE_SUPERWEAPON_SAFETY_BUFFER" />
+	</Defines>
+
+	<!-- This is the seed that is created at the target location when the superweapon is initially fired -->
+	<GameObject
+		id="GDIStructureJSuperweaponObjectSeed"
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE INERT_SHROUD_REVEALER SKIRMISH_AI_ATTEMPT_TO_DODGE"
+		EditorName="GDIStructureJSuperweaponEffectSeed">
+		<DisplayName>GDIStructureJSuperweaponEffectSeed</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$GDISTRUCTUREJ_DODGE_SAFETY_DISTANCE" >
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL" />
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="=$SPECIAL_POWER_WARNING_FLARE_DURATION"
+				MaxLifetime="=$SPECIAL_POWER_WARNING_FLARE_DURATION" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_GDIStructureJSuperweapon">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<Event
+					Index="onCreate"
+					FX="FX_GDIWarningFlare" />
+			</FXListBehavior>
+	</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+<!-- no worky
+		<AudioArraySound>
+			<AudioEntry Sound="Gui_GDI_WarningFlareCursor" AudioType="soundAmbient" />
+		</AudioArraySound> 
+ -->
+ 	</GameObject>
+
+	<GameObject
+		id="GDIStructureJSuperweaponObject"
+		Side="GDI"
+		EditorSorting="UNIT"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE INERT_SHROUD_REVEALER GRANT_PLAYER_THREAT PASS_EXPERIENCE_TO_PRODUCER SKIRMISH_AI_ATTEMPT_TO_DODGE"
+		EditorName="GDIStructureJSuperweaponEffect">
+		<DisplayName>GDIStructureJSuperweaponEffect</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$GDISTRUCTUREJ_DODGE_SAFETY_DISTANCE" >
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL" />
+		</SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="FXIonCannonExplosion" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="FXIonCannonExplosion"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				
+				
+				<!-- LOW Power Effects -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="FXIonCannonExplosion" 
+						AnimationMode="ONCE" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDI_IonCannon_Shockwave_Small"
+						Bone="" />
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_Column"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_ColumnCap"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_Debris"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_DebrisTrail"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_Distort"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_Explosion"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_Flash"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_GroundDust"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_Light"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_LightningExpl"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_Mushroom"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_SmokeBase"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_SmokeBlast"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonSmallExpl_Sphere"/>
+
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonPreExplSmall_CloudColumn"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonPreExplSmall_Debris"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonPreExplSmall_DustSuck"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonPreExplSmall_Embers"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonPreExpl_GroundCloud"/>
+
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonExplSmall_CenterGlow"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonExplSmall_Flash"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonExplSmall_FlashUpper"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonExplSmall_Light"/>
+
+					<ParticleSysBone BoneName="FXBeamBone01" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone02" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone03" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone04" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone05" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone06" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone07" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+
+					<ParticleSysBone BoneName="FXBeamBone01" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone02" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone03" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone04" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone05" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone06" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone07" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+
+					<ParticleSysBone BoneName="FXBeamBone01" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone02" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone03" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone04" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone05" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone06" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone07" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+
+					<ParticleSysBone BoneName="FXBeamBone01" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone02" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone03" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone04" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone05" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone06" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone07" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+
+					<ParticleSysBone BoneName="FXBeamBoneCenter" FXParticleSystemTemplate="IonCannonPreExplSmall_BlueFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBoneCenter" FXParticleSystemTemplate="IonCannonPreExplSmall_BlueFlash" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBoneCenter" FXParticleSystemTemplate="IonCannonPreExplSmall_BlueGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBoneCenter" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+				</AnimationState>
+				
+				
+				<!-- HIGH Power Effects -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2">
+					<Animation
+						AnimationName="FXIonCannonExplosion"
+						AnimationMode="ONCE" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_GDI_IonCannon_Shockwave"
+						Bone="" />
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_Column"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_ColumnCap"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_Debris"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_DebrisTrail"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_Distort"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_Explosion"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_Flash"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_GroundDust"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_Light"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_LightningExpl"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_Mushroom"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_SmokeBase"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_SmokeBlast"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonBigExpl_Sphere"/>
+
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonPreExpl_CloudColumn"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonPreExpl_Debris"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonPreExpl_DustSuck"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonPreExpl_Embers"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonPreExpl_GroundCloud"/>
+
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonExpl_CenterGlow"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonExpl_Flash"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonExpl_FlashUpper"/>
+					<ParticleSysBone BoneName="NONE" FXParticleSystemTemplate="IonCannonExpl_Light"/>
+
+					<ParticleSysBone BoneName="FXBeamBone01" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone02" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone03" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone04" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone05" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone06" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone07" FXParticleSystemTemplate="IonCannonAuxBeamBaseGlow" FollowBone="true"/>
+
+					<ParticleSysBone BoneName="FXBeamBone01" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone02" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone03" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone04" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone05" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone06" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone07" FXParticleSystemTemplate="IonCannonAuxBeamFire" FollowBone="true"/>
+
+					<ParticleSysBone BoneName="FXBeamBone01" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone02" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone03" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone04" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone05" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone06" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone07" FXParticleSystemTemplate="IonCannonAuxBeamGlow" FollowBone="true"/>
+
+					<ParticleSysBone BoneName="FXBeamBone01" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone02" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone03" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone04" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone05" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone06" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBone07" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+
+					<ParticleSysBone BoneName="FXBeamBoneCenter" FXParticleSystemTemplate="IonCannonPreExpl_BlueFire" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBoneCenter" FXParticleSystemTemplate="IonCannonPreExpl_BlueFlash" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBoneCenter" FXParticleSystemTemplate="IonCannonPreExpl_BlueGlow" FollowBone="true"/>
+					<ParticleSysBone BoneName="FXBeamBoneCenter" FXParticleSystemTemplate="IonCannonAuxBeamSparks" FollowBone="true"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="7.7s"
+				MaxLifetime="7.7s" />
+			<!--
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onCreate"
+					FX="FX_GDI_IonCannon_Shockwave" />
+			</FXListBehavior>
+			-->
+			
+			<!-- this triggers the actual superweapon weapon. Which charge level is controlled by upgrades -->
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel1"
+				DeathWeapon="GDIStructureJSuperweaponEffectWeaponLevel1">
+				<TriggeredBy>Upgrade_GDIStructureJSuperweapon_Level1</TriggeredBy>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level2</ConflictsWith>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level3</ConflictsWith>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level4</ConflictsWith>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level5</ConflictsWith>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level6</ConflictsWith>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel2"
+				DeathWeapon="GDIStructureJSuperweaponEffectWeaponLevel2">
+				<TriggeredBy>Upgrade_GDIStructureJSuperweapon_Level2</TriggeredBy>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level3</ConflictsWith>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level4</ConflictsWith>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level5</ConflictsWith>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level6</ConflictsWith>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel3"
+				DeathWeapon="GDIStructureJSuperweaponEffectWeaponLevel3">
+				<TriggeredBy>Upgrade_GDIStructureJSuperweapon_Level3</TriggeredBy>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level4</ConflictsWith>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level5</ConflictsWith>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level6</ConflictsWith>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel4"
+				DeathWeapon="GDIStructureJSuperweaponEffectWeaponLevel4">
+				<TriggeredBy>Upgrade_GDIStructureJSuperweapon_Level4</TriggeredBy>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level5</ConflictsWith>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level6</ConflictsWith>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel5"
+				DeathWeapon="GDIStructureJSuperweaponEffectWeaponLevel5">
+				<TriggeredBy>Upgrade_GDIStructureJSuperweapon_Level5</TriggeredBy>
+				<ConflictsWith>Upgrade_GDIStructureJSuperweapon_Level6</ConflictsWith>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel6"
+				DeathWeapon="GDIStructureJSuperweaponEffectWeaponLevel6">
+				<TriggeredBy>Upgrade_GDIStructureJSuperweapon_Level6</TriggeredBy>
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			
+			<FireWeaponUpdate
+				id="ModuleTag_InitialWeapon_Level_1"
+				FireInterval="0.5s"
+				FireDelay="0.5s">
+				<FireWeaponNugget
+					WeaponName="GDIStructureJSuperweaponEffectFrontloadWeapon" />
+				<ObjectStatusValidation RequiredStatus="WEAPON_UPGRADED_01"/>
+			</FireWeaponUpdate>
+
+			<FireWeaponUpdate
+				id="ModuleTag_InitialWeapon_Level_2"
+				FireInterval="0.5s"
+				FireDelay="0.5s">
+				<FireWeaponNugget
+					WeaponName="GDIStructureJSuperweaponEffectFrontloadWeapon" />
+				<ObjectStatusValidation RequiredStatus="WEAPON_UPGRADED_02"/>
+			</FireWeaponUpdate>
+
+			<FireWeaponUpdate
+				id="ModuleTag_InitialWeapon_Level_3"
+				FireInterval="0.5s"
+				FireDelay="0.5s">
+				<FireWeaponNugget
+					WeaponName="GDIStructureJSuperweaponEffectFrontloadWeapon" />
+				<ObjectStatusValidation RequiredStatus="WEAPON_UPGRADED_03"/>
+			</FireWeaponUpdate>
+
+			<!-- destroy civilian objects that are dead, so they don't go through kill/death animations -->
+			<DestroyObjectsUpdate
+				id="ModuleTag_DestroyObjectsUpdate"
+				Radius="=$GDISTRUCTUREJ_EFFECT_RADIUS">
+				<ObjectFilter Rule="NONE" Include="CIVILIAN_UNIT"/>
+			</DestroyObjectsUpdate>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+			<StatusBitsUpgrade
+				id="ModuleTag_UpgradeWeapon01"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_GDIStructureJSuperweapon_Level2</TriggeredBy>
+			</StatusBitsUpgrade>
+
+			<StatusBitsUpgrade
+				id="ModuleTag_UpgradeWeapon02"
+				StatusToSet="WEAPON_UPGRADED_02">
+				<TriggeredBy>Upgrade_GDIStructureJSuperweapon_Level4</TriggeredBy>
+			</StatusBitsUpgrade>
+
+			<StatusBitsUpgrade
+				id="ModuleTag_UpgradeWeapon03"
+				StatusToSet="WEAPON_UPGRADED_03">
+				<TriggeredBy>Upgrade_GDIStructureJSuperweapon_Level6</TriggeredBy>
+			</StatusBitsUpgrade>
+		
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="50.0"
+				Height="300.0"></Shape>
+		</Geometry>
+		<VisionInfo
+			ShroudClearingRange="=$GDISTRUCTUREJ_EFFECT_RADIUS" />
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS									-->
+	<!-- ////////////////////////////////////////	-->
+
+	<WeaponTemplate
+		id="GDIStructureJSuperweaponEffectWeaponLevel1"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		AttackRange="10000"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage"
+				Damage="200.0"
+				Radius="=$GDISTRUCTUREJ_EFFECT_RADIUS"
+				DamageType="BLAST"
+				DeathType="DETONATED"
+				PartitionFilterTestType="CIRCLE" />
+
+			<!-- The big explosion -->
+			<ParalyzeNugget
+				id="Nugget_EMP" 
+				Radius="=$GDISTRUCTUREJ_EFFECT_RADIUS"
+				DurationSeconds="3s"
+				ParalyzeType="EMP"
+				FXListVictim="FX_EMPEE"
+				ForbiddenTargetModelCondition="LANDING TAKING_OFF" />	
+			
+			<WeaponOCLNugget
+				WeaponOCL="OCL_GenericTreeCrusher" />
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="GDIStructureJSuperweaponEffectWeaponLevel2"
+		inheritFrom="GDIStructureJSuperweaponEffectWeaponLevel1">
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage"
+				Damage="200.0"/>
+
+			<ParalyzeNugget
+				id="Nugget_EMP"
+				DurationSeconds="5s" />		
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="GDIStructureJSuperweaponEffectWeaponLevel3"
+		inheritFrom="GDIStructureJSuperweaponEffectWeaponLevel2">
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage"
+				Damage="300.0"/>
+			<ParalyzeNugget
+				id="Nugget_EMP"
+				DurationSeconds="7s" />
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="GDIStructureJSuperweaponEffectWeaponLevel4"
+		inheritFrom="GDIStructureJSuperweaponEffectWeaponLevel3">
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage"
+				Damage="400.0"/>
+			<ParalyzeNugget
+				id="Nugget_EMP"
+				DurationSeconds="9s" />
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="GDIStructureJSuperweaponEffectWeaponLevel5"
+		inheritFrom="GDIStructureJSuperweaponEffectWeaponLevel4">
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage"
+				Damage="500.0"/>
+			<ParalyzeNugget
+				id="Nugget_EMP"
+				DurationSeconds="11s" />
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="GDIStructureJSuperweaponEffectWeaponLevel6"
+		inheritFrom="GDIStructureJSuperweaponEffectWeaponLevel5">
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage"
+				Damage="600.0"/>
+			<ParalyzeNugget
+				id="Nugget_EMP"
+				DurationSeconds="15s" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIStructureJSuperweaponEffectFrontloadWeapon"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		AttackRange="10000"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<DamageNugget
+				id="Nugget_Damage"
+				Damage="12.0"
+				Radius="=$GDISTRUCTUREJ_EFFECT_RADIUS"
+				DamageType="BLAST"
+				DeathType="DETONATED"
+				PartitionFilterTestType="CIRCLE" />
+		</Nuggets>
+	</WeaponTemplate>
+	<!-- ////////////////////////////////////////	-->
+	<!--   UPGRADES									-->
+	<!-- ////////////////////////////////////////	-->
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_GDIStructureJSuperweapon_Level1"
+		DisplayName="UPGRADE:GDIStructureJSuperweapon_Level1"
+		Description="UPGRADE:GDIStructureJSuperweapon_Level1"
+		BuildCost="0"
+		BuildTime="0s">
+	</UpgradeTemplate>
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_GDIStructureJSuperweapon_Level2"
+		DisplayName="UPGRADE:GDIStructureJSuperweapon_Level2"
+		Description="UPGRADE:GDIStructureJSuperweapon_Level2"
+		BuildCost="0"
+		BuildTime="0s">
+	</UpgradeTemplate>
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_GDIStructureJSuperweapon_Level3"
+		DisplayName="UPGRADE:GDIStructureJSuperweapon_Level3"
+		Description="UPGRADE:GDIStructureJSuperweapon_Level3"
+		BuildCost="0"
+		BuildTime="0s">
+	</UpgradeTemplate>
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_GDIStructureJSuperweapon_Level4"
+		DisplayName="UPGRADE:GDIStructureJSuperweapon_Level4"
+		Description="UPGRADE:GDIStructureJSuperweapon_Level4"
+		BuildCost="0"
+		BuildTime="0s">
+	</UpgradeTemplate>
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_GDIStructureJSuperweapon_Level5"
+		DisplayName="UPGRADE:GDIStructureJSuperweapon_Level5"
+		Description="UPGRADE:GDIStructureJSuperweapon_Level5"
+		BuildCost="0"
+		BuildTime="0s">
+	</UpgradeTemplate>
+	<UpgradeTemplate
+		Type="OBJECT"
+		id="Upgrade_GDIStructureJSuperweapon_Level6"
+		DisplayName="UPGRADE:GDIStructureJSuperweapon_Level6"
+		Description="UPGRADE:GDIStructureJSuperweapon_Level6"
+		BuildCost="0"
+		BuildTime="0s">
+	</UpgradeTemplate>
+
+	<ObjectCreationList
+		id="OCL_GDIStructureJSuperweapon">
+		<!-- LOW power version -->
+		<CreateObject
+			Disposition="ON_GROUND_ALIGNED CLAMP_TO_GROUND RELATIVE_ANGLE USE_WATER_SURFACE"
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET COPY_CREATORS_UPGRADES COPY_CREATORS_PRODUCER"
+			StartingModelConditions="USER_1">
+			<ForbiddenUpgrade>Upgrade_GDIStructureJSuperweapon_Level6</ForbiddenUpgrade>
+			<CreateObject>GDIStructureJSuperweaponObject</CreateObject>
+		</CreateObject>
+		<!-- HIGH power version -->
+		<CreateObject
+			Disposition="ON_GROUND_ALIGNED CLAMP_TO_GROUND RELATIVE_ANGLE USE_WATER_SURFACE"
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET COPY_CREATORS_UPGRADES COPY_CREATORS_PRODUCER"
+			StartingModelConditions="USER_2">
+			<RequiredUpgrade>Upgrade_GDIStructureJSuperweapon_Level6</RequiredUpgrade>
+			<CreateObject>GDIStructureJSuperweaponObject</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+	
+</AssetDeclaration>

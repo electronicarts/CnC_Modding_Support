@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+		  
+	<!-- Base Video Event -->
+	<xs:complexType name="FadeData">
+		<xs:sequence>
+			<xs:element name="StartColor" type="Color3f" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="EndColor" type="Color3f" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="FrameCount" type="SageInt" use="required"  />
+	</xs:complexType>
+
+	<xs:complexType name="VideoEvent" xas:isPolymorphic="true">
+			<xs:sequence>
+				<xs:element name="FadeIn" type="FadeData"  minOccurs="0" maxOccurs="1"/>
+				<xs:element name="FadeOut" type="FadeData"  minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+	</xs:complexType>
+
+	<!-- FMV Movie Event -->
+	<xs:complexType name="MovieEvent">
+		<xs:complexContent>
+			<xs:extension base="VideoEvent">
+				<xs:attribute name="MovieAsset" type="AssetReference" xas:refType="Video" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Text Justification Enum Type -->
+	<xs:simpleType name="TextJustificationType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LEFT" />
+			<xs:enumeration value="RIGHT" />
+			<xs:enumeration value="CENTER" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Title Card Event -->
+	<xs:complexType name="TitleCardEvent">
+		<xs:complexContent>
+			<xs:extension base="VideoEvent">
+				<xs:sequence>
+					<xs:element name="TextInstance" minOccurs="1" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="TextColor" type="Color3f" minOccurs="1" maxOccurs="1"/>
+							</xs:sequence>
+							<xs:attribute name="TextId" type="StringList"  use="required"/>
+							<xs:attribute name="Justification" type="TextJustificationType" default="LEFT"/>
+							<xs:attribute name="XOffset" type="SageReal" default="0.0"/>
+							<xs:attribute name="YOffset" type="SageReal" default="0.0"/>
+							<xs:attribute name="Font" type="xs:string"  use="required"/>
+							<xs:attribute name="PointSize" type="SageInt"  use="required"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="DisplayTime" type="Time"  use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="VideoEventTypes" >
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="Movie" type="MovieEvent" />
+			<xs:element name="TitleCard" type="TitleCardEvent" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="VideoEventList" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+				<xs:element name="EventList" type="VideoEventTypes" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

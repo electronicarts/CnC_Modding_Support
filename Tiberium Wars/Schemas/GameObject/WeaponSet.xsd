@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+					 xmlns="uri:ea.com:eala:asset"
+					 xmlns:at="uri:ea.com:eala:asset:type"
+					 xmlns:xas="uri:ea.com:eala:asset:schema"
+					 targetNamespace="uri:ea.com:eala:asset"
+					 elementFormDefault="qualified"
+					 xmlns:balance="uri:ea.com:eala:balance" 
+					 xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="WeaponChoiceCriteria">
+		<xs:restriction base="xs:string">
+			<!-- choose the weapon that will do the most damage -->
+			<xs:enumeration value="PREFER_MOST_DAMAGE" />
+			<!-- choose the weapon with the longest range (that will do nonzero damage) -->
+			<xs:enumeration value="PREFER_LONGEST_RANGE" />
+			<!-- choose the weapon that has a grab nugget, or failing that, the one with the most damage -->
+			<xs:enumeration value="PREFER_GRAB_OVER_DAMAGE" />
+			<!-- choose the weapon that results in having to move the least to get in range (ie, longest range weapon when far away, melee weapon when close) -->
+			<xs:enumeration value="PREFER_LEAST_MOVEMENT" />
+			<!-- choose a weapon randomly from all weapons in the set that can currently be used -->
+			<xs:enumeration value="SELECT_AT_RANDOM" />
+			<!-- use default weapon choice critera set in the WeaponSet -->
+			<xs:enumeration value="USE_WEAPONSET_DEFAULT_CRITERIA" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="CommandSourceBitFlags">
+		<xs:list itemType="CommandSourceType"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="WeaponTemplateSet">
+		<xs:sequence>
+			<xs:element name="Slot"
+									maxOccurs="unbounded"
+									minOccurs="0">
+				<xs:complexType>
+					<xs:sequence></xs:sequence>
+					<xs:attribute name="WeaponSlot"
+												balance:field="WeaponSlot" 
+												type="WeaponSlotType" />
+					<xs:attribute name="WeaponTemplate"
+												type="WeaponRef"
+												balance:category="WeaponTemplate"/>
+					<xs:attribute name="PreferredAgainst"
+												type="KindOfBitFlags"
+												XmlEdit:Category="Engineering" />
+					<xs:attribute name="OnlyAgainst"
+												type="KindOfBitFlags"
+												XmlEdit:Category="Engineering" />
+					<xs:attribute name="AutoChooseMask"
+												type="CommandSourceBitFlags" />
+					<xs:attribute name="OnlyInCondition"
+												type="ModelConditionBitFlags" />
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="Conditions"
+									type="WeaponSetBitFlags" />
+		<xs:attribute name="OnlyAgainst"
+									type="WeaponSlotType" />
+		<xs:attribute name="OnlyInCondition"
+									type="WeaponSlotType" />
+		<xs:attribute name="ShareWeaponReloadTime"
+									type="SageBool"
+									default="false" />
+		<xs:attribute name="WeaponLockSharedAcrossSets"
+									type="SageBool"
+									default="false" />
+		<xs:attribute name="ReadyStatusSharedWithinSet"
+									type="SageBool"
+									default="false" />
+		<xs:attribute name="DefaultWeaponChoiceCritera"
+									type="WeaponChoiceCriteria" />
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="LightingSet">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Sun" />
+			<xs:enumeration value="Accent1" />
+			<xs:enumeration value="Accent2" />
+		</xs:restriction>
+	 </xs:simpleType>
+
+	<xs:simpleType name="ShadowSoftness">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DEFAULT"/>
+			<xs:enumeration value="LITTLE_SOFT"/>
+			<xs:enumeration value="SOMEWHAT_SOFT"/>
+			<xs:enumeration value="REALLY_SOFT"/>
+			<xs:enumeration value="EXTRA_SOFT"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+    <xs:complexType name="ShadowSoftnessParams">
+		<xs:attribute name="KernelSize" type="SageReal" use="required"/>
+		<xs:attribute name="JitterSize" type="SageReal" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ShadowSoftnessParamsTable">
+		<xs:sequence>
+			<xs:element name="ShadowSoftnessParams" type="ShadowSoftnessParams" minOccurs="5" maxOccurs="5"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="LightingInfo">
+		<xs:sequence>
+			<xs:element name="Ambient" type="RGBColor" />
+			<xs:element name="Diffuse" type="RGBColor" />
+			<xs:element name="LightPos" type="Vector3" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="LightingTime">
+		<xs:sequence>
+			<xs:element name="Lighting" type="LightingInfo" 	minOccurs="3" maxOccurs="3"/>
+		</xs:sequence>
+		<xs:attribute name="TimeOfDay" type="TimeOfDayType" use="required" />
+		<xs:attribute name="ShadowSoftness" type="ShadowSoftness" default="DEFAULT" />
+	</xs:complexType>
+
+	<xs:complexType name="LightingGroup">
+		<xs:sequence>
+			<xs:element name="LightingTimeGroup" type="LightingTime" minOccurs="6" maxOccurs="6"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="LightAnimationType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE"/>
+			<xs:enumeration value="RANDOM"/>
+			<xs:enumeration value="PULSING"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="LightUpdateAttrib">
+		<xs:attribute name="AttachToBoneInAnotherModule" type="AssetId" default=""/>
+		<xs:attribute name="ColorAnimType" type="LightAnimationType" default="NONE"/>
+		<xs:attribute name="ColorAnimMin" type="SageReal" default="0.0"/>
+		<xs:attribute name="ColorAnimMax" type="SageReal" default="1.0"/>
+		<xs:attribute name="ColorAnimSpeed" type="SageReal" default="1.0"/>
+		<xs:attribute name="SizeAnimType" type="LightAnimationType" default="NONE"/>
+		<xs:attribute name="SizeAnimMin" type="SageReal" default="0.5"/>
+		<xs:attribute name="SizeAnimMax" type="SageReal" default="1.0"/>
+		<xs:attribute name="SizeAnimSpeed" type="SageReal" default="1.0"/>
+	</xs:complexType>
+
+	<xs:complexType name="PointLight">
+		<xs:sequence>
+			<xs:element name="Offset"   type="Vector3"  minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Color"    type="RGBColor" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Update"   type="LightUpdateAttrib" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="MinRadius"	type="SageReal"		use="required" />
+		<xs:attribute name="MaxRadius"	type="SageReal" 	use="required" />
+		<xs:attribute name="Gobo"		type="TextureRef" 	use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="DirectionalLight">
+		<xs:sequence>
+			<xs:element name="Direction"  type="Vector3"  minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Color"      type="RGBColor" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="SpotLight">
+		<xs:sequence>
+			<xs:element name="Offset"     type="Vector3"  minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Direction"  type="Vector3"  minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Color"      type="RGBColor" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Update"     type="LightUpdateAttrib" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="MinRange"   type="SageReal" 	use="required" />
+		<xs:attribute name="MaxRange"   type="SageReal" 	use="required" />
+		<xs:attribute name="InnerAngle" type="SageReal" 	use="required" />
+		<xs:attribute name="OuterAngle" type="SageReal" 	use="required" />
+		<xs:attribute name="Gobo"		type="TextureRef" 	use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="CylindricalLight">
+		<xs:sequence>
+			<xs:element name="Offset"     type="Vector3"  minOccurs="0" maxOccurs="1"/>
+			<xs:element name="Direction"  type="Vector3"  minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Color"      type="RGBColor" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Update"     type="LightUpdateAttrib" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="Length"     type="SageReal" 	use="required" />
+		<xs:attribute name="MinRadius"  type="SageReal" 	use="required" />
+		<xs:attribute name="MaxRadius"  type="SageReal" 	use="required" />
+		<xs:attribute name="Gobo" 		type="TextureRef" 	use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="LightingSettings" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseSubsystemSettings">
+				<xs:sequence>
+                    <xs:element name="ShadowSoftnessParamsTable" type="ShadowSoftnessParamsTable" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="LightingMultiplierIfNoClouds" type="RGBColor" />
+					<xs:element name="CurrentLightingSettings"      type="LightingTime" />
+					<xs:element name="TerrainLighting"              type="LightingGroup" />
+				</xs:sequence>
+				<xs:attribute name="TimeOfDay" type="TimeOfDayType" use="required" />
+				<xs:attribute name="OccludedLuminanceScale" type="SageReal" default="0.5" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="MapLightingSettings" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseSubsystemSettings">
+				<xs:sequence>
+					<xs:element name="PointLight"        type="PointLight"       minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="DirectionalLight"  type="DirectionalLight" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="SpotLight"         type="SpotLight"        minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="CylindricalLight"  type="CylindricalLight" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

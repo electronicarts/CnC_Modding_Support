@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:FXInvisBone.w3x" />
+	</Includes>
+	<Defines>
+		<Define name="NODINFANTRYC_VIRUS_TIME_BETWEEN_HOPS" value="20.0s" />
+		<Define name="NODINFANTRYC_VIRUS_HOP_DISTANCE" value="250" />
+		<Define name="NODINFANTRYC_VIRUS_SCATTER_EXPLOSION_DISTANCE" value="150" />
+		<!-- Make sure the number of ScatterSettings matches this count -->
+		<Define name="NODINFANTRYC_VIRUS_HOP_COUNT" value="5" />
+		<!-- Can't do math on strings so just hardcode time_between_hops * hop_count -->
+		<Define name="NODINFANTRYC_VIRUS_LIFETIME" value="120.0s" />
+	</Defines>
+	<GameObject
+		id="NODInfantryCScatterNodeManager"
+		KindOf="DEFLECT_BY_SPECIAL_POWER INERT NO_COLLIDE HIDE_IF_FOGGED">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="=$NODINFANTRYC_VIRUS_LIFETIME"
+				MaxLifetime="=$NODINFANTRYC_VIRUS_LIFETIME" />
+
+			<!-- This manages the complete Scattering effect of a weapon -->
+			<WeaponScatterEffectUpdate
+				id="ScatterEffect_Virus"
+				WeaponTemplate="NODInfantryCScatterNode"
+				WeaponTemplateToFireAtSource="NODInfantryCScatterExplosion" 
+				Options="STOP_SCATTER_IF_NO_TARGET_OBJECTS_HIT FIRE_WEAPON_ON_INITIAL_TARGET">
+				<!-- Define the prioritization of the targets to scatter to -->
+				<TargetSelection>
+					<!-- units first, then structures -->
+					<ObjectPriorityFilter
+						Rule="ANY"
+						Relationship="ENEMIES NEUTRAL"
+						Include="VEHICLE INFANTRY" />
+					<ObjectPriorityFilter
+						Rule="ANY"
+						Relationship="ENEMIES NEUTRAL"
+						Include="STRUCTURE" />
+				</TargetSelection>
+
+				<!-- Define the specifics for each scatter of the weapon -->
+				<ScatterSettings
+					ScatterDelay="=$NODINFANTRYC_VIRUS_TIME_BETWEEN_HOPS">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="=$NODINFANTRYC_VIRUS_HOP_DISTANCE"
+						PercentDamage="100%"
+						NodeOCL="OCL_NODInfantryCScatterNodeDisplay" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="=$NODINFANTRYC_VIRUS_TIME_BETWEEN_HOPS">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="=$NODINFANTRYC_VIRUS_HOP_DISTANCE"
+						PercentDamage="100%"
+						NodeOCL="OCL_NODInfantryCScatterNodeDisplay" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="=$NODINFANTRYC_VIRUS_TIME_BETWEEN_HOPS">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="=$NODINFANTRYC_VIRUS_HOP_DISTANCE"
+						PercentDamage="100%"
+						NodeOCL="OCL_NODInfantryCScatterNodeDisplay" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="=$NODINFANTRYC_VIRUS_TIME_BETWEEN_HOPS">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="=$NODINFANTRYC_VIRUS_HOP_DISTANCE"
+						PercentDamage="100%"
+						NodeOCL="OCL_NODInfantryCScatterNodeDisplay" />
+				</ScatterSettings>
+
+				<ScatterSettings
+					ScatterDelay="=$NODINFANTRYC_VIRUS_TIME_BETWEEN_HOPS">
+					<ScatterInfo
+						ScatterAmount="1"
+						ScatterDistance="=$NODINFANTRYC_VIRUS_HOP_DISTANCE"
+						PercentDamage="100%"
+						NodeOCL="OCL_NODInfantryCScatterNodeDisplay" />
+				</ScatterSettings>
+			</WeaponScatterEffectUpdate>
+		</Behaviors>
+
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody"/>
+		</Body>
+	</GameObject>
+
+	<WeaponTemplate
+		id="NODInfantryCScatterNode"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE">
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<Nuggets>
+			<DOTNugget
+				id="NuggetTag_DOT"
+				Damage="6.0"
+				DamageInterval="0.5s"
+				DamageDuration="=$NODINFANTRYC_VIRUS_TIME_BETWEEN_HOPS"
+				DamageType="BLAST"
+				FXListVictim="FX_NOD_DigitalHit"
+				DeathType="NORMAL">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES NEUTRAL"
+					Include="VEHICLE INFANTRY STRUCTURE"/>
+			</DOTNugget>
+
+			<!-- attaches an object to provide vision for virus effect 1 -->
+			<WeaponOCLNugget WeaponOCL="OCL_NODInfantryCVisionAttachment" />
+
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODInfantryCScatterExplosion"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE">
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<Nuggets>
+			<DamageNugget
+				Damage="50.0"
+				Radius="=$NODINFANTRYC_VIRUS_SCATTER_EXPLOSION_DISTANCE"
+				DamageType="BLAST"
+				DeathType="NORMAL"
+				DamageFXType="NOD_VIRUS"
+				PartitionFilterTestType="CIRCLE">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES NEUTRAL"
+					Include="INFANTRY VEHICLE STRUCTURE"/>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- This object provides VFX on any virused object -->
+	<GameObject
+		id="NODInfantryCScatterNodeVisuals"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+					<ParticleSysBone
+						BoneName=""
+						FXParticleSystemTemplate="Binary_Sparks"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		
+		</Draws>
+
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="=$NODINFANTRYC_VIRUS_TIME_BETWEEN_HOPS"
+				MaxLifetime="=$NODINFANTRYC_VIRUS_TIME_BETWEEN_HOPS" />
+
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Range="1.0"
+				Flags="TELEPORT DIE_WHEN_DETACH_ALWAYS DETACH_WHEN_NO_PARENT STICK_TO_PARENT" />
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<Event
+					Index="onCreate"
+					FX="FX_NOD_VirusInfection" />
+			</FXListBehavior>
+			
+		</Behaviors>
+
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody"/>
+		</Body>
+	
+	</GameObject>
+
+	<!-- virus ability uses this object to grant vision on the infected unit by attaching it -->
+	<GameObject
+		id="NODInfantryCVisionAttachment"
+		Side="NOD"
+		RadarPriority="UNIT"
+		KindOf="NO_COLLIDE UNATTACKABLE NOT_AUTOACQUIRABLE DO_NOT_CLASSIFY">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+		</Draws>
+
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="=$NODINFANTRYC_VIRUS_TIME_BETWEEN_HOPS"
+				MaxLifetime="=$NODINFANTRYC_VIRUS_TIME_BETWEEN_HOPS" />
+
+			<AttachUpdate
+				id="ModuleTag_Attach"
+				Range="1.0"
+				ParentStatusAttached="INFECTED" 
+				Flags="TELEPORT DIE_WHEN_DETACH_ALWAYS DETACH_WHEN_NO_PARENT" />	
+			
+		</Behaviors>
+
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody"/>
+		</Body>		
+		
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="300"/>
+	</GameObject>	
+
+	<ObjectCreationList
+		id="OCL_NODInfantryCScatterNodeRegular">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODInfantryCScatterNodeManager"/>
+				<CopyParentUpgrades/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_NODInfantryCScatterNodeDisplay">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODInfantryCScatterNodeVisuals"/>
+				<CopyParentUpgrades/>
+				<AttachToTarget/>
+			</Modules>
+		</OCLModule>		
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_NODInfantryCVisionAttachment">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODInfantryCVisionAttachment"/>
+				<AttachToTarget/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>	
+</AssetDeclaration>

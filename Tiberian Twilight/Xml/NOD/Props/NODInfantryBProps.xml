@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseFirestormObject.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="all"	source="ART:FXArtilleryShell01.w3x" />
+	</Includes>
+	<Defines>
+		<Define name="NOD_INFANTRY_B_FIRE_RADIUS" value="40" />
+		<Define name="NOD_INFANTRY_B_HOLY_WATER_RADIUS_1" value="40" />
+		<Define name="NOD_INFANTRY_B_HOLY_WATER_RADIUS_2" value="80" />
+		<Define name="NOD_INFANTRY_B_HOLY_WATER_RADIUS_3" value="120" />
+	</Defines>
+
+	<GameObject
+		id="NODInfantryBHolyWaterProjectile"
+		inheritFrom="baseunattackableprojectile"
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		EditorName="NODInfantryBHolyWaterProjectile">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXArtilleryShell01" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODHolywater_Hit" />
+				<Event Index="onDeath" FX="FX_NOD_BlackHand_InfB_HolyWaterWeaponImpactExplosion_AudioOnly"/> <!-- please add visuals to another FXList, thanks! -->
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="100"
+				FirstHeightMax="100"
+				SecondHeightMin="100"
+				SecondHeightMax="100"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				CurveFlattenMinDist="300"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH"
+				FlightPathAdjustDistPerSecond="0"
+				GroundHitFX="">
+			</BezierProjectile>
+		</Behaviors>
+	</GameObject>
+
+	<GameObject
+		id="NODInfantryBPrimaryEffect"
+		inheritFrom="BaseFirestormAOEObject"
+		KindOf="+GRANT_PLAYER_THREAT" 
+		EditorName="NODInfantryBPrimaryEffect">
+		<DisplayName>NODInfantryBPrimaryEffect</DisplayName>
+		<Behaviors>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateNODInfantryBFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+			
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="5.0s"
+				MaxLifetime="5.0s" />
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<RequiredObject
+					Range="=$NOD_INFANTRY_B_FIRE_RADIUS">
+					<ObjectFilter
+						Rule="ALL"
+						StatusBitFlagsExclude="IN_SHIELD_SPHERE"/>
+				</RequiredObject>
+				<FireWeaponNugget
+					WeaponName="NODInfantryBPrimaryDOT" />
+			</FireWeaponUpdate>
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate_02">
+				<RequiredObject
+					Range="=$NOD_INFANTRY_B_FIRE_RADIUS">
+					<ObjectFilter
+						Rule="ANY"
+						Include="FIRESTORM"
+						Relationship="SAME_PLAYER"/>
+				</RequiredObject>
+				<FireWeaponNugget
+					WeaponName="GenericKillOwnerFirestormWeapon" 
+					OneShot="true"/>
+			</FireWeaponUpdate>
+
+			<FireGroupCenterUpdate
+				id="ModuleTag_FirestormWeapon"
+				WeaponName="GenericKillOwnerFirestormWeapon"
+				Range="=$NOD_INFANTRY_B_FIRE_RADIUS"
+				RequiredCount="3">
+				<ObjectFilter
+					Rule="NONE"
+					Relationship="SAME_PLAYER"
+					Include="HAS_FIRE_GROUP_CENTER_UPDATE"/>
+			</FireGroupCenterUpdate>
+
+		</Behaviors>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_INFANTRY_B_FIRE_RADIUS"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_BlackHand_InfB_FireGroundSmallLoop" AudioType="soundAmbient"/>
+		</AudioArraySound>
+
+	</GameObject>
+	
+	<GameObject
+		id="NODInfantryBFirestormObject"
+		inheritFrom="BaseFirestormObject" 
+		KindOf="+GRANT_PLAYER_THREAT +SKIRMISH_AI_ATTEMPT_TO_DODGE" 
+		EditorName="NODInfantryBFirestormObject">
+		<DisplayName>NODInfantryBFirestormObject</DisplayName>
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NOD_INFANTRY_B_FIRE_RADIUS + $AI_DODGE_SAFETY_BUFFER">
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"
+				StatusBitFlagsExclude="AIRBORNE_TARGET">
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="2.0s"
+				MaxLifetime="2.0s" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateNODInfantryBFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="2.0s">
+				<FireWeaponNugget
+					WeaponName="NODInfantryBFirestormWeapon" />
+				<FireWeaponNugget
+					OneShot="true"
+					WeaponName="NODInfantryBOneShotFirestormWeapon" />
+			</FireWeaponUpdate>
+		</Behaviors>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_INFANTRY_B_FIRE_RADIUS"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_BlackHand_InfB_FireGroundFirestormLoop" AudioType="soundAmbient"/>
+		</AudioArraySound>
+
+	</GameObject>
+	
+	<!-- The Holy Water weapon is complicated. The targeted special power creates an object at the target location 
+	(HolyWaterEffect_1) that deals low DOT damage over time. After X seconds it "grows" into HolyWaterEffect_2, and then
+	again into HolyWaterEffect_3. If the effect object takes damage from a "flame" type weapon it explodes, dealing 
+	damage according to its size. See DamageNugget_HolyWaterDetonationTrigger to see how to make the cloud detonate. -->
+	<ObjectCreationList
+		id="OCL_NODInfantryBHolyWater_1">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODInfantryBHolyWaterEffect_1"/>
+				<CopyParentUpgrades/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_NODInfantryBHolyWater_2">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODInfantryBHolyWaterEffect_2"/>
+				<CopyParentUpgrades/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_NODInfantryBHolyWater_3">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODInfantryBHolyWaterEffect_3"/>
+				<CopyParentUpgrades/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<GameObject
+		id="NODInfantryBHolyWaterEffect_Base"
+		Side="NOD"
+		KindOf="NOT_AUTOACQUIRABLE DO_NOT_CLASSIFY ALLY_TARGETABLE GRANT_PLAYER_THREAT">
+		<ArmorSet
+			Armor="NODVehicleBHolyWaterArmor"/>
+
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_3">
+			<DodgeWithUnits
+				Rule="ALL" />
+		</SkirmishAIInformation>
+
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1" />
+		</Body>
+	</GameObject>
+
+
+	<GameObject
+		id="NODInfantryBHolyWaterEffect_1"
+		inheritFrom="NODInfantryBHolyWaterEffect_Base">
+
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="5.0s"
+				MaxLifetime="5.0s"
+				DeathType="SUICIDED" />
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeapon"
+				FireInterval="1.0s">
+				<FireWeaponNugget
+					WeaponName="NODInfantryBHolyWaterDOT_1" />
+			</FireWeaponUpdate>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_NODInfantryBHolyWater_2">
+				<DieMuxData
+					DeathTypes="SUICIDED" />
+			</CreateObjectDie>
+
+			<FireWeaponWhenDead
+				id="ModuleTag_FireWeaponWhenDead"
+				InitiallyActive="true"
+				DeathWeapon="NODInfantryBHolyWaterDetonation_1">
+				<DieMuxData
+					DeathTypes="BURNED" />
+			</FireWeaponWhenDead>
+		</Behaviors>
+
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_1"
+				Height="20.0">
+			</Shape>
+		</Geometry>
+	</GameObject>
+
+	<GameObject
+		id="NODInfantryBHolyWaterEffect_2"
+		inheritFrom="NODInfantryBHolyWaterEffect_Base">
+
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="5.0s"
+				MaxLifetime="5.0s"
+				DeathType="SUICIDED" />
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeapon" 
+				FireInterval="1.0s">
+				<FireWeaponNugget
+					WeaponName="NODInfantryBHolyWaterDOT_2" />
+			</FireWeaponUpdate>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_NODInfantryBHolyWater_3">
+				<DieMuxData
+					DeathTypes="SUICIDED" />
+			</CreateObjectDie>
+
+			<FireWeaponWhenDead
+				id="ModuleTag_FireWeaponWhenDead"
+				InitiallyActive="true"
+				DeathWeapon="NODInfantryBHolyWaterDetonation_2">
+				<DieMuxData
+					DeathTypes="BURNED" />
+			</FireWeaponWhenDead>
+		</Behaviors>
+
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_2"
+				Height="20.0">
+			</Shape>
+		</Geometry>
+	</GameObject>
+
+	<GameObject
+		id="NODInfantryBHolyWaterEffect_3"
+		inheritFrom="NODInfantryBHolyWaterEffect_Base">
+
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="5.0s"
+				MaxLifetime="5.0s"
+				DeathType="SUICIDED" />
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeapon"
+				FireInterval="1.0s">
+				<FireWeaponNugget
+					WeaponName="NODInfantryBHolyWaterDOT_3" />
+			</FireWeaponUpdate>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="">
+				<DieMuxData
+					DeathTypes="SUICIDED" />
+			</CreateObjectDie>
+
+			<FireWeaponWhenDead
+				id="ModuleTag_FireWeaponWhenDead"
+				InitiallyActive="true"
+				DeathWeapon="NODInfantryBHolyWaterDetonation_3">
+				<DieMuxData
+					DeathTypes="BURNED" />
+			</FireWeaponWhenDead>
+		</Behaviors>
+
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_3"
+				Height="20.0">
+			</Shape>
+		</Geometry>
+	</GameObject>
+
+	<!-- only takes damage from weapons designed to detonate the holy water (using FLAME type damage nuggets) -->
+	<ArmorTemplate
+		id="NODVehicleBHolyWaterArmor"
+		Default="0">
+		<Armor
+			Damage="FLAME">
+			<DamageSetting
+				Lethality="ALL_LETHALITIES"
+				Percent="300" />
+		</Armor>
+	</ArmorTemplate>
+
+	<WeaponTemplate
+		id="NODInfantryBHolyWaterDOT_1"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		FireFX="FX_NODInfantryB_HolyWater_1"
+		ClipSize="1"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		AcceptableAimDelta="180d">
+		<Nuggets>
+			<DOTNugget
+				id="DOTNugget_NODInfantryBHolyWater" 
+				Damage="4.0"
+				Radius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_1"
+				DamageInterval="1.0s"
+				DamageDuration="1.0s"
+				DamageType="BLAST"
+				FXListVictim="FX_NOD_FireDamage"
+				DeathType="BURNED"
+				ForbiddenTargetObjectStatus="AFLAME" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODInfantryBHolyWaterDOT_2"
+		inheritFrom="NODInfantryBHolyWaterDOT_1"
+		FireFX="FX_NODInfantryB_HolyWater_2">
+		<Nuggets>
+			<DOTNugget
+				id="DOTNugget_NODInfantryBHolyWater"
+				Radius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_2" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODInfantryBHolyWaterDOT_3"
+		inheritFrom="NODInfantryBHolyWaterDOT_1" 
+		FireFX="FX_NODInfantryB_HolyWater_3">
+		<Nuggets>
+			<DOTNugget
+				id="DOTNugget_NODInfantryBHolyWater"
+				Radius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_3" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODInfantryBHolyWaterDetonation_1"
+		inheritFrom="NODInfantryBHolyWaterDetonationTrigger"
+		AttackRange="99999.0"
+		FireFX="FX_NOD_HolyWaterBlast"
+		ClipSize="1"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY">
+		<FiringDuration
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<Nuggets>
+			<DamageNugget
+				id="DamageNugget_HolyWater" 
+				Damage="100.0"
+				Radius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_1"
+				DamageType="BLAST"
+				DamageFXType="NOD_GRENADE"
+				DeathType="EXPLODED" />
+			<DamageNugget
+				id="DamageNugget_NODInfantryBHolyWaterDetonationTrigger"
+				Radius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_1" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODInfantryBHolyWaterDetonation_2"
+		inheritFrom="NODInfantryBHolyWaterDetonation_1"
+		FireFX="FX_NOD_HolyWaterBlast02">
+		<Nuggets>
+			<DamageNugget
+				id="DamageNugget_HolyWater"
+				Damage="100.0"
+				Radius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_2" />
+			<DamageNugget
+				id="DamageNugget_NODInfantryBHolyWaterDetonationTrigger"
+				Radius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_2" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODInfantryBHolyWaterDetonation_3"
+		inheritFrom="NODInfantryBHolyWaterDetonation_1"
+		FireFX="FX_NOD_HolyWaterBlast03">
+		<Nuggets>
+			<DamageNugget
+				id="DamageNugget_HolyWater"
+				Damage="100.0"
+				Radius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_3" />
+			<DamageNugget
+				id="DamageNugget_NODInfantryBHolyWaterDetonationTrigger"
+				Radius="=$NOD_INFANTRY_B_HOLY_WATER_RADIUS_3" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<FXList id="FX_NODInfantryB_HolyWater_1">
+		<NuggetList>
+			<ParticleSystem
+				Particle="Holywater_Mist01"
+				OrientToObject="true" />
+		</NuggetList>
+	</FXList>
+
+	<FXList id="FX_NODInfantryB_HolyWater_2">
+		<NuggetList>
+			<ParticleSystem
+				Particle="Holywater_Mist02"
+				OrientToObject="true" />
+		</NuggetList>
+	</FXList>
+
+	<FXList id="FX_NODInfantryB_HolyWater_3">
+		<NuggetList>
+			<ParticleSystem
+				Particle="Holywater_Mist03"
+				OrientToObject="true" />
+			<ParticleSystem
+				Particle="Holywater_Flash"
+				OrientToObject="true" />
+		</NuggetList>
+	</FXList>
+
+</AssetDeclaration>

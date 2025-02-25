@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- GDI Vehicle N / GDI Predator Tank -->
+	
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GUPredTank_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:GUPredTankR.w3x" />
+		<Include
+			type="all"
+			source="ART:GUPredTank_FP.w3x" />	
+		<Include
+			type="all"
+			source="ART:FXWhiteSquare.xml" />
+		<Include
+			type="all"
+			source="ART:FXRailGunCoreMask.xml" />
+		<Include
+			type="all"
+			source="ART:FXRailGunCoreDistortion.xml" />
+		<Include
+			type="instance"
+			source="ART:EXTnkTrack.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="MediumGroundTestUnit"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_GDIPredatorTank"
+		ButtonImage="Portrait_GDIPredatorTank"
+		Side="Neutral"
+		CommandSet="EmptyCommandSet"
+		EditorName="MediumGroundTestUnit"
+		Description="Desc:GDIPredatorTank"
+		TypeDescription="Type:GDIPredatorTank">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="750"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIPredatorTank</DisplayName>
+		<ArmorSet
+			Armor="NoArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			Locomotor="MediumGroundTestUnitLocomotor"
+			Condition="NORMAL"
+			Speed="90.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TankDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FXTracksL FXTracksR FXMUZZLEFLASH"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="FXTracksL"
+				TrackMarksRightBone="FXTracksR">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT"
+					RetainSubObjects="true">
+					<Model
+						Name="GUPredTank_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXMUZZLEFLASH" />
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXMUZZLEFLASH" />						
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXMUZZLEFLASH" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretPitch="Barrel"
+						TurretID="1" />
+				</ModelConditionState>
+<!--
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<ParticleSysBone
+						BoneName="TANKBODY"
+						FXParticleSystemTemplate="GDIDebrisSmallFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="TANKBODY"
+						FXParticleSystemTemplate="GDIDebrisSmallFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="TANKBODY"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+-->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUPredTank_SKN" />
+					<Texture
+						Original="GUPredatorTank"
+						New="GUPredatorTankD" />
+					<ParticleSysBone
+						BoneName="BARREL"
+						FXParticleSystemTemplate="GDIPredDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="BARREL"
+						FXParticleSystemTemplate="GDIPredDamagedFireDistortion"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="BARREL"
+						FXParticleSystemTemplate="GDIPredDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="GUPredTank_FP" />
+				</ModelConditionState>
+							
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- Circumvents blend issues when the arrow is being shown... -->
+					<Script>
+						CurDrawableShowSubObject("TreadsStop")
+						CurDrawableHideSubObject("TreadsMove")
+						CurDrawableHideSubObject("TreadsLeft")
+						CurDrawableHideSubObject("TreadsRight")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_LEFT">
+					<!-- Circumvents blend issues when the arrow is being shown... -->
+					<Script>
+						CurDrawableHideSubObject("TreadsStop")
+						CurDrawableHideSubObject("TreadsMove")
+						CurDrawableShowSubObject("TreadsLeft")
+						CurDrawableHideSubObject("TreadsRight")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING TURN_RIGHT">
+					<!-- Circumvents blend issues when the arrow is being shown... -->
+					<Script>
+						CurDrawableHideSubObject("TreadsStop")
+						CurDrawableHideSubObject("TreadsMove")
+						CurDrawableHideSubObject("TreadsLeft")
+						CurDrawableShowSubObject("TreadsRight")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<!-- Circumvents blend issues when the arrow is being shown... -->
+					<Script>
+						CurDrawableHideSubObject("TreadsStop")
+						CurDrawableShowSubObject("TreadsMove")
+						CurDrawableHideSubObject("TreadsLeft")
+						CurDrawableHideSubObject("TreadsRight")
+					</Script>
+				</AnimationState>
+			</TankDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_FX">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TreadDustPred"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TreadDirt"
+						FollowBone="true" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<LaserDraw
+				id="ModuleTag_LaserDistort"
+				UseDistortionShader="true"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="50">
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXRailGunCoreDistortion</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXRailGunCoreMask</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+		</Draws>
+		<Behaviors>
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					SympathyRange="100.0" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3600" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="18.0"
+				MinorRadius="12.0"
+				Height="10.0"
+				ContactPointGeneration="VEHICLE" />
+		</Geometry>
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="400" />
+		<CrusherInfo
+			CrusherLevel="1"
+			CrushableLevel="2"
+			CrushEqualLevelProps="true" />
+	</GameObject>
+
+	<LocomotorTemplate
+		id="MediumGroundTestUnitLocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		TurnTimeSeconds="2.0s"
+		TurnTimeDamagedSeconds="4.0s"
+		MaxSpeedDamaged="75%"
+		AccelerationSeconds="0.4s"
+		BrakingSeconds="0.4s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="20.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="TREADS"
+		UseTerrainSmoothing="true"
+		CanReverseMove="true"
+
+		AccelPitchLimit="1.8d"
+		BounceKick="0.8d"
+		PitchStiffness="0.4"
+		RollStiffness="0.5"
+		PitchDamping="0.4"
+		RollDamping="0.5"
+		ForwardAccelerationPitchFactor="0.1"
+		LateralAccelerationRollFactor="0.0"
+
+		HasSuspension="true"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		/>
+</AssetDeclaration>

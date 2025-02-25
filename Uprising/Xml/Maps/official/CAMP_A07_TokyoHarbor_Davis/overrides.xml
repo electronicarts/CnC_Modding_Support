@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+    xmlns="uri:ea.com:eala:asset"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags/>
+  <Includes>
+    <!-- Campaign Specific Overrides -->
+    <Include type="all" source="DATA:Includes/CampaignOverrides/CampaignOverrides.xml"/>
+
+    <Include type="instance" source="DATA:Civilian/Props/CPDummyTarget.xml" />
+    <Include type="instance" source="DATA:Japan/Eggs/JapanBaseDefenseEgg.xml" />
+    <Include type="instance" source="DATA:GlobalData\SpecialPowerTemplates.xml" />
+    <Include type="instance" source="DATA:GlobalData\Weapon.xml" />
+    <Include type="instance" source="DATA:Allied/Structures/AlliedSuperWeapon.xml" />
+		<Include type="instance" source="DATA:Allied/Structures/AlliedConstructionYard.xml" />
+    <Include type="instance" source="DATA:Japan/Structures/JapanSuperWeaponAdvanced.xml" />
+    <Include type="instance" source="DATA:Neutral\Structures\OreNode.xml"/>
+
+		<Include type="instance" source="DATA:PathMusic/StandardPathMusicGameDynamicState.xml" />
+  </Includes>
+
+  <SpecialPowerTemplate
+    id="SpecialPowerTelekineticProjectorDevice"
+    inheritFrom="SpecialPowerTelekineticProjectorDevice" 
+    ReloadTime="600s"/>
+
+
+  <!--
+  <WeaponTemplate
+    id="TelekineticExplosion"
+    inheritFrom="TelekineticExplosion"
+	  RadiusDamageAffects="SELF ALLIES ENEMIES NEUTRALS"
+	  RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY ANTI_PARACHUTE ANTI_PROJECTILE ANTI_SMALL_MISSILE ANTI_BALLISTIC_MISSILE ANTI_MINE"
+	  AttackRange="10000"
+	  Flags="ATTACK_NEEDS_LINE_OF_SIGHT" 
+    xai:joinAction="Replace">
+    <Nuggets>
+      <DamageNugget
+			   Damage="3250.0"
+			   DamageTaperOff="0.0"
+			   Radius="2000.0"
+			   DamageType="EXPLOSIVE"
+			   DeathType="DETONATED"
+			   PartitionFilterTestType="CIRCLE" />
+    </Nuggets>
+  </WeaponTemplate>
+  -->
+
+  <GameObject
+		id="AlliedSuperWeapon"
+    inheritFrom="AlliedSuperWeapon"
+    EnergyProduction="37">
+    <Behaviors>
+      <StoreObjectsSpecialPower
+	      id="ModuleTag_StoreObjectsSpecialPower"
+	      AvailableAtStart="true"/>
+      <TeleportStoredObjectsSpecialPower
+        id="ModuleTag_CloneStoredObjectsSpecialPower"
+        AvailableAtStart="true"/>
+    </Behaviors>
+  </GameObject>
+
+	<GameObject
+		id="AlliedConstructionYard"
+		inheritFrom="AlliedConstructionYard">
+		<Behaviors>
+			<TechUpgrade
+				id="ModuleTag_TechUpgrade_Tech3"
+				Radius="700.0"/>
+			<TechUpgrade
+				id="ModuleTag_TechUpgrade_Tech2"
+				Radius="700.0"/>
+			</Behaviors>
+		<ProjectedBuildabilityInfo
+			Radius="700"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE"
+			AllowedBuildabilityHeightVariation="-1.0">
+			<AllowedObjectFilter
+				 Rule="NONE">
+				<IncludeThing>AlliedNavalYard</IncludeThing>
+				<IncludeThing>SovietNavalYard</IncludeThing>
+				<IncludeThing>JapanNavalYard</IncludeThing>
+			</AllowedObjectFilter>
+		</ProjectedBuildabilityInfo>
+	</GameObject>
+
+  <GameObject
+    id="JapanSuperWeaponAdvanced"
+    inheritFrom="JapanSuperWeaponAdvanced">
+    <Behaviors>
+      <!--
+      <OCLSpecialPower
+	      id="ModuleTag_OCL_SpecialPower_TelekineticProjectorDevice"
+	      AvailableAtStart="true"/>
+      -->
+      <StructureUnpackUpdate
+				id="ModuleTag_StructureUnpack"
+				UnpackTime="1s" />
+    </Behaviors>
+  </GameObject>
+
+  <GameObject
+		id="OreNode"
+		inheritFrom="OreNode">
+    <Behaviors>
+      <OreNodeBehavior
+				  id="ModuleTag_OreNodeBehavior"
+          MaximumGatheredValue="90000"/>
+      <!-- 3x normal ore node, as of 07.26 -->
+    </Behaviors>
+  </GameObject>
+
+  <GameObject
+    id="CPDummyTarget"
+    inheritFrom="JapanSuperWeaponAdvanced">
+    <Behaviors>
+      <StructureUnpackUpdate
+				id="ModuleTag_StructureUnpack"
+				UnpackTime="0s"/>
+      <OCLSpecialPower
+				id="ModuleTag_OCL_SpecialPower_TelekineticProjectorDevice"
+        xai:joinAction="Remove"/>
+    </Behaviors>
+    <ClientUpdates>
+      <EvaAnnounceSpecialPowerReadyClientUpdate
+        id="TelekineticProjectorReady"
+        xai:joinAction="Remove"/>
+      <EvaAnnounceClientCreate
+			  id="TelekineticProjectorDetected"
+        xai:joinAction="Remove"/>
+    </ClientUpdates>
+  </GameObject>
+  
+  <Texture id="A7_TokyoHarbor_Art_Orange" File="A7_TokyoHarbor_Art_Orange.tga"  GenerateMipMaps="false" AllowAutomaticResize="false"/>
+			<Texture id="A7_TokyoHarbor_Art_Green" File="A7_TokyoHarbor_Art_Green.tga"  GenerateMipMaps="false" AllowAutomaticResize="false"/>
+
+
+      <RadarTerrainImage
+            id="OrangeBorderTerrain"
+            MapBorder="Orange" 
+            Texture="A7_TokyoHarbor_Art_Orange">
+            <ImageSize x="512" y="512"/>
+            <ImagePosition x="0" y="0"/>
+            <TextureSize x="512" y="512"/>
+      </RadarTerrainImage>
+
+      <RadarTerrainImage
+            id="GreenBorderTerrain"
+            MapBorder="Green" 
+            Texture="A7_TokyoHarbor_Art_Green">
+            <ImageSize x="512" y="512"/>
+            <ImagePosition x="0" y="0"/>
+            <TextureSize x="512" y="512"/>
+      </RadarTerrainImage>
+
+	<!-- PathMusic Overrides -->
+
+
+
+</AssetDeclaration>

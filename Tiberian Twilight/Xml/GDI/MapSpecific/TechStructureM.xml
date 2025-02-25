@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Tags></Tags>
+  <Includes>
+
+		<Include type="all" source="ART:NB_TechStructM_SKN.w3x" />
+		<Include type="all" source="ART:NB_TechStructM_AIDA.w3x" />
+		<Include type="all" source="ART:NB_TechStructM_CPTR.w3x" />
+
+
+		<Include type="instance" source="DATA:BaseObjects/BaseTechStructure.xml" />
+	</Includes>
+	<GameObject
+		id="TechStructureM"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_Neutral_TechStr_M"
+		ButtonImage="Portrait_TechStructureA"
+		Side="Neutral"
+		EditorSorting="STRUCTURE"
+		CommandSet="TibSpikeCommandSet"
+		KindOf="ALWAYS_VISIBLE STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH TIBERIUM_BASED TEAMCOLOR_ONLY"
+		RadarPriority="STRUCTURE"
+		EditorName="TechStructureM"
+		Description="Desc:TechBuildingTractorBeam">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechBuildingTractorBeam</DisplayName>
+		<ArmorSet
+			Armor="TechStructureArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FXDamage01"
+				Options="RENDER_BUFF_EFFECTS">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechStructM_SKN" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NB_TechStructM_AIDA"
+						AnimationBlendTime="15"
+						AnimationMode="LOOP"/>	
+				</AnimationState>
+
+				<!-- when captured -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="CAPTURED">
+					<Animation
+						AnimationName="NB_TechStructM_CPTR"
+						AnimationBlendTime="15"
+						AnimationMode="ONCE"/>
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+			<LightDraw id="ModuleTag_LightDraw">
+				<Light>
+					<SpotLight MinRange="0.0" MaxRange="100.0" InnerAngle="15" OuterAngle="70" Gobo="FXTechDots_v01">
+						<Color R="255.0" G="255.0" B="100.0"/>
+						<Offset x="0.0" y="0.0" z="00.0"/>
+						<Direction x="0" y="0" z="1.0"/>
+					</SpotLight>
+				</Light>
+			</LightDraw>
+
+
+
+
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+			<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" /> 
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+
+			<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<ModelConditionUpgrade
+				id="ModuleTag_FactionUpgrade"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+
+			<SelectiveVisibilityBehavior
+				  id="ModuleTag_SelectiveVisibility"
+				  DrawModuleId="ModuleTag_LightDraw"
+				  UpdateRate="0.5s"
+				  AllowedPlayers="NEUTRAL" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="8000.0" />
+		</Body>
+
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_PowerDownCaptured">
+				<ModelConditionSound Sound="GDI3-1_TractorBeam_StrA_PowerDownCaptured" RequiredFlags="USER_1"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_AmbientLoopUntilCaptured">
+				<ModelConditionSound Sound="GDI3-1_TractorBeam_StrA_AmbientLoop" ExcludedFlags="USER_1 DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+
+		<Geometry
+			IsSmall="false">
+			<Shape
+				 Type= "BOX"
+				 MajorRadius = "11.0"
+				 MinorRadius = "3.9"
+				 Height = "25.0"
+				 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.16835"
+					y = "-39.9874"
+					z = "0.0" />
+			</Shape>
+			<Shape
+				Type= "CYLINDER"
+				MajorRadius = "40.0"
+				MinorRadius = "40.0"
+				Height = "35.0"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-0.885971"
+					y = "1.46216"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<!-- <AudioEntry Sound="GDI3-1_TractorBeam_StrA_AmbientLoop" AudioType="soundAmbient"/> -->
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged"/>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged"/>
+		</AudioArraySound>
+		<VisionInfo
+				VisionRange="100"
+				ShroudClearingRange="200" />
+	</GameObject>
+</AssetDeclaration>

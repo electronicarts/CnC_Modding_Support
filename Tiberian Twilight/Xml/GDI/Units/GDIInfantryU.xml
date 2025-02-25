@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+
+	<!-- GDI Infantry U / GDI Builder / Dozer -->
+
+	<!-- Special Model Conditions. THese are used to hide/show the button that stops the power that builds StructureA
+		PACKING_TYPE_1: performing Build Structure A
+		PACKING_TYPE_2: performing Mine laying
+		Object Status Conditions
+		WEAPON_UPGRADED_01: does more repair when Enhanced Repair upgrade is triggered.
+		USER_1 : Set during mine-laying
+	   -->
+
+	<Includes>
+		<Include type="all" source="ART:GUS_InfantryU_SKN.w3x" />
+		<Include type="all" source="ART:GUS_InfantryU_AIDA.w3x" />
+		<Include type="all" source="ART:GUS_InfantryU_ATKA.w3x" />
+		<Include type="all" source="ART:GUS_InfantryU_BATA.w3x" />
+		<Include type="all" source="ART:GUS_InfantryU_BIDA.w3x" />
+		<Include type="all" source="ART:GUS_InfantryU_BLDA.w3x" />
+		<Include type="all" source="ART:GUS_InfantryU_DSEL.w3x" />
+		<Include type="all" source="ART:GUS_InfantryU_MINA.w3x" />
+		<Include type="all" source="ART:GUS_InfantryU_MOVA.w3x" />
+		<Include type="all"	source="ART:FXGDIHealingBeam.xml" />
+		<Include type="all"	source="ART:FXLaserOverlay.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/Locomotor.xml" />
+		<Include type="instance" source="DATA:GlobalData/LogicCommandSet.xml" />
+		<Include type="instance" source="DATA:GDI/Props/GDIMines.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseLightInfantry.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+	</Includes>
+
+	<Defines>
+		<Define name="GDI_SECONDS_PER_HEAL_TICK" value="0.5" />
+		<Define name="GDI_NUM_HEAL_TICKS_FOR_FULL_CONSTRUCTION" value="=$GDI_STRUCTUREA_BUILDTIME_SECONDS / $GDI_SECONDS_PER_HEAL_TICK" />
+		<Define name="GDI_HEAL_AMOUNT_PER_TICK" value="=$GDI_STRUCTUREA_MAXHEALTH / $GDI_NUM_HEAL_TICKS_FOR_FULL_CONSTRUCTION" />
+		<Define name="GDI_INFANTRYU_SECONDS_PER_HEAL_TICK_UPGRADED" value="=$GDI_SECONDS_PER_HEAL_TICK * 0.5" />
+	</Defines>
+
+	<GameObject
+		id="GDIInfantryU"
+		inheritFrom="BaseLightInfantry"
+		KindOf="+CAN_HEAL_ALLIES +CAN_ASSEMBLE_STRUCTURE"
+		HealthBoxHeightOffset="35"
+		SubGroupPriority="300"
+		SelectPortrait="Portrait_GDI_Infantry_U"
+		ButtonImage="Btn_GDI_Infantry_U"
+		Side="GDI"
+		ParticipationValue="=$GDIINFANTRYU_PARTICIPATION_VALUE"
+		BuildTime="8"
+		TransportSlotCount="1"
+		CommandSet="GDIInfantryUCommandSet"
+		CommandPoints="=$GDI_INFANTRY_U_COMMANDPOINT_COST"
+		VoicePriority="160"
+		Description="Desc:GDIInfantryU"
+		TypeDescription="Type:GDIInfantryU"
+		EditorName="GDI_D1_Light_Utility(Dozer)"
+		EditorSorting="UNIT"
+		WeaponCategory="NONE"
+		ForceLuaRegistration="true"
+		RadarPriority="UNIT"
+		UnitTypeIcon="GDIBuilderIcon">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIInfantryU</DisplayName>
+		<LocomotorSet
+			Locomotor="GDIInfantryULocomotor"
+			Condition="NORMAL"
+			Speed="80.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="GU_Tyre1 GU_Tyre2 GU_Tyre3 GU_Tyre4 FXHealingBone GU_Chassis"
+				Options="RENDER_BUFF_EFFECTS"
+				TrackMarksOnlyWhenCorneringQuickly="true"
+				TrackMarks="EXTireTrack2"
+				TrackMarksLeftBone="GU_Tyre3"
+				TrackMarksRightBone="GU_Tyre4"
+				TireRotationMultiplier="0.2"
+				PowerslideRotationAddition="1.25"
+				InitialRecoilSpeed="5.0"
+				MaxRecoilDistance="0.3"
+				RecoilDamping="0.5"
+				RecoilSettleSpeed="10.0"
+				MaximumWheelExtension="-0.2"
+				MaximumWheelCompression="0.2">
+
+				<TireBoneGroup
+					TireGroupSettings="FRONT"
+					LeftTireBone="GU_Tyre1"
+					RightTireBone="GU_Tyre2"
+					WheelTurnAngle="35d"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="GU_Tyre3"
+					RightTireBone="GU_Tyre4"/>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUS_InfantryU_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXHealingBone" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXHealingBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUS_InfantryU_SKN" />
+					<Texture
+						Original="GUS_InfantryU"
+						New="GUS_InfantryU" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+  ParseCondStateType="PARSE_NORMAL"
+  RetainSubObjects="true"
+  ConditionsYes="DAMAGED">
+					<Model
+						Name="GUS_InfantryU_SKN" />
+					<Texture
+						Original="GUS_InfantryU"
+						New="GUS_InfantryU" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GUS_InfantryU_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+					<Script>
+						CurDrawableHideSubObjectPermanently( "GUS_INFANTRYU_UPG" )
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="true"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="GUS_InfantryU_BIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="80"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" or Prev == "TRANS_Deselected" then
+						--Do Nothing and Re-Pick Animation
+						elseif Prev == "STATE_stunned_flailing" then
+						CurDrawableSetTransitionAnimState("STATE_stunned_landing")
+						else
+						CurDrawableSetTransitionAnimState("TRANS_Deselected")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="GUS_InfantryU_MOVA"
+						AnimationMode="LOOP"
+						AnimationPriority="5"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="GUS_InfantryU_ATKA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="5"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="GUS_InfantryU_MINA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREPARING" >
+					<Animation
+						AnimationName="GUS_InfantryU_BLDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15" />
+					<FXEvent
+						Frame="0"
+						FireWhenSkipped="true"
+						Effect="FX_GDIWelding_Sparks"
+						Bone="FXHealingBone" />
+					<FXEvent
+						Frame="45"
+						FireWhenSkipped="true"
+						Effect="FX_GDIWelding_Sparks"
+						Bone="FXHealingBone" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED"
+					StateName="STATE_SelectedPose"
+					Flags="RESTART_ANIM_WHEN_COMPLETE" >
+					<Animation
+						AnimationName="GUS_InfantryU_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="8" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" then
+						CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+				</AnimationState>
+
+				<!-- TRANSITIONS -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_Deselected">
+					<Animation
+						AnimationName="GUS_InfantryU_DSEL"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IdleToSelected">
+					<Animation
+						AnimationName="GUS_InfantryU_BATA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="10"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+				</AnimationState>
+
+			</TruckDraw>
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile="5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="5"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="5"
+				LightMin="5"
+				LightMax="10"
+				WeaponSlotID="1"
+				LaserStateID="1">
+				<LightColor R="0.86" G="0.86" B="0.07" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDIHealingBeam</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIInfantryUHealWeapon"/>
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIInfantryUHealWeaponUpgraded"
+						ObjectStatus="WEAPON_UPGRADED_01"/>
+				</WeaponSlotHardpoint>
+				<WeaponSlotHardpoint
+					ID="2">
+					<Weapon
+						Ordering="SECONDARY_WEAPON"
+						Template="GDIInfantryUStructureABuildWeapon" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+
+			<LaserState
+				id="ModuleTag_LaserState"
+				LaserId="1">
+				<LaserEndParticleSystem>HealingBeamHit</LaserEndParticleSystem>
+			</LaserState>
+
+			<!-- Range Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIInfantryURangeBoostUpgrade"
+				AttributeModifier="Modifier_Generic_GDIWeaponRange_T1">
+				<TriggeredBy>Upgrade_GDI_Defense_Range</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Speed Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_GDIInfantryUSpeedBoostUpgrade"
+				AttributeModifier="Modifier_Generic_GDISpeedBoostUpgrade">
+				<TriggeredBy>Upgrade_GDI_Defense_Speed</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Small_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleNDeath" />
+				<Event Index="onDeath" FX="FX_VehicleSmall_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<SpecialPower
+				id="ModuleTag_BuildGDIStructureASpecialPower"
+				UpdateModuleStartsAttack="true"
+				SpecialPowerTemplate="SpecialPower_GDIBuildStructureA"/>
+
+			<xi:include
+				href="DATA:Includes/GenericAssembleStructureSpecialAbilityUpdate.xml" />
+			<!-- now override to provide gdi-specific values -->
+			<AssembleStructureSpecialAbilityUpdate
+				id="ModuleTag_BuildStructureASpecialAbilityUpdate"
+				SpecialPowerTemplate="SpecialPower_GDIBuildStructureA"
+				Options="FAIL_WITH_INVALID_APPROACH">
+				<LogicCommandSetReplacement
+					CommandSetStages="PREPARING"
+					CommandSet="GDIInfantryUCommandSet_Building"/>
+				<StructureTemplate>GDIStructureA</StructureTemplate>
+			</AssembleStructureSpecialAbilityUpdate>
+
+			<!-- Repair Structures -->
+			<SpecialPower
+				id="ModuleTag_RepairStructure"
+				SpecialPowerTemplate="SpecialPower_RepairStructure"
+				UpdateModuleStartsAttack="true" />
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_RepairStructureUpdate"
+				SpecialWeapon="GDIInfantryUHealWeapon"
+				SpecialPowerTemplate="SpecialPower_RepairStructure"
+				WeaponSlotType="PRIMARY_WEAPON"
+				WeaponSlotID="1"
+				StartRechargeOnExit="true"
+				Flags="FORCE_ATTACK_TARGET"
+				StartAbilityRange="20.0"/>
+
+			<SpecialPower
+				id="ModuleTag_LayMineSpecialPower"
+				SpecialPowerTemplate="SpecialPower_LayMines"
+				SetModelCondition="USER_1"
+				SetModelConditionTime="1.0s"
+				TriggerFX="FX_GDI_Minelaying"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="GDIInfantryULayMinesObjectFilter"/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_LayMineSpecialAbilityUpdate"
+				SpecialPowerTemplate="SpecialPower_LayMines"
+				StartAbilityRange="5"
+				BusyForDuration="1s"
+				SpecialWeapon="Weapon_GDIInfantryUMineLayerWeapon"
+				UnpackingVariation="2"/>
+
+			<!-- dummy special power and update to stop the build.
+				NOTE: This also stops the minelayer ability. One way to Polish this would be to write a generic 'special power stopper'
+				special power -->
+			<SpecialPower
+				id="ModuleTag_CancelStructureABuildPower"
+				SpecialPowerTemplate="SpecialPower_CancelStructureA"
+				UpdateModuleStartsAttack="true"
+				DisabledTypesToIgnore="TEMPORARILY_BUSY"/>
+			<SpecialAbilityUpdate
+				id="ModuleTag_CancelStructureABuildUpdate"
+				SpecialPowerTemplate="SpecialPower_CancelStructureA"/>
+
+			<StatusBitsUpgrade
+				id="ModuleTag_EnhancedRepairUpgrade"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_GDIDefenseEnhancedRepair</TriggeredBy>
+			</StatusBitsUpgrade>
+
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+					  id="ModuleTag_LUAEventList"
+					  EventListName="GDIInfantryUFunctions"/>
+
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+					  id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_GDIDefenseEnhancedRepair</TriggeredBy>
+				<Nugget
+					ShowSubObjects="GUS_InfantryU_UPG"
+					Upgrade="Upgrade_GDIDefenseEnhancedRepair"
+					FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+
+			<FXListBehavior
+					  id="ModuleTag_FXListUpgrade">
+				<TriggeredBy>Upgrade_GDIDefenseEnhancedRepair</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeGDIEnhancedRepairs" />
+			</FXListBehavior>
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					AutoAcquireAllies="true"
+					CanPickDynamicTargets="true"
+					SympathyRange="100.0"
+					TargetInvalidAtFullHealth="true"
+					TargetingCompareList="HealingUnitTargetingCompareList" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="200"/>
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MoveReverseBeepLoop">
+				<!-- <ModelConditionSound Sound="GDI_Builder_InfU_MoveReverseBeepReallyDamagedLoop" RequiredFlags="MOVING BACKING_UP REALLYDAMAGED" ExcludedFlags="RECYCLED DYING" />
+				<ModelConditionSound Sound="GDI_Builder_InfU_MoveReverseBeepDamagedLoop" RequiredFlags="MOVING BACKING_UP DAMAGED" ExcludedFlags="RECYCLED REALLYDAMAGED DYING" /> -->
+				<ModelConditionSound Sound="GDI_Builder_InfU_MoveReverseBeepLoop" RequiredFlags="MOVING BACKING_UP" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionSoundSelectorClientBehavior
+				id="ModuleTag_VoiceMoveRepair">
+        <Override>
+          <AudioArrayVoice>
+            <AudioEntry Sound="GDI_InfUBuilder_VoiceMoveRepair" AudioType="voiceAttack"/>
+          </AudioArrayVoice>
+        </Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+
+		<Geometry
+			IsSmall="true">
+			<Shape
+			  Type= "BOX"
+			  MajorRadius = "12.0"
+			  MinorRadius = "11.0"
+			  Height = "17.0"
+			  ContactPointGeneration = "VEHICLE" >
+				<Offset
+					x = "-0.513369"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_InfUBuilder_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="GDI_InfUBuilder_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="GDI_InfUBuilder_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="GDI_InfUBuilder_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="GDI_InfUBuilder_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+			<!-- Voice for being ordered to enter and repair or capture various things. The names are defined in the 
+			     various EngineerContain modules on the target objects -->
+			<NamedEntry Sound="GDI_InfUBuilder_VoiceMoveRepair" Name="voiceRepairStructure" />
+			<NamedEntry Sound="GDI_InfUBuilder_VoiceMove" Name="VoiceLayMines"/>
+			<NamedEntry Sound="GDI_InfUBuilder_VoiceMoveBuild" Name="VoiceMoveBuild" />
+			<NamedEntry Sound="" Name="VoiceCaptureHusk" />
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="GDI_Builder_InfU_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="GDI_Builder_InfU_IdleLoop" AudioType="soundAmbient" />
+			<AudioEntry Sound="GDI_Builder_InfU_MoveLoop" AudioType="soundMoveLoop" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="225"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_GDIDefenseEnhancedRepair</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDI_Defense_Range</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDI_Defense_Speed</DisplayUpgrade>
+	</GameObject>
+
+	<GameObject
+		id="GDIInfantryUMinefieldEgg"
+		Side="GDI"
+		EditorSorting="UNIT"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE DO_NOT_CLASSIFY"
+		EditorName="GDIMinefieldEgg">
+		<DisplayName>GDIMinefieldEgg</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="1s"
+				MaxLifetime="1s" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_GDIInfantryUMineFieldOCL">
+				<DieMuxData
+					DeathTypes="ALL"/>
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_GDI_Builder_InfU_MineDeploy_AudioOnly" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+
+	<LocomotorTemplate
+		id="GDIInfantryULocomotor"
+		Name="GDIInfantryULocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		TurnTimeSeconds="0.8s"
+		TurnTimeDamagedSeconds="0.8s"
+		MaxSpeedDamaged="100%"
+		AccelerationSeconds="0.2s"
+		BrakingSeconds="0.1s"
+		SlowTurnRadius="30.0"
+		FastTurnRadius="40.0"
+		UseTerrainSmoothing="true"
+
+		MinTurnSpeed="10%"
+		TurnPivotOffset="-0.33"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="TREADS"
+
+		AccelPitchLimit="5d"
+		BounceKick="10d"
+		PitchStiffness="0.05"
+		RollStiffness="0.3"
+		PitchDamping="0.7"
+		RollDamping="0.2"
+		YawStiffness=".5"
+		YawDamping="0.3"
+		ForwardAccelerationPitchFactor="0.075"
+		LateralAccelerationRollFactor="0.2"
+		ReverseMoveSpeed="100%"
+		HasSuspension="true"
+		CanReverseMove="true"
+		/>
+
+	<LogicCommandSet
+		id="GDIInfantryUCommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+		<Cmd>Command_GDIInfantryU_BuildStructureA</Cmd>
+		<Cmd>Command_GDIInfantryU_LayMines</Cmd>
+		<Cmd>Command_RepairStructure</Cmd>		
+	</LogicCommandSet>
+	
+	<LogicCommandSet
+		id="GDIInfantryUCommandSet_Building">
+		<Cmd>Command_GDIInfantryU_CancelBuild</Cmd>
+	</LogicCommandSet>
+
+	<LogicCommand
+		id="Command_GDIInfantryU_BuildStructureA"
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPower_GDIBuildStructureA</SpecialPower>
+	</LogicCommand>
+
+	<LogicCommand
+		id="Command_GDIInfantryU_LayMines"
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPower_LayMines</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo
+				Heuristic="MINEFIELD"
+				InnerDistanceForMineLaying="300"
+				OuterDistanceForMineLaying="600"
+				DeployMinesAtCasterPosition="true"/>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommand
+		id="Command_GDIInfantryU_CancelBuild"
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPower_CancelStructureA</SpecialPower>
+	</LogicCommand>
+	<SpecialPowerTemplate
+		id="SpecialPower_GDIBuildStructureA"
+		TargetType="OBJECT_OR_LOCATION_AND_ANGLE"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceMoveBuild"
+		Flags="PATHABLE_ONLY NOT_CLIFF_CELL"/>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_LayMines"
+		TargetType="LOCATION"
+		Flags="PATHABLE_ONLY NOT_CLIFF_CELL NO_FORBIDDEN_OBJECTS"
+		ReloadTime="30s"
+		ForbiddenObjectRange="70"
+		RadiusCursorRadius="70"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceLayMines" >
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE VEHICLE INFANTRY"
+			Exclude="AIRCRAFT"
+			Relationship="ALLIES NEUTRAL ENEMIES">
+			<ExcludeThing>GDIInfantryU</ExcludeThing>
+		</ForbiddenObjectFilter>
+	</SpecialPowerTemplate>
+
+	<ObjectFilterAsset
+	 id="GDIInfantryULayMinesObjectFilter">
+		<Filter
+			Rule="NONE"/>
+	</ObjectFilterAsset>
+
+	<!-- Weapons -->
+	<WeaponTemplate
+		id="Weapon_GDIInfantryUMineLayerWeapon"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<WeaponOCLNugget WeaponOCL="OCL_GDIInfantryUMineEggOCL" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIInfantryUStructureABuildWeapon"
+		AttackRange="20.0"
+		ChaseWeapon="true"
+		WeaponSpeed="999999.0"
+		ReAcquireDetailType="PRE_FIRE"
+		AcceptableAimDelta="10d"
+		CanFireWhileMoving="true"
+		RequiredAntiMask="ANTI_STRUCTURE"
+		RadiusDamageAffects="ALLIES">
+		<PreAttackDelay
+			MinSeconds="0.0s"
+			MaxSeconds="0.0s" />
+		<FiringDuration
+			MinSeconds="=$GDI_SECONDS_PER_HEAL_TICK+'s'"
+			MaxSeconds="=$GDI_SECONDS_PER_HEAL_TICK+'s'" />
+		<Nuggets>
+			<SpecialPowerNugget
+				SpecialPowerTemplate="SpecialPower_GDIBuildStructureA">
+				<SpecialObjectFilter
+					Rule="NONE"
+					Relationship="SAME_PLAYER"
+					StatusBitFlags="PARTIALLY_ASSEMBLED">
+					<IncludeThing>GDIStructureA</IncludeThing>
+				</SpecialObjectFilter>
+			</SpecialPowerNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIInfantryUHealWeapon"
+		AttackRange="20.0"
+		ChaseWeapon="true"
+		WeaponSpeed="999999.0"
+		ReAcquireDetailType="PRE_FIRE"
+		FireSound="GDI_Engineer_InfJ_RepairWeaponBeam"
+		FireFX="FX_HealingBeam"
+		Flags="IGNORE_FORCE_FIRE" 
+		AcceptableAimDelta="10d"
+		CanFireWhileMoving="true"
+		RequiredAntiMask="ANTI_GROUND"
+		ForbiddenAntiMask=" ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY" 
+		RadiusDamageAffects="ALLIES">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="1.0s"
+				LaserId="1"
+				ObjectFilterRef="ObjectFilter_RepairWeapons">
+			</ActivateLaserNugget>
+			<HOTNugget
+				id="Nugget_HOT" 
+				Damage="18"
+				DamageType="HEALING"
+				DeathType="NORMAL"
+				DamageFXType="GDI_HEAL" 
+				HealDuration="1.0s"
+				AlwaysActive="true"
+				ObjectFilterRef="ObjectFilter_RepairWeapons">
+			</HOTNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIInfantryUHealWeaponUpgraded"
+		inheritFrom="GDIInfantryUHealWeapon"
+		FireFX="FX_HealingBeamUG">
+		<Nuggets>
+			<HOTNugget
+  				id="Nugget_HOT" 
+				Damage="24">
+			</HOTNugget>
+		</Nuggets>	
+	</WeaponTemplate>
+
+	<GameObject
+		id="GDIInfantryUMine"
+		inheritFrom="GDIEMPMine"
+		KindOf="+GRANT_PLAYER_THREAT">
+		<Behaviors>
+			<!-- how long will the mines stick around -->
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="120.0s"
+				MaxLifetime="120.0s" />
+		</Behaviors>
+	</GameObject>
+	
+	<ObjectCreationList
+		id="OCL_GDIInfantryUMineEggOCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIInfantryUMinefieldEgg</ObjectTemplate>
+					<ObjectOffset />
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_GDIInfantryUMineFieldOCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIInfantryUMine</ObjectTemplate>
+					<ObjectTemplate>GDIInfantryUMine</ObjectTemplate>
+					<ObjectTemplate>GDIInfantryUMine</ObjectTemplate>
+					<ObjectTemplate>GDIInfantryUMine</ObjectTemplate>
+					<ObjectOffset x="50" />
+					<ObjectOffset y="50" />
+					<ObjectOffset x="-50" />
+					<ObjectOffset y="-50" />
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ExperienceLevelTemplate
+		id="GDIInfantryUSquadExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="3">
+		<Target>GDIInfantryU</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIInfantryUSquadExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIInfantryUSquadExperienceLevel_1"
+		RequiredExperience="6"
+		ExperienceAward="4">
+		<Target>GDIInfantryU</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIInfantryUSquadExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIInfantryUSquadExperienceLevel_2"
+		RequiredExperience="15"
+		ExperienceAward="5">
+		<Target>GDIInfantryU</Target>
+
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIInfantryUSquadExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIInfantryUSquadExperienceLevel_3"
+		RequiredExperience="27"
+		ExperienceAward="6">
+		<Target>GDIInfantryU</Target>
+	</ExperienceLevelTemplate>
+
+</AssetDeclaration>

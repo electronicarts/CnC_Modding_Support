@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:FXInvisBone.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseTimedAllyVisibleDecal.xml" />
+	</Includes>
+	<GameObject
+		id="GDIRepairZoneProxyObject"
+		EditorName="GDIRepairZoneProxyObject: DO NOT USE"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+			<!--  NOTE:  This object needs a draw module and a weapon bone setup to 
+												properly fire the particle system that draws the effect -->
+			<ScriptedModelDraw
+					id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXINVISBONE" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="MESH" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<AutoHealBehavior
+				id="ModuleTag_AutoHealBehavior"
+				InitiallyActive="true"
+				StartImmediately="true"
+				Radius="=$GDI_REPAIRZONE_RADIUS"
+				HealingAmount="=$GDI_REPAIRZONE_AMOUNT"
+				HealingDelay="1.0s"
+				HealingDuration="0.0s"
+				RespawnMinimumDelay="1.0s"
+				HealFXList="FX_Repair"
+				HealAlwaysActive="true">
+				<HealObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES"
+					Include="STRUCTURE VEHICLE INFANTRY AIRCRAFT"
+					Exclude="NEUTRAL_TECH"
+					StatusBitFlagsExclude="NO_HEALING">
+					<ExcludeThing>GDIPointDefenseShield</ExcludeThing>
+				</HealObjectFilter>
+			</AutoHealBehavior>
+			<FXListBehavior id="ModuleTag_FXList">
+				<Event
+					Index="onCreate"
+					FX="FX_GDIRepairPower" />
+			</FXListBehavior>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="0.2s"
+				MaxLifetime="0.2s"
+				DeathType="SUICIDED" />
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+</AssetDeclaration>

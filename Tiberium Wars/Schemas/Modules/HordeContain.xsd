@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!-- ENUMS -->
+	<xs:simpleType name="FormationType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="MAIN" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="HordeMeleeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AMOEBA" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- AUXILIARY TYPES -->
+	<xs:complexType name="HordeMeleeBehaviorData">
+		<xs:attribute name="Type" type="HordeMeleeType" />
+	</xs:complexType>
+	
+	<xs:complexType name="PositionAndLeaderType">
+		<xs:attribute name="X" type="SageReal" default="0" />
+		<xs:attribute name="Y" type="SageReal" default="0" />
+		<xs:attribute name="LeaderRank" type="SageInt" default="-1" />
+		<xs:attribute name="LeaderIndex" type="SageInt" default="0" />
+	</xs:complexType>
+	
+	<xs:complexType name="RankInfoType">
+		<xs:sequence>
+			<xs:element name="Position" type="PositionAndLeaderType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="WeaponConditionSet" type="WeaponSetBitFlags" minOccurs="0" maxOccurs="1" />
+			<xs:element name="WeaponConditionClear" type="WeaponSetBitFlags" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="RankID" type="SageInt" default="0" />
+		<xs:attribute name="UnitType" type="GameObjectWeakRef" />
+	</xs:complexType>
+	
+	<xs:complexType name="BannerCarrierPosType">
+		<xs:sequence>
+			<xs:element name="UnitType" type="GameObjectWeakRef" />
+			<xs:element name="Pos" type="Coord2D" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- HordeContainModuleData -->
+	<xs:complexType name="HordeContainModuleData">
+		<xs:complexContent>
+			<xs:extension base="TransportContainModuleData">
+				<xs:sequence>
+					<xs:element name="MeleeBehavior" type="HordeMeleeBehaviorData" minOccurs="0" maxOccurs="1" />
+					<xs:element name="RandomOffset" type="Coord2D" minOccurs="0" maxOccurs="1" />
+					<xs:element name="RankInfo" type="RankInfoType" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="RankThatStopsAdvance" type="SageInt" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="RankToReleaseWhenAttacking" type="SageInt" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="LeaderPosition" type="Coord2D" minOccurs="0" maxOccurs="1" />
+					<xs:element name="BannerCarrierPosition" type="BannerCarrierPosType" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="BannerCarriersAllowed" type="GameObjectWeakRef" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="LeadersAllowed" type="GameObjectWeakRef" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="AttributeModifier" type="AttributeModifierRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Formation" type="FormationType" />
+				<xs:attribute name="AlternateFormation" type="GameObjectWeakRef" />
+				<xs:attribute name="ForcedLocomotorSet" type="LocomotorSetType" />
+				<xs:attribute name="UseSlowHordeMovement" type="SageBool" default="true"/>
+				<xs:attribute name="MeleeAttackLeashDistance" type="SageReal" default="60.0"/>
+				<xs:attribute name="GeometryFrontAngleRadians" type="SageReal" default="0.0"/>
+				<xs:attribute name="EvaEventLastMemberDeath" type="EvaEventIDType" />
+				<xs:attribute name="FrontAngle" type="SageReal" default="6.283"/> <!-- TWO PI -->
+				<xs:attribute name="FlankedDelaySeconds" type="SageReal" default="0"/>
+				<xs:attribute name="FlankedDurationSeconds" type="SageReal" default="5.0"/>
+				<xs:attribute name="MinimumHordeSize" type="SageUnsignedInt" default="0"/>
+				<xs:attribute name="BackupMinDelayTime" type="Time" default="0s"/>
+				<xs:attribute name="BackupMaxDelayTime" type="Time" default="0s"/>
+				<xs:attribute name="BackupMinDistance" type="SageReal" default="0"/>
+				<xs:attribute name="BackupMaxDistance" type="SageReal" default="0"/>
+				<xs:attribute name="BackupPercentage" type="SageReal" default="0"/>
+				<xs:attribute name="RadiusCowerOverride" type="SageReal" default="0"/>
+				<xs:attribute name="VisionOverrideRear" type="SageReal" default="0.0"/>
+				<xs:attribute name="VisionOverrideSide" type="SageReal" default="0.0"/>
+				<xs:attribute name="SpawnBannerCarrierImmediately" type="SageBool" default="false"/>
+				<xs:attribute name="BannerCarrierByUpgradeOnly" type="SageBool" default="false"/>
+				<xs:attribute name="ForbiddenCoverStatus" type="ObjectStatusBitFlags" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

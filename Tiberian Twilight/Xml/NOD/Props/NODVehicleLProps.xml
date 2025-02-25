@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- Nod Vehicle L / Spectre projectile -->
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		 <!-- Art Includes -->
+		<Include type="all" source="ART:FXNodArtilleryProjectile.w3x" />
+		
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+		
+	</Includes>
+
+	<Defines>
+		<Define name="NODVEHICLEL_CATALYST_CLOUD_AOE_DURATION" value="5.0s" />
+		<Define name="NODVEHICLEL_CATALYST_CLOUD_AOE_DOT_DURATION" value="10.0s" />	 
+	</Defines>
+	
+	<GameObject
+		id="DummyNodVehicleLProjectile"
+		inheritFrom="baseunattackableprojectile" 
+		Side="Nod"
+		EditorName="DummyNodVehicleLShell">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_DummyScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+		
+	<GameObject
+		id="NodVehicleLShell"
+		inheritFrom="baseunattackableprojectile"
+		Side="Nod"
+		EditorName="NodVehicleLShell">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_NodVehicleLShellScriptedModelDraw">
+				<ModelConditionState
+					id="ModuleTag_ModelConditionState" 
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXNodArtilleryProjectile" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODArtilleryShellTrail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODArtilleryShellTrail02"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NodArtillery_ObjectTail"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NOD_Artillery_ProjectileImpact" />
+				<Event Index="onDeath" FX="FX_NOD_Specter_VehL_ArtilleryWeaponImpactExplosion_AudioOnly"/>
+			</FXListBehavior>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="80"
+				FirstHeightMax="320"
+				SecondHeightMin="40"
+				SecondHeightMax="160"
+				FirstPercentIndent="25"
+				SecondPercentIndent="66"
+				CurveFlattenMinDist="300"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH"
+				FlightPathAdjustDistPerSecond="0"
+				/>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="100.0" />
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Spectre_VehL_ArtilleryWeaponIncoming" AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+
+	<GameObject
+		id="NodVehicleLCatalystShell"
+		inheritFrom="NodVehicleLShell" 
+		EditorName="NodVehicleLCatalystShell">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_NodVehicleLShellScriptedModelDraw">
+				<ModelConditionState
+					id="ModuleTag_ModelConditionState"
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXArtilleryShell01" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODArtilleryShellTrail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="NODArtilleryShellTrail02"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NOD_Specter_VehL_ArtilleryWeaponUpgradedImpactExplosion_AudioOnly" />
+				<Event
+					Index="onDeath"
+					FX="FX_NOD_Spectre_Artillery_Cloud" />
+			</FXListBehavior>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="80"
+				FirstHeightMax="320"
+				SecondHeightMin="40"
+				SecondHeightMax="160"
+				FirstPercentIndent="25"
+				SecondPercentIndent="66"
+				CurveFlattenMinDist="300"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH"
+				FlightPathAdjustDistPerSecond="0"
+				/>
+		</Behaviors>
+	</GameObject>
+
+	<!-- The NOD Vehicle L / Nod Medium Blast T3 / Spectre Catalyst Cloud Object AOE Attack -->
+	<GameObject
+		id="NODVehicleLTiberiumCloudObject"
+		EditorName="NODVehicleLTiberiumCloudObject"
+		Side="NOD"
+		EditorSorting="SYSTEM"
+		KindOf="UNATTACKABLE INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER GRANT_PLAYER_THREAT">
+		<ArmorSet
+				Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+					id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<DestroyDie id="ModuleTag_Die">
+				<DieMuxData DeathTypes="ALL" />
+			</DestroyDie>
+
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+			
+			<!-- This defines the duration of the Cloud Damage Effect -->
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="=$NODVEHICLEL_CATALYST_CLOUD_AOE_DURATION"
+				MaxLifetime="=$NODVEHICLEL_CATALYST_CLOUD_AOE_DURATION" />
+
+			<!-- Deals the damage -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="NODVehicleLWeapon_Cloud" />
+			</FireWeaponUpdate>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+
+	<GameObject
+		id="NODVehicleLTiberiumCloudObject_Upgraded"
+		inheritFrom="NODVehicleLTiberiumCloudObject" 
+		EditorName="NODVehicleLTiberiumCloudObject_Upgraded">
+		<Behaviors>
+			<!-- Deals the damage -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				xai:joinAction="Replace" 
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="NODVehicleLWeapon_CloudUpgraded" />
+			</FireWeaponUpdate>
+		</Behaviors>
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS																-->
+	<!-- ////////////////////////////////////////	-->
+	<WeaponTemplate
+		id="NODVehicleLWeapon_Cloud"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		ClipSize="1"
+		CanFireWhileMoving="false"
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_GROUND"
+		ForbiddenAntiMask="ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		InstantLoadClipOnActivate="true"
+		FinishAttackOnceStarted="true">
+		<FiringDuration
+			MinSeconds="0.12s"
+			MaxSeconds="0.12s" />
+		<ClipReloadTime
+			MinSeconds="0.12s"
+			MaxSeconds="0.12s" />
+		<Nuggets>
+			<DOTNugget
+				id="NuggetTag_DOT" 
+				Damage="0.5"
+				Radius="100.0"
+				DamageInterval="0.5s"
+				DamageDuration="=$NODVEHICLEL_CATALYST_CLOUD_AOE_DOT_DURATION"
+				DamageType="BLAST"
+				DamageFXType="NOD_LASER_TIBERIUM"
+				FXListVictim="FX_NODTibCloud_Hit"
+				DeathType="EXPLODED">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ENEMIES NEUTRAL"
+					Include="INFANTRY VEHICLE STRUCTURE"/>
+			</DOTNugget>
+			<AttributeModifierNugget
+				id="NuggetTag_AttributeModifier"
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifier_NODVehicleLDeployedCloudWeapon"
+				Radius="100.0" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Crate Upgraded weapon -->
+	<WeaponTemplate
+		id="NODVehicleLWeapon_CloudUpgraded"
+		inheritFrom="NODVehicleLWeapon_Cloud">
+		<Nuggets>
+				<!-- NOTE: The DOT NUGGET override is temp until INHERIT_ATTRIBUTES_FROM_SOURCE works properly (on my todo list)-->
+			<DOTNugget
+				id="NuggetTag_DOT"
+				Damage="1.0"
+				Radius="100.0"/>
+			<AttributeModifierNugget
+				id="NuggetTag_AttributeModifier"
+				AttributeModifierName="AttributeModifier_NODVehicleLDeployedCloudWeapon_Upgraded"
+				Radius="100.0"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   ATTRIBUTE MODIFIERS										-->
+	<!-- ////////////////////////////////////////	-->
+	<AttributeModifier
+		id="AttributeModifier_NODVehicleLDeployedCloudWeapon"
+		Category="NONE"
+		Duration="=$NODVEHICLEL_CATALYST_CLOUD_AOE_DOT_DURATION"
+		RenderBuffEffectFlags="VEIN_DETONATION">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="NAME:NODVehicleL" />
+		<Modifier Type="ARMOR" Value="125%"/>
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_NODVehicleLDeployedCloudWeapon_Upgraded"
+		Category="NONE"
+		Duration="=$NODVEHICLEL_CATALYST_CLOUD_AOE_DOT_DURATION"
+		RenderBuffEffectFlags="VEIN_DETONATION">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="NAME:NODVehicleL" />
+		<Modifier Type="ARMOR" Value="125%"/>
+	</AttributeModifier>
+
+
+</AssetDeclaration>

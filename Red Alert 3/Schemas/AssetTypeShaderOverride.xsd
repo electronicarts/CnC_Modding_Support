@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:complexType name="ShaderOverrideRule" xas:typeGroup="Xml">
+		<xs:attribute name="IfOriginalShaderIs" type="Poid" xas:refType="FXShaderMaterial" use="optional" />
+		<xs:attribute name="ReplaceShaderName" type="Poid" xas:refType="FXShaderMaterial" use="required" />
+		<xs:attribute name="ReplaceTechniqueName" type="xs:string" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="ShaderOverride" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<!-- Rules are processed in order from top to bottom. The first one that matches wins. 
+						It is possible, but not necessary, to have a default rule (without condition) at the bottom as a catch-all. -->
+					<xs:element name="Rule" type="ShaderOverrideRule" minOccurs="1" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Priority" type="xs:unsignedInt" default="1" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="ShaderOverrideRef" xas:isRef="true" xas:refType="ShaderOverride">
+		<xs:restriction base="AssetReference" />
+	</xs:simpleType>
+
+</xs:schema>

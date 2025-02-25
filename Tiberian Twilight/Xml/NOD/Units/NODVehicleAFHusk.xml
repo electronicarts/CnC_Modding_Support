@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- Nod Aftershock Husk -->
+	<Includes>
+
+		<Include type="all" source="ART:NUL_VehicleAF_SKN.W3X" />
+		<Include type="all" source="ART:NUL_VehicleAF_GTPA.W3X" />
+		<Include type="all" source="ART:NUL_VehicleAF_DMG.xml" />
+
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseHusk.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NODVEHICLEAF_HUSK_NONBUILD_RADIUS" value="60.0" />
+	</Defines>
+	<GameObject
+		id="NodVehicleAFHusk"
+		inheritFrom="BaseHusk"
+		HealthBoxHeightOffset="30"
+		SelectPortrait="Portrait_NOD_Vehicle_AF"
+		ButtonImage="Btn_NOD_Vehicle_AF"
+		Side="NOD"
+		TransportSlotCount="0"
+		CommandSet="EmptyCommandSet"
+		RadarPriority="UNIT"
+		ProductionQueueType="INFANTRY"
+		EditorName="NOD_D3_Heavy_Blast_Husk(Aftershock)"
+		EditorSorting="UNIT"
+		Description="Desc:NodVehicleAFHusk">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NodVehicleAFHusk</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FXDamage01 FXDamage02">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUL_VehicleAF_SKN" />
+					<Texture
+						Original="NUL_VehicleAF"
+						New="NUL_VehicleAF_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="NODDamagedFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NUL_VehicleAF_GTPA"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODVehicleAFHuskFunctions"/>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Large_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleLRG_Death" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+				<Event Index="onDeath" FX="FX_GDIArtilleryHitBIG"/>
+			</FXListBehavior>
+
+			<!-- Override base capture functionality with revive specific OCL -->
+			<CaptureContain
+				id="ModuleTag_CaptureHusk"
+				OnCaptureOCL="OCL_NodVehicleAFHuskReplace"
+				/>
+
+			<CreateObjectOnHealed
+				id="ModuleTag_CreateObjectOnHealed"
+				CreationList="OCL_NodVehicleAFHuskReplace"/>
+
+			<AutoHealBehavior
+				id="ModuleTag_BackupSystemsHeal"
+				HealingAmount="=$MEGAUNIT_HUSK_HEAL_PER_SECOND"/>
+
+			<ProjectedBuildabilityOverrideBehavior
+				id="ModuleTag_BuildabilityOverride" >
+				<Override
+					id="ProjectedBuildability_OverrideBlock">
+					<ProjectedBuildabilityInfo
+						id="ProjectedBuildability_Blocked"
+						Radius="=$NODVEHICLEAF_HUSK_NONBUILD_RADIUS" />
+				</Override>
+			</ProjectedBuildabilityOverrideBehavior>
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$MEGAUNIT_HUSK_HEALTH" />
+		</Body>
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "60.0"
+					 MinorRadius = "20.0"
+					 Height = "20.0">
+				<Offset
+						x = "-1.15977"
+						y = "-13.7905"
+						z = "0.0" />
+			</Shape>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "10.0"
+					 MinorRadius = "30.0"
+					 Height = "20.0">
+				<Offset
+						x = "0.32824"
+						y = "44.9259"
+						z = "0.0" />
+			</Shape>
+			<Shape
+					Type= "CYLINDER"
+					MajorRadius = "22.0"
+					MinorRadius = "22.0"
+					Height = "60.0">
+				<Offset
+						x = "0.0"
+						y = "0.0"
+						z = "0.0" />
+			</Shape>
+
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_WidowHusk_VehADHusk_Select" AudioType="voiceSelect"/>
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbient"/>
+		</AudioArraySound>
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="50"
+			ShroudClearingRange="50" />
+		<CrusherInfo
+			CrusherLevel="0"
+			CrushEqualLevelProps="true"
+			CrushableLevel="9" />
+		<ProjectedBuildabilityInfo
+			id="ProjectedBuildability_DisplayOnly"
+			Radius="=$NODVEHICLEAF_HUSK_NONBUILD_RADIUS" />
+	</GameObject>
+
+	<ObjectCreationList
+		id="OCL_NodVehicleAFHuskReplace">
+		<OCLModule>
+			<Modules>
+				<ClearRemovables/>
+				<SetTimedModelCondition
+					ModelCondition="USER_5"
+					Duration="2.5s"/>
+				<CreateObject
+					ObjectTemplate="NodVehicleAF"
+					DisableScoring="true"/>
+				<CopyParentExperience/>
+				<CopyParentLayer/>
+				<CopyParentUpgrades/>
+				<SetBusyState
+					Duration="2.5s"
+					DisableWhileBusy="true"/>
+				<SetHealthToParentPercent/>
+				<SetStatus
+					Status="NO_EXPERIENCE_LEVEL_ON_CREATTION"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+</AssetDeclaration>

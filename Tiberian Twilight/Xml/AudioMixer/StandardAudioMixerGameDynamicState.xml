@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- This is the Standard Audio Mixer Dynamic State Set.  It features the full range of Transitions that
+	might occur throughout the course of a game.  It is designed to take care of all the mixer snapshot changes by
+	itself, without needing lots of specifically scripted events.  Usually this is used in Multiplayer
+	maps, but in some cases it may be used on Campaign maps as well.  -->
+	
+	
+	
+	<!--	******************************************************************************
+					TOTAL STATE SET 
+	******************************************************************************	--> 
+	<AudioMixerGameDynamicStateSet id="AM_Standard_Full" Category="STANDARD">	
+		<State>AM_Explore</State>
+		<State>AM_Fighting</State>
+		<State>AM_CrawlerDestroyed</State>
+	</AudioMixerGameDynamicStateSet>
+
+	
+	<!--	******************************************************************************
+					STATES 
+      	******************************************************************************	-->
+	
+	<!-- Explore : The initial State before anything has happened yet. -->
+	<AudioGameDynamicState id="AM_Explore" AudioMixerEnterEvent="Explore">
+		<Transition>AM_Explore_to_AM_Fighting</Transition>
+		<Transition>AM_Explore_to_AM_CrawlerDestroyed</Transition>
+	</AudioGameDynamicState>
+
+	<!-- Fighting : Any fighting involving the Player on the screen -->
+	<AudioGameDynamicState id="AM_Fighting" AudioMixerEnterEvent="Combat">
+		<Transition>AM_Fighting_to_AM_Explore</Transition>
+		<Transition>AM_Fighting_to_AM_CrawlerDestroyed</Transition>
+	</AudioGameDynamicState>
+
+	<!-- CrawlerDestroyed : When player crawler is destroyed on screen -->
+	<AudioGameDynamicState id="AM_CrawlerDestroyed" AudioMixerEnterEvent="Explore">
+		<Transition>AM_CrawlerDestroyed_to_AM_Explore</Transition>
+		<Transition>AM_CrawlerDestroyed_to_AM_Fighting</Transition>
+	</AudioGameDynamicState>
+
+
+	<!--	******************************************************************************
+					TRANSITIONS
+	      ******************************************************************************	-->
+	<!-- Explore -->
+	<AudioGameDynamicTransition id="AM_Explore_to_AM_Fighting" DestinationState="AM_Fighting">
+		<Condition>AM_Explore_to_AM_Fighting_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="AM_Explore_to_AM_CrawlerDestroyed" DestinationState="AM_CrawlerDestroyed">
+		<Condition>AM_Explore_to_AM_CrawlerDestroyed_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+
+	<!-- Fighting -->
+	<AudioGameDynamicTransition id="AM_Fighting_to_AM_Explore" DestinationState="AM_Explore">
+		<Condition>AM_Fighting_to_AM_Explore_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="AM_Fighting_to_AM_CrawlerDestroyed" DestinationState="AM_CrawlerDestroyed">
+		<Condition>AM_Fighting_to_AM_CrawlerDestroyed_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+
+	<!-- CrawlerDestroyed -->
+	<AudioGameDynamicTransition id="AM_CrawlerDestroyed_to_AM_Explore" DestinationState="AM_Explore">
+		<Condition>AM_CrawlerDestroyed_to_AM_Explore_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="AM_CrawlerDestroyed_to_AM_Fighting" DestinationState="AM_Fighting">
+		<Condition>AM_CrawlerDestroyed_to_AM_Fighting_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+
+	<!--	******************************************************************************
+					CONDITIONS : General-Reuseable 
+				******************************************************************************	-->
+	<MusicScriptConditionNugget_Not id="AM_NoEngagement" >
+		<Condition>AM_AnyEngagement</Condition>
+	</MusicScriptConditionNugget_Not>
+
+	<MusicScriptConditionNugget_Or id="AM_AnyEngagement" >
+		<Condition>AM_PlayerUnitsEngaged</Condition>
+		<Condition>AM_EnemyUnitsEngaged</Condition>
+	</MusicScriptConditionNugget_Or>
+
+	<MusicScriptConditionNugget_EngagementCount id="AM_PlayerUnitsEngaged"
+		Count="1"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="false"
+		CountOnlyEngagementsByTheLocalPlayer="true"
+		RequiredScreenStatus="ON_SCREEN"
+		TimeBetweenConditionChecks="0.5s"
+		TargetFilter="AM_Filter_CombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_EngagementCount id="AM_EnemyUnitsEngaged"
+		Count="1"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="true"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_SCREEN"
+		TimeBetweenConditionChecks="0.5s"
+		TargetFilter="AM_Filter_CombatTargets">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_ScoredKillCount id="AM_PlayerCrawlerDestroyedOnScreen"
+		Count="1"
+		Time="3s"
+		KillCountMask="COUNT_ONLY_KILLS_AGAINST_LOCALPLAYER"
+		RequiredScreenStatus="ON_SCREEN"
+		Filter="AM_Filter_Crawlers">
+	</MusicScriptConditionNugget_ScoredKillCount>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="AM_CrawlerDestroyed_EnteredSecondsAgo"
+		TrackedState="AM_CrawlerDestroyed"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="5s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+	
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="AM_Explore_CurrentlyActive"
+		TrackedState="AM_Explore" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="AM_Fighting_CurrentlyActive"
+		TrackedState="AM_Fighting" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="AM_CrawlerDestroyed_CurrentlyActive"
+		TrackedState="AM_CrawlerDestroyed" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+
+	<!--	******************************************************************************
+					CONDITIONS : Transition-Specific Combinations 
+				******************************************************************************	-->
+	<!-- Explore -->
+	<MusicScriptConditionNugget_And id="AM_Explore_to_AM_Fighting_Allowed" >
+		<Condition>AM_Explore_CurrentlyActive</Condition>
+		<Condition>AM_AnyEngagement</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="AM_Explore_to_AM_CrawlerDestroyed_Allowed" >
+		<Condition>AM_Explore_CurrentlyActive</Condition>
+		<Condition>AM_PlayerCrawlerDestroyedOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+	
+	<!-- Fighting -->
+	<MusicScriptConditionNugget_And id="AM_Fighting_to_AM_Explore_Allowed" >
+		<Condition>AM_Fighting_CurrentlyActive</Condition>
+		<Condition>AM_NoEngagement</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="AM_Fighting_to_AM_CrawlerDestroyed_Allowed" >
+		<Condition>AM_Fighting_CurrentlyActive</Condition>
+		<Condition>AM_PlayerCrawlerDestroyedOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<!-- CrawlerDestroyed -->
+	<MusicScriptConditionNugget_And id="AM_CrawlerDestroyed_to_AM_Explore_Allowed" >
+		<Condition>AM_CrawlerDestroyed_CurrentlyActive</Condition>
+		<Condition>AM_CrawlerDestroyed_EnteredSecondsAgo</Condition>
+		<Condition>AM_NoEngagement</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="AM_CrawlerDestroyed_to_AM_Fighting_Allowed" >
+		<Condition>AM_CrawlerDestroyed_CurrentlyActive</Condition>
+		<Condition>AM_CrawlerDestroyed_EnteredSecondsAgo</Condition>
+		<Condition>AM_AnyEngagement</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<!--	******************************************************************************
+					EXTRA DATA : Stuff that isn't specific to AudioGameDynamic State 
+				******************************************************************************	-->
+	<ObjectFilterAsset id="AM_Filter_CombatTargets">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES">
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="AM_Filter_Crawlers">
+		<Filter
+			Rule="ANY"
+			Include="CRAWLER">
+		</Filter>
+	</ObjectFilterAsset>
+
+	<ObjectFilterAsset id="AM_Filter_EnemyCrawlers">
+		<Filter
+			Rule="ANY"
+			Relationship="ENEMIES"
+			Include="CRAWLER">
+		</Filter>
+	</ObjectFilterAsset>
+
+</AssetDeclaration>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:FXIonStormBone.w3x" />
+	</Includes>
+	<GameObject
+		id="IonStorm"
+		Side="Neutral" 
+		KindOf="IMMOBILE CAN_ATTACK UNATTACKABLE NOT_AUTOACQUIRABLE RESIST_EMP NO_COLLIDE NO_DRAW_PLAYER_NAME IGNORES_SELECT_ALL CAN_ATTACK_STEALTHED"
+		EditorSorting="MISC_NATURAL"
+		EditorName="IonStorm">
+		<DisplayName>Name:IonStorm</DisplayName>
+		<ArmorSet
+			Armor="InvulnerableArmor" />		
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL">
+					<Model
+						Name="FXIonStormBone" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="Weaponfx_" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="Weaponfx_" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="IonStorm_Clouds"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="IonStorm_CloudsRing"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="IonStorm_Dots"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="IonStorm_Glow"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="IonStorm_Light"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="IonStorm_Lightning"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="IonStorm_LightningCore"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PARALYZED">
+					<Model
+						Name="FXIonStormBone" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="IonStormWeapon" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="10s"
+				MaxLifetime="10s"
+				DeathType="SUICIDED" />
+			
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="IonStormFunctions"/>
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanAutoAcquireNonAutoAcquirable="true" 
+					SympathyRange="25.0" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="100.0"
+				Height="160.0"/>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="IonStorm_AmbientLoopMS" AudioType="soundAmbient" />
+		</AudioArraySound>		
+		<VisionInfo
+			VisionRange="500"
+			ShroudClearingRange="600" />
+		<CrusherInfo
+			CrushableLevel="100" />
+	</GameObject>
+
+	<WeaponTemplate
+		id="IonStormWeapon"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_AIRBORNE_INFANTRY ANTI_AIRBORNE_VEHICLE"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		AttackRange="200.0"
+		WeaponSpeed="9999"
+		AcceptableAimDelta="180d"
+		FireSound="IonStorm_WeaponFire"
+		FireFX="FX_LightningSpikeFire"
+		AutoReloadsClip="AUTO"
+		CanFireWhileMoving="true">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s"
+		/>
+		<Nuggets>
+			<DamageNugget
+				Damage="200.0"
+				Radius="5.0"
+				DamageType="BLAST"
+				DeathType="BURNED"
+				DamageFXType="ALIEN_ION">
+				<SpecialObjectFilter
+					Rule="ALL">
+					<ExcludeThing>UpgradeCrystal</ExcludeThing>
+				</SpecialObjectFilter>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+</AssetDeclaration>

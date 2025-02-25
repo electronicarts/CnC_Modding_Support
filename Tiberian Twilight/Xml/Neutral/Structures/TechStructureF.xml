@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+
+		<Include
+			type="all"
+			source="ART:NB_TechStructF_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechStructF_IDLA.w3x" />
+		<Include
+			type="all"
+			source="ART:NB_TechStructF_CPTR.w3x" />
+    <Include
+			type="all"
+			source="ART:NB_TechStructF_FX_IDLA.w3x" />
+    <Include
+			type="all"
+			source="ART:NB_TechStructF_FX_IDLB.w3x" />
+    <Include
+			type="all"
+			source="ART:NB_TechStructF_CUBE_CPTR.w3x" />
+    <Include
+			type="all"
+			source="ART:NB_TechStructF_FX_IDLC.w3x" />
+    <Include
+			type="all"
+			source="ART:NB_TechStructF_LITES_CPTR.w3x" />
+    <Include
+			type="all"
+			source="ART:NB_TechStructF_FX_CPTR.w3x" />
+
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+	</Includes>
+	<GameObject
+		id="TechStructureF"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_TechStructureF"
+		ButtonImage="Portrait_TechStructureF"
+		Side="Neutral"
+		EditorSorting="STRUCTURE"
+		BuildTime="15"
+		CommandSet="EmptyCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH"
+		RadarPriority="STRUCTURE"
+		EditorName="TechStructureF"
+		Description="Desc:TechBuildingTiberiumSilo">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechBuildingTiberiumSilo</DisplayName>
+		<ArmorSet
+			Armor="StructureArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechStructF_SKN" />
+				</ModelConditionState>
+				<!--
+						$note (MD) commented out since this was causing pink geo to be spawned in the level
+									Before uncommenting make sure that
+									1) all geo spawns in correct location (currently spawn is different location than building)
+									2) correct textures are applied.
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NB_TechStructF_SKN" />
+					<Texture
+						Original="NB_TechStructF"
+						New="TEMP_Red" />
+				</ModelConditionState>
+												-->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NB_TechStructF_SKN" />
+					<Texture
+						Original="NB_TechStructF"
+						New="TEMP_Red" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NB_TechStructF_SKN" />
+					<Texture
+						Original="NB_TechStructF"
+						New="TEMP_Red" />
+				</ModelConditionState>
+				
+				
+			<!--
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBSilo_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+		
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBSilo_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				-->
+
+
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="UNCAPTURED_IDLE">
+					<Animation
+						AnimationName="NB_TechStructF_CPTR"
+						AnimationMode="MANUAL"/>
+				</AnimationState>
+
+
+
+				
+				<!--when captured -->
+				<AnimationState
+          ParseCondStateType="PARSE_NORMAL"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+          ConditionsYes="USER_1"
+          StateName="CAPTURED">
+					<Animation
+            AnimationName="NB_TechStructF_IDLA"
+            AnimationMode="ONCE"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "UNCAPTURED_IDLE" then
+						CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+						end
+					</Script>
+				</AnimationState>
+
+
+
+
+				<!-- transition to captured state -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToCaptured">
+					<Animation
+						AnimationName="NB_TechStructF_CPTR"
+						AnimationMode="ONCE" />
+          <ParticleSysBone
+            BoneName="ROOTTRANSFORM"
+            FXParticleSystemTemplate="Doubler_StartupDust"
+            FollowBone="true"/>
+				</AnimationState>
+
+
+			<!--
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="CBSilo_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="CBSilo_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			-->
+			</ScriptedModelDraw>
+
+			
+      <!-- FX dissolve on when captured -->
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_CaptureFX">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="" />
+        </ModelConditionState>
+        <AnimationState
+					ParseCondStateType="PARSE_DEFAULT" />
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+          <Model
+						Name="NB_TechStructF_FX_CPTR" />
+        </ModelConditionState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="SPIKE_CAPTURED">
+          <Animation
+						AnimationName="NB_TechStructF_FX_IDLA"
+						AnimationMode="LOOP"/>
+          <Script>
+            Prev = CurDrawablePrevAnimationState()
+            if Prev ~= "SPIKE_CAPTURED" and Prev ~= "Transition_ToCaptured" then
+            CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToCaptured">
+          <Animation
+						AnimationName="NB_TechStructF_FX_CPTR"
+						AnimationMode="ONCE" />
+        </AnimationState>
+      </ScriptedModelDraw>
+      
+      <!-- SPOTLIGHTS dissolve on when captured -->
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_CaptureFX_B">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="" />
+        </ModelConditionState>
+        <AnimationState
+					ParseCondStateType="PARSE_DEFAULT" />
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+          <Model
+						Name="NB_TechStructF_LITES_CPTR" />
+        </ModelConditionState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="SPIKE_CAPTURED">
+          <Animation
+						AnimationName="NB_TechStructF_FX_IDLB"
+						AnimationMode="LOOP"/>
+          <Script>
+            Prev = CurDrawablePrevAnimationState()
+            if Prev ~= "SPIKE_CAPTURED" and Prev ~= "Transition_ToCaptured" then
+            CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToCaptured">
+          <Animation
+						AnimationName="NB_TechStructF_LITES_CPTR"
+						AnimationMode="ONCE" />
+        </AnimationState>
+      </ScriptedModelDraw>
+      
+      <!-- CUBE OUTLINE dissolves on when captured -->
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_CaptureFX_C">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="" />
+        </ModelConditionState>
+        <AnimationState
+					ParseCondStateType="PARSE_DEFAULT" />
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+          <Model
+						Name="NB_TechStructF_CUBE_CPTR" />
+        </ModelConditionState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="SPIKE_CAPTURED">
+          <Animation
+						AnimationName="NB_TechStructF_FX_IDLC"
+						AnimationMode="LOOP"/>
+          <Script>
+            Prev = CurDrawablePrevAnimationState()
+            if Prev ~= "SPIKE_CAPTURED" and Prev ~= "Transition_ToCaptured" then
+            CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+            end
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToCaptured">
+          <Animation
+						AnimationName="NB_TechStructF_CUBE_CPTR"
+						AnimationMode="ONCE" />
+        </AnimationState>
+      </ScriptedModelDraw>      
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<RebuildHoleExposeDie
+				id="ModuleTag_RebuildHoleExposeDie"
+				HoleObject="TechStructureFHole"
+				FadeInTimeSeconds="3.0s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</RebuildHoleExposeDie>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="2.0s" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="TechStructureEFunctions"
+			/>
+
+			<ModelConditionUpgrade
+				id="ModuleTag_FactionUpgrade"
+				AddConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+			</ModelConditionUpgrade>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1400.0"
+				InitialHealth="1400.0" />
+		</Body>
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_AnimationSound">
+				<Sound Sound="NEU_TCNDampener_StrF_AnimationCaptured1of2" Animation="NB_TechStructF_CPTR" Frame="0"/>
+				<Sound Sound="NEU_TCNDampener_StrF_AnimationCaptured2of2" Animation="NB_TechStructF_CPTR" Frame="39"/>
+			</AnimationSoundClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_CapturedAmbientLoop">
+				<ModelConditionSound Sound="NEU_TCNDampener_StrF_AmbientLoop" RequiredFlags="USER_1" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="50.0"
+				Height="100.0"></Shape>
+		</Geometry>
+		<!-- <AudioArrayVoice>
+			<AudioEntry Sound="GDI_SiloSelect" AudioType="voiceSelect" />
+		</AudioArrayVoice> -->
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+	</GameObject>
+</AssetDeclaration>

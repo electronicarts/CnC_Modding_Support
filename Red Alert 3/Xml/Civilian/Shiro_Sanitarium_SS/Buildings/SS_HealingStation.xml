@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:SS_HealingStation.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseObject.xml" />
+		<Include type="instance" source="DATA:Civilian/Shiro_Sanitarium_SS/Props/SS_HealingStation_Collapse.xml" />
+		<Include type="instance" source="DATA:Civilian/Shiro_Sanitarium_SS/Props/SS_HealingStationRagdoll_Collapse.xml" />
+
+	</Includes>
+	<GameObject
+		id="SS_HealingStation"
+		inheritFrom="BaseObject"
+		Side="Neutral"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS RESIST_EMP NOT_AUTOACQUIRABLE"
+		CommandSet="EmptyCommandSet"
+		EditorName="SS_HealingStation"
+	    EditorSorting="STRUCTURE"
+		SelectPortrait="Portrait_SS_HealingStation"
+		ButtonImage="Button_SS_HealingStation"
+		Description="DESC:SS_HealingStation"
+		TypeDescription="TYPE:SS_HealingStation" 
+		Browser="REGION Shiro_Sanitarium_SS STRUCTURE">
+		<DisplayName>Name:SS_HealingStation</DisplayName>
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="StructureArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false"
+				AffectedByStealth="false"
+				ExtraPublicBone="A BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SS_HealingStation" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="SS_HealingStationLight"/>						
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="SS_HealingStation"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.5"
+						AnimationSpeedFactorMax="0.5"/>
+				</AnimationState>
+			
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<!-- passive healing behavior when NOT attacking
+				 This behavior needs to go before the PassiveAreaEffectBehavior when 
+			     attacking behavior so that it has precendence in evaluation -->
+			<PassiveAreaEffectBehavior
+				id="ModuleTag_PassiveHealWhenNotAttacking"
+				EffectRadius="100.0"
+				SurveyDelayFrames="1" 
+				HealingPercentPerSecond="15%"
+				AffectWoundedOnly="true"
+				AffectUnderAttack="false"
+				NonStackable="true"
+				HealFX=""
+				DisabledTypesToProcess="HELD">
+				<AllowFilter
+					Rule="ANY"
+					Include="INFANTRY"
+					StatusBitFlagsExclude="IS_FIRING_WEAPON">
+					<ExcludeThing>SovietScoutVehicle</ExcludeThing>
+				</AllowFilter>
+			</PassiveAreaEffectBehavior>
+			
+			<!-- passive healing behavior when attacking-->
+			<PassiveAreaEffectBehavior
+				id="ModuleTag_PassiveHealWhenAttacking"
+				EffectRadius="100.0"
+				SurveyDelayFrames="4"
+				HealingPercentPerSecond="1%"
+				AffectWoundedOnly="true"
+				AffectUnderAttack="true"
+				NonStackable="true"
+				HealFX=""
+				DisabledTypesToProcess="HELD">
+				<AllowFilter
+					Rule="ANY"
+					Include="INFANTRY">
+					<ExcludeThing>SovietScoutVehicle</ExcludeThing>
+				</AllowFilter>
+			</PassiveAreaEffectBehavior>			
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="FX_BuildingDebrisExplosion"
+					CreationObject="YU_HotelDebris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Large" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Tiny" />
+				<Event
+					Index="onDeath"
+					FX="FX_SpecialDebrisExplosionShake" />
+			</FXListBehavior>
+
+			<DynamicsUpdate
+				id="ModuleTag_DefaultDynamicsUpdate"
+				Motion="STATIC"
+				Collision="OMNICOLLIDING" />
+
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SS_HealingStation_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="DefaultBody"
+				MaxHealth="20000.0" />
+		</Body>		
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				Type= "CYLINDER"
+				MajorRadius = "15.0"
+				MinorRadius = "15.0"
+				Height = "40.0"
+				ContactPointGeneration = "STRUCTURE" />
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+
+	<ObjectCreationList
+		id="SS_HealingStation_Die_OCL">
+
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>SS_HealingStation_Collapse</CreateObject>
+		</CreateObject>
+
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING BUILDING_CHUNKS"
+			Count="1"
+			VelocityScale="120.0">
+			<Offset x="2" y="5" z="7"/>
+			<CreateObject>SS_HealingStation_Ragdoll</CreateObject>
+		</CreateObject>
+
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE BUILDING_CHUNKS"
+			Count="1"
+			VelocityScale="120.0">
+			<Offset x="2" y="-5" z="7"/>
+			<CreateObject>SS_HealingStation_Ragdoll</CreateObject>
+		</CreateObject>
+
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING BUILDING_CHUNKS"
+			Count="1"
+			VelocityScale="120.0">
+			<Offset x="5" y="0" z="7"/>
+			<CreateObject>SS_HealingStation_Ragdoll</CreateObject>
+		</CreateObject>
+		
+	</ObjectCreationList>		
+</AssetDeclaration>

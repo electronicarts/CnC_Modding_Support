@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:SquadMarkAUMar.w3x" />
+		<Include
+			type="all"
+			source="ART:FXMaruader_FP.w3x" />			
+		<Include
+			type="all"
+			source="ART:NUMutant_SKN.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseSquad.xml" />
+	</Includes>
+	<GameObject
+		id="MutantMarauderSquad"
+		inheritFrom="BaseSquad"
+		SelectPortrait="Portrait_MutantMaurader"
+		ButtonImage="Portrait_MutantMaurader"
+		Side="Neutral"
+		EditorSorting="UNIT"
+		TransportSlotCount="1"
+		BuildTime="6.0"
+		CommandSet="MutantSquadCommandSet"
+		CommandPoints="6"
+		KindOf="SELECTABLE CAN_ATTACK INFANTRY HORDE ARMY_SUMMARY LARGE_RECTANGLE_PATHFIND HEALED_BY_TIBERIUM CAN_CAPTURE SCORE SUMMONED HARDENED_ANTI_AIR"
+		IsTrainable="true"
+		FormationWidth="2"
+		FormationDepth="1"
+		ProductionQueueType="INFANTRY"
+		UnitCategory="INFANTRY"
+		EditorName="MutantMarauderSquad"
+		TypeDescription="Type:NeutralMutantMarauder"
+		UnitTypeIcon="MutantMarauderIcon">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="600"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NeutralMutantMarauder</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<LocomotorSet
+			Locomotor="NormalRangedSquadLocomotor"
+			Condition="NORMAL"
+			Speed="55.0" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				DependencySharedModelFlags="EMOTION_TAUNTING EMOTION_ALERT EMOTION_MORALE_HIGH EMOTION_MORALE_LOW EMOTION_AFRAID EMOTION_COWER SELECTED  EMOTION_TERROR EMOTION_LOOK_TO_SKY">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="FXMaruader_FP" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="WORLD_BUILDER">
+					<Model
+						Name="SquadMarkAUMar" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="MutantMarauderSquadGunRangeFinder" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			
+			<Physics
+				id="ModuleTag_Physics" />
+			<HordeContain
+				id="ModuleTag_HordeContain"
+				FrontAngle="4.7123"
+				FlankedDelaySeconds="2.0"
+				ShowPips="false"
+				Formation="MAIN"
+				MeleeAttackLeashDistance="1"
+				Slots="3"
+				ObjectStatusOfContained=""
+				ConditionForEntry="INVALID"
+				BannerCarrierMinLevel="0">
+				<PassengerFilter
+					Rule="NONE"
+					Include="INFANTRY" />
+				<DieMuxData />
+				<InitialPayload
+					Name="MutantMarauder"
+					Count="3" />
+				<RandomOffset
+					x="0"
+					y="0" />
+				<RankInfo
+					RankID="1"
+					UnitType="MutantMarauder">
+					<Position
+						X="0"
+						Y="0" />
+				</RankInfo>
+				<RankInfo
+					RankID="2"
+					UnitType="MutantMarauder">
+					<Position
+						X="-15"
+						Y="15" />
+					<Position
+						X="-15"
+						Y="-15" />
+				</RankInfo>
+				<RankToReleaseWhenAttacking>1</RankToReleaseWhenAttacking>
+				<RankToReleaseWhenAttacking>2</RankToReleaseWhenAttacking>
+			</HordeContain>
+			<InvisibilityUpdate
+				id="ModuleTag_InvisibilityUpdate"
+				RequiredNearbyObjectRange="20"
+				UpdatePeriod="1s"
+				InvisibilityTemplate="MutantMarauderInvisibilityTemplate">
+				<RequiresNearbyObjectFilter
+					Rule="ANY"
+					Include="TIBERIUM TIBERIUM_FIELD" />
+			</InvisibilityUpdate>
+			<AimWeapon
+				id="ModuleTag_AimWeapon"
+				AimHighThreshold="0.5"/>
+			<ExperienceLevelCreate xmlns="uri:ea.com:eala:asset"
+				id="ModuleTag_MutantExperienceLevelGain">
+				<LevelUpgrade Level="3" RequiredUpgrade="Upgrade_Mutant_Allies_Rank3" />
+				<LevelUpgrade Level="2" RequiredUpgrade="Upgrade_Mutant_Allies_Rank2" />
+			</ExperienceLevelCreate>
+		</Behaviors>
+		<AI>
+			<HordeAIUpdate
+				id="ModuleTag_HordeAIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES ATTACK_BUILDINGS"
+				MaxCowerTime="5.0s"
+				MinCowerTime="3.0s">
+				<UnitAITargetChooserData
+					SympathyRange="25.0" />
+			</HordeAIUpdate>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				MaxHealth="1.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="20.0"
+				MinorRadius="25.0"
+				Height="20.0" />
+		</Geometry>
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="450"
+			MaxVisionBonusPercent="300"
+			VisionBonusTestRadius="200"
+			VisionBonusPercentPerFoot="1" />
+		<CrusherInfo
+			UseCrushAttack="false"
+			CrushableLevel="0"
+			CrusherLevel="0" />
+	</GameObject>
+</AssetDeclaration>

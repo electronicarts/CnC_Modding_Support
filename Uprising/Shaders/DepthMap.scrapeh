@@ -1,0 +1,127 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2008 Electronic Arts Inc
+//
+// Scrape script for depth map pass
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_DEPTH_MAP_SCRAPEH
+#define SCRAPE_SCRIPT_DEPTH_MAP_SCRAPEH
+
+//
+// Depth map
+//
+
+// This buffer holds the depth information in linear format
+var texture DepthTexture $PostEffect.FrameBufferSize.x $PostEffect.FrameBufferSize.y R32F
+
+#if defined(EA_PLATFORM_WINDOWS)
+
+	#define DepthRenderTarget DepthTexture
+	
+	var texture DepthTextureLinear $PostEffect.FrameBufferSize.x $PostEffect.FrameBufferSize.y R32F
+	#define DepthTextureLinearTarget DepthTextureLinear
+	
+#elif defined(EA_PLATFORM_XENON)
+	
+	var texture ZBufferTexture $PostEffect.FrameBufferSize.x $PostEffect.FrameBufferSize.y D24FS8
+
+	var surface DepthRenderTarget edram $PostEffect.FrameBufferSize.x $PostEffect.FrameBufferSize.y R32F
+	var surfacegroup DepthGroup DepthRenderTarget DepthBuffer
+
+#endif
+
+var shader PostEffectLinearDepthShader 	PostFX_LinearDepth.fx
+
+// Moved from common because the shadow pass and depth pass render different things.
+proc renderDepthCasters
+	renderTerrain 
+
+	renderbin TerrainLikeGroundObject
+	renderbin Bridge
+	renderProps
+
+	beginevent RenderCasters_Units
+		callproc renderBinsUnit
+		callproc renderBinsUnitOutline
+	endevent RenderCasters_Units
+
+	renderbin Solid
+
+	beginevent RenderCasters_Structures
+		renderbin Structure
+		callproc renderBinsStructureOutline
+	endevent RenderCasters_Structures
+
+	renderbin PartiallyTransparentWall
+
+	renderbin StaticSort5 					// Underwater Sorting
+	callproc renderBinsStaticSort
+	renderbin Transparent
+	renderTransparentOutlineObjects
+endproc
+
+proc updateDepthMapReally
+	beginevent UpdateDepthMap
+
+#if defined(EA_PLATFORM_XENON)
+	settarget 0 NULL
+#else
+	settarget 0 DepthRenderTarget
+#endif
+	setdepth DepthBuffer
+	
+	beginDepthOverrideTechnique
+		
+	setclearcolor		1 1 1 1
+	setcleardepth       1.0
+	
+#if defined(EA_PLATFORM_XENON)
+	clearz
+#else
+	clear
+#endif
+	
+	setcamera Viewer
+	visibleobjects DepthMap
+	
+	callproc renderDepthCasters
+
+	endDepthOverrideTechnique
+	
+	setshader PostEffectLinearDepthShader LinearDepth
+	
+#if defined(EA_PLATFORM_XENON)
+	resolve ZBufferTexture depthstencil
+	
+	settarget 0 DepthRenderTarget
+	
+	settexture PostEffect DepthBufferTexture ZBufferTexture
+
+	renderquad
+	
+	resolve DepthTexture
+	
+	settexture WW3D DepthTexture DepthTexture
+#else
+	settarget 0 DepthTextureLinearTarget
+	
+	settexture PostEffect DepthBufferTexture DepthTexture
+
+	renderquad
+
+	settexture WW3D DepthTexture DepthTextureLinear	
+#endif
+
+	endevent UpdateDepthMap
+endproc
+
+
+proc updateDepthMap
+	// Note(s): Depth texture is needed for deferred water shading and soft particles.
+	if Water IsReflectionVisible
+		callproc updateDepthMapReally
+	elif Particle IsSoftParticlesEnabled
+		callproc updateDepthMapReally
+	endif
+endproc
+
+#endif // SCRAPE_SCRIPT_DEPTH_MAP_SCRAPEH

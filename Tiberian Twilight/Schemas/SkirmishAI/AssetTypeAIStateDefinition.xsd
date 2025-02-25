@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="AIBank.xsd"/>
+	<xs:include schemaLocation="AIBaseSelectionCriteria.xsd"/>
+	<xs:include schemaLocation="AssetTypeAIStateHeuristic.xsd"/>
+	<xs:include schemaLocation="AssetTypeAIStateTactic.xsd"/>
+	<xs:include schemaLocation="AssetTypeAITeamTemplate.xsd"/> 
+	<xs:include schemaLocation="../Includes/PathfindingCheckType.xsd"/>
+
+	<xs:complexType name="AIStategicStateCombatStartPower">
+		<xs:sequence>
+			<xs:element name="SpecialPower" type="SpecialPowerTemplateRef" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+
+		<!-- When the team is in combat and one unit is within this range from the Tactic target, try to cast each power in list 
+			until one is cast.	If we fail to cast any powers, there will be no further attempts.	-->
+		<xs:attribute name="DistanceTeamToTargetToAttemptCast" type="SageReal" default="100" />
+
+		<!-- When a target heuristic finds a location to cast the power, it must be within this distance of the Tactic target (or
+			from a random team unit in the team if no target.) -->
+		<xs:attribute name="MaxDistanceToAllowPowerToCastFromTarget" type="SageReal" default="100" />
+	</xs:complexType>
+
+	<xs:complexType name="AIStateDefinition" xas:runtimeWrapper="::AIState" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="Heuristic" type="HeuristicChoice" minOccurs="1" maxOccurs="1">
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AIStrategicStateDefinition" xas:runtimeWrapper="::AIStrategicState" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="AIStateDefinition">
+				<xs:sequence>
+					<xs:element name="TargetHeuristic" type="StateTargetHeuristic" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="Tactic" type="AIStateTactic" minOccurs="0" maxOccurs="unbounded" />
+				    <xs:element name="CombatStartPower" type="AIStategicStateCombatStartPower" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="TargetHeuristicReevaluationInterval" type="AITargetHeuristicReevaluationInterval" default="STATE_CREATION_AND_START" />
+				<!-- If TargetHeuristicReevaluationInterval="PERIODICALLY", how often does the target heuristic
+					 get reevaluated while the state is running? -->
+				<xs:attribute name="TargetHeuristicReevaluationTime" type="Time" default="5.0s" />
+				<!-- If TargetHeuristicReevaluationInterval="PERIODICALLY" do we only reevaluate if the team
+						micromanager state is idle? -->
+				<xs:attribute name="TargetHeuristicReevaluateOnlyWhenIdle" type="SageBool" default="false" />
+				<!-- Can override TargetHeuristicReevaluateOnlyWhenIdle, if the type of the current target does not match expected. 
+						Any valid target should at least have LOCATION 
+						See AssetTypeAIStateTactic.xsd for the definition of the TacticTargetType 
+						Only used if TargetHeuristicReevaluationInterval="PERIODICALLY" -->
+				<xs:attribute name="TargetHeuristicExpectedTargetType" type="TacticTargetType" default="ANY" />
+				<xs:attribute name="MaxTargets" type="xs:unsignedInt" default="1" />
+				<xs:attribute name="MaxRunningCopies" type="xs:unsignedInt" use="optional" />
+				<xs:attribute name="MaxInactiveCopies" type="xs:unsignedInt" use="optional" />
+				<xs:attribute name="PathfindingCheckType" type="PathfindingCheckType" use="optional" />
+				<xs:attribute name="CannotAttackTargetReaction" type="AICannotAttackTargetReaction" use="optional" />
+				<xs:attribute name="TeamGatherBeginFeedbackKey" type="StringHash" use="optional" />
+				<xs:attribute name="ExecutionBeginFeedbackKey" type="StringHash" use="optional" />
+				<xs:attribute name="ExecutionCanceledFeedbackKey" type="StringHash" use="optional" />
+				<xs:attribute name="ExecutionCompleteFeedbackKey" type="StringHash" use="optional" />
+
+				<!-- If this is greater than zero, allied AIs will attempt to coordinate attacks. 
+						 In particular, if the target is found to be too hard for a single AI to 
+						 crack (the AI won't be able to beat the MinPowerAdvantage even with all its 
+						 units and with some extra building), then all AIs with the same target will
+						 start joining forces to beat the MinPowerAdvantage and attack the target at the
+						 same time.
+						 Only one cross-AI coordinated attack can happen at a time - and it will be the
+						 one with the highest CoordinatedAttackPriority. -->
+				<xs:attribute name="CoordinatedAttackPriority" type="SageUnsignedInt" default="0" />
+				
+				<!-- If this is set, then we only consider doing a coordinated attack if we can't
+				     beat this power advantage by ourselves. If it is not set, we use the MinPowerAdvantage
+						 from the tactics. -->
+				<xs:attribute name="MaxPowerAdvantageForCoordinatedAttacks" type="SageReal" use="optional" />
+
+				<!-- If this is set, then we only consider doing a coordinated attack if we can't
+				     beat this command point advantage by ourselves. If it is not set, we use the MinCommandPointAdvantage
+						 from the tactics. -->
+				<xs:attribute name="MaxCommandPointAdvantageForCoordinatedAttacks" type="SageReal" use="optional" />				
+
+				<!-- By default, we consider building all the way up to the Player command point cap when 
+				     deciding what else we could build. However, we can override that to give a lower 
+						 cap by setting this.
+						 This only affects when the attack becomes coordinated; it doesn't affect the
+						 actual recruiting of units. -->
+				<xs:attribute name="MaxCommandPointsForCoordinatedAttack" type="SageInt" use="optional" />
+				
+				<!-- By default, the only limit on the number of units we consider building is 
+				     the maxUnits in the teams. But you can set this to a lower number if you want.
+						 This only affects when the attack becomes coordinated; it doesn't affect the
+						 actual recruiting of units. -->
+				<xs:attribute name="MaxUnitsForCoordinatedAttack" type="SageInt" use="optional" />
+				
+				<!-- Sometimes, even when we have maxed out our units, we still can't beat the max power 
+				     advantage. For 'big' attacks, we don't want to just give up and never ever attack
+						 the target. At some point, if we have enough units, we just plain go for it even
+						 if we don't know we can win. -->
+				<xs:attribute name="CoordinatedAttacksIgnoreMaxPowerAdvantageIfTeamsAreFull" type="SageBool" default="false" />
+				
+				<!-- Ditto for the Command Point Advantage.  We just need to hope we can wreak 
+								enough damage to out weight the command point deficit -->
+				<xs:attribute name="CoordinatedAttacksIgnoreMaxCommandPointAdvantageIfTeamsAreFull" type="SageBool" default="false" />
+				
+				<!-- For CoordinatedAttacksIgnoreMaxPowerAdvantageIfTeamsAreFull and 
+									CoordinatedAttacksIgnoreMaxCommandPointAdvantageIfTeamsAreFull: 
+						Count the team as full if it would have this many command points, expressed 
+						 as a percentage of the player's maximum. Doesn't actually block recruiting, just
+						 another way to get counted as full when trying to get a Coordinated Attack going. 
+						 Pointless unless CoordinatedAttacksIgnoreMaxPowerAdvantageIfTeamsAreFull or
+						 CoordinatedAttacksIgnoreMaxCommandPointAdvantageIfTeamsAreFull is true
+						 in at least one of the states in the Coordinated Attack.
+						 NOTE: Generally will not work if set to 100% - players usually cannot quite build up
+						 to 100% of their CP limit.  -->
+				<xs:attribute name="CoordinatedAttacksAlsoCountAsFullWhenCommandPointIsPercentOfPlayerMaximum" type="Percentage" use="optional" />
+				
+				<!-- The special power PLAYER_CREATE_MCV needs a target to optimally deploy the crawler. 
+				     Setting to true tells the power that it can use a target created from this state.	-->
+				<xs:attribute name="CreateMcvPowerCanUse" type="xs:boolean" default="false"/>
+
+
+			</xs:extension>
+	  </xs:complexContent>
+  </xs:complexType>
+
+	<!-- Give this its own XSD at some point perhaps -->
+	<xs:simpleType name="AICheatType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ResourceMultiplier" />
+			<xs:enumeration value="ThreatMultiplier" />
+			<xs:enumeration value="BuildTimeMultiplier" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="AICheatData">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="CheatType" type="AICheatType" use="required" />
+		<xs:attribute name="Percentage" type="Percentage" default="100%"/>
+	</xs:complexType>
+	
+	<xs:complexType name="AICheatStateDefinition" xas:runtimeWrapper="::AICheatState" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="AIStateDefinition">
+				<xs:sequence>
+					<!-- Should be no more than the number of cheat types -->
+					<xs:element name="Cheat" type="AICheatData" minOccurs="1" maxOccurs="3" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<!-- Needed to get around the lack of asset name strings in final builds. Basically, if you want to 
+	     reference a state from WB, give it a name using this -->
+	<xs:complexType name="AIStrategicStateName" xas:typeGroup="Xml">
+	  <xs:complexContent>
+		  <xs:extension base="BaseAssetType">
+			  <xs:sequence>
+			  </xs:sequence>
+			  <xs:attribute name="State" type="AssetReference" xas:refType="AIStrategicStateDefinition" use="required" />
+			  <xs:attribute name="Name" type="xs:string" use="required" />
+			</xs:extension>
+	  </xs:complexContent>
+	 </xs:complexType>
+
+  <xs:complexType name="AIBudgetStateDefinition" xas:runtimeWrapper="::AIBudgetState" xas:typeGroup="Xml">
+	  <xs:complexContent>
+		  <xs:extension base="AIStateDefinition">
+			  <xs:sequence>
+				  <xs:element name="Budget" type="AIBankBudget" minOccurs="1" maxOccurs="1" />
+			  </xs:sequence>
+		  </xs:extension>
+	  </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIBuildStateDefinition" xas:runtimeWrapper="::AIBuildState" xas:typeGroup="Xml">
+    <xs:complexContent>
+      <xs:extension base="AIStateDefinition">
+        <xs:sequence>
+          <xs:element name="BuildEntry" type="AIBuildEntry" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <!-- Target Heuristics in a state -->
+  <xs:complexType name="StateTargetHeuristic">
+		<xs:attribute name="id" type="Poid" xas:pipelineOnly="true"/>
+		<xs:attribute name="TargetHeuristic" type="AssetReference" xas:refType="AITargetingHeuristic" use="required"/>
+		<!-- Targetting heuristics with higher priority are checked first -->
+		<xs:attribute name="Priority" type="SageInt" default="10" />
+  </xs:complexType>
+
+</xs:schema>

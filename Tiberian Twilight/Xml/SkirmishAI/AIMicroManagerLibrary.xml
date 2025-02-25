@@ -1,0 +1,1433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+	<Includes></Includes>
+	<Defines>
+		<Define name="INITIAL_JOIN_DISTANCE" value="600" />
+		<Define name="INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" value="80.0" />
+	</Defines>
+	
+	<!-- Base micromanager. Inherit from this, do not use directly -->
+	<AIMicroManagerData
+		id="BaseMicroManager"
+		UpdateTime="0.5s"
+		MaxTeamIdleTime="15s"
+		MaxTeamIdleDistanceChange="50.0" 
+		MaxUnitIdleTime="10s"
+		MaxUnitIdleDistanceChange="30.0"
+		EnemySearchDistanceVisionMultiplier="1.5"
+		MinTimeToKeepTempVisionRangeBonus="10s"
+		EnemyHealerValueFudgeFactor="20.0"
+		SiegeWeaponBuffer="1.5"
+		DodgeThreatsReactionTimeMin="0.5s"
+		DodgeThreatsReactionTimeMax="0.5s"
+		GatherTempVisionRangeBonus="1.5"
+		RetreatTempVisionRangeBonus="1.5"
+		MaxSecondaryDamageFraction="1.3"
+		OverrideSpecialPowersAllowed="CRAWLER_UNPACK CRAWLER_PACK"
+		TacticControlledSpecialPowersAllowed="MOVEMENT SPEED_BOOST">
+		
+		<!-- Prefer to retreat to goal nodes first. Then to either captured nodes or our spawn zone. -->
+		<RetreatBaseCriteria
+			PreferredBaseTypes="GAMEPLAY_STRUCTURE_BASE INCLUDES_GOAL_STRUCTURE" 
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_CLOSEST" />
+
+		<!-- Remove this once we get a real fix for the AI attacking goals inappropriately -->
+		<IgnoreTargets
+			Rule="ANY"
+			Include="GOAL_STRUCTURE" />
+
+		<CrateCollectionInfo
+			UnitScoreStartingValue="6.0"
+			DistanceScoreFactor="300.0"
+			DistanceScoreDivisor="50.0"
+			ShouldAvoidSwitchingPenalty="1.0"
+			UpgradeCrateRequiredClass="HEAVY"
+			RejectUnitForUpgradeCratePickupByStatus="HAS_CRATE_UPGRADE AI_SKIP_UPGRADE_CRATE_SEARCH"
+			CrateAvoidanceDistance="100.0"
+			CratePickupDelay="3s"/>
+
+		<HealInfo
+			ScoreDistanceMinRange="100.0"
+			ScoreDistanceMaxRange="300.0"
+			ScoreDistanceMinRangeIdle="150.0"
+			ScoreDistanceMaxRangeIdle="350.0"
+			ScoreSkirmishAIValueMax="500"
+			HealRetargetDelay="8s"
+			HealStartMinimumHealthPriorityThreshold="50%"
+			Options="NO_STACKING_HEALS"
+			StatusToRejectUnitForHeal="BURROWING DISABLED_FOR_RECYCLE" />
+
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+
+	</AIMicroManagerData>
+
+	<!-- General MicroManagers -->
+
+	<AIMicroManagerData
+    id="StandardMicroManager"
+		inheritFrom="BaseMicroManager"
+    EngageHostileTargets="true"
+    EngagePassiveTargets="true"
+    EngageTacticalTarget="true"
+    EnemySearchDistanceVisionMultiplier="1.5"
+    RetreatPowerAdvantage="0.6"
+    RetreatMinDistanceFromBase="600.0"
+    RetreatMinDistanceToFallback="500.0"
+    AlphaStrikeTargetHealthPct="0.35"
+    AlphaStrikeTargetTimeToKill="2.0"
+    Crush="true"
+    EnterGarrisons="true"
+    EnterGarrisonableStructureDistance="300"
+		EnterBaseDefensesWhenIdle="false"
+    PullbackInjured="true"
+    PullbackInjuredHealthPct="0.35"
+    ReverseMove="true"
+    DodgeThreats="true"
+    UseSpecialPowers="true">
+		<CrateCollectionInfo CratePickupDelay="0s"/>
+	</AIMicroManagerData>
+
+  <AIMicroManagerData
+    id="StandardMicroManager_MEDIUM"
+    inheritFrom="StandardMicroManager"
+    UpdateTime="2.0s"
+    EnemySearchDistanceVisionMultiplier="1.75"
+		RetreatPowerAdvantage="0.5"
+    TimeToKeepTargetMin="3s"
+    TimeToKeepTargetMax="5s"
+    RandomTargetScoreModifier="2.0"
+		KiteAttack="false"
+		ReverseMove="false"
+    DodgeThreatsReactionTimeMin="6s"
+    DodgeThreatsReactionTimeMax="14s"
+    SpecialPowerDelayMinimum="2s"
+    SpecialPowerDelayMaximum="8s">
+    <SpecificSpecialPowerDelay PowerType="TOGGLE" TogglePowerSubType="TOGGLE_LOCKDOWN" MinimumDelay="20s" MaximumDelay="40s"/>
+		<CrateCollectionInfo CratePickupDelay="8s"/>
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			ScuttleUnitHealth_Combat="25%"
+			ScuttleUnitsTimeBetweenChecks="1s">
+			<ScuttleUnitIfTimeToDieInRange
+				Low="0s"
+				High="25s">
+				<ObjectFilter
+						Rule="ANY"
+						Include="CRAWLER"/>
+			</ScuttleUnitIfTimeToDieInRange>
+		</ScuttleUnitInfo>
+  </AIMicroManagerData>
+
+  <AIMicroManagerData
+    id="StandardMicroManager_EASY"
+    inheritFrom="StandardMicroManager"
+    UpdateTime="3.0s"
+    EnemySearchDistanceVisionMultiplier="2.0"
+    UseGatherState="false" 
+    TimeToKeepTargetMin="5s"
+    TimeToKeepTargetMax="7s"
+    RandomTargetScoreModifier="4.0"
+    RetreatPowerAdvantage="0.0"
+    CrushPreference="0.5"
+		CanCollectCrates="false"
+    EnterGarrisons="false"
+		KiteAttack="false" 
+    PullbackInjured="false"
+    ReverseMove="false"
+    DodgeThreats="false"
+    UseSpecialPowers="false"
+    SpecialPowerDelayMinimum="6s"
+    SpecialPowerDelayMaximum="16s">
+    <SpecificSpecialPowerDelay PowerType="TOGGLE" TogglePowerSubType="TOGGLE_LOCKDOWN" MinimumDelay="40s" MaximumDelay="80s"/>
+    <IgnoreTargets Rule="ANY"
+      Include="NEUTRAL_TECH GOAL_STRUCTURE">
+    </IgnoreTargets>
+  </AIMicroManagerData>
+	
+	<AIMicroManagerData
+		id="CleanupMicroManager"
+		inheritFrom="StandardMicroManager"
+		FractionBlockedToDestroyWalls="0.2"/>
+
+	<AIMicroManagerData
+		id="FocusedMicroManager"
+		inheritFrom="StandardMicroManager"
+		EnemySearchDistanceVisionMultiplier="0.9">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			ScuttleUnitHealth_Combat="35%"
+			ScuttleUnitsTimeBetweenChecks="1s">
+			<ScuttleUnitIfTimeToDieInRange
+				Low="15s"
+				High="30s">
+				<ObjectFilter
+						Rule="ANY"
+						Include="CRAWLER"/>
+			</ScuttleUnitIfTimeToDieInRange>
+		</ScuttleUnitInfo>
+	</AIMicroManagerData>
+	
+	<AIMicroManagerData
+    id="FocusedMicroManager_MEDIUM"
+    inheritFrom="StandardMicroManager_MEDIUM"
+    EnemySearchDistanceVisionMultiplier="0.9"  />
+
+	<AIMicroManagerData
+		id="OverwhelmMicroManager"
+		inheritFrom="StandardMicroManager"
+		RetreatPowerAdvantage="0.8"
+		EnemySearchDistanceVisionMultiplier="1.0">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			ScuttleUnitHealth_Combat="35%"
+			ScuttleUnitsTimeBetweenChecks="1s">
+			<ScuttleUnitIfTimeToDieInRange
+				Low="15s"
+				High="30s">
+				<ObjectFilter
+						Rule="ANY"
+						Include="CRAWLER"/>
+			</ScuttleUnitIfTimeToDieInRange>
+		</ScuttleUnitInfo>
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="OverwhelmMicroManager_MEDIUM"
+		inheritFrom="StandardMicroManager_MEDIUM"
+		RetreatPowerAdvantage="0.8"
+		EnemySearchDistanceVisionMultiplier="1.0">
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="FocusedGarrisonMicroManager"
+		inheritFrom="StandardMicroManager"
+		EngageHostileTargets="false"
+		EngagePassiveTargets="false"
+		EngageTacticalTarget="false"
+		EnemySearchDistanceVisionMultiplier="1.0"
+		CanCollectCrates="false"
+		KiteAttack="false"
+    PullbackInjured="false"
+    ReverseMove="false"
+    DodgeThreats="false"
+		SpecialPowersForbidden="EVACUATE"
+	/>
+	
+	<AIMicroManagerData
+		id="OverwhelmFocusedMicroManager"
+		inheritFrom="FocusedMicroManager"
+		RetreatPowerAdvantage="0.8">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="OverwhelmFocusedMicroManager_MEDIUM"
+		inheritFrom="FocusedMicroManager_MEDIUM"
+		RetreatPowerAdvantage="0.8">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="OverwhelmCrawlerScuttleFocusedMicroManager"
+		inheritFrom="OverwhelmFocusedMicroManager"
+		RetreatPowerAdvantage="0.8">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			ScuttleUnitHealth_Combat="35%"
+			ScuttleUnitsTimeBetweenChecks="1s">
+			<ScuttleUnitIfTimeToDieInRange
+				Low="15s"
+				High="30s">
+				<ObjectFilter
+						Rule="ANY"
+						Include="CRAWLER"/>
+			</ScuttleUnitIfTimeToDieInRange>
+		</ScuttleUnitInfo>
+	</AIMicroManagerData>
+	
+	<AIMicroManagerData
+		id="DeterminedFocusedMicroManager"
+		inheritFrom="FocusedMicroManager"
+		RetreatPowerAdvantage="0.5">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+	
+	<AIMicroManagerData
+			id="DeterminedCrawlerScuttleFocusedMicroManager"
+			inheritFrom="DeterminedFocusedMicroManager">
+			<ScuttleUnitInfo
+				id="Tag_ScuttleUnitInfo"
+				ScuttleUnitHealth_Combat="35%"
+				ScuttleUnitsTimeBetweenChecks="1s">
+				<ScuttleUnitIfTimeToDieInRange
+					Low="15s"
+					High="30s">
+					<ObjectFilter
+							Rule="ANY"
+							Include="CRAWLER"/>
+				</ScuttleUnitIfTimeToDieInRange>
+			</ScuttleUnitInfo>
+		</AIMicroManagerData>
+	
+	<AIMicroManagerData
+		id="DeterminedFocusedMicroManager_MEDIUM"
+		inheritFrom="FocusedMicroManager_MEDIUM"
+		RetreatPowerAdvantage="0.5">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+		
+	<AIMicroManagerData
+		id="FearlessFocusedMicroManager"
+		inheritFrom="FocusedMicroManager"
+		RetreatPowerAdvantage="0.0">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="FocusedPartialAlphaStrikeMicroManager"
+		inheritFrom="StandardMicroManager"
+		EnemySearchDistanceVisionMultiplier="1.0"
+		AlphaStrikeTargetHealthPct="0.6"
+		AlphaStrikeTargetTimeToKill="10.0"
+    />
+
+	<AIMicroManagerData
+		id="FocusedSuicideRunMicroManager"
+		inheritFrom="StandardMicroManager"
+		EngageHostileTargets="false"
+		EngagePassiveTargets="false"
+		EngageTacticalTarget="true"
+		EnemySearchDistanceVisionMultiplier="1.0"
+		AlphaStrikeTargetHealthPct="1.0"
+		AlphaStrikeTargetTimeToKill="999.0">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="FocusedSuicideRunMicroManager_Medium"
+		inheritFrom="StandardMicroManager_Medium"
+		EngageHostileTargets="false"
+		EngagePassiveTargets="false"
+		EngageTacticalTarget="true"
+		EnemySearchDistanceVisionMultiplier="1.0"
+		AlphaStrikeTargetHealthPct="1.0"
+		AlphaStrikeTargetTimeToKill="999.0">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			xai:joinAction="Remove"/>
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="FocusedSuicideRunMicroManager_Easy"
+		inheritFrom="StandardMicroManager_Easy"
+		EngageHostileTargets="false"
+		EngagePassiveTargets="false"
+		EngageTacticalTarget="true"
+		EnemySearchDistanceVisionMultiplier="1.0"
+		AlphaStrikeTargetHealthPct="1.0"
+		AlphaStrikeTargetTimeToKill="999.0">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+	
+	<AIMicroManagerData
+    id="StandardFullAlphaStrikeMicroManager"
+    inheritFrom="StandardMicroManager"
+    AlphaStrikeTargetHealthPct="1.0"
+    AlphaStrikeTargetTimeToKill="999.0"
+    />
+
+  <AIMicroManagerData
+    id="GrowingAttacksMicroManager"
+    inheritFrom="StandardMicroManager"
+    RetreatPowerAdvantage="0.5"
+    RetreatMinDistanceFromBase="900.0"
+    RetreatMinDistanceToFallback="400.0"
+    />
+
+  <AIMicroManagerData
+    id="GrowingAttacksMicroManager_MEDIUM"
+    inheritFrom="StandardMicroManager_MEDIUM"
+    RetreatPowerAdvantage="0.5"
+    RetreatMinDistanceFromBase="900.0"
+    RetreatMinDistanceToFallback="400.0"
+    />
+
+  <AIMicroManagerData
+    id="TestMicroManager_HARD"
+    inheritFrom="StandardMicroManager"
+    RetreatPowerAdvantage="0.0"
+    UpdateTime="0.5s"
+    EnemySearchDistanceVisionMultiplier="2.5"
+    TimeToKeepTargetMin="0s"
+    TimeToKeepTargetMax="0s"
+    RandomTargetScoreModifier="0.0"
+    SiegeWeaponBuffer="2.0"
+    CrushPreference="0.0"
+    />
+
+  <AIMicroManagerData
+    id="TestMicroManager_MEDIUM"
+    inheritFrom="StandardMicroManager_MEDIUM"
+    RetreatPowerAdvantage="0.0" 
+    UpdateTime="2.0s"
+    EnemySearchDistanceVisionMultiplier="1.5"
+    TimeToKeepTargetMin="3s"
+    TimeToKeepTargetMax="5s"
+    RandomTargetScoreModifier="1.0"
+    DodgeThreatsReactionTimeMin="6s"
+    DodgeThreatsReactionTimeMax="14s"
+    CrushPreference="0.0"
+    SiegeWeaponBuffer="2.0"
+    />
+
+  <AIMicroManagerData
+    id="TestMicroManager_EASY"
+    inheritFrom="StandardMicroManager_EASY"
+    RetreatPowerAdvantage="0.0"
+    UpdateTime="3.0s"
+    EnemySearchDistanceVisionMultiplier="1.0"
+    UseGatherState="false"
+    TimeToKeepTargetMin="5s"
+    TimeToKeepTargetMax="7s"
+    RandomTargetScoreModifier="3.0"
+    CrushPreference="0.0"
+    SiegeWeaponBuffer="2.0"
+    >
+    <IgnoreTargets Rule="ANY"
+      Exclude="NEUTRAL_TECH TIME_BOMB">
+    </IgnoreTargets>
+  </AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="ReactiveDefenseMicroManager"
+		inheritFrom="StandardMicroManager"
+		EngageHostileTargets="true"
+		EngagePassiveTargets="true"
+		EngageTacticalTarget="true"
+		UseGatherState="false"
+		RetreatPowerAdvantage="1.0"
+		RetreatMinDistanceFromBase="1050.0"
+		RetreatMinDistanceToFallback="500.0"
+		AlphaStrikeTargetHealthPct="0.0"
+		Crush="true"
+		EnterGarrisons="true"
+		EnterGarrisonableStructureDistance="150"
+		EnterBaseDefensesWhenIdle="true"
+		PullbackInjured="false"
+		PullbackInjuredHealthPct="0.0"
+		ReverseMove="true"
+		UseSpecialPowers="true">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+
+	<AIMicroManagerData
+		id="FearlessMicroManager"
+		inheritFrom="BaseMicroManager"
+		EngageHostileTargets="true"
+		EngagePassiveTargets="true"
+		EngageTacticalTarget="true"
+		EnemySearchDistanceVisionMultiplier="1.25"
+		RetreatPowerAdvantage="0.0"
+		Crush="true"
+		EnterGarrisons="false"
+		PullbackInjured="false"
+		ReverseMove="false"
+		UseSpecialPowers="true">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		 id="CrystalCollectionMicroManager"
+		 inheritFrom="FearlessMicroManager"
+		 TacticControlledSpecialPowersAllowed="MOVEMENT TOGGLE SPEED_BOOST"
+		 UseSpecialPowers="false"
+		 OverrideSpecialPowersAllowed="MOVEMENT TOGGLE SPEED_BOOST"
+		 OverrideToggleHintsAllowed="TOGGLE_DEFAULT TOGGLE_UNIT_BURROW">
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="FearlessMicroManager_MEDIUM"
+		inheritFrom="FearlessMicroManager"
+		UpdateTime="2.0s"
+		EnemySearchDistanceVisionMultiplier="1.5"
+		TimeToKeepTargetMin="3s"
+		TimeToKeepTargetMax="5s"
+		KiteAttack="false"
+		ReverseMove="false"
+		RandomTargetScoreModifier="1.0"
+		DodgeThreatsReactionTimeMin="6s"
+		DodgeThreatsReactionTimeMax="14s"
+		SpecialPowerDelayMinimum="2s"
+		SpecialPowerDelayMaximum="8s">
+		<SpecificSpecialPowerDelay 
+			PowerType="TOGGLE" 
+			TogglePowerSubType="TOGGLE_LOCKDOWN" 
+			MinimumDelay="20s" 
+			MaximumDelay="40s"/>
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+	
+	<AIMicroManagerData
+	 id="CrystalCollectionMicroManager_Medium"
+	 inheritFrom="FearlessMicroManager_Medium"
+	 TacticControlledSpecialPowersAllowed="MOVEMENT TOGGLE SPEED_BOOST"
+	 UseSpecialPowers="false"
+	 OverrideSpecialPowersAllowed="MOVEMENT TOGGLE SPEED_BOOST"
+	 OverrideToggleHintsAllowed="TOGGLE_DEFAULT TOGGLE_UNIT_BURROW">
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="FearlessMicroManager_EASY"
+		inheritFrom="FearlessMicroManager"
+		UpdateTime="3.0s"
+		EnemySearchDistanceVisionMultiplier="1.8"
+		UseGatherState="false"
+		TimeToKeepTargetMin="5s"
+		TimeToKeepTargetMax="7s"
+		RandomTargetScoreModifier="3.0"
+		CanCollectCrates="false"
+    EnterGarrisons="false"
+		KiteAttack="false" 
+    PullbackInjured="false"
+    ReverseMove="false"
+    DodgeThreats="false"
+    UseSpecialPowers="false">
+		<IgnoreTargets Rule="ANY"
+			Exclude="NEUTRAL_TECH TIME_BOMB"/>
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+	 id="CrystalCollectionMicroManager_Easy"
+	 inheritFrom="FearlessMicroManager_EASY"
+	 TacticControlledSpecialPowersAllowed="MOVEMENT TOGGLE SPEED_BOOST"
+	 UseSpecialPowers="false"
+	 OverrideSpecialPowersAllowed="MOVEMENT TOGGLE SPEED_BOOST"
+	 OverrideToggleHintsAllowed="TOGGLE_DEFAULT TOGGLE_UNIT_BURROW">
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="EmergencyDefenseMicroManager"
+		inheritFrom="StandardMicroManager"
+		EngageHostileTargets="true"
+		EngagePassiveTargets="true"
+		EngageTacticalTarget="true"
+		EnemySearchDistanceVisionMultiplier="1.5"
+		RetreatPowerAdvantage="0.0"
+		UseGatherState="false" 
+		Crush="true"
+		EnterGarrisons="false"
+		PullbackInjured="false"
+		ReverseMove="true"
+		UseSpecialPowers="true">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="EmergencyDefenseMicroManager_MEDIUM"
+		inheritFrom="StandardMicroManager_MEDIUM"
+		EngageHostileTargets="true"
+		EngagePassiveTargets="true"
+		EngageTacticalTarget="true"
+		EnemySearchDistanceVisionMultiplier="1.5"
+		RetreatPowerAdvantage="0.0"
+		UseGatherState="false"
+		Crush="true"
+		EnterGarrisons="false"
+		PullbackInjured="false"
+		ReverseMove="true"
+		UseSpecialPowers="true">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="EmergencyDefenseMicroManager_EASY"
+		inheritFrom="StandardMicroManager_EASY"
+		EngageHostileTargets="true"
+		EngagePassiveTargets="true"
+		EngageTacticalTarget="true"
+		EnemySearchDistanceVisionMultiplier="1.5"
+		RetreatPowerAdvantage="0.0"
+		UseGatherState="false"
+		Crush="true"
+		EnterGarrisons="false"
+		PullbackInjured="false"
+		ReverseMove="true"
+		UseSpecialPowers="true">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="DefenseMicroManager"
+		inheritFrom="StandardMicroManager"
+		EngageHostileTargets="true"
+		EngagePassiveTargets="true"
+		EngageTacticalTarget="false"
+		EnemySearchDistanceVisionMultiplier="1.5"
+		UseGatherState="false"
+		RetreatPowerAdvantage="1.0"
+		RetreatMinDistanceFromBase="1050.0"
+		RetreatMinDistanceToFallback="400.0"
+		AlphaStrikeTargetHealthPct="0.0"
+		Crush="true"
+		EnterGarrisons="true"
+		EnterGarrisonableStructureDistance="450"
+		EnterBaseDefensesWhenIdle="true"
+		PullbackInjured="true"
+		PullbackInjuredHealthPct="0.35"
+		ReverseMove="true"
+		UseSpecialPowers="true">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="DefenseMicroManager_MEDIUM"
+		inheritFrom="DefenseMicroManager"
+		UpdateTime="2.0s"
+		TimeToKeepTargetMin="3s"
+		TimeToKeepTargetMax="5s"
+		RandomTargetScoreModifier="1.0"
+		DodgeThreatsReactionTimeMin="6s"
+		DodgeThreatsReactionTimeMax="14s"
+		SpecialPowerDelayMinimum="2s"
+		SpecialPowerDelayMaximum="8s"
+		KiteAttack="false"
+		ReverseMove="false">
+		<SpecificSpecialPowerDelay 
+		PowerType="TOGGLE" 
+		TogglePowerSubType="TOGGLE_LOCKDOWN" 
+		MinimumDelay="20s" 
+		MaximumDelay="40s"/>
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="DefenseMicroManager_EASY"
+		inheritFrom="DefenseMicroManager"
+		UpdateTime="3.0s"
+		UseGatherState="false"
+		TimeToKeepTargetMin="5s"
+		TimeToKeepTargetMax="7s"
+		RandomTargetScoreModifier="3.0"
+		CanCollectCrates="false"
+		KiteAttack="false" 
+    PullbackInjured="false"
+    ReverseMove="false"
+    DodgeThreats="false"
+    UseSpecialPowers="false">
+		<IgnoreTargets Rule="ANY"
+			Exclude="NEUTRAL_TECH TIME_BOMB">
+		</IgnoreTargets>
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+  <AIMicroManagerData
+    id="ExpansionMicroManager"
+    inheritFrom="StandardMicroManager"
+    EngageHostileTargets="true"
+    EngagePassiveTargets="true"
+    EngageTacticalTarget="false"
+    EnemySearchDistanceVisionMultiplier="1.5"
+    UseGatherState="false"
+    RetreatPowerAdvantage="1.0"
+    RetreatMinDistanceFromBase="400.0"
+    RetreatMinDistanceToFallback="150.0"
+    AlphaStrikeTargetHealthPct="0.0"
+    Crush="true"
+    EnterGarrisons="false"
+    EnterBaseDefensesWhenIdle="false"
+    PullbackInjured="false"
+    ReverseMove="true"
+    UseSpecialPowers="true"
+    />
+
+	<!-- for base defense structures. -->
+	<AIMicroManagerData
+		id="BaseDefenseMicroManager"
+		inheritFrom="StandardMicroManager"
+		EngageHostileTargets="true"
+		EngagePassiveTargets="true"
+		EngageTacticalTarget="false"
+		EnemySearchDistanceVisionMultiplier="1.3"
+		RetreatPowerAdvantage="-1.0"
+		CanUseSiegeState="false"
+		UseGatherState="false"
+		Crush="false"
+		EnterGarrisons="false"
+		EnterBaseDefensesWhenIdle="false"
+		PullbackInjured="false"
+		ReverseMove="false"
+		KiteAttack="false"
+		CanCollectCrates="false"
+		DodgeThreats="true" 
+		UseSpecialPowers="true">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo" 
+			ScuttleUnitHealth_Idle="10%"
+			ScuttleUnitHealth_Combat="10%"
+			ScuttleUnitsTimeBetweenChecks="0.5s"/>
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="BaseDefenseMicroManager_MEDIUM"
+		inheritFrom="BaseDefenseMicroManager"
+		DodgeThreatsReactionTimeMin="6s"
+		DodgeThreatsReactionTimeMax="14s"
+		SpecialPowerDelayMinimum="2s"
+		SpecialPowerDelayMaximum="6s">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			ScuttleUnitsTimeBetweenChecks="15s"/>
+	</AIMicroManagerData>
+
+	<!-- Easy never scuttles damaged base defenses -->
+	<!-- Note: If scuttle info is added, the alter the campaign micromanager below -->
+	<AIMicroManagerData
+		id="BaseDefenseMicroManager_EASY"
+		inheritFrom="BaseDefenseMicroManager_MEDIUM"
+		SpecialPowerDelayMinimum="6s"
+		SpecialPowerDelayMaximum="16s"
+		DodgeThreats="false" 
+		UseSpecialPowers="false">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			xai:joinAction="Remove"/>
+	</AIMicroManagerData>
+
+	<!-- Special base defense Micromanagers for campaign - don't delete heavily damaged structures
+	     because campaigns usually don't have victory points so there's no benefit & it just looks weird -->
+	<AIMicroManagerData
+    id="BaseDefenseMicroManager_CAMPAIGN"
+		inheritFrom="BaseDefenseMicroManager">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			xai:joinAction="Remove"/>
+	</AIMicroManagerData>
+	
+	<AIMicroManagerData
+    id="BaseDefenseMicroManager_CAMPAIGN_MEDIUM"
+		inheritFrom="BaseDefenseMicroManager_MEDIUM">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			xai:joinAction="Remove"/>
+	</AIMicroManagerData>
+
+	<!-- This has no ScuttleUnitInfo in the first place so no need to remove it -->
+	<AIMicroManagerData
+    id="BaseDefenseMicroManager_CAMPAIGN_EASY"
+		inheritFrom="BaseDefenseMicroManager_EASY"
+		UseSpecialPowers="true">
+	</AIMicroManagerData>
+
+
+	<AIMicroManagerData
+		id="FearlessDefenseMicroManager"
+		inheritFrom="BaseMicroManager"
+		EngageHostileTargets="true"
+		EngagePassiveTargets="true"
+		EngageTacticalTarget="false"
+		EnemySearchDistanceVisionMultiplier="1.8"
+		UseGatherState="false"
+		RetreatPowerAdvantage="0.0"
+		AlphaStrikeTargetHealthPct="0.0" 
+		Crush="true"
+		EnterGarrisons="false"
+		PullbackInjured="false"
+		ReverseMove="false"
+		UseSpecialPowers="true"
+		CanCollectCrates="false">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="FearlessDefenseMicroManager_MEDIUM"
+		inheritFrom="FearlessDefenseMicroManager"
+		UpdateTime="2.0s"
+		TimeToKeepTargetMin="3s"
+		TimeToKeepTargetMax="5s"
+		RandomTargetScoreModifier="1.0"
+		DodgeThreatsReactionTimeMin="6s"
+		DodgeThreatsReactionTimeMax="14s"
+		SpecialPowerDelayMinimum="2s"
+		SpecialPowerDelayMaximum="8s"
+		KiteAttack="false"
+		ReverseMove="false">
+		<SpecificSpecialPowerDelay 
+			PowerType="TOGGLE" 
+			TogglePowerSubType="TOGGLE_LOCKDOWN" 
+			MinimumDelay="20s" 
+			MaximumDelay="40s"/>
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="FearlessDefenseMicroManager_EASY"
+		inheritFrom="FearlessDefenseMicroManager"
+		UpdateTime="3.0s"
+		UseGatherState="false"
+		TimeToKeepTargetMin="5s"
+		TimeToKeepTargetMax="7s"
+		RandomTargetScoreModifier="3.0"
+		CanCollectCrates="false"
+		KiteAttack="false" 
+		PullbackInjured="false"
+		ReverseMove="false"
+		DodgeThreats="false"
+		UseSpecialPowers="false">
+		<IgnoreTargets Rule="ANY"
+			Exclude="NEUTRAL_TECH TIME_BOMB">
+		</IgnoreTargets>
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+  <AIMicroManagerData
+    id="HostilesOnlyMicroManager"
+		inheritFrom="BaseMicroManager" 
+    EngageHostileTargets="true"
+    EngagePassiveTargets="false"
+    EngageTacticalTarget="false"
+    Crush="true"
+    EnterGarrisons="true"
+    EnterGarrisonableStructureDistance="150"
+    PullbackInjured="true"
+    PullbackInjuredHealthPct="0.35"
+    ReverseMove="true"
+    UseSpecialPowers="false"
+    />
+
+	<!-- A micromanager which never attacks anything -->
+	<AIMicroManagerData
+		id="NoEngageMicroManager"
+		inheritFrom="StandardMicroManager"
+		EngageHostileTargets="false"
+		EngagePassiveTargets="false"
+		EngageTacticalTarget="false"
+		Crush="false"
+		AlphaStrikeTargetHealthPct="0.01"
+		AlphaStrikeTargetTimeToKill="0.1"
+		UseGatherState="false"
+		EnterGarrisons="false"
+		CanCollectCrates="false"
+		KiteAttack="false" 
+		ReverseMove="false"
+		DodgeThreats="false"
+		UseSpecialPowers="false">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="ScuttleStateMicroManager"
+		inheritFrom="NoEngageMicroManager"
+		PullbackInjured="false">
+		<ScuttleUnitInfo
+		ScuttleUnitHealth_Idle="50%"/>
+	</AIMicroManagerData>
+	
+	<AIMicroManagerData
+		id="OverwhelmNoEngageMicroManager"
+		inheritFrom="NoEngageMicroManager"
+		RetreatPowerAdvantage="0.8">
+	</AIMicroManagerData>
+
+  <AIMicroManagerData
+    id="ScoutInfantryMicroManager"
+		inheritFrom="BaseMicroManager" 
+    EngageHostileTargets="true"
+    EngagePassiveTargets="true"
+    EngageTacticalTarget="true"
+    UseGatherState="false"
+    RetreatPowerAdvantage="3.0"
+    RetreatMinDistanceFromBase="650.0"
+    RetreatMinDistanceToFallback="600.0"
+    Crush="true"
+    EnterGarrisons="false"
+    PullbackInjured="true"
+    PullbackInjuredHealthPct="0.35"
+    ReverseMove="false"
+    UseSpecialPowers="true"
+    />
+
+  <AIMicroManagerData
+    id="ScoutMicroManager"
+    inheritFrom="BaseMicroManager"
+    UpdateTime="0.25s"
+    EngageHostileTargets="false"
+    EngagePassiveTargets="false"
+    EngageTacticalTarget="false"
+    UseGatherState="false"
+    EnemySearchDistanceVisionMultiplier="1.5"
+    RetreatPowerAdvantage="1"
+    RetreatMinDistanceFromBase="750.0"
+    RetreatMinDistanceToFallback="700.0"
+    Crush="true"
+    EnterGarrisons="false"
+    PullbackInjured="true"
+    PullbackInjuredHealthPct="0.8"
+    ReverseMove="true"
+    UseSpecialPowers="true"
+    />
+
+  <AIMicroManagerData
+    id="StealthDetectorMicroManager"
+    inheritFrom="StandardMicroManager"
+    UpdateTime="0.25s"
+    EngageHostileTargets="true"
+    EngagePassiveTargets="true"
+    EngageTacticalTarget="false"
+    UseGatherState="false"
+    EnemySearchDistanceVisionMultiplier="1.5"
+    RetreatPowerAdvantage="0.0"
+    Crush="true"
+    EnterGarrisons="false"
+    PullbackInjured="false"
+    ReverseMove="true"
+    UseSpecialPowers="true"
+    />
+
+  <AIMicroManagerData
+    id="HarassmentMicroManager"
+    inheritFrom="StandardMicroManager"
+    EngageHostileTargets="true"
+    EngagePassiveTargets="false"
+    EngageTacticalTarget="true"
+    PassiveTargetSearchDistance="600"
+    EnemySearchDistanceVisionMultiplier="1.0"
+    GatherTempVisionRangeBonus="2.5"
+    RetreatTempVisionRangeBonus="2.5"
+    RetreatPowerAdvantage="0.75"
+    RetreatMinDistanceFromBase="750.0"
+    RetreatMinDistanceToFallback="200.0"
+    AlphaStrikeTargetHealthPct="0.8"
+    AlphaStrikeTargetTimeToKill="8"
+    Crush="true"
+    EnterGarrisons="false"
+    PullbackInjured="false"
+    ReverseMove="true"
+    UseSpecialPowers="true"
+    />
+
+  <AIMicroManagerData
+    id="HarassmentMicroManager_MEDIUM"
+    inheritFrom="StandardMicroManager_MEDIUM"
+    EngageHostileTargets="true"
+    EngagePassiveTargets="false"
+    EngageTacticalTarget="true"
+    PassiveTargetSearchDistance="600"
+    EnemySearchDistanceVisionMultiplier="1.0"
+    GatherTempVisionRangeBonus="2.5"
+    RetreatTempVisionRangeBonus="2.5"
+    RetreatPowerAdvantage="0.75"
+    RetreatMinDistanceFromBase="750.0"
+    RetreatMinDistanceToFallback="200.0"
+    AlphaStrikeTargetHealthPct="0.8"
+    AlphaStrikeTargetTimeToKill="8"
+    Crush="true"
+    EnterGarrisons="false"
+    PullbackInjured="false"
+    ReverseMove="true"
+    UseSpecialPowers="true"
+    />
+
+	<AIMicroManagerData
+		id="CrawlerMicromanager"
+		inheritFrom="StandardMicroManager"
+		PullbackInjured="false"
+		EnemySearchDistanceVisionMultiplier="1.0"
+		RetreatPowerAdvantage="1.0"
+		CanCollectCrates="false">
+		<!-- Retreat back to spawn zones, not self -->
+		<RetreatBaseCriteria
+			PreferredBaseTypes="SPAWN_ZONE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			ExcludedBaseTypes="CRAWLER_BASE" 
+			SortOrder="PREFER_CLOSEST" />
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			ScuttleUnitHealth_Combat="50%"
+			ScuttleUnitsTimeBetweenChecks="1s">
+			<ScuttleUnitIfTimeToDieInRange
+				Low="15s"
+				High="30s"/>
+		</ScuttleUnitInfo>
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="CrawlerMicromanager_Medium"
+		inheritFrom="CrawlerMicromanager">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			ScuttleUnitHealth_Combat="25%"
+			ScuttleUnitsTimeBetweenChecks="1s">
+			<ScuttleUnitIfTimeToDieInRange
+				Low="0s"
+				High="25s"/>
+		</ScuttleUnitInfo>
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="CrawlerMicromanager_CAMPAIGN"
+		inheritFrom="CrawlerMicromanager">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			xai:joinAction="Remove"/>
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="CrawlerMicromanager_Easy"
+		inheritFrom="CrawlerMicromanager_CAMPAIGN" />
+	
+	<AIMicroManagerData
+		id="DefenseCrawlerMicromanager"
+		inheritFrom="CrawlerMicroManager"
+		RetreatPowerAdvantage="0.6">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			ScuttleUnitHealth_Combat="50%"
+			ScuttleUnitsTimeBetweenChecks="1s">
+			<ScuttleUnitIfTimeToDieInRange
+				Low="15s"
+				High="30s"/>
+		</ScuttleUnitInfo>
+	</AIMicroManagerData>
+	
+	<AIMicroManagerData
+		id="DefenseCrawlerMicromanager_Medium"
+		inheritFrom="DefenseCrawlerMicromanager">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			ScuttleUnitHealth_Combat="25%"
+			ScuttleUnitsTimeBetweenChecks="1s">
+			<ScuttleUnitIfTimeToDieInRange
+				Low="0s"
+				High="25s"/>
+		</ScuttleUnitInfo>
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="DefenseCrawlerMicromanager_Campaign"
+		inheritFrom="DefenseCrawlerMicromanager">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			xai:joinAction="Remove"/>
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="DefenseCrawlerMicromanager_Easy"
+		inheritFrom="DefenseCrawlerMicromanager_Campaign" />
+
+	<AIMicroManagerData
+		id="DeterminedCrawlerMicromanager"
+		inheritFrom="CrawlerMicroManager"
+		RetreatPowerAdvantage="0.4">
+	</AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="FearlessCrawlerMicromanager"
+		inheritFrom="CrawlerMicroManager"
+		RetreatPowerAdvantage="0.0">
+	</AIMicroManagerData>
+
+	<!-- Mission-Specific Crawler MicroManagers -->
+	
+	<AIMicroManagerData
+		id="NOD_3_2_CrawlerMicromanager"
+		inheritFrom="CrawlerMicroManager"
+		RetreatPowerAdvantage="0.0">
+	</AIMicroManagerData>
+
+	<!-- Aircraft MicroManagers -->
+
+  <AIMicroManagerData
+    id="FighterAircraftMicroManager"
+		inheritFrom="BaseMicroManager" 
+    EngageHostileTargets="true"
+    EngagePassiveTargets="true"
+    EngageTacticalTarget="true"
+    EnemySearchDistanceVisionMultiplier="1.5"
+    PassiveTargetSearchDistance="650"
+    UseGatherState="false"
+    AlphaStrikeTargetHealthPct="1.0"
+    AlphaStrikeTargetTimeToKill="999"
+    RetreatPowerAdvantage="0.5"
+    RetreatMinDistanceFromBase="1200.0"
+    RetreatMinDistanceToFallback="400.0"
+    Crush="false"
+    EnterGarrisons="false"
+    PullbackInjured="true"
+    PullbackInjuredHealthPct="0.35"
+    ReverseMove="false"
+    UseSpecialPowers="true"
+    />
+
+  <AIMicroManagerData
+    id="FighterAircraftMicroManager_MEDIUM"
+    inheritFrom="FighterAircraftMicroManager"
+    UpdateTime="3.0s"
+    />
+
+	<AIMicroManagerData
+		id="FearlessFighterAircraftMicroManager"
+		inheritFrom="FighterAircraftMicroManager"
+		RetreatPowerAdvantage="0.0">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+  <AIMicroManagerData
+    id="AssaultAircraftMicroManager"
+		inheritFrom="BaseMicroManager" 
+    EngageHostileTargets="true"
+    EngagePassiveTargets="true"
+    EngageTacticalTarget="true"
+    EnemySearchDistanceVisionMultiplier="1.5"
+    RetreatPowerAdvantage="0.5"
+    RetreatMinDistanceFromBase="650.0"
+    RetreatMinDistanceToFallback="600.0"
+    Crush="false"
+    EnterGarrisons="false"
+    PullbackInjured="true"
+    PullbackInjuredHealthPct="0.35"
+    ReverseMove="false"
+    UseSpecialPowers="true"
+    />
+
+	<AIMicroManagerData
+		id="FearlessAssaultAircraftMicroManager"
+		inheritFrom="AssaultAircraftMicroManager"
+		RetreatPowerAdvantage="0.0"
+		PullbackInjured="false">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+  <AIMicroManagerData
+    id="BomberAircraftMicroManager"
+		inheritFrom="BaseMicroManager" 
+    EngageHostileTargets="false"
+    EngagePassiveTargets="false"
+    EngageTacticalTarget="true"
+    UseGatherState="false"
+    RetreatPowerAdvantage="0.5"
+    RetreatMinDistanceFromBase="650.0"
+    RetreatMinDistanceToFallback="600.0"
+    Crush="false"
+    EnterGarrisons="false"
+    PullbackInjured="false"
+    PullbackInjuredHealthPct="0.0"
+    ReverseMove="false"
+    UseSpecialPowers="true"
+    />
+
+	<AIMicroManagerData
+		id="FearlessBomberAircraftMicroManager"
+		inheritFrom="BomberAircraftMicroManager"
+		RetreatPowerAdvantage="0.0"
+		PullbackInjured="false">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+  <AIMicroManagerData
+    id="CommandoMicroManager"
+    inheritFrom="BaseMicroManager"
+    EngageHostileTargets="true"
+    EngagePassiveTargets="true"
+    EngageTacticalTarget="true"
+    UseGatherState="false"
+    EnemySearchDistanceVisionMultiplier="2.0"
+    RetreatPowerAdvantage="0.2"
+    RetreatMinDistanceFromBase="400.0"
+    RetreatMinDistanceToFallback="200.0"
+    AlphaStrikeTargetHealthPct="0.0"
+    AlphaStrikeTargetTimeToKill="0"
+    Crush="false"
+    EnterGarrisons="false"
+    EnterBaseDefensesWhenIdle="false"
+    PullbackInjured="false"
+    ReverseMove="false"
+    DodgeThreats="true"
+    UseSpecialPowers="true"
+    />
+
+  <AIMicroManagerData
+    id="ZoneCaptainMicroManager"
+    inheritFrom="BaseMicroManager"
+    EngageHostileTargets="true"
+    EngagePassiveTargets="true"
+    EngageTacticalTarget="true"
+    UseGatherState="false"
+    EnemySearchDistanceVisionMultiplier="1.5"
+    RetreatPowerAdvantage="0.5"
+    RetreatMinDistanceFromBase="400.0"
+    RetreatMinDistanceToFallback="200.0"
+    AlphaStrikeTargetHealthPct="0.5"
+    AlphaStrikeTargetTimeToKill="5"
+    Crush="false"
+    EnterGarrisons="false"
+    EnterBaseDefensesWhenIdle="false"
+    PullbackInjured="false"
+    ReverseMove="false"
+    DodgeThreats="true"
+    UseSpecialPowers="true"
+    MinDistanceFromBaseToIgnoreTargets="0"
+    />
+  
+  <AIMicroManagerData
+    id="ScoutAircraftMicroManager"
+		inheritFrom="BaseMicroManager" 
+    EngageHostileTargets="true"
+    EngagePassiveTargets="false"
+    EngageTacticalTarget="false"
+    UseGatherState="false"
+    RetreatPowerAdvantage="0.2"
+    RetreatMinDistanceFromBase="1050.0"
+    RetreatMinDistanceToFallback="1000.0"
+		CanCollectCrates="false"
+    Crush="false"
+    EnterGarrisons="false"
+    PullbackInjured="true"
+    PullbackInjuredHealthPct="0.35"
+    ReverseMove="false"
+    UseSpecialPowers="true"
+    />
+
+	<AIMicroManagerData
+		id="ScoutAircraftMicroManager_Medium"
+		inheritFrom="ScoutAircraftMicroManager"
+		KiteAttack="false"
+    />
+
+	<AIMicroManagerData
+		id="ScoutAircraftMicroManager_Easy"
+		inheritFrom="ScoutAircraftMicroManager"
+		KiteAttack="false"
+    PullbackInjured="false"
+    ReverseMove="false"
+    DodgeThreats="false"
+    UseSpecialPowers="false"
+    />
+
+  <!-- Coop Command MicroManagers -->
+
+  <AIMicroManagerData
+    id="BeaconAssaultMicroManager"
+		inheritFrom="BaseMicroManager" 
+    EngageHostileTargets="true"
+    EngagePassiveTargets="true"
+    EngageTacticalTarget="true"
+    EnemySearchDistanceVisionMultiplier="1.5"
+    RetreatPowerAdvantage="0.0"
+    Crush="true"
+    EnterGarrisons="false"
+    PullbackInjured="false"
+    ReverseMove="true"
+    UseSpecialPowers="true"
+    />
+
+  <AIMicroManagerData
+    id="BeaconHoldMicroManager"
+		inheritFrom="BaseMicroManager" 
+    EngageHostileTargets="true"
+    EngagePassiveTargets="true"
+    EngageTacticalTarget="true"
+    EnemySearchDistanceVisionMultiplier="1.5"
+    UseGatherState="false"
+    RetreatPowerAdvantage="0.0"
+    Crush="true"
+    EnterGarrisons="false"
+    PullbackInjured="false"
+    ReverseMove="true"
+    UseSpecialPowers="true"
+    />
+
+  <AIMicroManagerData
+    id="BeaconStrikeTargetMicroManager"
+		inheritFrom="BaseMicroManager"
+    EngageHostileTargets="false"
+    EngagePassiveTargets="false"
+    EngageTacticalTarget="true"
+    EnemySearchDistanceVisionMultiplier="1.5"
+    UseGatherState="false"
+    AlphaStrikeTargetHealthPct="1.0"
+    AlphaStrikeTargetTimeToKill="999"
+    RetreatPowerAdvantage="0.0"
+    Crush="true"
+    EnterGarrisons="false"
+    PullbackInjured="false"
+    ReverseMove="true"
+    UseSpecialPowers="true"
+    />
+
+  <!-- Special MicroManagers -->
+
+
+  <AIMicroManagerData
+    id="BlankMicroManager"
+		inheritFrom="BaseMicroManager" 
+    EngageHostileTargets="false"
+    EngagePassiveTargets="false"
+    EngageTacticalTarget="false"
+    UseGatherState="false"
+    RetreatPowerAdvantage="0.0"
+    Crush="false"
+    EnterGarrisons="false"
+    PullbackInjured="false"
+    ReverseMove="false"
+    UseSpecialPowers="false"
+  />
+
+  <AIMicroManagerData
+    id="HarvesterMicroManager"
+    inheritFrom="StandardMicroManager"
+		EnemySearchDistanceVisionMultiplier="1.25"
+    IsHarvesterManager="true"
+    MaxUnitIdleDistanceChange="20.0" 
+		/>
+  
+  <AIMicroManagerData
+    id="CaptureTechMicroManager"
+		inheritFrom="BaseMicroManager" 
+    EngageHostileTargets="true"
+    EngagePassiveTargets="false"
+    EngageTacticalTarget="false"
+    RetreatPowerAdvantage="1.0"
+    RetreatMinDistanceFromBase="0.0"
+    EnterGarrisons="true"
+    EnterGarrisonableStructureDistance="150"
+    UseSpecialPowers="true"
+    />
+
+  <AIMicroManagerData
+    id="CaptureAnythingMicroManager"
+    inheritFrom="BaseMicroManager"
+    EngageHostileTargets="true"
+    EngagePassiveTargets="true"
+    EngageTacticalTarget="false"
+    RetreatPowerAdvantage="1.0"
+    RetreatMinDistanceFromBase="0.0"
+    EnterGarrisons="true"
+    EnterGarrisonableStructureDistance="150"
+    UseSpecialPowers="true"
+    >
+    <IgnoreTargets Rule="ANY"
+      Include="NEUTRAL_TECH TIME_BOMB">
+    </IgnoreTargets>
+  </AIMicroManagerData>
+
+	<AIMicroManagerData
+		id="FearlessCaptureAnythingMicroManager"
+		inheritFrom="CaptureAnythingMicroManager"
+		RetreatPowerAdvantage="0.0"
+		EnterGarrisons="false">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+
+  <AIMicroManagerData
+    id="CaptureHuskMicroManager"
+    inheritFrom="BaseMicroManager"
+    EngageHostileTargets="true"
+    EngagePassiveTargets="false"
+    EngageTacticalTarget="false"
+    RetreatPowerAdvantage="1.0"
+    RetreatMinDistanceFromBase="250.0"
+    RetreatMinDistanceToFallback="100.0"
+    EnterGarrisons="false"
+    UseSpecialPowers="true"
+    />
+
+	<AIMicroManagerData
+		id="FearlessCaptureTechMicroManager"
+		inheritFrom="CaptureTechMicroManager"
+		RetreatPowerAdvantage="0.0"
+		EnterGarrisons="false"
+		EnterBaseDefensesWhenIdle="false">
+		<InitialJoinInfo
+			DistanceThreshold="=$INITIAL_JOIN_DISTANCE"
+			TeamCenterDistanceDiffThreshold="=$INITIAL_JOIN_TEAMCENTER_CHANGE_THRESHOLD" />
+	</AIMicroManagerData>
+
+    <!--CnC4 SP MicroManagers-->
+
+    <!-- GDI 2_4 -->
+
+    <AIMicroManagerData
+		id="GDI_2_4_FearlessDefenseMicroManager"
+		inheritFrom="FearlessDefenseMicroManager"
+		EnterGarrisons="true"
+		ReverseMove="true">
+    </AIMicroManagerData>
+
+    <!--Nod 2_2-->
+
+	<AIMicroManagerData
+		id="Nod_2_2_FearlessCrawlerMicromanager"
+		inheritFrom="CrawlerMicromanager"
+		RetreatPowerAdvantage="0.0">
+		<ScuttleUnitInfo
+			id="Tag_ScuttleUnitInfo"
+			xai:joinAction="Remove"/>
+		<RetreatBaseCriteria
+			PreferredBaseTypes="CRAWLER_BASE"
+			PreferredNotBaseTypes="CAPTURED_BASE"
+			SortOrder="PREFER_CLOSEST" />
+    </AIMicroManagerData>
+    
+
+
+</AssetDeclaration>

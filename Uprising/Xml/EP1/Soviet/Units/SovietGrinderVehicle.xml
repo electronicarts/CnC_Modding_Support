@@ -1,0 +1,693 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<!-- Referenced Files-->
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/Armor.xml" />				
+
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseVehicle.xml" />
+		
+		<!--Art Includes-->
+		<Include type="all" source="ART:SUGrinderVehicle_SKN.w3x" />
+		<Include type="all" source="ART:SUGrinderVehicle_IDLA.w3x" />
+		<Include type="all" source="ART:SUGrinderVehicle_WIDL.w3x" />
+		<Include type="all" source="ART:SUGrinderVehicle_WTRANS.w3x" />
+		<Include type="all" source="ART:SUGrinderVehicle_D.xml" />
+    <Include type="all" source="ART:SUExhaustFire.w3x" />
+	</Includes>
+	
+	<GameObject
+		id="SovietGrinderVehicle"
+		inheritFrom="BaseVehicle" 
+		SelectPortrait="Portrait_SovietGrinder"
+		ButtonImage="Button_SovietGrinder"
+		Side="Soviet"
+		EditorSorting="UNIT"
+		SubGroupPriority="290"
+		BuildTime="15"
+		CommandSet="SovietGrinderVehicleCommandSet"
+		KindOf="ATTACKS_BRIDGE_GATEHOUSE SELECTABLE AMPHIBIOUS CAN_ATTACK CAN_CAST_REFLECTIONS SCORE VEHICLE T3_UNIT PATH_THROUGH_INFANTRY PATH_THROUGH_ENEMY_VEHICLES"
+		RadarPriority="UNIT"
+		Description="Desc:SovietGrinderVehicle"
+		TypeDescription="Type:SovietGrinderVehicle"
+		EditorName="SovietGrinderVehicle"
+		UnitIntro="Soviet_Grinder_UnitIntro"
+		HealthBoxHeightOffset="35">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SovietGrinderVehicle</DisplayName>
+		<GameDependency>
+			<RequiredObject>SovietPowerPlantAdvanced</RequiredObject>
+			<RequiredObject>SovietCrane</RequiredObject>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="1600"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SovietGrinderVehicleArmor"
+			DamageFX="VehicleDamageFX" />
+		<LocomotorSet
+			id="DefaultLandLocomotor"
+			Locomotor="SovietGrinderVehicleLocomotor"
+			Condition="NORMAL"
+			Speed="60.0" />
+		<LocomotorSet
+			id="DefaultWaterLocomotor"
+			Locomotor="SovietGrinderVehicle_WaterLocomotor"
+			Condition="NORMAL"
+			Speed="50.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_Draw"
+				LeftFrontTireBone="Bone_Wheel_Left_Front"
+				RightFrontTireBone="Bone_Wheel_Right_Front"
+				MidLeftFrontTireBone="Bone_Wheel_Left_Rear"
+				MidRightFrontTireBone="Bone_Wheel_Right_Rear"
+				LeftRearTireBone="Bone_tread_wheels_left"
+				RightRearTireBone="Bone_tread_wheels_right"
+				TireRotationMultiplier="0.0"
+				TireRotationMultiplierFront="0.1"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FX_Weapon_01 FX_Weapon_02 FX_Weapon_Eject BONE_TREAD_LEFT BONE_TREAD_RIGHT Bone_tread_wheels_left Bone_tread_wheels_right FXTreadR FXTreadL"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="BONE_TREAD_WHEELS_LEFT"
+				TrackMarksRightBone="BONE_TREAD_WHEELS_RIGHT">
+			
+				<TreadTerrainParticles>SovietTankTerrainParticleMapping</TreadTerrainParticles>
+
+				<TreadScrollingMap
+					LeftTrack="BONE_TREAD_LEFT"
+					RightTrack="BONE_TREAD_RIGHT"
+					SpeedMultiplier="-0.06"
+					TreadDriveSpeedFraction="10%"/>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT"
+					RetainSubObjects="true">
+					<Model
+						Name="SUGrinderVehicle_SKN" />
+          <WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon_01" />
+				</ModelConditionState>
+
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6 DAMAGED">
+          <Model
+						Name="SUGrinderVehicle_SKN" />
+          <ParticleSysBone
+            BoneName="FXBone01"
+            FXParticleSystemTemplate="Soviet_HeavyWalker_Exhaust"
+            FollowBone="true" />
+          <ParticleSysBone
+           BoneName="FXBone02"
+           FXParticleSystemTemplate="Soviet_HeavyWalker_Exhaust"
+           FollowBone="true" />
+          <ParticleSysBone
+            BoneName="Bone_Engine"
+            FXParticleSystemTemplate="VehicleDamageSmoke"
+            FollowBone="true" />
+        </ModelConditionState>
+        <ModelConditionState
+			    ParseCondStateType="PARSE_NORMAL"
+			    ConditionsYes="USER_6 REALLYDAMAGED">
+          <Model
+            Name="SUGrinderVehicle_SKN" />
+          <Texture
+             Original="SUGrinderVehicle"
+             New="SUGrinderVehicle_D" />
+          <ParticleSysBone
+            BoneName="FXBone01"
+            FXParticleSystemTemplate="Soviet_HeavyWalker_Exhaust"
+            FollowBone="true" />
+          <ParticleSysBone
+           BoneName="FXBone02"
+           FXParticleSystemTemplate="Soviet_HeavyWalker_Exhaust"
+           FollowBone="true" />
+
+          <ParticleSysBone
+            BoneName="Bone_Engine"
+            FXParticleSystemTemplate="VehicleDamageSmoke"
+            FollowBone="true" />
+          <ParticleSysBone
+            BoneName="Bone_Engine"
+            FXParticleSystemTemplate="VehicleDamageFire"
+            FollowBone="true" />
+          <ParticleSysBone
+            BoneName="Bone_Engine"
+            FXParticleSystemTemplate="VehicleDamageFire02"
+            FollowBone="true" />
+        </ModelConditionState>
+        
+        
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+          <Model
+						Name="SUGrinderVehicle_SKN" />
+          <ParticleSysBone
+            BoneName="Bone_Engine"
+            FXParticleSystemTemplate="VehicleDamageSmoke"
+            FollowBone="true" />
+        </ModelConditionState>
+        <ModelConditionState
+			    ParseCondStateType="PARSE_NORMAL"
+			    ConditionsYes="REALLYDAMAGED">
+          <Model
+            Name="SUGrinderVehicle_SKN" />
+         <Texture
+						Original="SUGrinderVehicle"
+						New="SUGrinderVehicle_D" />
+          <ParticleSysBone
+            BoneName="Bone_Engine"
+            FXParticleSystemTemplate="VehicleDamageSmoke"
+            FollowBone="true" />
+          <ParticleSysBone
+            BoneName="Bone_Engine"
+            FXParticleSystemTemplate="VehicleDamageFire"
+            FollowBone="true" />
+          <ParticleSysBone
+            BoneName="Bone_Engine"
+            FXParticleSystemTemplate="VehicleDamageFire02"
+            FollowBone="true" />
+        </ModelConditionState>
+
+        
+        <ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6">
+          <Model
+						Name="SUGrinderVehicle_SKN" />
+          <ParticleSysBone
+            BoneName="FXBone01"
+            FXParticleSystemTemplate="Soviet_HeavyWalker_Exhaust"
+            FollowBone="true" />
+          <ParticleSysBone
+           BoneName="FXBone02"
+           FXParticleSystemTemplate="Soviet_HeavyWalker_Exhaust"
+           FollowBone="true" />
+        </ModelConditionState>
+        
+        
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_OnLAND">
+					<Animation
+						AnimationName="SUGrinderVehicle_IDLA"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_OnWater" and Prev ~= "TRANS_toLand" then CurDrawableSetTransitionAnimState("TRANS_toLand")	end;
+					</Script>							
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE MOVING OVER_WATER"
+          StateName="STATE_OnWater"
+					Flags="RANDOMSTART">
+          <Animation
+						AnimationName="SUGrinderVehicle_WIDL"
+						AnimationMode="LOOP"
+						AnimationBlendTime="10"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+          <ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="Soviet_Tank_Exhaust"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="Soviet_Tank_Exhaust"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="SovietGrinderWaterWake"
+						FollowBone="true" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState()
+            if Prev == "STATE_OnLAND" and Prev ~= "TRANS_toWater" then CurDrawableSetTransitionAnimState("TRANS_toWater")	end;
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING OVER_WATER"
+          StateName="STATE_OnWater"
+					Flags="RANDOMSTART">
+          <Animation
+						AnimationName="SUGrinderVehicle_WIDL"
+            AnimationMode="LOOP"/>
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="SovietGrinderWaterWake"
+						FollowBone="true" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState()
+            if Prev == "STATE_OnLAND" and Prev ~= "TRANS_toWater" then CurDrawableSetTransitionAnimState("TRANS_toWater")	end;
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE MOVING"
+          StateName="STATE_OnLAND"
+					Flags="RANDOMSTART">
+          <Animation
+						AnimationName="SUGrinderVehicle_IDLA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="10"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+          <ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="Soviet_Tank_Exhaust"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="Soviet_Tank_Exhaust"
+						FollowBone="true" />
+          <Script>
+            Prev = CurDrawablePrevAnimationState()
+            if Prev == "STATE_OnWater" and Prev ~= "TRANS_toLand" then CurDrawableSetTransitionAnimState("TRANS_toLand")	end;
+          </Script>
+        </AnimationState>
+        <AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+          StateName="STATE_OnLAND"
+					Flags="RANDOMSTART">
+          <Animation
+						AnimationName="SUGrinderVehicle_IDLA"
+            AnimationMode="LOOP"
+						AnimationBlendTime="10"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2"/>
+          <Script>
+            Prev = CurDrawablePrevAnimationState()
+            if Prev == "STATE_OnWater" and Prev ~= "TRANS_toLand" then CurDrawableSetTransitionAnimState("TRANS_toLand")	end;
+          </Script>
+        </AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER"
+					StateName="STATE_OnWater">
+					<Animation
+						AnimationName="SUGrinderVehicle_WIDL"
+						AnimationMode="LOOP"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="SmallShipWakeIdle"
+						FollowBone="true" />          
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_OnLAND" and Prev ~= "TRANS_toWater" then CurDrawableSetTransitionAnimState("TRANS_toWater")	end;
+					</Script>						
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_toWater">
+					<Animation
+						AnimationName="SUGrinderVehicle_WTRANS"
+						AnimationMode="ONCE"/>
+					<Script>
+						CurDrawablePlaySound("ALL_Prospector_WaterSplashMS")
+					</Script>    
+				</AnimationState>							
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					Flags="START_FRAME_LAST"
+					StateName="TRANS_toLand">
+					<Animation
+						AnimationName="SUGrinderVehicle_WTRANS"
+						AnimationMode="ONCE_BACKWARDS" />
+					<Script>
+						CurDrawablePlaySound("AmphibiousWaterUnitToLand_ScrapeTreadsOut")
+					</Script>    
+				</AnimationState>	
+        
+        
+			</TruckDraw>
+      <ScriptedModelDraw
+          id="ModuleTag_FireingDraw"
+          AttachToBoneInAnotherModule="FXBone02">
+        <ModelConditionState
+          ParseCondStateType="PARSE_DEFAULT">
+          <Model
+            Name="" />
+        </ModelConditionState>
+        <ModelConditionState
+          ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="USER_6">
+          <Model
+            Name="SUExhaustFire" />
+        </ModelConditionState>
+
+        <AnimationState
+          ParseCondStateType="PARSE_DEFAULT">
+        </AnimationState>
+        
+      </ScriptedModelDraw>
+      <ScriptedModelDraw
+        id="ModuleTag_FireingDraw2"
+        AttachToBoneInAnotherModule="FXBone01">
+        <ModelConditionState
+          ParseCondStateType="PARSE_DEFAULT">
+          <Model
+            Name="" />
+        </ModelConditionState>
+        <ModelConditionState
+          ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="USER_6">
+          <Model
+            Name="SUExhaustFire" />
+        </ModelConditionState>
+
+        <AnimationState
+          ParseCondStateType="PARSE_DEFAULT">
+        </AnimationState>
+
+      </ScriptedModelDraw>
+		</Draws>
+		<Behaviors>			
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate"
+				ActiveWhenDisabledBy="TEMPORARILY_BUSY HELD">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietGrinderVehicleGrindWeapon"
+						ForbiddenObjectStatus="WEAPON_UPGRADED_01" />
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="SovietGrinderVehicleGrindVeteranWeapon"
+						ObjectStatus="WEAPON_UPGRADED_01"/>
+					<Weapon
+						Ordering="SECONDARY_WEAPON"
+						Template="SovietGrinderVehicleGrindWeapon_Infantry"
+						ForbiddenObjectStatus="WEAPON_UPGRADED_01" />
+					<Weapon
+						Ordering="SECONDARY_WEAPON"
+						Template="SovietGrinderVehicleGrindVeteranWeapon_Infantry"
+						ObjectStatus="WEAPON_UPGRADED_01"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<Physics
+				id="ModuleTag_Physics" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SUGrinderVehicle_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_SOV_MediumVehicleDie" />
+			</FXListBehavior>
+
+			<SpecialPower
+				id="ModuleTag_ActivateNitrousBoost"
+				SpecialPowerTemplate="SpecialPower_TriggerNitrousBoost"
+				UpdateModuleStartsAttack="true"
+				AttributeModifier="AttributeModifier_SovietGrinderTriggerNitrousBoost"
+				AttributeModifierAffectsSelf="true"
+				DisabledTypesToIgnore="TEMPORARILY_BUSY"/>
+			<SpecialAbilityUpdate
+				id="ModuleTag_SpecialAbilityUpdate"
+				SpecialPowerTemplate="SpecialPower_TriggerNitrousBoost"
+				Options="RECONSTITUTE_STORED_COMMAND"
+				DisabledTypesToProcess="TEMPORARILY_BUSY" />
+
+			<FireWeaponCollide
+				id="ModuleTag_CrushCollideWeapon"
+				CollideWeapon="SovietGrinderVehicleGrindWeapon"
+				ForbiddenStatus="WEAPON_UPGRADED_01"
+				Flags="ONLY_WHILE_MOVING CHECK_WEAPON_AIM_DELTA NOT_WHILE_ATTACKING STANCE_ONLY_FORBIDDEN_WHILE_STATIONARY"
+				DisabledTypesToProcess="TEMPORARILY_BUSY"
+				FiringInterval="0.24s"
+				ForbiddenStance="HOLD_FIRE">
+				<TargetObjectFilter
+					Rule="ALL"
+					Exclude="INFANTRY STRUCTURE">
+					<IncludeThing>SovietScoutVehicle</IncludeThing>
+					<ExcludeThing>JapanScoutInfantry</ExcludeThing>
+				</TargetObjectFilter>
+			</FireWeaponCollide>
+
+			<FireWeaponCollide
+				id="ModuleTag_CrushCollideWeaponVeteran"
+				CollideWeapon="SovietGrinderVehicleGrindVeteranWeapon"
+				RequiredStatus="WEAPON_UPGRADED_01"
+				Flags="ONLY_WHILE_MOVING CHECK_WEAPON_AIM_DELTA NOT_WHILE_ATTACKING STANCE_ONLY_FORBIDDEN_WHILE_STATIONARY"
+				DisabledTypesToProcess="TEMPORARILY_BUSY"
+				FiringInterval="0.24s"
+				ForbiddenStance="HOLD_FIRE">
+				<TargetObjectFilter
+					Rule="ALL"
+					Exclude="INFANTRY STRUCTURE">
+					<IncludeThing>SovietScoutVehicle</IncludeThing>
+					<ExcludeThing>JapanScoutInfantry</ExcludeThing>
+				</TargetObjectFilter>
+			</FireWeaponCollide>
+
+			<FireWeaponCollide
+				id="ModuleTag_CrushCollideWeapon_Infantry"
+				CollideWeapon="SovietGrinderVehicleGrindWeapon_Infantry"
+				ForbiddenStatus="WEAPON_UPGRADED_01"
+				RequiredStatus="OVER_WATER"
+				Flags="ONLY_WHILE_MOVING CHECK_WEAPON_AIM_DELTA NOT_WHILE_ATTACKING STANCE_ONLY_FORBIDDEN_WHILE_STATIONARY"
+				DisabledTypesToProcess="TEMPORARILY_BUSY"
+				FiringInterval="0.24s"
+				ForbiddenStance="HOLD_FIRE">
+				<TargetObjectFilter
+					Rule="NONE"
+					Include="INFANTRY">
+					<ExcludeThing>SovietScoutVehicle</ExcludeThing>
+					<ExcludeThing>JapanScoutInfantry</ExcludeThing>
+				</TargetObjectFilter>
+			</FireWeaponCollide>
+
+			<FireWeaponCollide
+				id="ModuleTag_CrushCollideWeaponVeteran_Infantry"
+				CollideWeapon="SovietGrinderVehicleGrindVeteranWeapon_Infantry"
+				RequiredStatus="WEAPON_UPGRADED_01 OVER_WATER"
+				Flags="ONLY_WHILE_MOVING CHECK_WEAPON_AIM_DELTA NOT_WHILE_ATTACKING STANCE_ONLY_FORBIDDEN_WHILE_STATIONARY"
+				DisabledTypesToProcess="TEMPORARILY_BUSY"
+				FiringInterval="0.24s"
+				ForbiddenStance="HOLD_FIRE">
+				<TargetObjectFilter
+					Rule="NONE"
+					Include="INFANTRY">
+					<ExcludeThing>SovietScoutVehicle</ExcludeThing>
+					<ExcludeThing>JapanScoutInfantry</ExcludeThing>
+				</TargetObjectFilter>
+			</FireWeaponCollide>
+			
+
+			<xi:include
+				href="DATA:Includes/SovietTerrorDroneSpawnUpgradePlayerPower.xml" />
+
+			<xi:include
+				href="DATA:Includes/SovietCrushUpgradePlayerPower.xml" />
+
+
+			<StatusBitsUpgrade
+				id="ModuleTag_VeterancyUpgrade"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_Veterancy_HEROIC</TriggeredBy>
+			</StatusBitsUpgrade>
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					RotateToTargetWhenAiming="true"
+					CheckVisionRange="true"/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1200.0"/>
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ShrunkenVoice">
+				<ModelConditionSound Sound="SOV_Grinder_VoiceShrunken" RequiredFlags="SHRINK_EFFECT" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_NitroBoost">
+				<ModelConditionSound Sound="SOV_Grinder_NitroBoostMS" RequiredFlags="USER_6" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<Geometry>
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "30.25"
+           MinorRadius = "19.25"
+           Height = "22.0"
+           ContactPointGeneration = "VEHICLE" >
+        <Offset
+            x = "0.526405"
+            y = "-0.0525017"
+            z = "-0.404428" />
+      </Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="SOV_Grinder_VoiceMoveAttack" AudioType="voiceAttack" />
+			<AudioEntry Sound="SOV_Grinder_VoiceCreate" AudioType="voiceCreated" />
+			<AudioEntry Sound="SOV_Grinder_VoiceMove" AudioType="voiceMove" />
+			<AudioEntry Sound="SOV_Grinder_VoiceMoveToLand" AudioType="voiceMoveWaterToLand" />
+			<AudioEntry Sound="SOV_Grinder_VoiceMoveToWater" AudioType="voiceMoveLandToWater" />
+			<AudioEntry Sound="SOV_Grinder_VoiceRetreat" AudioType="voiceRetreatToCastle" />
+			<AudioEntry Sound="SOV_Grinder_VoiceSelect" AudioType="voiceSelect" />
+			<AudioEntry Sound="SOV_Grinder_VoiceSelectBattle" AudioType="voiceSelectBattle" />
+			<AudioEntry Sound="SOV_Grinder_VoiceSelectUnderFire" AudioType="voiceSelectUnderFire" />
+			<NamedEntry Sound="SOV_Grinder_VoiceNitroBoost" Name="voiceNitroBoost" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<!--<AudioEntry
+				Sound="SOV_HammerTank_MoveByLoop"
+				AudioType="soundMoveLoop" /> -->
+			<AudioEntry
+				Sound="SOV_Grinder_MoveLoop"
+				AudioType="soundMoveLoop" />
+			<AudioEntry
+				Sound="SOV_Grinder_MoveStart"
+				AudioType="soundMoveStart" />
+			<AudioEntry
+				Sound="SOV_Grinder_IdleLoop"
+				AudioType="soundAmbient" />
+			<AudioEntry
+				Sound="VehicleCrush"
+				AudioType="soundCrushing" />	
+			<!-- <AudioEntry Sound="AudioEvent:MammothTankTurretMoveLoop" AudioType="soundTurretMoveLoop" /> -->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="200"
+			ShroudClearingRange="500" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrusherLevel="0"
+			CrushableLevel="30"
+			CrushWeapon="SovietCrushWeapon"
+			CrushDecelerationPercent="0%"
+			DefaultCrushKillDelay="0.0s"
+			DecelerateForAllCollides="true"
+			CannotCrushTarget="true">
+	
+			<ExtraCrushLevels
+				 CrusherLevel="0"
+				 CrushableLevel="30"
+				 CrushEqualLevelProps="true"
+				 ModelConditionMatch="OVER_WATER">
+			</ExtraCrushLevels>
+			
+			<ExtraCrushLevels
+				 CrusherLevel="60"
+				 CrushableLevel="30"
+				 CrushEqualLevelProps="true"
+				 ModelConditionMatch="">
+				<ObjectFilter
+					 Rule="NONE"
+					 Include="INFANTRY"
+					 StatusBitFlagsExclude="AIRBORNE_TARGET" >
+					<ExcludeThing>SovietScoutVehicle</ExcludeThing>
+				</ObjectFilter>
+			</ExtraCrushLevels>
+
+			<ExtraCrushKillDelays
+				 CrushKillDelay="0.0s"
+				 CrushDecelerationPercent="50%">
+				<ObjectFilter
+					 Rule="NONE"
+					 Include="INFANTRY"
+					 StatusBitFlagsExclude="AIRBORNE_TARGET">
+					<ExcludeThing>SovietScoutVehicle</ExcludeThing>
+				</ObjectFilter>
+			</ExtraCrushKillDelays>
+		</CrusherInfo>
+	</GameObject>
+
+	<!-- Object Specific buttons, armor, locomotor, and weapons here-->
+	<ArmorTemplate
+		id="SovietGrinderVehicleArmor"
+		inheritFrom="BaseAdvancedTankArmor">
+	</ArmorTemplate>
+
+	<LocomotorTemplate
+		id="SovietGrinderVehicleLocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE" 
+		TurnTimeSeconds="5.0s"
+		TurnTimeDamagedSeconds="6.0s"
+		MaxSpeedDamaged="75%"
+		AccelerationSeconds="0.25s"
+		BrakingSeconds="0.5s"
+		SlowTurnRadius="60.0" 
+		FastTurnRadius="75.0"
+		BehaviorZ="NO_MOTIVE_FORCE"	
+		Appearance="FOUR_WHEELS"
+		HasSuspension="true"
+		UseTerrainSmoothing="true"
+		AccelPitchLimit="0.04r"
+		PitchStiffness="0.25"
+		PitchDamping="0.2"
+		RollStiffness="0.4"
+		RollDamping="0.3"
+		ForwardAccelerationPitchFactor="0.01"
+		LateralAccelerationRollFactor="0.0"
+		WheelTurnAngle="35d"
+		MaximumWheelExtension="-2.3"
+		MaximumWheelCompression="1.4"
+		ClampOrientationToPathTangent="true">
+		<BounceKickTerrainMap>TankBounceKickTerrainMapping</BounceKickTerrainMap>
+	</LocomotorTemplate>
+
+	<LocomotorTemplate
+		id="SovietGrinderVehicle_WaterLocomotor"
+		Surfaces="WATER DEEP_WATER"
+		TurnTimeSeconds="5.0s"
+		TurnTimeDamagedSeconds="6.0s"
+		MaxSpeedDamaged="75%"
+		AccelerationSeconds="0.25s"
+		BrakingSeconds="0.5s"
+		SlowTurnRadius="60.0"
+		FastTurnRadius="75.0"
+		PreferredHeight="0"
+		BehaviorZ="SEA_LEVEL"
+		Appearance="FOUR_WHEELS"
+		HasSuspension="true"
+		UseTerrainSmoothing="true"
+		ActiveModelConditions="OVER_WATER"
+		ActiveObjectStatus="WATER_LOCOMOTOR_ACTIVE OVER_WATER"
+		AccelPitchLimit="2d"
+		PitchStiffness="0.2"
+		RollStiffness="0.2"
+		PitchDamping="0.2"
+		RollDamping="0.2"
+		ForwardAccelerationPitchFactor="0.01"
+		LateralAccelerationRollFactor="-0.01"
+		ElevatorCorrectionDegree="0.06"
+		ElevatorCorrectionRate="0.06"
+		AeleronCorrectionDegree="0.1"
+		AeleronCorrectionRate="0.07"
+		WheelTurnAngle="35d"
+		MaximumWheelExtension="-2.3"
+		MaximumWheelCompression="1.4"
+		ClampOrientationToPathTangent="true"/>
+
+</AssetDeclaration>

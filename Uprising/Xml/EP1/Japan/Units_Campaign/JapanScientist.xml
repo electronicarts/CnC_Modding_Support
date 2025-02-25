@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:JUScientist_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:JUScientist_AIDA.w3x" />
+		<Include
+			type="all"
+			source="ART:JUScientist_AIDB.w3x" />
+		<Include
+			type="all"
+			source="ART:JUScientist_AIDC.w3x" />
+		<Include
+			type="all"
+			source="ART:JUScientist_DIEA.w3x" />
+		<Include
+			type="all"
+			source="ART:JUScientist_HITA.w3x" />
+		<Include
+			type="all"
+			source="ART:JUScientist_FLYA.w3x" />
+		<Include
+			type="all"
+			source="ART:JUScientist_RUNA.w3x" />
+		<Include
+			type="all"
+			source="ART:JUScientist_WLKA.w3x" />
+			
+		<!-- temp laser fx -->
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseObject.xml" />	
+		<Include
+			type="instance"
+			source="ART:ShadowI.xml" />				
+	</Includes>
+	<GameObject
+		id="JapanScientist"
+		inheritFrom="BaseObject"
+		Side="Japan"
+		EditorSorting="CAMPAIGN_UNITS"
+		RadarPriority="UNIT"
+		ThreatLevel="10"
+		ProductionQueueType="INFANTRY"
+		UnitCategory="INFANTRY"
+		TransportSlotCount="0"
+		CommandSet="EmptyCommandSet"
+		KindOf="SELECTABLE CAN_ATTACK CAN_CAST_REFLECTIONS INFANTRY SCORE"
+		SelectPortrait="Portrait_JapanEmperorYoshiro"
+		ButtonImage="Button_JapanEmperorYoshiro"
+		TypeDescription="TYPE:JapanScientist"
+		Description="DESC:JapanScientist"
+		EditorName="JapanScientist"
+		HealthBoxHeightOffset="15">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:JapanScientist</DisplayName>
+		<ArmorSet
+			Armor="JapanScientistArmor"
+			DamageFX="VehicleDamageFX" />
+		<!--
+		<LocomotorSet
+			Locomotor="HumanLocomotor"
+			Condition="NORMAL"
+			Speed="17.0" />
+			-->
+		<LocomotorSet
+			Locomotor="HumanLocomotor"
+			Condition="NORMAL"
+			Speed="75.0" />			
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JUScientist_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="JUScientist_SKN" />
+				</ModelConditionState>		
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="JUScientist_AIDA"
+						AnimationMode="ONCE"
+						AnimationPriority="1" />
+					<Animation
+						AnimationName="JUScientist_AIDA"
+						AnimationMode="ONCE"
+						AnimationPriority="1" />
+					<Animation
+						AnimationName="JUScientist_AIDA"
+						AnimationMode="ONCE"
+						AnimationPriority="1" />						
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="JUScientist_DIEA"
+						AnimationMode="ONCE"
+						AnimationPriority="1" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="JUScientist_RUNA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING HIT_REACTION"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="JUEmperor_HITWLK"
+						AnimationMode="LOOP" />
+				</AnimationState>
+-->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="HIT_REACTION">
+					<Animation
+						AnimationName="JUScientist_HITA"
+						AnimationMode="LOOP" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="999s"
+				SinkRate="0.01"
+				DestructionDelay="999s">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Sound Type="INITIAL" List="JAP_Shimada_VoiceDie" />
+			</SlowDeath>
+			<AttributeModifierPoolUpdate 
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<SquishCollide
+				id ="DefaultSquishCollide"/>
+			<HitReactionBehavior
+				id="ModuleTag_HitReaction"
+				HeavyDamageHitReactionLifeTimer="1.3s"/>
+			<!-- for use on objects that don't have Dynamics
+				 but that still may fall out of the sky on death 
+				 Positive initial velocity means infantry will jump a little before falling -->
+			<FreefallUpdate
+				id="ModuleTag_FreefallUpdate"
+				ModelConditionsToSet="STUNNED_FLAILING"
+				InitialVelocity="5"
+				Acceleration="1"
+				TerminalVelocity="15"/>
+		</Behaviors>
+		<AI>
+				<AIUpdate
+					id="ModuleTag_AI"
+					AutoAcquireEnemiesWhenIdle="YES"
+					StateMachine="UnitAIStateMachine">
+					<UnitAITargetChooserData
+						IdleScanDelay="=$FAST_IDLE_SCAN_DELAY"/>
+				</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="DefaultBody"
+				MaxHealth="200.0" />
+		</Body>	
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_VoiceHurt">
+				<ModelConditionSound Sound="JAP_Shimada_VoiceHurt" RequiredFlags="HIT_REACTION" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>			
+			<AnimationSoundClientBehavior id="AnimationSoundCB" >	
+				<Sound Sound="JAP_Shimada_MovStep" Animation="JUScientist_RUNA" Frame="1 9 17 25" />
+				<Sound Sound="JAP_Shimada_MovStep" Animation="JUScientist_WLKA" Frame="1 20" /> <!-- check timing of this!!! -->
+				<Sound Sound="BodyfallGenericDirt" Animation="JUScientist_DIEA" Frame="26" />				
+			</AnimationSoundClientBehavior>	
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="7.0"
+				Height="13.0"
+				ContactPointGeneration="SQUAD_MEMBER"/>
+		</Geometry>
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="0" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrushableLevel="0" />	
+	</GameObject>
+
+  <ArmorTemplate
+    id="JapanScientistArmor">
+    <Armor
+			Damage="KI"
+			Percent="50" />
+    <Armor
+			Damage="SNIPER"
+			Percent="100" />
+    <Armor
+			Damage="CANNON"
+			Percent="100" />
+    <Armor
+			Damage="ROCKET"
+			Percent="100" />
+    <Armor
+			Damage="GRENADE"
+			Percent="100" />
+    <Armor
+			Damage="GUN"
+			Percent="100" />
+    <Armor
+			Damage="MELEE"
+			Percent="100" />
+    <Armor
+			Damage="AUTO_CANNON"
+			Percent="100" />
+    <Armor
+			Damage="IMPACT"
+			Percent="100" />
+    <Armor
+			Damage="EXPLOSIVE"
+			Percent="100" />
+    <Armor
+			Damage="FLAK"
+			Percent="100" />
+    <Armor
+			Damage="PRISM"
+			Percent="100" />
+    <Armor
+			Damage="TESLA"
+			Percent="100" />
+    <Armor
+			Damage="RADIATION"
+			Percent="100" />
+  </ArmorTemplate>
+  
+</AssetDeclaration>

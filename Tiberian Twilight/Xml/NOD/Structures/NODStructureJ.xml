@@ -1,0 +1,852 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<!-- Nod Superweapon T3 / Temple of Nod -->
+	<!--
+		'USER_1' - object status set when charging super weapon 
+
+		'USER_2' - Model condition set when super weapon at level 1 charge
+		'USER_3' - Model condition set when super weapon at level 2 charge
+		'USER_4' - Model condition set when super weapon at level 3 charge
+			  
+		'USER_10' - set for 5s when the missile launches. This lets the missile model continue its ascent
+			  even if the structure dies.
+			  Only handled in the drawmodule for the nuke.
+	-->
+	<Tags></Tags>
+	<Includes>
+		 <!-- MAIN STRUCTURE FILES-->
+		<Include type="all" source="ART:NSL_StructureJ_SKN.w3x" />
+		<Include type="all" source="ART:NSL_StructureJ_SKL.w3x" />
+		<Include type="all" source="ART:NSL_StructureJ_ATKA.w3x" />
+		<Include type="all" source="ART:NSL_StructureJ_BLDA.w3x" />
+		<Include type="all" source="ART:NSL_StructureJ_IDLA.w3x" />
+		<Include type="all" source="ART:NSL_StructureJ_MSL1.w3x" />
+		<Include type="all" source="ART:NSL_StructureJ_MSL2.w3x" />
+		<Include type="all" source="ART:NSL_StructureJ_FX.w3x" />
+
+		<!-- NUKE FILES -->
+		<Include type="all" source="ART:NSL_StructureJNuke_SKN.w3x" />
+		<Include type="all" source="ART:NSL_StructureJNuke_SKL.w3x" />
+		<Include type="all" source="ART:NSL_StructureJNuke_ATKA.w3x" />
+		<Include type="all" source="ART:NSL_StructureJNuke_MSL1.w3x" />
+		<Include type="all" source="ART:NSL_StructureJNuke_MSL2.w3x" />
+
+		<Include type="all" source="DATA:NOD/Props/NODStructureJProps.xml" />
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+	</Includes>
+<!--
+	This variable was moved to NODStructureJProps
+	<Defines>
+		<Define name="NODSTRUCTUREJ_CHARGE_AMOUNT" value="100" />
+	</Defines>
+-->
+	<GameObject
+		id="NODStructureJ"
+		inheritFrom="BaseDefensiveStructure"
+		SubGroupPriority="403"
+		HealthBoxHeightOffset="60"
+		HealthBar="Structure"
+		SelectPortrait="Portrait_NOD_Structure_J_tech1"
+		ButtonImage="Btn_NOD_Structure_J_tech1"
+		Side="NOD"
+		ParticipationValue="=$NODSTRUCTUREJ_PARTICIPATION_VALUE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildTime="30.0"
+		EnergyProduction="=$NOD_STRUCTURE_J_COMMANDPOINT_COST"
+		CommandSet="NODStructureJCommandSet"
+		KindOf="+CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING +HAS_BUILDING_DESTRUCT_BEHAVIOR -CAN_ATTACK -SKIRMISH_AI_DELETE_TO_FREE_UP_ENERGY"
+		RadarPriority="STRUCTURE"
+		EditorName="NOD_D3_Struct_Superweapon(Temple Of Nod)"
+		EditorSorting="STRUCTURE"
+		Description="Desc:NODStructureJ"
+		TypeDescription="Type:NODStructureJ"
+		MaxSimultaneousOfType="1">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODStructureJ</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BuildingPlacementType="CenterDefault" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="MissileAttach Bone_Contact_point_01 Bone_Contact_point_02 Bone_Contact_point_03 Bone_Contact_point_04 Bone_Contact_point_05
+				Bone_Contact_point_06 Bone_Contact_point_07 Bone_Contact_point_08 Bone_Contact_point_09 Bone_Contact_point_10 Bone_Contact_point_11" 
+				Options="RENDER_BUFF_EFFECTS">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NSL_StructureJ_SKN" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NSL_StructureJ_BLDA" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Animation
+						AnimationName="NSL_StructureJ_IDLA"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObjectPermanently( "STRUCTUREJ_UPG2" )
+						CurDrawableHideSubObjectPermanently( "STRUCTUREJ_UPG1" )
+					</Script>
+				</AnimationState>
+
+				<!-- ANIMATIONS -->
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NSL_StructureJ_IDLA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+
+				<!-- building -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NSL_StructureJ_BLDA"
+						AnimationSpeedFactorMin="2.0"
+						AnimationSpeedFactorMax="2.0"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Medium"
+						FollowBone="true" />
+				</AnimationState>
+				<!-- launching -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_10">
+					<Animation
+						AnimationName="NSL_StructureJ_ATKA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<!-- idle ready -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPECIALPOWER1_READY"
+					StateName="STATE_Ready">
+					<Animation
+						AnimationName="NSL_StructureJ_MSL2"
+						AnimationMode="LOOP" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "STATE_BecomingReady" and Prev ~= "STATE_Ready" then
+						CurDrawableSetTransitionAnimState("STATE_BecomingReady")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="STATE_BecomingReady" >
+					<Animation
+						AnimationName="NSL_StructureJ_MSL1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+			<ScriptedModelDraw
+				id="ModuleTag_TempleOfNodNuke"
+				AttachToBoneInAnotherModule="MissileAttach"
+				Options="IGNORE_FLASH_SHADER">
+				<!-- no model in default-->
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<!-- ...or in unpacking mode -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<!-- ...or dying -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<!-- only show a model in SPECIALPOWER1_READY, or USER_10 (Ready or ascending respectively) -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPECIALPOWER1_READY">
+					<Model
+						Name="NSL_StructureJNuke_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_10">
+					<Model
+						Name="NSL_StructureJNuke_SKN" />
+				</ModelConditionState>
+				<!-- missile is attacking -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_10">
+					<Animation
+						AnimationName="NSL_StructureJNuke_ATKA"
+						AnimationMode="ONCE"/>
+					<ParticleSysBone
+						BoneName="Missile"
+						FXParticleSystemTemplate="NodStructureJ_Launch01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="Missile"
+						FXParticleSystemTemplate="NodStructureJ_Launch02"
+						FollowBone="true" />
+				</AnimationState>
+				<!-- missile is ready -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SPECIALPOWER1_READY"
+					StateName="STATE_Ready">
+					<Animation
+						AnimationName="NSL_StructureJNuke_MSL2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "STATE_BecomingReady" and Prev ~= "STATE_Ready" then
+						CurDrawableSetTransitionAnimState("STATE_BecomingReady")
+						end
+					</Script>
+					<ParticleSysBone
+						BoneName="Missile"
+						FXParticleSystemTemplate="NodStructureJ_Idle01"
+						FollowBone="true" />
+				</AnimationState>
+				<!-- becoming ready transition -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="STATE_BecomingReady" >
+					<Animation
+						AnimationName="NSL_StructureJNuke_MSL1"
+						AnimationMode="ONCE" 
+						AnimationBlendTime="0"/>
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+
+			<ScriptedModelDraw
+				id="ModuleTag_TempleOfNodFX"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NSL_StructureJ_FX" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Model
+						Name="" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4 REALLYDAMAGED">
+					<Model
+						Name="NSL_StructureJ_FX" />
+					<ParticleSysBone
+						BoneName="FXTurbine01"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTurbine04"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4 DAMAGED">
+					<Model
+						Name="NSL_StructureJ_FX" />
+					<ParticleSysBone
+						BoneName="FXTurbine01"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTurbine04"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_4">
+					<Model
+						Name="NSL_StructureJ_FX" />
+					<ParticleSysBone
+						BoneName="FXTurbine01"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTurbine02"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTurbine03"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTurbine04"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTurbine05"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTurbine06"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_3 REALLYDAMAGED">
+					<Model
+						Name="NSL_StructureJ_FX" />
+					<ParticleSysBone
+						BoneName="FXTurbine03"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_3 DAMAGED">
+					<Model
+						Name="NSL_StructureJ_FX" />
+					<ParticleSysBone
+						BoneName="FXTurbine03"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_3">
+					<Model
+						Name="NSL_StructureJ_FX" />
+
+					<ParticleSysBone
+						BoneName="FXTurbine03"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+
+					<ParticleSysBone
+						BoneName="FXTurbine06"
+						FXParticleSystemTemplate="GDIIonCannonFan"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			
+			
+
+		</Draws>
+
+		<Behaviors>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODStructureJFunctions"/>
+
+			<!-- This will unhide the first upgrade model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade1">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level1</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Rocket_UPG_1"
+					Upgrade="Upgrade_NODStructureJSuperweapon_Level1"
+					HideSubObjectsOnRemove="true"
+					FadeTime="3.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+
+			<!-- This will unhide the second upgrade model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade2">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level2</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Rocket_UPG_2 StructureJ_UPG1"
+					Upgrade="Upgrade_NODStructureJSuperweapon_Level2"
+					HideSubObjectsOnRemove="true"
+					FadeTime="3.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+
+			<!-- This will unhide the third upgrade model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade3">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level3</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Rocket_UPG_3 StructureJ_UPG2"
+					HideSubObjectsOnRemove="true"
+					FadeTime="3.0s"
+					Upgrade="Upgrade_NODStructureJSuperweapon_Level3"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+
+			<!-- Spawn Debris as this unit takes damage-->
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="200.0"
+					FX="FX_GDIVehicleL_Damage"/>
+			</BuildingDestructionBehavior>
+
+			<!-- selling destroys the object as soon as it's killed. Perform some cleanup right away -->
+			<SlowDeath
+				id="ModuleTag_DeathSold">
+				<OCL
+					Type="INITIAL">
+					<OCL>NODStructureJ_OCL</OCL>
+				</OCL>
+				<FX Type="INITIAL">
+					<FX>FX_NODVehicleLRG_DeathNoScorch</FX>
+				</FX>
+				<Sound Type="INITIAL" List="StructureLarge_DieExplosionMS" />
+				<DieMuxData
+					DeathTypes="SUICIDED"/>
+			</SlowDeath>
+
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0.0s"
+				SinkRate="0.0"
+				DestructionDelay="2.5s">
+				<OCL
+					Type="FINAL">
+					<OCL>NODStructureJ_OCL</OCL>
+				</OCL>
+				<FX Type="FINAL">
+					<FX>FX_NODVehicleLRG_DeathNoScorch</FX>
+				</FX>
+				<Sound Type="FINAL" List="StructureLarge_DieExplosionMS" />
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event Index="onDeath" FX="FX_StructureLarge_DieExplosion_AudioOnly" />
+				<Event Index="onDeath" FX="FX_StructureLarge_Decal" />
+			</FXListBehavior>
+
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+
+
+			<!-- Superweapon modules -->
+			<SpecialPower
+				id="ModuleTag_SuperweaponFireSpecialPower"
+				SpecialPowerTemplate="SpecialPowerTemplate_NODStructureJSuperweapon"
+				UpdateModuleStartsAttack="true"
+				AvailableAtStart="false" 
+				CanAffectObjectFilter="NODStructureJSpecialPowerObjectFilter"/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_SuperweaponFireUpdate"
+				SpecialPowerTemplate="SpecialPowerTemplate_NODStructureJSuperweapon"
+				SpecialWeapon="NODStructureJSuperweapon"
+				UnpackTime="0.1s"
+				PackTime="5.0s" 
+				WhichSpecialWeapon="1"
+				DisabledTypesToProcess="USER_PARALYZED EMP HELD PARALYZED UNDERPOWERED TEMPORARILY_BUSY">
+				<CustomAnimAndDuration
+					AnimState="USER_10"
+					Frames="75"/>
+			</WeaponFireSpecialAbilityUpdate>
+			<!--Monitors when this special power template is ready to fire and sets a model condition-->
+			<MonitorSpecialPowerTimerUpdate
+				id="ModuleTag_SuperweaponReadyToFireUpdate"
+				SpecialPowerTemplate="SpecialPowerTemplate_NODStructureJSuperweapon"
+				ReadyCondition="SPECIALPOWER1_READY"
+				ObjectStatusWhenReady="USER_1" />
+
+			<!-- Stored resources are used to track the 'charge' of the weapon -->
+			<StoredResourceBehavior
+				id="ModuleTag_StoredResourceBehavior"
+				ShowInUI="true">
+				<ResourceInfo
+					Account="0"
+					Amount="=$NODSTRUCTUREJ_CHARGE_AMOUNT" />
+				<ResourceUpgradeEffect
+					RequiredResourceAmount="1"
+					GrantObjectUpgrade="Upgrade_NODStructureJSuperweapon_Level1" />
+				<ResourceUpgradeEffect
+					RequiredResourceAmount="50"
+					GrantObjectUpgrade="Upgrade_NODStructureJSuperweapon_Level2" />
+				<ResourceUpgradeEffect
+					RequiredResourceAmount="100"
+					GrantObjectUpgrade="Upgrade_NODStructureJSuperweapon_Level3" />
+			</StoredResourceBehavior>
+			<StoredResourceUpdate
+				id="ModuleTag_StoredResourceUpdate"
+				StoredResourceBehaviorID="ModuleTag_StoredResourceBehavior"
+				UpdateInterval="1.8s"
+				UpdateValue="1">
+				<UpdateStatusValidation
+					RequiredStatus="USER_1" />
+			</StoredResourceUpdate>
+
+			<ModelConditionUpgrade
+				id="ModuleTag_ModelConditionUpgradeLevel1"
+				AddConditionFlags="USER_2">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level1</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_ModelConditionUpgradeLevel2"
+				AddConditionFlags="USER_3">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level2</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_ModelConditionUpgradeLevel3"
+				AddConditionFlags="USER_4">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level3</TriggeredBy>
+			</ModelConditionUpgrade>
+
+			<!-- If the building is destroyed, it fires the superweapon's weapon -->
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel1"
+				InitiallyActive="false"
+				DeathWeapon="NODStructureJSuperweaponEffectWeaponLevel1">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level1</TriggeredBy>
+				<ConflictsWith>Upgrade_NODStructureJSuperweapon_Level2</ConflictsWith>
+				<ConflictsWith>Upgrade_NODStructureJSuperweapon_Level3</ConflictsWith>
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="SOLD" />
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel2"
+				InitiallyActive="false"
+				DeathWeapon="NODStructureJSuperweaponEffectWeaponLevel2">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level2</TriggeredBy>
+				<ConflictsWith>Upgrade_NODStructureJSuperweapon_Level3</ConflictsWith>
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="SOLD" />
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponLevel3"
+				InitiallyActive="false"
+				DeathWeapon="NODStructureJSuperweaponEffectWeaponLevel3">
+				<TriggeredBy>Upgrade_NODStructureJSuperweapon_Level3</TriggeredBy>
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="SOLD" />
+			</FireWeaponWhenDead>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1125.0" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MissileAppears">
+				<ModelConditionSound Sound="NOD_TempleOfNOD_StrJ_MissileReadyRumble" RequiredFlags="SPECIALPOWER1_READY" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MissileAppears">
+				<ModelConditionSound Sound="NOD_TempleOfNOD_StrJ_MissileAppearsMS" RequiredFlags="SPECIALPOWER1_READY" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_TiberiumCatalystMissileReadyAtLevel3">
+				<ModelConditionSound Sound="NOD_TempleOfNOD_StrJ_GlobalArmed" RequiredFlags="SPECIALPOWER1_READY USER_4" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Level1Reached">
+				<ModelConditionSound Sound="NOD_TempleOfNOD_StrJ_Level1Reached" RequiredFlags="USER_2" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Level2Reached">
+				<ModelConditionSound Sound="NOD_TempleOfNOD_StrJ_Level2Reached" RequiredFlags="USER_3" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Level3Reached">
+				<ModelConditionSound Sound="NOD_TempleOfNOD_StrJ_Level3Reached" RequiredFlags="USER_4" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_NuclearMissileLaunch">
+				<ModelConditionSound Sound="NOD_TiberiumCatalystMissile_LaunchMS" RequiredFlags="UNPACKING" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<Sound Sound="NOD_TempleOfNOD_StrJ_Deploy1" Animation="NSL_StructureJ_BLDA" Frame="11" />
+				<Sound Sound="NOD_TempleOfNOD_StrJ_Deploy2" Animation="NSL_StructureJ_BLDA" Frame="61" />
+				<Sound Sound="NOD_TempleOfNOD_StrJ_Deploy3_SpikesOut" Animation="NSL_StructureJ_BLDA" Frame="43 48 53 58 61 74" />
+				<Sound Sound="NOD_TempleOfNOD_StrJ_EndImpactMS" Animation="NSL_StructureJ_BLDA" Frame="74" />
+			</AnimationSoundClientBehavior>	
+		</ClientBehaviors>
+		<ClientUpdates>
+			<EvaAnnounceSpecialPowerReadyClientUpdate
+				id="NuclearMissileReady"
+				AnnouncementEventOwner="NuclearMissileReady"
+				SpecialPowerTemplate="SpecialPowerTemplate_NODStructureJSuperweapon"
+				JustMonitorPercentReady="true"/>
+			<EvaAnnounceClientCreate
+				id="IonCannonDetected"
+				AnnouncementEventEnemy="EnemyTempleOfNodDetected"
+				AnnouncementEventAlly="AlliedTempleOfNodDetected"
+				UseObjectsPosition="true"/>
+		</ClientUpdates>
+		<Geometry>
+			<!-- Shape used for contact point generation -->
+			<PlacementShape
+				Type= "BOX"
+				MajorRadius = "80.0"
+				MinorRadius = "60.0"
+				Height = "32.0">
+				<Offset
+					x = "-12.3605"
+					y = "-0.148829"
+					z = "0.0" />
+			</PlacementShape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "50.0"
+				MinorRadius = "30.0"
+				Height = "32.0"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "-12.3605"
+					y = "-0.148829"
+					z = "0.0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="11.8"
+					y="-6.22"
+					z="49.59" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-31.53"
+					y="2.97"
+					z="49.59" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="53.44"
+					y="2.97"
+					z="36.68" />
+			</ContactPoint>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "50.0"
+					 MinorRadius = "50.0"
+					 Height = "25.0">
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_TempleOfNOD_StrJ_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<!-- <AudioEntry Sound="Fire1_StructureLarge_LoopMS" AudioType="soundAmbientReallyDamaged" /> -->
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   LOGIC COMMANDS AND COMMAND SET			-->
+	<!-- ////////////////////////////////////////	-->
+
+	<LogicCommand
+		id="Command_NODStructureJ_Superweapon"
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPowerTemplate_NODStructureJSuperweapon</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo
+				Heuristic="SUPER_WEAPON"
+				HealthFraction="0.20"
+				ValueRequired="1200"
+				UseWhenChargeIsAtLeast="100"
+				UpdateObject="NODStructureJSuperweaponObject" >
+				<SuperWeaponFiringInfo
+					WeightedObjectWeight="1.5" >
+					<WeightedObjectFilter
+						Rule="NONE"
+						Include="STRUCTURE"/>
+				</SuperWeaponFiringInfo>
+			</AISpecialPowerInfo>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="NODStructureJCommandSet">
+		<Cmd>Command_NODStructureJ_Superweapon</Cmd>
+		<Cmd>Command_NODSellSelf</Cmd>
+	</LogicCommandSet>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    TEMPLATES								-->
+	<!-- ////////////////////////////////////////	-->
+
+	<SpecialPowerTemplate
+		id="SpecialPowerTemplate_NODStructureJSuperweapon"
+		DisplayName="NAME:NODStructureJSuperweapon"
+		Description="DESC:NODStructureJSuperweapon"
+		Flags="FOGGED_SHROUDED_CELLS_OK WATER_OK IGNORE_MAP_EXTENTS"
+		ReloadTime="60s"
+		TargetType="LOCATION"
+		RadiusCursorRadius="200"
+		RestrictionType="1"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		EvaEventToPlayOnInitiateOwner="OwnNuclearMissileLaunched"
+		EvaEventToPlayOnInitiateAlly="AlliedNuclearMissileLaunched"
+		EvaEventToPlayOnInitiateEnemy="EnemyNuclearMissileLaunched"
+		/>
+
+	<ObjectFilterAsset
+		 id="NODStructureJSpecialPowerObjectFilter">
+		<Filter
+			Rule="ALL"
+			Relationship="ENEMIES NEUTRAL"
+			Include="AIRCRAFT VEHICLE INFANTRY STRUCTURE UPGRADE_CRYSTAL"/>
+	</ObjectFilterAsset>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS									-->
+	<!-- ////////////////////////////////////////	-->
+
+	<WeaponTemplate
+		id="NODStructureJSuperweapon"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		AttackRange="10000"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT" >
+		<Nuggets>
+			<WeaponOCLNugget
+				WeaponOCL="OCL_NODStructureJSuperweaponMaster" />
+
+			<!-- this clears the 'charge' of the weapon -->
+			<ModifyStoredResourceNugget
+				Amount="='-'+$NODSTRUCTUREJ_CHARGE_AMOUNT"/>
+
+			<ReportWeaponFiredStatNugget />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    OCLs									-->
+	<!-- ////////////////////////////////////////	-->
+
+	<ObjectCreationList
+		id="OCL_NODStructureJSuperweaponMaster">
+		<CreateObject
+			Disposition="ON_GROUND_ALIGNED CLAMP_TO_GROUND RELATIVE_ANGLE USE_WATER_SURFACE"
+			Options="IGNORE_ALL_OBJECTS IGNORE_COMMANDPOINT_LIMIT CREATE_AT_TARGET COPY_CREATORS_UPGRADES">
+			<CreateObject>NODStructureJSuperweaponObjectSeed</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+
+	<!-- OCL -->
+	<ObjectCreationList
+		id="NODStructureJ_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectTemplate>NODDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectTemplate>NODDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset x="0" y="0" z="0" />
+					<ObjectOffset x="10" y="10" z="20" />
+					<ObjectOffset x="-10" y="-20" z="20" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ExperienceLevelTemplate
+		id="NODStructureJExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="15">
+		<Target>NODStructureJ</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODStructureJExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="NODStructureJExperienceLevel_1"
+		RequiredExperience="30"
+		ExperienceAward="18">
+		<Target>NODStructureJ</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODStructureJExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="NODStructureJExperienceLevel_2"
+		RequiredExperience="75"
+		ExperienceAward="21">
+		<Target>NODStructureJ</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODStructureJExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="NODStructureJExperienceLevel_3"
+		RequiredExperience="135"
+		ExperienceAward="24">
+		<Target>NODStructureJ</Target>
+	</ExperienceLevelTemplate>
+	
+</AssetDeclaration>

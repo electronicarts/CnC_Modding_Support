@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+  <Tags></Tags>
+  <Includes>
+  </Includes>
+
+  <!-- Terror Drone Rush -->
+  <AIStrategicStateDefinition
+    id="AIState_S09_Terror"
+    MaxTargets="4">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/AIFLAG_Terrorize"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestHarvesterHeuristic_NonUnique" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="SafestToGroundUnitHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="DISBAND">
+      <TeamTemplate MinUnits="1" 
+      							MaxUnits="3" 
+      							IncludeKindOf="CAN_ATTACK" 
+      							ExcludeKindOf="AIRCRAFT IGNORES_SELECT_ALL HARVESTER" 
+      							AllowedLocomotorTypes="LAND AMPHIBIOUS"
+                    Priority="HIGH"
+                    AlwaysRecruit="false" 
+                    MicroManager="FearlessMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <!-- Kirov Destruction -->
+
+  <AIStrategicStateDefinition
+    id="AIState_S09_Kirov"
+    MaxTargets="4">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/AIFLAG_Invasion"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestStructureHeuristic_NonUnique" Priority="20"/>
+    <TargetHeuristic TargetHeuristic="ClosestUnitHeuristic_NonUnique" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack">
+      <TeamTemplate MinUnits="1" 
+      							MaxUnits="2" 
+      							IncludeKindOf="CAN_ATTACK BOMBER_AIRCRAFT" 
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER" 
+      							AllowedLocomotorTypes="AIR"
+                    Priority="HIGH" 
+                    AlwaysRecruit="true" 
+                    MicroManager="KirovMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIStrategicStateDefinition
+  id="AIState_S09_Invasion"
+  MaxTargets="1">
+    <Heuristic>
+      <ScriptedFlagHeuristic FlagName="Player_2/AIFLAG_FollowPlayer"/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestAllyUnitHeuristic" Priority="20"/>
+    <Tactic id="Defend" Tactic="StaticDefense"  EndBehavior="DISBAND" Distance="275" UseAestheticsManager="false" UpdateTime="0.1s" UseTransports="true" EndIfStateTurnsOff="true">
+      <TeamTemplate MinUnits="1" 
+      							MaxUnits="99" 
+      							IncludeKindOf="CAN_ATTACK" 
+      							ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER BOMBER_AIRCRAFT" 
+      							AllowedLocomotorTypes="AIR LAND WATER AMPHIBIOUS"
+                    Priority="HIGH" 
+                    AlwaysRecruit="true"
+                    MicroManager="S09_FollowPlayerMicroManager">
+          <ObjectFilter Rule="ALL">
+          <ExcludeThing>SovietBomerAircraft</ExcludeThing>
+        </ObjectFilter>
+      </TeamTemplate>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+
+  <AIStrategicStateDefinition
+    id="AIState_S09_CoCommander_WaterAttack"
+    MaxTargets="2">
+    <Heuristic>
+      <ConstantHeuristic/>
+    </Heuristic>
+    <TargetHeuristic TargetHeuristic="ClosestWaterUnitHeuristic" Priority="10"/>
+    <TargetHeuristic TargetHeuristic="ClosestWaterStructureHeuristic" Priority="10"/>
+    <Tactic id="Attack" Tactic="SimpleAttack" EndBehavior="RAMPAGE" DisbandAfterRetreatTeamSize="999">
+      <TeamTemplate MinUnits="8" MaxUnits="18"
+                    IncludeKindOf="CAN_ATTACK" ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+                    AllowedLocomotorTypes="WATER AMPHIBIOUS"
+                    Priority="STANDARD" AlwaysRecruit="true"
+                    MicroManager="StandardMicroManager"/>
+    </Tactic>
+  </AIStrategicStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_S09_Coop_TechBuildState">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <BuildEntry Build="SovietTechStructure" Heuristic="TECH" ForceTime="360s"/>
+    <BuildEntry Build="SovietSuperWeapon" Heuristic="TECH" MinTime="600s"/>
+    <BuildEntry Build="SovietSuperWeaponAdvanced" Heuristic="TECH" MinTime="900s"/>
+  </AIBuildStateDefinition>
+
+  <AIBuildStateDefinition
+    id="AIState_S09_Coop_StructureBuildState">
+    <Heuristic>
+      <OpeningMoveHeuristic Complete="true"/>
+    </Heuristic>
+    <BuildEntry Build="SovietPowerPlant" Heuristic="POWER"/>
+    <BuildEntry Build="SovietRefinery" Heuristic="REFINERY"/>
+    <BuildEntry Build="SovietNavalYard" Heuristic="FACTORY"/>
+    <BuildEntry Build="SovietAirfield" Heuristic="FACTORY"/>
+  </AIBuildStateDefinition>
+
+</AssetDeclaration>

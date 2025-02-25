@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	<xs:complexType name="BaseAssetType">
+		<xs:annotation>
+			<xs:documentation>Base type for all assets</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="id" type="InstanceId" use="required" XmlEdit:Default="UnnamedAsset" />
+		<xs:attribute name="typeHashCode" type="HashCode" use="optional" XmlEdit:Default="00000000" />
+		<xs:attribute name="buildRule" type="BuildRule" />
+	</xs:complexType>
+	<xs:complexType name="BaseInheritableAsset">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:annotation>
+					<xs:documentation>Inheritable base type for all assets</xs:documentation>
+				</xs:annotation>
+				<xs:sequence>
+				</xs:sequence>
+				<xs:attribute name="inheritFrom">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value="([0-9a-zA-Z_.-]*:)?[0-9a-zA-Z_.-]*" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:simpleType name="HashCode">
+		<xs:annotation>
+			<xs:documentation>Type to represent 8 digit hexadecimal values</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="8" fixed="true" />
+			<xs:pattern value="[0-9a-fA-F]{8}" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="InstanceId">
+		<xs:annotation>
+			<xs:documentation>Type for instance names</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9a-zA-Z_.-]+" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BuildRule">
+		<xs:annotation>
+			<xs:documentation>Type for build rules</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string" />
+	</xs:simpleType>
+	<xs:simpleType name="AssetReference" xas:isRef="true">
+		<xs:annotation>
+			<xs:documentation>Type for internal references to other declared assets</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<!-- The \number at the end isn't ACTUALLY legal, but BAB outputs this for indexing purposes -->
+			<!-- If anyone actually TRIES to use this, the regex will fail because BAB will also add its own -->
+			<xs:pattern value="([0-9a-zA-Z_.-]*:)?[0-9a-zA-Z_.-]*(\\[0-9]+)?" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="WeakReference" xas:isWeakRef="true">
+		<xs:annotation>
+			<xs:documentation>Type for internal references to other declared assets that need to be post-fixed due to ciruclar dependencies</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9a-zA-Z_.-]*" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Poid" xas:isWeakRef="true">
+		<xs:annotation>
+			<xs:documentation>"Pipeline Object Id", can be used as an identifier for any complexType in the pipeline</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9a-zA-Z/_.%@#$^\(\) \-\?&amp;&quot;&lt;&gt;\+\!]+" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FileReference">
+		<xs:annotation>
+			<xs:documentation>Type for external references to stand-alone files</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:anyURI" />
+	</xs:simpleType>
+	<xs:simpleType name="DataBlob">
+		<xs:annotation>
+			<xs:documentation>Pulls in data from external references to stand-alone files,</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="FileReference" />
+	</xs:simpleType>
+	<xs:complexType name="Include">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="type" type="IncludeType" use="required" />
+		<xs:attribute name="source" type="xs:anyURI" use="required" />
+	</xs:complexType>
+	<xs:simpleType name="IncludeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="reference" />
+			<xs:enumeration value="instance" />
+			<xs:enumeration value="all" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Tag">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="tag" type="xs:string" use="required" />
+	</xs:complexType>
+	<xs:complexType name="Define">
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="value" type="xs:string" use="required" />
+		<xs:attribute name="override" type="xs:boolean" />
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:FXMagneticSatellite.w3x" />
+		<Include type="all" source="ART:FXMagneticSatelliteCursor.w3x" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseObject.xml" />
+	</Includes>
+	<GameObject
+		id="BaseMagneticSatelliteEffect"
+		inheritFrom="BaseObject"
+		Side="Soviet"
+		EditorSorting="SYSTEM"
+		TransportSlotCount="0"
+		IsTrainable="false"
+		KindOf="UNATTACKABLE SELECTABLE NOT_AUTOACQUIRABLE CAN_CAST_REFLECTIONS PATH_THROUGH_INFANTRY NO_COLLIDE AI_NEEDS_PLAYER_POWER_UPDATE SKIRMISH_AI_ATTEMPT_TO_DODGE SHOW_BEHIND_OCCLUDERS"
+		EditorName="BaseMagneticSatelliteEffect"
+		Description="Desc:BaseMagneticSatelliteEffect"
+		TypeDescription="Type:BaseMagneticSatelliteEffect">
+		<DisplayName>BaseMagneticSatelliteEffect</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<LocomotorSet
+			id="ModuleTag_Locomotor"
+			Locomotor="SovietMagneticSatelliteEffectLocomotor"
+			Speed="50" />
+		<SkirmishAIInformation
+		  DodgeSafetyDistance="300.0">
+			<DodgeWithUnits Rule="NONE"
+			  Include="VEHICLE">
+				<IncludeThing>SovietScoutVehicle</IncludeThing>
+				<IncludeThing>SovietHeavyAntiVehicleInfantry</IncludeThing>
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_SOV_MagneticSatellite_Die" />
+			</FXListBehavior>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<PropBody
+				id="ModuleTag_Body" />
+		</Body>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="50.0"
+				Height="50.0"></Shape>
+		</Geometry>
+		<ShadowInfo
+			Type="NONE" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrushableLevel="0" />
+		<AudioArrayVoice>
+			<AudioEntry Sound="SOV_MagneticSatellite_Attack" AudioType="voiceAttack" />
+			<AudioEntry Sound="SOV_MagneticSatellite_MoveStart" AudioType="voiceMove" />
+			<AudioEntry Sound="SOV_MagneticSatellite_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<VisionInfo
+			VisionRange="50"
+			ShroudClearingRange="100" />
+
+	</GameObject>
+
+	<!-- Magnetic Satellite Effect Level 1 -->
+	<GameObject
+		id="MagneticSatelliteEffectLvl1"
+		inheritFrom="BaseMagneticSatelliteEffect"
+		EditorName="MagneticSatelliteEffectLvl1"
+		SelectPortrait="Portrait_Neutral_MagneticSatellite"
+		ButtonImage="Button_PlayerPower_MagneticSatellite1">
+		<DisplayName
+			xai:joinAction="Replace">Name:PLAYERPOWERMAGNETICSATELLITELVL1</DisplayName>
+    <Draws>
+      <ScriptedModelDraw
+				id="ModuleTag_Draw"
+        NoRotate="true">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="FXMagneticSatelliteCursor" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="FXMagneticSatelliteLevel1"/>
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="FXMagneticSatelliteDistortLevel1"/>
+        </ModelConditionState>
+
+				
+        <AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="FXMagneticSatelliteCursor"
+						AnimationMode="LOOP" />
+        </AnimationState>
+
+        <AnimationState
+            ParseCondStateType="PARSE_NORMAL"
+            ConditionsYes="OVER_WATER">
+					<Animation
+						AnimationName="FXMagneticSatelliteCursor"
+						AnimationMode="LOOP" />            
+          <!-- If over water play these -->
+          <ParticleSysBone
+            BoneName="None"
+            FXParticleSystemTemplate="FXMagneticSatelliteMistLevel1"/>
+          <ParticleSysBone
+            BoneName="None"
+            FXParticleSystemTemplate="FXMagneticSatelliteWakeLevel1"/>
+        </AnimationState>
+
+        <AnimationState
+            ParseCondStateType="PARSE_NORMAL"
+            ConditionsYes="USER_1">
+					<Animation
+						AnimationName="FXMagneticSatelliteCursor"
+						AnimationMode="LOOP" />            
+          <!-- If over land (aka USER_1) play these -->
+          <ParticleSysBone
+            BoneName="None"
+            FXParticleSystemTemplate="FXMagneticSatelliteMotesLevel1"/>
+          <ParticleSysBone
+            BoneName="None"
+            FXParticleSystemTemplate="FXMagneticSatelliteDustLevel1"/>
+        </AnimationState>
+      </ScriptedModelDraw>
+    </Draws>
+    
+		<Behaviors>
+			<LifetimeUpdate
+			  id="ModuleTag_LifetimeUpdate"
+			  xai:joinAction="Replace"
+			  MinLifetime="10.0s"
+			  MaxLifetime="10.0s" />
+			
+			<SuckUpObjectsUpdate
+					id="ModuleTag_MagneticSatelliteUpdate"
+					xai:joinAction="Replace"
+					DeathHeight="450"
+					LiftVelocity="0.005" 
+					Duration="8.0s" 
+					Radius="30">
+				<ObjectFilter
+					Rule="ANY"
+					Include="VEHICLE"
+					Exclude="T2_UNIT T3_UNIT"
+					StatusBitFlagsExclude="SUBMERGED UNDER_IRON_CURTAIN IN_NANOHIVE">
+					<IncludeThing>SovietScoutVehicle</IncludeThing>
+					<IncludeThing>SovietHeavyAntiVehicleInfantry</IncludeThing>
+					<IncludeThing>JapanAntiVehicleInfantryTech3</IncludeThing>
+					<ExcludeThing>JapanBalloonBomb</ExcludeThing>
+					<ExcludeThing>JapanFallingBalloonBomb</ExcludeThing>
+					<ExcludeThing>JapanEmperorMecha</ExcludeThing>
+				</ObjectFilter>
+			</SuckUpObjectsUpdate>
+		</Behaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="SOV_MagneticSatellite3_LoopMS" AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+
+	<!-- Magnetic Satellite Effect Level 2 -->
+	<GameObject
+		id="MagneticSatelliteEffectLvl2"
+		inheritFrom="BaseMagneticSatelliteEffect"
+		EditorName="MagneticSatelliteEffectLvl2"
+		SelectPortrait="Portrait_Neutral_MagneticSatellite"
+		ButtonImage="Button_PlayerPower_MagneticSatellite2">
+		<DisplayName
+			xai:joinAction="Replace">Name:PLAYERPOWERMAGNETICSATELLITELVL2</DisplayName>
+    <Draws>
+      <ScriptedModelDraw
+				id="ModuleTag_Draw"
+        NoRotate="true">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="FXMagneticSatelliteCursor" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="FXMagneticSatelliteLevel2"/>
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="FXMagneticSatelliteDistortLevel2"/>
+        </ModelConditionState>
+
+        <AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="FXMagneticSatelliteCursor"
+						AnimationMode="LOOP" />   					
+        </AnimationState>
+
+        <AnimationState
+            ParseCondStateType="PARSE_NORMAL"
+            ConditionsYes="OVER_WATER">
+					<Animation
+						AnimationName="FXMagneticSatelliteCursor"
+						AnimationMode="LOOP" />               
+          <!-- If over water play these -->
+          <ParticleSysBone
+            BoneName="None"
+            FXParticleSystemTemplate="FXMagneticSatelliteMistLevel2"/>
+          <ParticleSysBone
+            BoneName="None"
+            FXParticleSystemTemplate="FXMagneticSatelliteWakeLevel2"/>
+        </AnimationState>
+
+        <AnimationState
+            ParseCondStateType="PARSE_NORMAL"
+            ConditionsYes="USER_1">
+					<Animation
+						AnimationName="FXMagneticSatelliteCursor"
+						AnimationMode="LOOP" />               
+          <!-- If over land (aka USER_1) play these -->
+          <ParticleSysBone
+            BoneName="None"
+            FXParticleSystemTemplate="FXMagneticSatelliteMotesLevel2"/>
+          <ParticleSysBone
+            BoneName="None"
+            FXParticleSystemTemplate="FXMagneticSatelliteDustLevel2"/>
+        </AnimationState>
+      </ScriptedModelDraw>
+    </Draws>
+
+    <Behaviors>
+			<LifetimeUpdate
+			  id="ModuleTag_LifetimeUpdate"
+			  xai:joinAction="Replace"
+			  MinLifetime="15.0s"
+			  MaxLifetime="15.0s" />
+      
+			<SuckUpObjectsUpdate
+					id="ModuleTag_MagneticSatelliteUpdate"
+					xai:joinAction="Replace"
+					DeathHeight="450"
+					LiftVelocity="0.02" 
+					Duration="13.0s" 
+					Radius="40">
+				<ObjectFilter
+					Rule="ANY"
+					Include="VEHICLE"
+					Exclude="T3_UNIT"
+					StatusBitFlagsExclude="SUBMERGED UNDER_IRON_CURTAIN IN_NANOHIVE">
+					<IncludeThing>SovietScoutVehicle</IncludeThing>
+					<IncludeThing>SovietHeavyAntiVehicleInfantry</IncludeThing>
+					<IncludeThing>JapanAntiVehicleInfantryTech3</IncludeThing>
+					<ExcludeThing>JapanBalloonBomb</ExcludeThing>
+					<ExcludeThing>JapanFallingBalloonBomb</ExcludeThing>
+					<ExcludeThing>JapanEmperorMecha</ExcludeThing>
+				</ObjectFilter>
+			</SuckUpObjectsUpdate>
+		</Behaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="SOV_MagneticSatellite3_LoopMS" AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+
+	<!-- Magnetic Satellite Effect Level 3 -->
+	<GameObject
+		id="MagneticSatelliteEffectLvl3"
+		inheritFrom="BaseMagneticSatelliteEffect"
+		EditorName="MagneticSatelliteEffectLvl3"
+		SelectPortrait="Portrait_Neutral_MagneticSatellite"
+		ButtonImage="Button_PlayerPower_MagneticSatellite3">
+		<DisplayName
+			xai:joinAction="Replace">Name:PLAYERPOWERMAGNETICSATELLITELVL3</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+					  id="ModuleTag_Draw"
+			  NoRotate="true">
+				<ModelConditionState
+							ParseCondStateType="PARSE_DEFAULT">
+					<Model
+								  Name="FXMagneticSatelliteCursor" />
+					<ParticleSysBone
+								  BoneName="None"
+								  FXParticleSystemTemplate="FXMagneticSatelliteLevel3"/>
+					<ParticleSysBone
+								  BoneName="None"
+								  FXParticleSystemTemplate="FXMagneticSatelliteDistortLevel3"/>
+				</ModelConditionState>
+
+				<AnimationState
+							ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="FXMagneticSatelliteCursor"
+						AnimationMode="LOOP" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Animation
+						AnimationName="FXMagneticSatelliteCursor"
+						AnimationMode="LOOP" />
+					<!-- If over water play these -->
+					<ParticleSysBone
+					  BoneName="None"
+					  FXParticleSystemTemplate="FXMagneticSatelliteMistLevel3"/>
+					<ParticleSysBone
+					  BoneName="None"
+					  FXParticleSystemTemplate="FXMagneticSatelliteWakeLevel3"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="FXMagneticSatelliteCursor"
+						AnimationMode="LOOP" />
+					<!-- If over land (aka USER_1) play these -->
+					<ParticleSysBone
+					  BoneName="None"
+					  FXParticleSystemTemplate="FXMagneticSatelliteMotesLevel3"/>
+					<ParticleSysBone
+					  BoneName="None"
+					  FXParticleSystemTemplate="FXMagneticSatelliteDustLevel3"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+
+		<Behaviors>
+			<LifetimeUpdate
+			  id="ModuleTag_LifetimeUpdate"
+			  xai:joinAction="Replace"
+			  MinLifetime="20.0s"
+			  MaxLifetime="20.0s" />
+
+			<SuckUpObjectsUpdate
+					id="ModuleTag_MagneticSatelliteUpdate"
+					xai:joinAction="Replace"
+					DeathHeight="450"
+					LiftVelocity="0.03"
+					Duration="18.0s"
+					Radius="50">
+				<ObjectFilter
+					Rule="ANY"
+					Include="VEHICLE"
+					StatusBitFlagsExclude="SUBMERGED UNDER_IRON_CURTAIN IN_NANOHIVE">
+					<IncludeThing>SovietScoutVehicle</IncludeThing>
+					<IncludeThing>SovietHeavyAntiVehicleInfantry</IncludeThing>
+					<IncludeThing>JapanAntiVehicleInfantryTech3</IncludeThing>
+					<ExcludeThing>JapanBalloonBomb</ExcludeThing>
+					<ExcludeThing>JapanFallingBalloonBomb</ExcludeThing>
+					<ExcludeThing>JapanEmperorMecha</ExcludeThing>
+				</ObjectFilter>
+			</SuckUpObjectsUpdate>
+		</Behaviors>
+		<AudioArraySound>
+			<AudioEntry Sound="SOV_MagneticSatellite3_LoopMS" AudioType="soundAmbient" />
+		</AudioArraySound>
+	</GameObject>
+</AssetDeclaration>

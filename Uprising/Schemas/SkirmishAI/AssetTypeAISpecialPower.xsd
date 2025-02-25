@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+    <xs:include schemaLocation="AssetTypeAIMicroManagerStates.xsd"/>
+    <xs:include schemaLocation="AssetTypeTargetHeuristics.xsd"/>
+
+    <xs:simpleType name="AISpecialPowerHeuristic">
+    <xs:restriction base="xs:string">
+      
+      <xs:enumeration value="MOVEMENT"/>
+      <xs:enumeration value="CAPTURE"/>
+      <xs:enumeration value="UNPACK"/>
+      <xs:enumeration value="PACK"/>
+      <xs:enumeration value="AOE_ATTACK"/>
+      <xs:enumeration value="TOGGLE"/>
+      <xs:enumeration value="TIME_WARP"/>
+      <xs:enumeration value="DOMINATE"/>
+      <xs:enumeration value="DISGUISE"/>
+      <xs:enumeration value="JUMP"/>
+      <xs:enumeration value="DEPLOY"/>
+      <xs:enumeration value="SPEED_BOOST"/>
+      <xs:enumeration value="DUMB_FIRE"/>
+      <xs:enumeration value="UPGRADE"/>
+      <xs:enumeration value="INSTAKILL"/>
+      <xs:enumeration value="INVULNERABILITY"/>
+      <xs:enumeration value="ATTACHED_BOMB"/>
+      <xs:enumeration value="RUSH_ATTACK"/>
+      <xs:enumeration value="DISCHARGE"/>
+      
+      <xs:enumeration value="PLAYER_AOE_ATTACK"/>
+      <xs:enumeration value="PLAYER_AOE_DEBUFF"/>
+      <xs:enumeration value="PLAYER_AOE_BUFF"/>
+      <xs:enumeration value="PLAYER_AOE_SHROUD_CLEAR"/>
+      <xs:enumeration value="PLAYER_POSITION_SWAP"/>
+      <xs:enumeration value="PLAYER_POWER_MAGNETIC_SATELLITE"/>
+            
+    </xs:restriction>
+  </xs:simpleType>
+
+    <xs:simpleType name="ToggleStatusAiHint">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TOGGLE_DEFAULT"/>
+            <xs:enumeration value="TOGGLE_ALWAYS" /> <!-- Always choose this state -->
+            <xs:enumeration value="TOGGLE_ONE_PER_TARGET"/>
+            <xs:enumeration value="TOGGLE_DEFENSE_PROTECT_OTHERS"/>
+            <xs:enumeration value="TOGGLE_DEFENSE_SELF_ONLY"/>
+            <xs:enumeration value="TOGGLE_WEAPON" />
+            <xs:enumeration value="TOGGLE_TRANSFORM" />
+            <xs:enumeration value="TOGGLE_SHORT_RANGE_WEAPON" />
+            <xs:enumeration value="TOGGLE_IMMOBILIZE" />
+            <xs:enumeration value="TOGGLE_LOCKDOWN" />
+            <xs:enumeration value="TOGGLE_NO_HINT"/>
+            <xs:enumeration value="TOGGLE_AOE_ATTACK" />
+            <xs:enumeration value="TOGGLE_LEECH_HEALTH_AND_WEAPON" />
+            <xs:enumeration value="TOGGLE_STEALTH_OTHERS" />
+            <xs:enumeration value="TOGGLE_SHIELD" />
+            <xs:enumeration value="TOGGLE_HARPOON" />
+        </xs:restriction>
+    </xs:simpleType>
+
+	<xs:simpleType name="AISpecialPowerManager">
+    	<xs:restriction base="xs:string">
+      		<xs:enumeration value="SKIRMISH_AI"/>
+      		<xs:enumeration value="TACTIC"/>
+      		<xs:enumeration value="MICRO_MANAGER"/>
+      		<xs:enumeration value="BUILDER"/>
+    	</xs:restriction>
+	</xs:simpleType>
+
+    <!-- How do we decide which enemy to target with a special power?
+         Only for targeted AOE attack powers -->
+    <xs:simpleType name="AIAoeAttackPowerLocationPreference" >
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PREFER_NEAREST" />
+            <xs:enumeration value="PREFER_CENTER_OF_ENEMIES" />
+            <xs:enumeration value="PREFER_MAXIMUM_DAMAGE" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!-- For weapons we do not target inside the power controller - what point does the effect
+         emanate from? From the current target or from the object itself? -->
+    <xs:simpleType name="AIAoeAttackPowerEmanationLocation" >
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EMANATE_FROM_SELF" />
+            <xs:enumeration value="EMANATE_FROM_TARGET" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="AISpecialPowerWeaponData">
+        <xs:sequence />
+        <xs:attribute name="Weapon" type="WeaponRef" use="required" />
+        <xs:attribute name="IsDisablingAttack" type="SageBool" default="false"/>
+        <xs:attribute name="AffectsFriendlies" type="SageBool" default="false"/>
+        <xs:attribute name="AffectsSelf" type="SageBool" default="false"/>
+        <xs:attribute name="TotalValueGreaterThan" type="SageInt" default="0" />
+
+        <!-- Only for targeted AOE_ATTACK powers. Determines where the power should be targeted -->
+        <xs:attribute name="AoeAttackPowerLocationPreference" type="AIAoeAttackPowerLocationPreference" default="PREFER_NEAREST" />
+        <!-- Only for targeted AOE_ATTACK powers. After the power is activated, other powers should not be fired into
+               the target region for this long, so that the powers don't redundantly disable or kill units -->
+        <xs:attribute name="AoeAttackPowerBlockAreaAfterActivationTime" type="Time" default="0s" />
+        <!-- Only for non-targeted AOE_ATTACK and TOGGLE_AOE_ATTACK. Determines where the power emanates from -->
+        <xs:attribute name="AoeAttackEmanationLocation" type="AIAoeAttackPowerEmanationLocation" default="EMANATE_FROM_SELF"/>
+
+        <!-- When calculating ranges in a toggle state, raise the range of weapons we are currently using and lower the
+               range of weapons we are not using by this much, to avoid constant state flickering -->
+        <xs:attribute name="ToggleRangeHysteresis" type="SageReal" default="0.0" />
+
+
+        <!-- Only for TOGGLE_SHORT_RANGE_WEAPON: Do we force the weapon to be fired at whatever is in range, or do we just
+               stick to the micromanager's targeting? -->
+        <xs:attribute name="ToggleShortRangeTargetForcesTarget" type="SageBool" default="false" />
+    </xs:complexType>
+
+
+    <xs:complexType name="AIToggleSpecialPowerInfo">
+        <xs:sequence >
+            <!-- for TOGGLE_WEAPON, TOGGLE_AOE_ATTACK -->
+            <xs:element name="StateWeapon" type="AISpecialPowerWeaponData" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="ToggleHint" type="ToggleStatusAiHint" use="required" />
+
+        <xs:attribute name="UseOnlyWhenPowerAdvantageIsAbove" type="SageReal" use="optional" />
+        <xs:attribute name="UseOnlyWhenPowerAdvantageIsBelow" type="SageReal" use="optional" />
+        <xs:attribute name="UseOnlyWhenCostAdvantageIsAbove" type="SageReal" use="optional" />
+        <xs:attribute name="UseOnlyWhenCostAdvantageIsBelow" type="SageReal" use="optional" />
+        <xs:attribute name="NeverUseWhenFurtherThanNUnitsFromTarget" type="SageReal" use="optional" />
+        <xs:attribute name="NeverUseWhenCloserThanNUnitsFromTarget" type="SageReal" use="optional" />
+        <xs:attribute name="NeverUseWhenHealthIsBelow" type="SageReal" use="optional" />
+        <xs:attribute name="OnlyUseWhenHaveTarget" type="SageBool" default="false" />
+        <xs:attribute name="MaxZDifferenceFromTarget" type="SageReal" use="optional" />
+        <xs:attribute name="NeverUseInState" type="MicroManagerStateList" default="" />
+        <xs:attribute name="NeverUseDuringTask" type="MicroManagerUnitTaskList" default="" />
+    
+        <!-- "Clear" is defined here to mean that there are no enemies nearby and the team isn't near its tactical target.
+            Note that this is unfortuantely different from the MicroManager_IDLE state.  A team will stay in the IDLE state
+            if none of its members are able to attack any nearby target.  We don't want that situation to block a toggle from
+            activating because toggling may be what solves that problem (e.g. Japan Transforming units). -->
+        <xs:attribute name="NeverUseWhenClear" type="SageBool" default="false" />
+
+        <!-- For TOGGLE_DEFENSE_SELF_ONLY. If you set these, the defense will active when the amount of damage
+         taken in the last x seconds plus the damage expected in the next y seconds exceeds some fraction z
+         of our total health. If not, or if you don't set these, then the power will activate if we are being
+         targeted by an enemy unless DontUseIfInRange is set to true. -->
+        <xs:attribute name="SelfDefenseDamageLookAheadTime" type="Time" use="optional" />
+        <xs:attribute name="SelfDefenseDamageLookBehindTime" type="Time" use="optional" />
+        <xs:attribute name="SelfDefenseDamageFraction" type="SageReal" use="optional" />
+        <xs:attribute name="DontUseIfInRange" type="SageBool" default="false" />
+
+        <!-- For ONE_PER_TARGET power -->
+        <xs:attribute name="NumOtherAttackersOnTarget" type="SageInt" default="1" />
+
+        <!-- For TOGGLE_LEECH_HEALTH_AND_WEAPON: The upgrade used to test if we have already leeched a weapon. If this
+               upgrade is present, we will not switch to the LEECH state just to get someone's weapon. -->
+        <xs:attribute name="LeechWeaponUpgrade" type="UpgradeTemplateRef" default="" />
+        <!-- For TOGGLE_LEECH_HEALTH_AND_WEAPON: How close to death does the target need to be for us to use the 
+               "Let's switch to leech beam to get the target's weapon!" code. -->
+        <xs:attribute name="LeechWeaponTargetHealthFraction" type="SageReal" default="0.1" />
+        <!-- For TOGGLE_LEECH_HEALTH_AND_WEAPON: Reference to a SecondaryObjectListenerModule which knows which
+               types of objects we can leech weapons from. -->
+        <xs:attribute name="LeechWeaponSOLModuleId" type="Poid" xas:refType="ModuleData" use="optional" />
+
+        <!-- For TOGGLE_LEECH_HEALTH_AND_WEAPON: We turn the "leech health" abilities only when our power advantage
+               is above this. (Because then we expect to be gaining more health from the leech than we lose because we're
+                 killing the enemy slower.) -->
+        <xs:attribute name="LeechHealthActivatePowerAdvantage" type="SageReal" default="1.7" />
+        <!-- For TOGGLE_LEECH_HEALTH_AND_WEAPON: And we turn it off if the power advantage drops below this. We 
+             have some hysteresis in the state to avoid vibrating back and forth between states, since turning 
+             the power on may lower our power advantage. -->
+        <xs:attribute name="LeechHealthDeactivatePowerAdvantage" type="SageReal" default="1.2" />
+
+        <!-- For TOGGLE_STEALTH_OTHERS: Invisibility module we are using when stealthing others -->
+        <xs:attribute name="StealthOthersInvisibilityModuleId" type="Poid" xas:refType="ModuleData" use="optional" />
+
+        <!-- For TOGGLE_SHIELD: We must protect at least this much cost of friendly units to bother with the shield -->
+        <xs:attribute name="ShieldMinCostProtected" type="SageInt" default="0" />
+        
+        <!-- For TOGGLE_SHIELD: The enemy army's DPS against the protected units must be larger than this to bother
+               with the shield -->
+        <xs:attribute name="ShieldMinEnemyDPS" type="SageReal" default="1000.0" />
+
+        <!-- For TOGGLE_SHIELD: Units far away from the shield center are not counted as much when figuring 
+             ShieldMinCostProtected, because they won't be protected as long. Units closer than this are 
+             counted at full value (this distance is a fraction of the shield's radius): -->
+        <xs:attribute name="ShieldCostAdjustPastDistanceFraction" type="SageReal" default="0.5" />
+        <!-- and then there is a linear falloff until units are the edge of the shield radius have their costs
+             multiplied by: -->
+        <xs:attribute name="ShieldCostAdjustMultiplierAtEdge" type="SageReal" default="0.0" />
+
+    	<!-- For TOGGLE_WEAPON -->
+    	<xs:attribute name="EnemyMustBeInVisionRange" type="SageBool" default="false" />
+
+    	<!-- Exclude a target by KindOf bit flag. For example, allows us to modify the behavior of a power -->
+    	<!-- like the leech weapon so it cannot be used against infantry -->
+	    <xs:attribute name="NeverUseWhenTargetIsAnyKindOf" type="KindOfBitFlags" />
+
+    	<!-- Constrain toggling by the location/surface type of the object. For example, allows us 	-->
+    	<!-- to modify the behavior of a special power like the JapanAntiAirShip tranfrom so that 	-->
+    	<!-- it will only transform when located on Water but not on Land.                          -->
+		<xs:attribute name="Location" type="AITargetLocationBitFlags" default="Water Land"/>
+
+        <!-- This attributue was added to handle the special case of the EP1 AlliedArtilleryVehicle which
+		     is required to always attack enemies with the siege artillery when they are in range
+			 even if the current weapon is valid and might even be more effective. -->
+        <xs:attribute name="AlwaysUseWhenEnemiesInRange" type="SageBool" default="false" />
+
+    </xs:complexType>
+    
+	<xs:complexType name="AISpecialPowerInfo">
+    	<xs:sequence>
+        	<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1"/>
+        	<xs:element name="SpecialPowerWeapon" type="AISpecialPowerWeaponData" minOccurs="0" maxOccurs="1" />
+    	</xs:sequence>
+	    <xs:attribute name="id" type="Poid" xas:pipelineOnly="true"/>
+	    <xs:attribute name="Heuristic" type="AISpecialPowerHeuristic" use="required"/>
+	    <xs:attribute name="Manager" type="AISpecialPowerManager" use="required"/>
+	    <xs:attribute name="Distance" type="xs:float" default="100.0"/>
+	    <xs:attribute name="HealthFraction" type="xs:float" default="0.0"/>
+	    <xs:attribute name="TargetObjectInclude" type="KindOfBitFlags" />
+	    <xs:attribute name="TargetObjectExclude" type="KindOfBitFlags" />
+	    <xs:attribute name="UseOnlyWhenPowerAdvantageIsAbove" type="SageReal" use="optional" />
+	    <xs:attribute name="NeverUseWhileRetreating" type="SageBool" default="false" />
+	    <xs:attribute name="NeverUseWhilePullingBack" type="SageBool" default="false" />
+	        
+	    <!-- For INVULNERABILITY power -->
+	    <xs:attribute name="InvulnerabilityDamageLookAheadTime" type="Time" default="1s" />
+	    <xs:attribute name="InvulnerabilityDamageLookBehindTime" type="Time" default="1s" />
+	    <!-- The InvulnerabilityDamageFractions say: Activate the invulnerability power when the damage I took
+	     from instant weapons over the last n seconds plus the damage I expect to take in the next y seconds
+	     from delayed weapons is greater than some fraction of my current health. We have two fractions -
+	     one for when we are out of range of our target, and one for when we are in range. The invulnerability
+	     power often precludes use of our weapons, so we are much more willing to use the power when we are
+	     out of range than when we are in range. -->
+	     <xs:attribute name="InvulnerabilityDamageFractionWhenOutOfRangeOfTarget" type="SageReal" default=".3" />
+	     <xs:attribute name="InvulnerabilityDamageFractionWhenInRangeOfTarget" type="SageReal" default=".6" />
+	     <!-- For INVULNERABILITY powers which prevent us from changing direction - a hack to try & avoid
+	          use until we are facing the correct direction. -->
+	     <xs:attribute name="InvulnerabilityAvoidUseIfAngleToNextPathNodeIsMoreThan" type="Angle" default="360d" />
+
+	    <!-- For Player Powers: Prevents the power from being cast on anything moving over this speed.  This is useful
+	         for powers that have a delay between cast time and when they hit, which many of the player powers do.
+	         0.0 should be a common usage value, i.e. only pick stationary targets -->
+	    <xs:attribute name="MaxTargetSpeed" type="SageReal" default="99999.0" />
+
+	    <!-- For PLAYER_AOE_ATTACK: Whether or not this power needs to be able to kill its targets.  This is normally on but
+	         needs to be turned off for powers that do more indirect damage such as the Desolator Bomb and Final Squadron.
+	         With these powers, the "MinTargetsHit" parameter is used instead of MinKillValue. -->
+	    <xs:attribute name="RequireKillTargets" type="SageBool" default="true" />
+
+	    <!-- For PLAYER_AOE_ATTACK: Requires that the power thinks it will be able to kill at least this amount worth of enemy assets.
+	         This is useful for powerful player powers that we don't want to 'waste' by taking out a single unit for example. -->
+	    <xs:attribute name="MinKillValue" type="SageReal" default="0.0" />
+
+	    <!-- For Player Powers: Requires that the power thinks it will be able to hit at least this many targets.
+	         This is useful for powerful player powers that we don't want to 'waste' by hitting a single unit for example. -->
+	    <xs:attribute name="MinTargetsHit" type="SageInt" default="1" />
+
+	    <!-- For PLAYER_AOE_BUFF: The minimum number of enemies we're fighting to use the buff on our team -->
+	    <xs:attribute name="MinEnemiesNearby" type="SageInt" default="1" />
+	    
+	    <!-- For Special Powers that requrie two logic commands, i.e., ChronoSwap & ChronoSphere -->
+	    <xs:attribute name="NextLogicCommand" type="LogicCommandRef" use="optional" />
+
+	    <!-- For SPEED_BOOST -->
+	    <xs:attribute name="UseInMicroManagerState" type="MicroManagerStateList" default="" />
+	    <xs:attribute name="UseNearTacticalTarget" type="SageBool" default="false" />
+	    <!-- Note that "out of ammo" only applies to aircraft that must reload at a structure, not units going through their normal auto-reloading clips -->
+	    <xs:attribute name="UseWhenOutOfAmmo" type="SageBool" default="false" />
+
+	    <!-- For Special Powers that require an update, i.e., Soviet Magnetic Satellite -->
+	    <xs:attribute name="UpdateObject" type="GameObjectRef" use="optional"  />
+	    <xs:attribute name="SearchRadius" type="SageReal" default="150.0" />
+
+    	<!-- Exclude a target by the location/surface type of the target. For example, allows us to modify the behavior -->
+        <!-- of a power like the Torpedo Spread so that it only targets units that are located on Water but not on Land  -->
+		<xs:attribute name="Location" type="AITargetLocationBitFlags" default="Water Land"/>
+
+    	<!-- For PLAYER_POWER_MAGNETIC_SATELLITE heuristic, we need to limit the number of updatables that are active -->
+	    <xs:attribute name="MaxUpdatables" type="SageInt" use="optional" />
+
+    	<!-- For RUSH_ATTACK and TOGGLE_DEFENSE_SELF_ONLY -->
+		<!-- Used to indicate the unit should use its special power for the Counter Garrison mechanic -->
+	    <xs:attribute name="UseToCounterGarrison" type="SageBool" use="optional" />
+
+        <!-- This attribute was added to handle the special case of the EP1 AlliedLegionnaireInfantry unit
+		     which is required to only attack units with it's secondary ability, the Leap Attack, only when the 
+             units have an object status of UNDER_FROZEN -->
+		<xs:attribute name="RequiredForAttackObjectStatus" type="ObjectStatusBitFlags" use="optional"/>
+
+        <!-- Similarly this attribute was added to handle the case of the CryoCopters continuing to 
+		     use their secondary ability ShrinkRay on a unit that was already shrunk. So this ObjectStatus 
+		     defines a state when the object can never be attacked -->
+		<xs:attribute name="ForbiddenForAttackObjectStatus" type="ObjectStatusBitFlags" use="optional"/>
+
+		<!-- For RUSH_ATTACK -->
+		<!-- Don't activate if we out-range our target so we can get free-hits in while we wait for them to close the gap -->
+	    <xs:attribute name="DontUseIfOutRangeTarget" type="SageBool" default="true" />
+
+    </xs:complexType>
+
+</xs:schema>

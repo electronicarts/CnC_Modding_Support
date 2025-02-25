@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:TibSpike.w3x" />
+		<Include
+			type="all"
+			source="ART:TibSpikeD.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTiberiumShaft.xml" />
+	</Includes>
+	<GameObject
+		id="TiberiumCollapsableTower"
+		inheritFrom="BaseTiberiumShaft"
+		SelectPortrait="Portrait_NeutralTiberiumTower"
+		ButtonImage="Portrait_NeutralTiberiumTower"
+		EditorName="TiberiumCollapsableTower"
+		KindOf="STRUCTURE NOT_AUTOACQUIRABLE IMMOBILE CAN_CAST_REFLECTIONS TIBERIUM_BASED TIBERIUM"
+		Browser="REGION NEUTRAL MISC_NATURAL">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TibSpike" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="TibSpikeD" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="TibSpikeD" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Animation
+						AnimationName="TibSpikeD"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="TibSpikeD"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="TibSpikeD"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<StructureCollapseUpdate
+				id="ModuleTag_Collapse"
+				xai:joinAction="Remove" xmlns:xai="uri:ea.com:eala:asset:instance"/>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="2000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="25.0"
+				Height="72.0"
+				ContactPointGeneration="INFANTRY" />
+		</Geometry>
+	</GameObject>
+</AssetDeclaration>

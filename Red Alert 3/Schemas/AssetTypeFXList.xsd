@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+	
+	<xs:complexType name="FXNugget" xas:isPolymorphic="true">
+		<xs:sequence>
+			<xs:element name="SecondaryObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+			<xs:element name="SourceObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+			<xs:element name="SourceMustNotHaveBeenDisabledThisFrameByType" type="DisabledType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="RequiredSecondaryModelConditions" type="ModelConditionBitFlags" use="optional" />
+		<xs:attribute name="ExcludedSecondaryModelConditions" type="ModelConditionBitFlags" use="optional" />
+		<xs:attribute name="RequiredSourceModelConditions" type="ModelConditionBitFlags" use="optional" />
+		<xs:attribute name="ExcludedSourceModelConditions" type="ModelConditionBitFlags" use="optional" />
+		<xs:attribute name="StopIfPlayed" type="SageBool" />
+		<xs:attribute name="Weather" type="WeatherType" default="INVALID" />
+		<xs:attribute name="OnlyIfOnLand" type="SageBool" default="false"/>
+		<xs:attribute name="PlayIfSourceIsStealthed" type="SageBool" default="false" />
+  </xs:complexType>
+
+	<xs:complexType name="EvaEventFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:sequence>
+				</xs:sequence>
+				<xs:attribute name ="EvaEventOwner" type="EvaEventRef" default="" />
+				<xs:attribute name ="EvaEventAlly" type="EvaEventRef" default="" />
+				<xs:attribute name ="EvaEventEnemy" type="EvaEventRef" default="" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SoundFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:attribute name="Value"
+											type="AudioEventInfoRef" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="RayEffectFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:sequence>
+					<xs:element name="PrimaryOffset" type="Vector3" minOccurs="0" xas:byValue="true" />
+					<xs:element name="SecondaryOffset"
+											type="Vector3" minOccurs="0" xas:byValue="true" />
+				</xs:sequence>
+				<xs:attribute name="Thing" type="GameObjectWeakRef" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="LightPulseFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:sequence>
+					<xs:element name="Color" type="RGBColor" xas:byValue="true" minOccurs="0" />
+				</xs:sequence>
+				<xs:attribute name="Radius" type="SageReal" />
+				<xs:attribute name="RadiusAsPercentOfObjectSize" type="Percentage" />
+				<xs:attribute name="IncreaseTime" type="SageUnsignedInt" />
+				<xs:attribute name="DecreaseTime" type="SageUnsignedInt" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="DynamicDecalShaderType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ALPHA" />
+			<xs:enumeration value="ADDITIVE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="DynamicDecalFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:sequence>
+					<xs:element name="Color" type="Color3" xas:byValue="true" minOccurs="0" />
+					<xs:element name="Offset" type="Vector2" xas:byValue="true" minOccurs="0" />
+				</xs:sequence>
+				<xs:attribute name="Decal" type="AssetId" />
+				<xs:attribute name="Shader" type="DynamicDecalShaderType" default="ALPHA" />
+				<xs:attribute name="Size" type="SageReal" />
+				<xs:attribute name="OrientToObject" type="SageBool" default="true" />
+				<xs:attribute name="OpacityStart" type="SageReal" />
+				<xs:attribute name="OpacityPeak" type="SageReal" default="1.0" />
+				<xs:attribute name="OpacityEnd" type="SageReal" />
+				<xs:attribute name="OpacityFadeTimeOne" type="Time" />
+				<xs:attribute name="OpacityFadeTimeTwo" type="Time" />
+				<xs:attribute name="OpacityPeakTime" type="Time" />
+				<xs:attribute name="StartingDelay" type="Time" />
+				<xs:attribute name="Lifetime" type="Time" />
+				<xs:attribute name="AllowOnObjects" type="SageBool" default="true" /> <!-- if false restricts decal to terrain -->
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="LaserFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:sequence>
+					<xs:element name="Offset"
+											type="Vector3"
+											xas:byValue="true"
+											minOccurs="0" />
+				</xs:sequence>
+				<xs:attribute name="LaserTemplate"
+											type="GameObjectWeakRef" />
+				<xs:attribute name="LaserBackwards"
+											type="SageBool" default="false" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="CameraShakerVolumeFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:attribute name="Radius"
+											type="SageReal" />
+				<xs:attribute name="Duration"
+											type="Time" />
+				<xs:attribute name="Amplitude"
+											type="Angle" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ViewShakeFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:attribute name="Type"
+											type="ViewShakeType" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AttachedModelFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:attribute name="Model"
+											type="RenderObjectRef" />
+				<xs:attribute name="RandomlyRotate"
+											type="SageBool" default="false" />
+				<xs:attribute name="ExpireTimer"
+											type="Time" default="8s" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TerrainScorchFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:sequence>
+					<!--Like RandomVariable, only dealing with a range of TerrainScorchType.  TODO: do we want a DistributionType? -->
+					<xs:element name="RandomRange" 
+											minOccurs="0">
+						<xs:complexType>
+							<xs:attribute name="Low"
+														type="TerrainScorchType" default="SCORCH_1" />
+							<xs:attribute name="High"
+														type="TerrainScorchType" default="SCORCH_4" />
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="Type"
+											type="TerrainScorchType" default="RANDOM" />
+				<xs:attribute name="Radius"
+											type="SageReal" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TintDrawableFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:sequence>
+					<xs:element name="Color"
+											type="RGBColor"
+											minOccurs="0"
+											xas:byValue="true" />
+				</xs:sequence>
+				<xs:attribute name="PreColorTime"
+											type="Time" default="2s" />
+				<xs:attribute name="PostColorTime"
+											type="Time" default="2s" />
+				<xs:attribute name="SustainedColorTime"
+											type="Time" default="1s" />
+				<xs:attribute name="Frequency"
+											type="SageReal" default="1.0" />
+				<xs:attribute name="Amplitude"
+											type="SageReal" default="1.0" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="FXListAtBonePosFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:attribute name="FX"
+											type="FXListRef" />
+				<xs:attribute name="Bone"
+											type="xs:string" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="FXParticleSysBoneNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:sequence>
+					<xs:element name="Offset"
+											type="Vector3"
+											minOccurs="0"
+											xas:byValue="true" />
+				</xs:sequence>
+				<xs:attribute name="Bone"
+											type="xs:string" />
+				<xs:attribute name="RequireFrequentUpdate"
+											type="SageBool" />
+				<xs:attribute name="TriggerType"
+											type="FXTriggerType" />
+				<xs:attribute name="HoldBetweenStateID"
+											type="SageInt" />
+				<xs:attribute name="ActionType"
+											type="FXActionType" />
+				<xs:attribute name="Particle"
+											type="FXParticleSystemRef" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="ParticleSystemFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:sequence>
+					<xs:element name="Rotate" xas:byValue="true" minOccurs="0" >
+						<xs:complexType>
+							<xs:attribute name="X"
+														type="Angle" />
+							<xs:attribute name="Y"
+														type="Angle" />
+							<xs:attribute name="Z"
+														type="Angle" />
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="Offset"
+										type="Vector3"
+										minOccurs="0"
+										xas:byValue="true" />
+					<xs:element name="TargetOffset"
+											type="Vector3" minOccurs="0" />
+					<xs:element name="Radius"
+											type="ClientRandomVariable"
+											minOccurs="0"
+											xas:byValue="true" />
+					<xs:element name="Height"
+											type="ClientRandomVariable"
+											minOccurs="0"
+											xas:byValue="true" />
+					<xs:element name="InitialDelay"
+											type="ClientRandomVariable"
+											minOccurs="0"
+											xas:byValue="true" xas:initialize="-1, -1, DistributionType_CONSTANT" />
+				</xs:sequence>
+				<xs:attribute name="Particle"
+										type="FXParticleSystemRef" />
+				<xs:attribute name="Count"
+											type="SageInt" default="1" />
+				<xs:attribute name="OrientToObject"
+											type="SageBool" />
+				<xs:attribute name="Ricochet"
+											type="SageBool" />
+				<xs:attribute name="CreateAtGroundHeight"
+											type="SageBool" />
+				<xs:attribute name="CreateOverrideBone"
+											type="xs:string" />
+				<xs:attribute name="UseTarget"
+											type="SageBool" />
+				<xs:attribute name="TargetOverrideBone"
+											type="xs:string" />
+				<xs:attribute name="TargetCoeff"
+											type="SageReal" default="1.0" />
+				<xs:attribute name="SystemLife"
+											type="Time" default="-1s"/>
+				<xs:attribute name="SetTargetMatrix"
+											type="SageBool" />
+				<xs:attribute name="OnlyIfOnWater"
+											type="SageBool" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ForceFeedbackFXNugget">
+		<xs:complexContent>
+			<xs:extension base="FXNugget">
+				<xs:attribute name="Event" type="ForceFeedbackEventRef" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="FXNuggetTypes" xas:runtimeWrapper="::FXList">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="EvaEvent"
+									type="EvaEventFXNugget" />
+			<xs:element name="Sound"
+									type="SoundFXNugget" />
+			<xs:element name="RayEffect"
+									type="RayEffectFXNugget" />
+			<xs:element name="LightPulse"
+									type="LightPulseFXNugget" />
+			<xs:element name="DynamicDecal"
+									type="DynamicDecalFXNugget" />
+			<xs:element name="Laser"
+									type="LaserFXNugget" />
+			<xs:element name="CameraShakerVolume"
+									type="CameraShakerVolumeFXNugget" />
+			<xs:element name="ViewShake"
+									type="ViewShakeFXNugget" />
+			<xs:element name="AttachedModel"
+									type="AttachedModelFXNugget" />
+			<xs:element name="TerrainScorch"
+									type="TerrainScorchFXNugget" />
+			<xs:element name="TintDrawable"
+									type="TintDrawableFXNugget" />
+			<xs:element name="FXListAtBonePos"
+									type="FXListAtBonePosFXNugget" />
+			<xs:element name="FXParticleSysBone"
+									type="FXParticleSysBoneNugget" />
+			<xs:element name="ParticleSystem"
+									type="ParticleSystemFXNugget" />
+			<xs:element name="ForceFeedback"
+									type="ForceFeedbackFXNugget" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="FXList" xas:runtimeWrapper="::FXList" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+				<xs:element name="NuggetList" type="FXNuggetTypes" />
+				</xs:sequence>
+				<xs:attribute name="PlayEvenIfShrouded"
+											type="SageBool" default="false" />
+				<xs:attribute name="Tailorable"
+											type="SageBool" default="false" />
+				<xs:attribute name="CullTracking"
+											type="Time" />
+				<xs:attribute name="CullTrackingMin"
+											type="SageInt" />
+				<xs:attribute name="CullTrackingMax"
+											type="SageInt" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="../Includes/ProductionQueue.xsd"/>
+
+    <xs:simpleType name="ProductionUpdateType" >
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="IGNORE_AI_WHILE_PRODUCING" />
+			<xs:enumeration value="OWNER_DISABLED_WHILE_PRODUCING" />
+			<xs:enumeration value="HIDE_BAR_WHEN_NOT_ACTIVELY_PRODUCING" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ProductionUpdateBitFlags">
+        <xs:list itemType="ProductionUpdateType"></xs:list>
+    </xs:simpleType>
+    
+	<xs:complexType name="UpgradeTranslation">
+		<xs:sequence />
+		<xs:attribute name="RequiredUpgrade" type="UpgradeTemplateRef" />
+		<xs:attribute name="ProvidedUpgrade" type="UpgradeTemplateRef" />
+	</xs:complexType>
+	
+	<xs:complexType name="GiveUpgradeToProduced">
+		<xs:sequence>
+			<xs:element name="UpgradeTranslate" type="UpgradeTranslation" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="QuantityModifier">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Name" type="GameObjectWeakRef" />
+		<xs:attribute name="Count" type="SageInt" />
+	</xs:complexType>
+
+	<xs:complexType name="ProductionModifier">
+		<xs:sequence>
+			<xs:element name="ModifierFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="RequiredUpgrade" type="UpgradeTemplateRef" />
+		<xs:attribute name="CostMultiplier" type="SageReal" default="1.0" />
+		<xs:attribute name="TimeMultiplier" type="SageReal" default="1.0" />		
+	</xs:complexType>
+
+	<xs:complexType name="ProductionUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="QuantityModifier" type="QuantityModifier" minOccurs="0" maxOccurs="2" />
+					<xs:element name="ProductionModifier" type="ProductionModifier" minOccurs="0" maxOccurs="2" />
+					<xs:element name="GiveUpgradeToProduced" type="GiveUpgradeToProduced" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="Options" type="ProductionUpdateBitFlags" />
+				<xs:attribute name="MaxQueueEntries" type="SageUnsignedInt" default="99" />
+				<xs:attribute name="MaxQueueEntriesUpgrade" type="SageUnsignedInt" default="99" />
+				<xs:attribute name="MaxQueueEntriesUpgradeTrigger" type="UpgradeTemplateWeakRef" />
+				<xs:attribute name="NumDoorAnimations" type="SageInt" default="0" />
+				<xs:attribute name="DoorOpeningTime" type="Time" default="0s" />
+				<xs:attribute name="DoorWaitOpenTime" type="Time" default="0s" />
+				<xs:attribute name="DoorCloseTime" type="Time" default="0s" />
+				<xs:attribute name="ConstructionCompleteDuration" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="DisabledTypesToProcess" type="DisabledBitFlags" />
+				<xs:attribute name="GiveNoXP" type="SageBool" default="false" />
+				<xs:attribute name="UnitInvulnerableTime" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="SpecialPrepModelconditionTime" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="VeteranUnitsFromVeteranFactory" type="SageBool" default="false" />
+				<xs:attribute name="BonusForType" type="GameObjectWeakRef" />
+				<xs:attribute name="SecondaryQueue" type="SageBool" default="false" />
+				<xs:attribute name="Type" type="ProductionQueueType" default="INVALID" />
+				<xs:attribute name="IgnorePreReqs" type="SageBool" default="false" />
+				<xs:attribute name="ProductionTimeDelayScalar" type="Time" default="0s"/>
+				<xs:attribute name="UnitEmitRequiresModelConditions" type="ModelConditionBitFlags" default=""/>
+				<xs:attribute name="ShowUpgradeQueueInBuildUI" type="SageBool" default="false"/>
+				<xs:attribute name="UnitEmitRequiresPlayerProducer" type="SageBool" default="false"/>
+				<xs:attribute name="NeedsUpgrade" type="UpgradeTemplateWeakRef" />
+				<xs:attribute name="UnitEmitRequiresUpgrade" type="UpgradeTemplateWeakRef" default=""/>
+				<xs:attribute name="MaximumFinishedUnits" type="SageUnsignedInt" default="0" />
+				<xs:attribute name="EndZoneBuildTimeModifier" type="SageReal" default="1.0" /><!-- works as a percentage.  use a value between 0.0 and 1.0.  for example, 0.2 would make the build take 20% of the default time -->
+				<xs:attribute name="NewObjectFadeInTime" type="Time" default="0s" />
+				<xs:attribute name="HoldDoorOpenForFinishedObjects" type="SageBool" default="false" />                
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

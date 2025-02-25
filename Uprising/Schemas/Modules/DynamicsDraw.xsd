@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="DynamicsJointSwingType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SWING_LOCKED"/>
+			<xs:enumeration value="SWING_CONE"/>
+			<xs:enumeration value="SWING_HINGE"/>
+			<xs:enumeration value="SWING_AXLE"/>
+			<xs:enumeration value="SWING_FREE"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="DynamicsJointTwistType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TWIST_LOCKED"/>
+			<xs:enumeration value="TWIST_ARC"/>
+			<xs:enumeration value="TWIST_FREE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+  <xs:complexType name="DynamicsBoneVolumeType">
+    <xs:annotation>
+      <xs:documentation>
+        A bone to be dynamically simulated. The supplied volume is interpreted as relative to the object's origin.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="DynamicsVolumeType">
+        <xs:attribute name="BoneName" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DynamicsBoneVolumeSetType">
+    <xs:sequence>
+      <xs:element name="BoneVolume" type="DynamicsBoneVolumeType" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+	<xs:complexType name="DynamicsJointLinkType">
+		<xs:sequence>
+			<xs:element name="Position" type="Vector3" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="BoneName" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="DynamicsJointFrameType">
+		<xs:sequence>
+			<xs:element name="Child" type="DynamicsJointLinkType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="Parent" type="DynamicsJointLinkType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DynamicsJointLimitsType">
+		<xs:sequence>
+			<xs:element name="Position" type="Vector3" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="SwingType" type="DynamicsJointSwingType" default="SWING_LOCKED" />
+		<xs:attribute name="SwingDisplacementLimit" type="SageReal" default="0" />
+		<xs:attribute name="SwingAngleLimit" type="SageReal" default="0" />
+		<xs:attribute name="TwistType" type="DynamicsJointTwistType" default="TWIST_LOCKED" />
+		<xs:attribute name="TwistDisplacementLimit" type="SageReal" default="0" />
+		<xs:attribute name="TwistAngleLimit" type="SageReal" default="0" />
+		<xs:attribute name="InertiaOverride" type="SageReal" default="0.2" />
+	</xs:complexType>
+
+	<xs:complexType name="DynamicsJointType">
+		<xs:sequence>
+			<xs:element name="Frame" type="DynamicsJointFrameType" minOccurs="1" maxOccurs="1" />
+			<xs:element name="Limits" type="DynamicsJointLimitsType" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DynamicsJointSetType">
+		<xs:sequence>
+			<xs:element name="Joint" type="DynamicsJointType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+  
+	<xs:complexType name="W3DDynamicsDrawModuleData">
+		<xs:complexContent>
+			<xs:extension base="W3DScriptedModelDrawModuleData">
+        <xs:sequence>
+          <xs:element name="BoneVolumes" type="DynamicsBoneVolumeSetType" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation>
+                The set of bones to be assigned volumes. If a bone is not specified, it is tied to its parent bone.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+		  <xs:element name="Joints" type="DynamicsJointSetType" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="Lifetime" type="DynamicsLifetime" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="Collision" type="DynamicsCollisionType" />
+        <xs:attribute name="IntuitiveCollision" type="IntuitiveCollisionType" default="COLLIDES_WITH_GROUND_ONLY"/>
+		<xs:attribute name="DrawPriority" type="DynamicsDrawPriority" default="MUST_BE_DRAWN">
+			<xs:annotation>
+				<xs:documentation>
+					Draw priority of the dynamics object.  Low priority objects get removed first
+					from the dynamics world to make room for high priority objects.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="LODPriority" type="EffectsLODType" default="VERY_LOW">
+			<xs:annotation>
+				<xs:documentation>
+					Specifies how likely dynamics volumes will be created according to the Effects
+					LOD setting. If the LODPriority is set to more than the Options setting, we may cull
+					some volumes. No culling by default.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Explodiness" type="SageReal" default="0">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies how much bones are exploded outwards from the origin of the object.
+              A value of 0 specifies that objects are given no radial force.
+              A value of 5 is probably kind of TOO explodey.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="FlingPerturbation" type="SageReal" default="0">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies a magnitude for a random vector applied to each bone in an object.
+              A value of 0 specified that objects are not manually perturbed.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+		<xs:attribute name="InitiallyActive" type="SageBool" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

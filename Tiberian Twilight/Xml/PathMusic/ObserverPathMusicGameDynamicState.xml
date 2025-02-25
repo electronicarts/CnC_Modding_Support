@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+	<!-- This is the Observer PathMusic Dynamic State Set. It is used in multiplayer matches by
+	     the observer.
+			 It is very similar to Standard PathMusic Dynamic State Set, except that it has less 
+			 references to the local player - e.g. it will play fight music when there is any fight
+			 anywhere on the map instead of just when the local player is in a fight (since the 
+			 local player is never in a fight...) -->
+	
+	 
+	
+	<!--	******************************************************************************
+					TOTAL STATE SET 
+				******************************************************************************	--> 
+	<PathMusicGameDynamicStateSet id="PM_Standard_Observer" Category="OBSERVER">	
+		<State>PM_Observer_Explore</State>
+		<State>PM_Observer_FirstFight</State>
+		<State>PM_Observer_SmallFight</State>
+		<State>PM_Observer_SmallCrawlerDestroyed</State>
+		<State>PM_Observer_BigFight</State>
+		<State>PM_Observer_BigCrawlerDestroyed</State>
+		<State>PM_Observer_FightFinished</State>
+		<State>PM_Observer_CloseToWinning</State>
+	</PathMusicGameDynamicStateSet>
+
+	
+	<!--	******************************************************************************
+					STATES 
+				******************************************************************************	-->
+	
+	<!-- Explore : The initial State before anything has happened yet. -->
+	<AudioGameDynamicState id="PM_Observer_Explore" PathMusicEnterEvent="Explore">
+		<Transition>PM_Observer_Explore_to_PM_FirstFight</Transition>
+	</AudioGameDynamicState>
+
+
+	<!-- FirstFight : The first time shots are fired -->
+	<AudioGameDynamicState id="PM_Observer_FirstFight" PathMusicEnterEvent="FirstFight">
+		<Transition>PM_Observer_FirstFight_to_PM_SmallCrawlerDestroyed</Transition>
+		<Transition>PM_Observer_FirstFight_to_PM_BigFight</Transition>
+		<Transition>PM_Observer_FirstFight_to_PM_FightFinished</Transition>
+	</AudioGameDynamicState>
+
+	<!-- SmallFight : A small skirmish -->
+	<AudioGameDynamicState id="PM_Observer_SmallFight" PathMusicEnterEvent="SmallFight">
+		<Transition>PM_Observer_SmallFight_to_PM_SmallCrawlerDestroyed</Transition>
+		<Transition>PM_Observer_SmallFight_to_PM_BigFight</Transition>
+		<Transition>PM_Observer_SmallFight_to_PM_FightFinished</Transition>
+		<Transition>PM_Observer_SmallFight_to_PM_CloseToWinning</Transition>
+	</AudioGameDynamicState>
+
+	<!-- SmallCrawlerDestroyed : When a crawler is killed during a small skirmish -->
+	<AudioGameDynamicState id="PM_Observer_SmallCrawlerDestroyed" PathMusicEnterEvent="SmallEnemyCrawlerDestroyed">
+		<Transition>PM_Observer_SmallCrawlerDestroyed_to_PM_SmallFight</Transition>
+	</AudioGameDynamicState>
+
+
+	<!-- BigFight : A big battle -->
+	<AudioGameDynamicState id="PM_Observer_BigFight" PathMusicEnterEvent="BigFight">
+		<Transition>PM_Observer_BigFight_to_PM_BigCrawlerDestroyed</Transition>
+		<Transition>PM_Observer_BigFight_to_PM_FightFinished</Transition>
+		<Transition>PM_Observer_BigFight_to_PM_SmallFight</Transition>
+		<Transition>PM_Observer_BigFight_to_PM_CloseToWinning</Transition>
+	</AudioGameDynamicState>
+
+	<!-- BigEnemyCrawlerDestroyed : When a crawler is killed during a big battle -->
+	<AudioGameDynamicState id="PM_Observer_BigCrawlerDestroyed" PathMusicEnterEvent="BigEnemyCrawlerDestroyed">
+		<Transition>PM_Observer_BigCrawlerDestroyed_to_PM_BigFight</Transition>
+	</AudioGameDynamicState>
+
+	<!-- FightFinished : When the combat has ended -->
+	<AudioGameDynamicState id="PM_Observer_FightFinished" PathMusicEnterEvent="FightFinished">
+		<Transition>PM_Observer_FightFinished_to_PM_SmallFight</Transition>
+		<Transition>PM_Observer_FightFinished_to_PM_BigFight</Transition>
+		<Transition>PM_Observer_FightFinished_to_PM_CloseToWinning</Transition>
+	</AudioGameDynamicState>
+
+	<!-- CloseToWinning : When someone is close to MP win -->
+	<AudioGameDynamicState id="PM_Observer_CloseToWinning" PathMusicEnterEvent="Triumphal">
+		<!-- No transitions since the game is wrapping up at this point -->
+	</AudioGameDynamicState>
+
+
+	<!--	******************************************************************************
+					TRANSITIONS
+				******************************************************************************	-->
+
+	<!-- Explore -->
+	<AudioGameDynamicTransition id="PM_Observer_Explore_to_PM_FirstFight" DestinationState="PM_Observer_FirstFight">
+		<Condition>AnyEngagementOnScreen</Condition>
+	</AudioGameDynamicTransition>
+
+
+	<!-- FirstFight -->
+	<AudioGameDynamicTransition id="PM_Observer_FirstFight_to_PM_SmallCrawlerDestroyed" DestinationState="PM_Observer_SmallCrawlerDestroyed">
+		<Condition>PM_Observer_FirstFight_to_PM_SmallCrawlerDestroyed_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_Observer_FirstFight_to_PM_BigFight" DestinationState="PM_Observer_BigFight">
+		<Condition>PM_Observer_FirstFight_to_PM_BigFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_Observer_FirstFight_to_PM_FightFinished" DestinationState="PM_Observer_FightFinished">
+		<Condition>PM_Observer_FirstFight_to_PM_FightFinished_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<!-- SmallFight -->
+	<AudioGameDynamicTransition id="PM_Observer_SmallFight_to_PM_SmallCrawlerDestroyed" DestinationState="PM_Observer_SmallCrawlerDestroyed">
+		<Condition>PM_Observer_SmallFight_to_PM_SmallCrawlerDestroyed_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_Observer_SmallFight_to_PM_BigFight" DestinationState="PM_Observer_BigFight">
+		<Condition>PM_Observer_SmallFight_to_PM_BigFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_Observer_SmallFight_to_PM_FightFinished" DestinationState="PM_Observer_FightFinished">
+		<Condition>PM_Observer_SmallFight_to_PM_FightFinished_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_Observer_SmallFight_to_PM_CloseToWinning" DestinationState="PM_Observer_CloseToWinning">
+		<Condition>PM_Observer_SmallFight_to_PM_CloseToWinning_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<!-- SmallEnemyCrawlerDestroyed -->
+	<AudioGameDynamicTransition id="PM_Observer_SmallCrawlerDestroyed_to_PM_SmallFight" DestinationState="PM_Observer_SmallFight">
+		<Condition>PM_Observer_SmallCrawlerDestroyed_to_PM_SmallFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+
+
+	<!-- BigFight -->
+	<AudioGameDynamicTransition id="PM_Observer_BigFight_to_PM_BigCrawlerDestroyed" DestinationState="PM_Observer_BigCrawlerDestroyed">
+		<Condition>PM_Observer_BigFight_to_PM_BigCrawlerDestroyed_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_Observer_BigFight_to_PM_SmallFight" DestinationState="PM_Observer_SmallFight">
+		<Condition>PM_Observer_BigFight_to_PM_SmallFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_Observer_BigFight_to_PM_FightFinished" DestinationState="PM_Observer_FightFinished">
+		<Condition>PM_Observer_BigFight_to_PM_FightFinished_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_Observer_BigFight_to_PM_CloseToWinning" DestinationState="PM_Observer_CloseToWinning">
+		<Condition>PM_Observer_BigFight_to_PM_CloseToWinning_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<!-- BigCrawlerDestroyed -->
+	<AudioGameDynamicTransition id="PM_Observer_BigCrawlerDestroyed_to_PM_BigFight" DestinationState="PM_Observer_BigFight">
+		<Condition>PM_Observer_BigCrawlerDestroyed_to_PM_BigFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+
+	<!-- FightFinished -->
+	<AudioGameDynamicTransition id="PM_Observer_FightFinished_to_PM_SmallFight" DestinationState="PM_Observer_SmallFight">
+		<Condition>PM_Observer_FightFinished_to_PM_SmallFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_Observer_FightFinished_to_PM_BigFight" DestinationState="PM_Observer_BigFight">
+		<Condition>PM_Observer_FightFinished_to_PM_BigFight_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<AudioGameDynamicTransition id="PM_Observer_FightFinished_to_PM_CloseToWinning" DestinationState="PM_Observer_CloseToWinning">
+		<Condition>PM_Observer_FightFinished_to_PM_CloseToWinning_Allowed</Condition>
+	</AudioGameDynamicTransition>
+
+	<!--	******************************************************************************
+					CONDITIONS : General-Reuseable 
+				******************************************************************************	-->
+
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_Observer_FirstFight_EnteredMomentAgo"
+		TrackedState="PM_Observer_FirstFight"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_Observer_SmallFight_EnteredMomentAgo"
+		TrackedState="PM_Observer_SmallFight"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_Observer_SmallFight_EnteredSecondsAgo"
+		TrackedState="PM_Observer_SmallFight"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="5s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_Observer_SmallCrawlerDestroyed_EnteredMomentAgo"
+		TrackedState="PM_Observer_SmallCrawlerDestroyed"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_Observer_BigFight_EnteredMomentAgo"
+		TrackedState="PM_Observer_BigFight"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_Observer_BigFight_EnteredSecondsAgo"
+		TrackedState="PM_Observer_BigFight"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="5s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_Observer_BigCrawlerDestroyed_EnteredMomentAgo"
+		TrackedState="PM_Observer_BigCrawlerDestroyed"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_Observer_FightFinished_EnteredMomentAgo"
+		TrackedState="PM_Observer_FightFinished"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="20s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+	<MusicScriptConditionNugget_PathMusicStateLastActive id="PM_Observer_FightFinished_EnteredSecondsAgo"
+		TrackedState="PM_Observer_FightFinished"
+		TrackedStateChange="ENTER"
+		TimeSinceLastActive="5s"
+		TimeSicneLastActiveOp="GREATER_THAN_OR_EQUAL" >
+	</MusicScriptConditionNugget_PathMusicStateLastActive>
+
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_Observer_FirstFight_CurrentlyActive"
+		TrackedState="PM_Observer_FirstFight" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_Observer_SmallFight_CurrentlyActive"
+		TrackedState="PM_Observer_SmallFight" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_Observer_SmallCrawlerDestroyed_CurrentlyActive"
+		TrackedState="PM_Observer_SmallCrawlerDestroyed" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_Observer_BigFight_CurrentlyActive"
+		TrackedState="PM_Observer_BigFight" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_Observer_BigCrawlerDestroyed_CurrentlyActive"
+		TrackedState="PM_Observer_BigCrawlerDestroyed" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_PathMusicStateCurrentlyActive id="PM_Observer_FightFinished_CurrentlyActive"
+		TrackedState="PM_Observer_FightFinished" >
+	</MusicScriptConditionNugget_PathMusicStateCurrentlyActive>
+
+	<MusicScriptConditionNugget_LikelyToWin id="SomeoneCloseToWinning"
+		PointThreshold="200"
+		LocalPlayerOnly="false"
+		TimeBetweenConditionChecks="1s">
+	</MusicScriptConditionNugget_LikelyToWin>
+	
+	<MusicScriptConditionNugget_ScoredKillCount id="CrawlerKilled"
+		Count="1"
+		Time="3s"
+		KillCountMask="COUNT_ALL_KILLS"
+		Filter="PM_Filter_Crawlers">
+	</MusicScriptConditionNugget_ScoredKillCount>
+
+	<MusicScriptConditionNugget_EngagementCount id="UnitsEngagedLargeOnScreen"
+		Count="12"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="false"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_SCREEN"
+		TimeBetweenConditionChecks="1s"
+		TargetFilter="PM_Filter_Units">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_EngagementCount id="UnitsEngagedMediumOnScreen"
+		Count="6"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="false"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_SCREEN"
+		TimeBetweenConditionChecks="1s"
+		TargetFilter="PM_Filter_Units">
+	</MusicScriptConditionNugget_EngagementCount>
+	
+	<MusicScriptConditionNugget_Not id="Not_UnitsEngagedMediumOnScreen">
+		<Condition>UnitsEngagedMediumOnScreen</Condition>
+	</MusicScriptConditionNugget_Not>
+
+	<MusicScriptConditionNugget_EngagementCount id="AnyEngagementOnScreen"
+		Count="1"
+		Time="20s"
+		CountOnlyEngagementsAgainstTheLocalPlayer="false"
+		CountOnlyEngagementsByTheLocalPlayer="false"
+		RequiredScreenStatus="ON_SCREEN"
+		TimeBetweenConditionChecks="1s"
+		TargetFilter="PM_Filter_Units">
+	</MusicScriptConditionNugget_EngagementCount>
+
+	<MusicScriptConditionNugget_Not id="NoEngagementOnScreen" >
+		<Condition>AnyEngagementOnScreen</Condition>
+	</MusicScriptConditionNugget_Not>
+
+
+
+	<!--	******************************************************************************
+					CONDITIONS : Transition-Specific Combinations 
+				******************************************************************************	-->
+	<!-- FirstFight -->
+	<MusicScriptConditionNugget_And id="PM_Observer_FirstFight_to_PM_SmallCrawlerDestroyed_Allowed" >
+		<Condition>PM_Observer_FirstFight_CurrentlyActive</Condition>
+		<Condition>CrawlerKilled</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<MusicScriptConditionNugget_And id="PM_Observer_FirstFight_to_PM_BigFight_Allowed" >
+		<Condition>PM_Observer_FirstFight_EnteredMomentAgo</Condition>
+		<Condition>PM_Observer_FirstFight_CurrentlyActive</Condition>
+		<Condition>UnitsEngagedLargeOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_Observer_FirstFight_to_PM_FightFinished_Allowed" >
+		<Condition>PM_Observer_FirstFight_EnteredMomentAgo</Condition>
+		<Condition>PM_Observer_FirstFight_CurrentlyActive</Condition>
+		<Condition>NoEngagementOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<!-- SmallFight -->
+	<MusicScriptConditionNugget_And id="PM_Observer_SmallFight_to_PM_SmallCrawlerDestroyed_Allowed" >
+		<Condition>PM_Observer_SmallFight_CurrentlyActive</Condition>
+		<Condition>CrawlerKilled</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_Observer_SmallFight_to_PM_BigFight_Allowed" >
+		<Condition>PM_Observer_SmallFight_EnteredMomentAgo</Condition>
+		<Condition>PM_Observer_SmallFight_CurrentlyActive</Condition>
+		<Condition>UnitsEngagedLargeOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_Observer_SmallFight_to_PM_FightFinished_Allowed" >
+		<Condition>PM_Observer_SmallFight_EnteredMomentAgo</Condition>
+		<Condition>PM_Observer_SmallFight_CurrentlyActive</Condition>
+		<Condition>NoEngagementOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_Observer_SmallFight_to_PM_CloseToWinning_Allowed" >
+		<Condition>SomeoneCloseToWinning</Condition>
+		<Condition>PM_Observer_SmallFight_EnteredSecondsAgo</Condition>
+		<Condition>PM_Observer_SmallFight_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<!-- SmallCrawlerDesetroyed -->
+	<MusicScriptConditionNugget_And id="PM_Observer_SmallCrawlerDestroyed_to_PM_SmallFight_Allowed" >
+		<Condition>PM_Observer_SmallCrawlerDestroyed_EnteredMomentAgo</Condition>
+		<Condition>PM_Observer_SmallCrawlerDestroyed_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+
+	<!-- BigFight -->
+	<MusicScriptConditionNugget_And id="PM_Observer_BigFight_to_PM_BigCrawlerDestroyed_Allowed" >
+		<Condition>PM_Observer_BigFight_CurrentlyActive</Condition>
+		<Condition>CrawlerKilled</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<MusicScriptConditionNugget_And id="PM_Observer_BigFight_to_PM_SmallFight_Allowed" >
+		<Condition>PM_Observer_BigFight_EnteredMomentAgo</Condition>
+		<Condition>PM_Observer_BigFight_CurrentlyActive</Condition>
+		<Condition>Not_UnitsEngagedMediumOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_Observer_BigFight_to_PM_FightFinished_Allowed" >
+		<Condition>PM_Observer_BigFight_EnteredMomentAgo</Condition>
+		<Condition>PM_Observer_BigFight_CurrentlyActive</Condition>
+		<Condition>NoEngagementOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_Observer_BigFight_to_PM_CloseToWinning_Allowed" >
+		<Condition>SomeoneCloseToWinning</Condition>
+		<Condition>PM_Observer_BigFight_EnteredSecondsAgo</Condition>
+		<Condition>PM_Observer_BigFight_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<!-- BigCrawlerDestroyed -->
+	<MusicScriptConditionNugget_And id="PM_Observer_BigCrawlerDestroyed_to_PM_BigFight_Allowed" >
+		<Condition>PM_Observer_BigCrawlerDestroyed_EnteredMomentAgo</Condition>
+		<Condition>PM_Observer_BigCrawlerDestroyed_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<!-- FightFinished -->
+	<MusicScriptConditionNugget_And id="PM_Observer_FightFinished_to_PM_SmallFight_Allowed" >
+		<Condition>PM_Observer_FightFinished_EnteredMomentAgo</Condition>
+		<Condition>PM_Observer_FightFinished_CurrentlyActive</Condition>
+		<Condition>AnyEngagementOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_Observer_FightFinished_to_PM_BigFight_Allowed" >
+		<Condition>PM_Observer_FightFinished_EnteredMomentAgo</Condition>
+		<Condition>PM_Observer_FightFinished_CurrentlyActive</Condition>
+		<Condition>UnitsEngagedLargeOnScreen</Condition>
+	</MusicScriptConditionNugget_And>
+
+	<MusicScriptConditionNugget_And id="PM_Observer_FightFinished_to_PM_CloseToWinning_Allowed" >
+		<Condition>SomeoneCloseToWinning</Condition>
+		<Condition>PM_Observer_FightFinished_EnteredSecondsAgo</Condition>
+		<Condition>PM_Observer_FightFinished_CurrentlyActive</Condition>
+	</MusicScriptConditionNugget_And>
+
+
+	<ObjectFilterAsset id="PM_Filter_Units">
+		<Filter
+			Rule="ALL"
+			Exclude="PROJECTILE STRUCTURE UNATTACKABLE SIMPLE_OBJECT_PROP"
+			StatusBitFlagsExclude="RUBBLE">
+		</Filter>
+	</ObjectFilterAsset>
+
+</AssetDeclaration>

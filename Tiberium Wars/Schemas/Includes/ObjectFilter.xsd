@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="uri:ea.com:eala:XmlEdit">
+
+	<xs:simpleType name="ObjectFilterRule">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="UNPARSED" />
+			<xs:enumeration value="ALL" />
+			<xs:enumeration value="ANY" />
+			<xs:enumeration value="NONE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ObjectFilterRelationship">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ALLIES" />
+			<xs:enumeration value="ENEMIES" />
+			<xs:enumeration value="NEUTRAL" />
+			<xs:enumeration value="SAME_PLAYER" />
+		</xs:restriction>
+	</xs:simpleType>
+    <xs:simpleType name="ObjectFilterRelationshipBitMask">
+      <xs:list itemType="ObjectFilterRelationship"></xs:list>
+    </xs:simpleType>
+
+	<xs:simpleType name="ObjectFilterAlignment">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="EVIL" />
+			<xs:enumeration value="GOOD" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="ObjectFilter">
+		<xs:annotation>
+			<xs:appinfo source="../GameData.xsd">
+				<GameData xmlns="uri:ea.com:eala:asset:gamedata">
+					<Function name="TestObject" return="bool">
+						<Parameter name="object" type="::Object" const="true" modifier="*"/>
+						<Parameter name="playerOwningFilter" type="::Player" const="true" modifier="*" defaultValue="NULL"/>
+					</Function>
+					<Function name="TestTemplate" return="bool">
+						<Parameter name="objectTemplate" type="::ThingTemplate" const="true" modifier="&amp;"/>
+						<Parameter name="objectPlayer" type="::Player" const="true" modifier="*" defaultValue="NULL"/>
+						<Parameter name="playerOwningFilter" type="::Player" const="true" modifier="*" defaultValue="NULL"/>
+            <Parameter name="ignoreRelationships" type="bool" const="false" modifier="" defaultValue="false"/>
+          </Function>
+					<Function name="TestKindOf" return="bool">
+						<Parameter name="kindOfFlag" type="KindOfBitFlags" const="true" modifier="&amp;"/>
+					</Function>
+					<Function name="Any" return="bool" />
+				</GameData>
+			</xs:appinfo>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="IncludeThing" type="WeakReference" xas:refType="GameObject" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ExcludeThing" type="WeakReference" xas:refType="GameObject" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:refType="ObjectFilter" />
+		<xs:attribute name="Rule" type="ObjectFilterRule" default="NONE" />
+		<xs:attribute name="Relationship" type="ObjectFilterRelationshipBitMask" default="" />
+		<xs:attribute name="Alignment" type="ObjectFilterAlignment" default="NONE" />
+		<xs:attribute name="Include" type="KindOfBitFlags" />
+		<xs:attribute name="Exclude" type="KindOfBitFlags" />
+	</xs:complexType>
+
+</xs:schema>

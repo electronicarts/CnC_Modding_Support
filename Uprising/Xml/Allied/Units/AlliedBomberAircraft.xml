@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+<!--		<Include type="all"	source="ART:Allied_Place_Holder.xml" />			-->
+		<Include type="all"	source="ART:AUBomberAircraft_SKN.w3x" />
+		<Include type="all"	source="ART:AUBomberAircraft_FX.w3x" />
+		<Include type="all"	source="ART:AUBomberAircraft_HVRA.w3x" />
+		<Include type="all"	source="ART:AUBomberAircraft_MOVA.w3x" />
+		<Include type="all"	source="ART:AUBomberAircraft_PRK.w3x" />
+		<Include type="all"	source="ART:AUBomberAircraft_FX.w3x" />
+		<Include type="all"	source="ART:AUBomberAircraft_FP.w3x" />
+		<Include type="all"	source="ART:AUBomberAircraft_D.xml" />				
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseVehicle.xml" />
+		<Include type="all"	source="ART:AUBomberAircraft_02.xml" />				
+		<Include type="all"	source="ART:AUBomberAircraft_02_D.xml" />			
+	</Includes>
+	<GameObject
+		id="AlliedBomberAircraft"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_AlliedBomberAircraft"
+		ButtonImage="Button_AlliedBomberAircraft_on"
+		Side="Allies"
+		SubGroupPriority="730" 
+		EditorSorting="UNIT"
+		BuildTime="20"
+		CommandSet="AlliedBomberAircraftCommandSet"
+		KindOf="CAN_CAST_REFLECTIONS CAN_ATTACK SELECTABLE SCORE AIRCRAFT VEHICLE BOMBER_AIRCRAFT LINE_OF_SIGHT_IGNORES_BUILDINGS T3_UNIT CAN_BE_FAVORITE_UNIT AIRCRAFT_TRANSPORT_ONLY_GARRISONABLE_WHILE_PARKED LIMITED_PRODUCTION_AIRCRAFT TRANSPORT"
+		RadarPriority="UNIT"
+		ThreatLevel="10"
+		ProductionQueueType="AIRCRAFT"
+		UnitCategory="AIRCRAFT"
+		WeaponCategory="MISSILE"
+		VoicePriority="148"
+		EditorName="AlliedBomberAircraft"
+		Description="Desc:AlliedBomberAircraft"
+		TypeDescription="Type:AlliedBomberAircraft"
+		HealthBoxHeightOffset="20"
+		UnitIntro="Allied_CenturyBomber_UnitIntro">
+		<DisplayName xai:joinAction="Replace">Name:AlliedBomberAircraft</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_AlliedTech3</NeededUpgrade>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="2000"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="AlliedBomberAircraftArmor"
+			DamageFX="AircraftDamageFX" />
+		<LocomotorSet
+			id="AlliedBomberAircraftLocomotor"
+			Locomotor="AlliedBomberAircraftLocomotor"
+			Condition="NORMAL"
+			Speed="150" />
+		<LocomotorSet
+			id="AlliedBomberAircraftTaxiLocomotor"
+			Locomotor="BasicHelicopterTaxiLocomotor"
+			Condition="TAXIING"
+			Speed="30" />
+		
+		<!-- Need ConquerMetricsOverrideDefendingAntiMask or else the TAXIING locomotor will make the AI try to build anti-ground units against this -->
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true"
+			ConquerMetricsOverrideDefendingAntiMask="ANTI_AIRBORNE_VEHICLE" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				OkToChangeModelColor="true" >
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AUBomberAircraft_SKN" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON_01" />
+				</ModelConditionState>
+
+	<!-- UPGRADED MODEL -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW USER_2">
+					<Model
+						Name="AUBomberAircraft_FP" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED USER_2">
+					<Model
+						Name="AUBomberAircraft_SKN" />
+					<Texture
+						Original="AUBomberAircraft"
+						New="AUBomberAircraft_02" />							
+					<ParticleSysBone
+						BoneName="FX_ENGINE_R02"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED USER_2">
+					<Model
+						Name="AUBomberAircraft_SKN" />
+					<Texture
+						Original="AUBomberAircraft"
+						New="AUBomberAircraft_02_D" />	
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="FX_ENGINE_R01"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="FX_ENGINE_R01"
+						FXParticleSystemTemplate="AircraftDamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2">
+					<Model
+						Name="AUBomberAircraft_SKN" />
+					<Texture
+						Original="AUBomberAircraft"
+						New="AUBomberAircraft_02" />							
+				</ModelConditionState>
+	<!-- UPGRADED MODEL -->
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW">
+					<Model
+						Name="AUBomberAircraft_FP" />
+				</ModelConditionState>
+        
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="AUBomberAircraft_SKN" />
+					<ParticleSysBone
+						BoneName="FX_ENGINE_R02"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="AUBomberAircraft_SKN" />
+					<Texture
+						Original="AUBomberAircraft"
+						New="AUBomberAircraft_D" />	
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="FX_ENGINE_R01"
+						FXParticleSystemTemplate="AircraftDamageSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="FX_ENGINE_R01"
+						FXParticleSystemTemplate="AircraftDamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="AUBomberAircraft_PRK"
+						AnimationMode="LOOP"
+						AnimationBlendTime="30" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="CLIMBING">
+					<Animation
+						AnimationName="AUBomberAircraft_HVRA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="30" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RAPPELLING">
+					<Animation
+						AnimationName="AUBomberAircraft_PRK"
+						AnimationMode="LOOP"
+						AnimationBlendTime="30" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FLYING">
+					<Animation
+						AnimationName="AUBomberAircraft_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="30" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_FX">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AUBomberAircraft_FX" />
+					<ParticleSysBone
+						BoneName="FXCon_R"
+						FXParticleSystemTemplate="FireHawkConTrail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXCon_L"
+						FXParticleSystemTemplate="FireHawkConTrail"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="AlliedBomberAircraftBombWeapon"
+						ForbiddenObjectStatus="WEAPON_UPGRADED_01"/>
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="AlliedBomberAircraftBombWeapon_AirPower"
+						ObjectStatus="WEAPON_UPGRADED_01"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>			
+			<Physics
+				id="ModuleTag_Physics"/>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="AUBomberAircraft_Dying_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="PARKED_AT_AIRFIELD"/>
+			</CreateObjectDie>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieAtAirfield"
+				CreationList="AUBomberAircraft_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="PARKED_AT_AIRFIELD"/>
+			</CreateObjectDie>
+			<DynamicsUpdate
+				id="ModuleTag_DefaultDynamicsUpdate"
+				xai:joinAction="Remove" />
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_ALL_CenturyBomberDie" />
+			</FXListBehavior>
+			<SubObjectsUpgrade
+				id="ModuleTag_AlliedAirPower_subobject">
+				<TriggeredBy>Upgrade_AlliedAirPower</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Upgrade_01"
+					Upgrade="Upgrade_AlliedAirPower">
+				</Nugget>
+				<CustomAnimAndDuration	AnimState="USER_2"/>	
+			</SubObjectsUpgrade>	
+			<TransportContain
+				id="ModuleTag_Contain"
+				ObjectStatusOfContained="UNSELECTABLE ENCLOSED"
+				ContainMax="5"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="true"
+				AllowNeutralInside="false"
+				AllowOwnPlayerInsideOverride="true"
+				ShowPips="true"
+				EnterSound="VehicleEnter"
+				ExitSound="ParachutingOutOfAirplane"
+				KillPassengersOnDeath="true"
+				ConditionForEntry="INVALID"
+				ExtendedExitContainerChecks="true">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY" />
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="BONEGARRISON">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</PassengerData>
+			</TransportContain>
+			<SpecialPower
+				id="ModuleTag_EjectPassengers"
+				SpecialPowerTemplate="SpecialPower_EjectPassengersUntargeted"
+				UpdateModuleStartsAttack="true" />
+			<EjectPassengersSpecialAbilityUpdate
+				id="ModuleTag_EjectPassengersUpdate"
+				SpecialPowerTemplate="SpecialPower_EjectPassengersUntargeted"
+				Height="150.0"
+				TimePerPassenger=".25s"
+				Radius="0"
+				Options="RECONSTITUTE_STORED_COMMAND DO_NOT_DO_AI_SPECIAL_POWER"/>
+
+			<xi:include
+				href="DATA:Includes/AlliedAirPowerUpgrade.xml" />
+			<StatusBitsUpgrade
+				id="ModuleTag_UpgradeWeapon"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_AlliedAirPower</TriggeredBy>
+			</StatusBitsUpgrade>
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				id="ModuleTag_JetAIUpdate"
+				AutoAcquireEnemiesWhenIdle="NO"
+				NeedsRunway="false"
+				KeepsParkingSpaceWhenAirborne="true"
+				OutOfAmmoDamagePerSecond="1.5"
+				CirclesForAttack="true"
+				ReturnToBaseWhenVictimDead="true"
+				StateMachine="JetAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					CanPickDynamicTargetType="ATTACK_MOVE AGGRESSIVE_STANCE"
+					CheckVisionRange="true"/>
+			</JetAIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="1000" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="16.0"
+				MinorRadius="30.0"
+				Height="8.0"
+				ContactPointGeneration="VEHICLE">
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="ALL_CenturyBomber_VoiceAttack" AudioType="voiceAttack" />
+			<AudioEntry Sound="ALL_CenturyBomber_VoiceCreate" AudioType="voiceCreated" />
+			<AudioEntry Sound="ALL_CenturyBomber_VoiceMove" AudioType="voiceMove" />
+			<AudioEntry Sound="ALL_CenturyBomber_VoiceRetreat" AudioType="voiceRetreatToCastle" />
+			<AudioEntry Sound="ALL_CenturyBomber_VoiceReturn" AudioType="voiceEnter" />
+			<AudioEntry Sound="ALL_CenturyBomber_VoiceSelectMS" AudioType="voiceSelect" />
+			<AudioEntry Sound="ALL_CenturyBomber_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire" />
+			<NamedEntry Sound="ALL_CenturyBomber_VoiceReturn" Name="ReturnToProducer" />
+			<NamedEntry Sound="ALL_CenturyBomber_VoiceRetreat" Name="ReturnToProducerWhileUnderAttack" />
+			<NamedEntry Sound="ALL_CenturyBomber_VoiceEvacuate" Name="VoiceEvacuate" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="ALL_CenturyBomber_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="ALL_CenturyBomber_MoveLoop" AudioType="soundMoveLoop" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="=$STANDARD_SHROUD_CLEAR" />
+	</GameObject>
+</AssetDeclaration>

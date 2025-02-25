@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+
+	<Includes>
+		<Include type="all" source="ART:GDI_CondorBomb.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseProjectile.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseFirestormObject.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+	</Includes>
+	<Defines>
+		<Define name="GDIAIRCRAFTS_BOMB_RADIUS" value="200.0" />
+	</Defines>
+
+	<GameObject
+		id="GDIAircraftSFireEffectObject"
+		inheritFrom="BaseFirestormAOEObject"
+		KindOf="+GRANT_PLAYER_THREAT" 
+		EditorName="GDIAircraftSFireEffectObject">
+		<DisplayName>GDIAircraftSFireEffectObject</DisplayName>
+		<Behaviors>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateGDIAircraftSFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="3.0s"
+				MaxLifetime="3.0s" />
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="GDIAircraftSDOTWeapon" />
+			</FireWeaponUpdate>
+
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate_02">
+				<RequiredObject
+					Range="=$GDIAIRCRAFTS_BOMB_RADIUS">
+					<ObjectFilter
+						Rule="ANY"
+						Include="FIRESTORM"
+						Relationship="SAME_PLAYER"/>
+				</RequiredObject>
+				<FireWeaponNugget
+					WeaponName="GenericKillOwnerFirestormWeapon"
+					OneShot="true"/>
+			</FireWeaponUpdate>
+
+			<FireGroupCenterUpdate
+				id="ModuleTag_FirestormWeapon"
+				WeaponName="GenericKillOwnerFirestormWeapon"
+				Range="=$GDIAIRCRAFTS_BOMB_RADIUS"
+				RequiredCount="2">
+				<ObjectFilter
+					Rule="NONE"
+					Relationship="SAME_PLAYER"
+					Include="HAS_FIRE_GROUP_CENTER_UPDATE"/>
+			</FireGroupCenterUpdate>
+
+		</Behaviors>
+		<Geometry>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$GDIAIRCRAFTS_BOMB_RADIUS"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+	</GameObject>
+
+	<GameObject
+		id="GDIAircraftSFirestormObject"
+		inheritFrom="BaseFirestormObject"
+		KindOf="+GRANT_PLAYER_THREAT +SKIRMISH_AI_ATTEMPT_TO_DODGE" 
+		EditorName="GDIAircraftSFirestormObject">
+		<DisplayName>GDIAircraftSFirestormObject</DisplayName>
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$GDIAIRCRAFTS_BOMB_RADIUS + $AI_DODGE_SAFETY_BUFFER">
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"
+				StatusBitFlagsExclude="AIRBORNE_TARGET">
+			</DodgeWithUnits>
+		</SkirmishAIInformation>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="3.0s"
+				MaxLifetime="3.0s" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_CreateGDIAircraftSFirestormOCL">
+				<DieMuxData
+					DeathTypes="FIRESTORM_DETONATED" />
+			</CreateObjectDie>
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.5s">
+				<FireWeaponNugget
+					WeaponName="GDIAircraftSFirestormWeapon" />
+				<FireWeaponNugget
+					OneShot="true"
+					WeaponName="GDIAircraftSOneShotFirestormWeapon" />
+			</FireWeaponUpdate>
+		</Behaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="=$GDIAIRCRAFTS_BOMB_RADIUS"
+				Height="10.0">
+			</Shape>
+		</Geometry>
+	</GameObject>
+
+	<ObjectCreationList
+		id="OCL_GDIAircraftSFireEffectObject">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="GDIAircraftSFireEffectObject"/>
+				<CopyParentUpgrades/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_CreateGDIAircraftSFirestormOCL">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<AlignToTerrain/>
+				<CreateObject
+					ObjectTemplate="GDIAircraftSFirestormObject"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- This weapon is used by the Fire effect object to do AOE and DOT damage -->
+	<WeaponTemplate
+		id="GDIAircraftSDOTWeapon"
+		inheritFrom="NODInfantryBHolyWaterDetonationTrigger"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		FireFX="FX_NodFlameTankDOT"
+		ClipSize="1"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		AcceptableAimDelta="360d">
+		<ClipReloadTime
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<Nuggets>
+			<DOTNugget
+				Damage="2.5"
+				Radius="=$GDIAIRCRAFTS_BOMB_RADIUS"
+				DamageTaperOff="0.5"
+				DamageInterval="0.5s"
+				DamageDuration="2s"
+				DamageType="BLAST"
+				DamageFXType="NOD_FLAMETHROWER"
+				DeathType="BURNED"
+				ForbiddenTargetObjectStatus="AFLAME BURROWING">
+				<SpecialObjectFilter
+					Rule="ALL">
+					<ExcludeThing>GDIAircraftS</ExcludeThing>
+				</SpecialObjectFilter>
+			</DOTNugget>
+			<DamageNugget
+				id="DamageNugget_NODInfantryBHolyWaterDetonationTrigger"
+				Radius="=$GDIAIRCRAFTS_BOMB_RADIUS" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Firestorm damage nugget weapon template.-->
+	<WeaponTemplate
+		id="GDIAircraftSFirestormWeapon">
+		<Nuggets>
+			<DamageNugget
+				Damage="20"
+				DamageTaperOff="10"
+				Radius="=$GDIAIRCRAFTS_BOMB_RADIUS"
+				DamageType="BLAST"
+				DamageFXType="NOD_FLAMETHROWER"
+				DeathType="BURNED"
+				InvalidTargetStatus="INSIDE_GARRISON UNATTACKABLE UNDER_IRON_CURTAIN BURROWING">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIAircraftSOneShotFirestormWeapon"
+		inheritFrom="GenericOneShotFirestormWeapon">
+		<Nuggets>
+			<DamageNugget
+				id="DamageNugget_OneShotFirestorm"
+				Radius="=$GDIAIRCRAFTS_BOMB_RADIUS"
+				InvalidTargetStatus="INSIDE_GARRISON UNATTACKABLE UNDER_IRON_CURTAIN BURROWING">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	
+	<GameObject
+		id="GDIAircraftSBombProjectile"
+		inheritFrom="BaseUnattackableProjectile" 
+		Side="GDI"
+		EditorSorting="SYSTEM"
+		EditorName="GDIAircraftSBombProjectile">
+		<Draws>
+
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GDI_CondorBomb" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			
+		</Draws>
+		<Behaviors>
+				  
+			<FXListBehavior
+				id="ModuleTag_FXLists">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_GDI_ArcusBomber_AirS_BombWeaponImpactExplosion_AudioOnly"/> <!-- please use another FXList for visuals, thanks -->
+			</FXListBehavior>
+			
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				FirstHeightMin="0"
+				FirstHeightMax="0"
+				SecondHeightMin="0"
+				SecondHeightMax="0"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				GroundHitFX="FX_GDIArtilleryMiss_Medium"
+				Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH DONT_TRACK_TARGET"
+				SidewaysDrift="25"
+				/>
+			
+		</Behaviors>
+		<!--  no worky, maybe missing that 1 frame delay?
+		<AudioArraySound>
+			<AudioEntry Sound="GDI_ArcusBomber_AirS_BombDropWhistle" AudioType="soundAmbient"/>
+		</AudioArraySound>
+		 -->
+	</GameObject>
+
+	<GameObject
+		id="GDIAircraftSMissileProjectile"
+		inheritFrom="BaseTargetableProjectile"
+		EditorName="GDIAircraftSMissileProjectile"
+		Side="GDI">
+		<Draws>
+			<ScriptedModelDraw
+					id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GDIRocketMedium" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_Trail"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="GDIMissileMedium_TrailThin"
+						FollowBone="true" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<!-- FX visuals left intentionally blank so it doesn't play on top of the fxlist in DamageFX.xml -Aram -->
+			<!-- This sound file is from the previous projectile link and may not be correct -NateLS -->
+			<FXListBehavior id="ModuleTag_FXList">
+				<DieMuxData DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_GDI_Sandstorm_VehH_RocketImpactExplosion_AudioOnly" />
+			</FXListBehavior>
+			<BezierProjectile
+					id="ModuleTag_BezierProjectileBehavior"
+					FirstHeightMin="-2"
+					FirstHeightMax="-2"
+					SecondHeightMin="20"
+					SecondHeightMax="20"
+					FirstPercentIndent="33"
+					SecondPercentIndent="66"
+					GroundHitFX="FX_GDIRocketMediumMiss"
+					SidewaysDrift="150"
+					FlightPathAdjustDistPerSecond="100.0"
+					Flags="DETONATE_CALLS_KILL ORIENT_TO_FLIGHT_PATH">
+			</BezierProjectile>
+		</Behaviors>
+		<Geometry IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0.8"></Shape>
+		</Geometry>
+	</GameObject>
+	
+</AssetDeclaration>

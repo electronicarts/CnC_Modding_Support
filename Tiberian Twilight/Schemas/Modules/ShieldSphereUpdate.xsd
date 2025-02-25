@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="ShieldSphereUpdateOption">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ALLOW_ALLIES_PROJECTILE_GOTHROUGH" />
+
+			<xs:enumeration value="MAINTAIN_DAMAGE_WHEN_DEACTIVATED" />
+			
+			<xs:enumeration value="ABSORB_ALL_DAMAGE_ON_KILLING_BLOW" />
+
+			<xs:enumeration value="NO_SHIELD_BAR" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+    	<xs:simpleType name="ShieldSphereUpdateOptionFlag">
+      		<xs:list itemType="ShieldSphereUpdateOption"></xs:list>
+    	</xs:simpleType>
+
+	<xs:complexType name="DamageTypeFXMapping">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="DamageType" type="DamageType" default="ALL" />
+		<xs:attribute name="DamageFX" type="FXListRef" default="" />
+	</xs:complexType>
+				
+	<xs:complexType name="ShieldSphereUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="SphereModuleUpdateModuleData">
+				<xs:sequence>
+					<!-- Maps an FXList for each damage type specified, so that the shield displays a different effect for each weapon type that hits it -->
+					<xs:element name="DamageTypeFXMap" type="DamageTypeFXMapping" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+
+				<!--Maximum damage that the shield can absorb.-->
+				<xs:attribute name="MaxDamage" type="SageReal" default="0"/>
+
+				<!-- Status to set while active.  Will remove object status on deactivation -->
+				<xs:attribute name="ObjectStatus" type="ObjectStatusBitFlags" default=""/>
+
+				<!-- Model Condition set while active.  Will be removed on deactivation -->
+				<xs:attribute name="ModelCondition" type="ModelConditionBitFlags" default="" />
+
+				<!-- AttributeModifier set while active.  Manually removed on deactivation -->
+				<xs:attribute name="AttributeModifierName" type="AttributeModifierRef" />
+
+				<!-- Status to set on units that are currently being shielded -->
+				<xs:attribute name="ShieldedObjectStatus" type="ObjectStatusBitFlags" default=""/>
+
+				<xs:attribute name="Options" type="ShieldSphereUpdateOptionFlag" />
+
+				<!-- can use this to heal or reduce sphere. Use negative to heal. -->
+				<xs:attribute name="DamageChangePerSecond" type="SageReal" default="0.0" />
+
+				<!-- damage must drop below this fraction of maxDamage before shield regen kicks in -->
+				<xs:attribute name="ShieldRegenerateThresholdPercent" type="Percentage" default="100%" />
+
+				<!-- Normally attacks originating inside the shield targeting a point inside the shield are not 
+							 absorbed by the shield (fictionally, the shield is a hollow sphere barrier - stuff inside is 
+							 not affected). Attacks from these types of units are absorbed anyways.... -->
+				<xs:attribute name="IgnoreInsideToInsideCheck" type="ObjectFilterAssetRef" default="ObjectFilter_IgnoreInsideToInsideCheck" />				
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,871 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	
+	<!-- NOD Vehicle AE / Nod Builder / Slave -->
+	
+	<!-- Special Model Conditions. THese are used to hide/show the button that stops the power that builds StructureA
+		PACKING_TYPE_1: performing Build Structure A
+		PACKING_TYPE_2: performing Mine laying
+		Object Status Conditions
+		WEAPON_UPGRADED_01: does more repair when Enhanced Repair upgrade is triggered.
+	   -->
+
+	<Includes>
+		<Include type="all"	source="ART:NUS_VEHICLEAE_SKN.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_AIDA.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_AIFA.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_AIFB.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_BATA.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_BIDA.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_BIFA.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_BIFB.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_BLDA.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_BLDB.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_DIEA.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_DIEC.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_DSEL.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_MOVA.w3x" />
+		<Include type="all"	source="ART:NUS_VEHICLEAE_HEAL.w3x" />
+
+		<Include type="all" source="ART:NUS_VEHICLEAE_DMG.xml" />
+		
+		<Include type="all"	source="ART:FXGDIHealingBeam.xml" />
+		<Include type="all"	source="ART:FXLaserOverlay.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:GlobalData/Locomotor.xml" />
+		<Include type="instance" source="DATA:GlobalData/LogicCommandSet.xml" />
+		<Include type="instance" source="DATA:Nod/Props/NODMines.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseLightVehicle.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+	</Includes>
+
+	<Defines>
+		<Define name="SECONDS_PER_HEAL_TICK" value="0.5" />
+		<Define name="NUM_HEAL_TICKS_FOR_FULL_CONSTRUCTION" value="=$NOD_STRUCTUREA_BUILDTIME_SECONDS / $SECONDS_PER_HEAL_TICK" />
+		<Define name="HEAL_AMOUNT_PER_TICK" value="=$NOD_STRUCTUREA_MAXHEALTH / $NUM_HEAL_TICKS_FOR_FULL_CONSTRUCTION" />
+		<Define name="NOD_SECONDS_PER_HEAL_TICK_UPGRADED" value="=$SECONDS_PER_HEAL_TICK * 0.5" />
+	</Defines>
+
+	<GameObject
+		id="NODVehicleAE"
+		inheritFrom="BaseLightVehicle"
+		KindOf="+CAN_HEAL_ALLIES +CAN_ASSEMBLE_STRUCTURE +CAN_ATTACK_STEALTHED"
+		HealthBoxHeightOffset="30"
+		HealthBar="Small"
+		SubGroupPriority="300"
+		SelectPortrait="Portrait_NOD_Vehicle_AE"
+		ButtonImage="Btn_NOD_Vehicle_AE"
+		Side="NOD"
+		ParticipationValue="=$NODVEHICLEAE_PARTICIPATION_VALUE"
+		BuildTime="8"
+		TransportSlotCount="1"
+		CommandSet="NODVehicleAECommandSet"
+		CommandPoints="=$NOD_VEHICLE_AE_COMMANDPOINT_COST"
+		VoicePriority="160"
+		Description="Desc:NODVehicleAE"
+		TypeDescription="Type:NODVehicleAE"
+		EditorName="NOD_D1_Light_Utility(Slave)"
+		EditorSorting="UNIT"
+		WeaponCategory="NONE"
+		ForceLuaRegistration="true"
+		UnitTypeIcon="EngineerIcon">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODVehicleAE</DisplayName>
+		<LocomotorSet
+			Locomotor="NODVehicleAELocomotor"
+			Condition="NORMAL"
+			Speed="80.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TankDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="NAE_forceps01 FXWelder01 NAE_ arm03 NAE_Pitch NAE_Tire01 NAE_Tire02"
+				Options="RENDER_BUFF_EFFECTS"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="NAE_Tire01"
+				TrackMarksRightBone="NAE_Tire02">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUS_VEHICLEAE_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="NAE_forceps01" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="NAE_forceps01" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUS_VEHICLEAE_SKN" />
+					<Texture
+						Original="NUS_VEHICLEAE"
+						New="NUS_VEHICLEAE_DMG" />
+					<ParticleSysBone
+						BoneName="NAE_ arm03"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAE_Pitch"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NAE_Pitch"
+						FXParticleSystemTemplate="NODDamagedFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NUS_VEHICLEAE_SKN" />
+					<Texture
+						Original="NUS_VEHICLEAE"
+						New="NUS_VEHICLEAE_DMG" />
+					<ParticleSysBone
+						BoneName="NAE_Pitch"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="NUS_VEHICLEAE_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="INSIDE_GARRISON">
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="true"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="NUS_VEHICLEAE_BIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="80"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Animation
+						AnimationName="NUS_VEHICLEAE_BIFA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="80"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Animation
+						AnimationName="NUS_VEHICLEAE_BIFB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationPriority="80"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" or Prev == "TRANS_Deselected" then
+						--Do Nothing and Re-Pick Animation
+						elseif Prev == "STATE_stunned_flailing" then
+						CurDrawableSetTransitionAnimState("STATE_stunned_landing")
+						else
+						CurDrawableSetTransitionAnimState("TRANS_Deselected")
+						end 
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING DEATH_1">
+					<Animation
+						AnimationName="NUS_VEHICLEAE_DIEA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING DEATH_2">
+					<Animation
+						AnimationName="NUS_VEHICLEAE_DIEC"
+						AnimationMode="ONCE" 
+						AnimationPriority="75"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="NUS_VEHICLEAE_BLDB"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ENGAGED">
+					<Animation
+						AnimationName="NUS_VEHICLEAE_HEAL"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREPARING">
+					<Animation
+						AnimationName="NUS_VEHICLEAE_BLDA"
+						AnimationMode="LOOP" 
+						AnimationBlendTime="15"/>
+					<FXEvent
+						Frame="0"
+						FireWhenSkipped="true"
+						Effect="FX_NODWelding_Sparks"
+						Bone="FXWelder01" />
+					<FXEvent
+						Frame="65"
+						FireWhenSkipped="true"
+						Effect="FX_NODWelding_Sparks"
+						Bone="FXWelder01" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="NUS_VEHICLEAE_MOVA"
+						AnimationMode="LOOP"
+						AnimationPriority="5"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED"
+					StateName="STATE_SelectedPose"
+					Flags="RESTART_ANIM_WHEN_COMPLETE" >
+					<Animation
+						AnimationName="NUS_VEHICLEAE_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<Animation
+						AnimationName="NUS_VEHICLEAE_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="10" />
+					<Animation
+						AnimationName="NUS_VEHICLEAE_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="10" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" then
+						CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+				</AnimationState>
+				
+				<!-- TRANSITIONS -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_Deselected">
+					<Animation
+						AnimationName="NUS_VEHICLEAE_DSEL"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IdleToSelected">
+					<Animation
+						AnimationName="NUS_VEHICLEAE_BATA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="10"
+						AnimationSpeedFactorMin="0.9"
+						AnimationSpeedFactorMax="1.1" />
+				</AnimationState>
+
+			</TankDraw>
+
+			<TreadScrollDraw
+				id="ModuleTag_TreadDraw">
+				<TreadScrollingMap
+					LeftTrack="NAE_Tire01"
+					RightTrack="NAE_Tire02"
+					SpeedMultiplier="-0.06"
+					TreadDriveSpeedFraction="10%"/>
+			</TreadScrollDraw>
+
+
+			<!-- Healing Laser -->
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile="1"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate="5"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".03"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="5"
+				LightMin="10"
+				LightMax="20"
+				WeaponSlotID="1"
+				LaserStateID="1">
+				<LightColor R="1.0" G="1.0" B="0.0" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXGDIHealingBeam</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODVehicleAEHealWeapon" />
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODVehicleAEHealWeaponUpgraded"
+						ObjectStatus="WEAPON_UPGRADED_01"/>
+				</WeaponSlotHardpoint>				
+				<WeaponSlotHardpoint
+					ID="2">
+					<Weapon
+						Ordering="SECONDARY_WEAPON"
+						Template="NODVehicleAEStructureABuildWeapon" />
+				</WeaponSlotHardpoint>
+
+			</WeaponSetUpdate>
+
+			<LaserState
+				id="ModuleTag_LaserState"
+				LaserId="1">
+				<LaserEndParticleSystem>HealingBeamHit</LaserEndParticleSystem>
+			</LaserState>
+
+			<!-- Range Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_NODVehicleV_WeaponRangeUpgrade"
+				AttributeModifier="Modifier_Generic_NODWeaponRange_T1">
+				<TriggeredBy>Upgrade_Nod_Defense_Range</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Speed Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_NODVehicleV_SpeedBoostUpgrade"
+				AttributeModifier="Modifier_Generic_NODSpeedBoostUpgrade">
+				<TriggeredBy>Upgrade_Nod_Defense_Speed</TriggeredBy>
+			</AttributeModifierUpgrade>
+			
+			<SlowDeath
+				id="ModuleTag_NormalDeath"
+				SinkRate="0.0"
+				DeathFlags="DEATH_1"
+				DestructionDelay="0s">
+				<OCL
+					Type="FINAL">
+					<OCL>NOD_Generic_Small_Die_OCL</OCL>
+				</OCL>
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="EXPLODED DETONATED" />
+				<Sound Type="INITIAL" List="NOD_VehicleAE_VoiceDie" />
+			</SlowDeath>
+
+			<SlowDeath
+				id="ModuleTag_ExplodeDeath"
+				SinkRate="0.0"
+				DeathFlags="DEATH_2"
+				DestructionDelay="0s">
+				<OCL
+					Type="FINAL">
+					<OCL>NOD_Generic_Small_Die_OCL</OCL>
+				</OCL>
+				<DieMuxData
+					DeathTypes="EXPLODED DETONATED" />
+				<!-- <Sound Type="INITIAL" List="NOD_Slave_VehAE_SoundDie"/> -->
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleMED_Death" />
+				<Event Index="onDeath" FX="FX_VehicleSmall_DieExplosion_AudioOnly" />
+				<Event Index="onDeath" FX="FX_NOD_Slave_VehAE_SoundDie_AudioOnly" />
+			</FXListBehavior>
+			<SpecialPower
+				id="ModuleTag_BuildNODStructureASpecialPower"
+				UpdateModuleStartsAttack="true"
+				SpecialPowerTemplate="SpecialPower_NodBuildStructureA">
+			</SpecialPower>
+			
+			<xi:include
+				href="DATA:Includes/GenericAssembleStructureSpecialAbilityUpdate.xml" />
+			<!-- now override to provide gdi-specific values -->
+			<AssembleStructureSpecialAbilityUpdate
+				id="ModuleTag_BuildStructureASpecialAbilityUpdate"
+				SpecialPowerTemplate="SpecialPower_NodBuildStructureA"
+				Options="FAIL_WITH_INVALID_APPROACH">
+				<LogicCommandSetReplacement
+					CommandSetStages="PREPARING"
+					CommandSet="NODVehicleAECommandSet_Building"/>
+				<StructureTemplate>NODStructureA</StructureTemplate>
+			</AssembleStructureSpecialAbilityUpdate>
+
+			<!-- Repair Structures -->
+			<SpecialPower
+				id="ModuleTag_RepairStructure"
+				SpecialPowerTemplate="SpecialPower_RepairStructure"
+				UpdateModuleStartsAttack="true" />
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_RepairStructureUpdate"
+				SpecialWeapon="NODVehicleAEHealWeapon"
+				SpecialPowerTemplate="SpecialPower_RepairStructure"
+				WeaponSlotType="PRIMARY_WEAPON"
+				WeaponSlotID="1"
+				StartRechargeOnExit="true"
+				Flags="FORCE_ATTACK_TARGET"
+				StartAbilityRange="20.0"/>
+			
+			<SpecialPower
+				id="ModuleTag_LayMineSpecialPower"
+				SpecialPowerTemplate="SpecialPower_NodLayMines"
+				SetModelCondition="USER_1"
+				SetModelConditionTime="1.0s"
+				TriggerFX="FX_NOD_Minelaying"
+				UpdateModuleStartsAttack="true"
+				CanAffectObjectFilter="NodVehicleAELayMinesObjectFilter">
+			</SpecialPower>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_LayMineSpecialAbilityUpdate"
+				SpecialPowerTemplate="SpecialPower_NodLayMines"
+				StartAbilityRange="5"
+				SpecialWeapon="Weapon_NODVehicleAEMineLayerWeapon"
+				UnpackingVariation="2"
+				BusyForDuration="1s"
+				PrepSoundLoop="NOD_Slave_VehAE_IncendiaryMineWeaponFire"/>
+
+			<!-- dummy special power and update to stop the build.
+				NOTE: This also stops the minelayer ability. One way to Polish this would be to write a generic 'special power stopper'
+				special power -->
+			<SpecialPower
+				id="ModuleTag_CancelStructureABuildPower"
+				SpecialPowerTemplate="SpecialPower_CancelStructureA"
+				UpdateModuleStartsAttack="true"
+				DisabledTypesToIgnore="TEMPORARILY_BUSY"/>
+			<SpecialAbilityUpdate
+				id="ModuleTag_CancelStructureABuildUpdate"
+				SpecialPowerTemplate="SpecialPower_CancelStructureA"/>
+
+			<StatusBitsUpgrade
+				id="ModuleTag_EnhancedRepairUpgrade"
+				StatusToSet="WEAPON_UPGRADED_01">
+				<TriggeredBy>Upgrade_NODDefenseEnhancedRepair</TriggeredBy>
+			</StatusBitsUpgrade>
+			<FXListBehavior
+				id="ModuleTag_FXListRepair">
+				<TriggeredBy>Upgrade_NODDefenseEnhancedRepair</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeNODEnhancedRepairs" />
+			</FXListBehavior>
+
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_NODVehicleAESelfAura"
+				InitiallyActive="true"
+				AttributeModifierName="AttributeModifier_NODVehicleAE_GarrisonBuff"
+				RefreshDelay="0.5s"
+				AllowSelf="true"
+				DisabledTypesToProcess="HELD">
+				<UpdateStatusValidation
+					RequiredStatus="INSIDE_GARRISON"/>
+			</AttributeModifierAuraUpdate>
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					AutoAcquireAllies="true"
+					CanPickDynamicTargets="true"
+					SympathyRange="100.0"
+					TargetInvalidAtFullHealth="true"
+					TargetingCompareList="HealingUnitTargetingCompareList" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="200"/>
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+
+		<Geometry
+			IsSmall="false">
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "16.8482"
+					 MinorRadius = "16.8482"
+					 Height = "24.6194"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+		</Geometry>
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_AnimationSound">
+				<Sound Sound="NOD_Slave_VehAE_SelectAnimation1" ExcludedMC="RECYCLED" Animation="NUS_VEHICLEAE_BATA" Frame="1"/>
+				<Sound Sound="NOD_Slave_VehAE_SelectAnimation2" ExcludedMC="RECYCLED" Animation="NUS_VEHICLEAE_BATA" Frame="26"/>
+				<Sound Sound="NOD_Slave_VehAE_DeselectAnimation" ExcludedMC="RECYCLED" Animation="NUS_VEHICLEAE_DSEL" Frame="33"/>
+				<Sound Sound="NOD_Slave_VehAE_DeselectAnimation1" ExcludedMC="RECYCLED" Animation="NUS_VEHICLEAE_DSEL" Frame="37"/>
+				<Sound Sound="NOD_Slave_VehAE_DeselectAnimation2" ExcludedMC="RECYCLED" Animation="NUS_VEHICLEAE_DSEL" Frame="70"/>
+				<Sound Sound="NOD_Slave_VehAE_SelectAnimation2" ExcludedMC="RECYCLED" Animation="NUS_VEHICLEAE_DSEL" Frame="70"/>
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_Slave_VehAE_SoundAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="NOD_Slave_VehAE_SoundCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="NOD_Slave_VehAE_SoundMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="NOD_Slave_VehAE_SoundSelectMS" AudioType="voiceSelect"/>
+			<NamedEntry Sound="NOD_Slave_VehAE_SoundDeployMines" Name="VoiceLayMines"/>
+			<NamedEntry Sound="NOD_Slave_VehAE_SoundBuildOutpost" Name="VoiceBuildStructure"/>
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Slave_VehAE_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="NOD_Slave_VehAE_MoveLoop" AudioType="soundMoveLoop" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="225"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_NODDefenseEnhancedRepair</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_Nod_Defense_Range</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_Nod_Defense_Speed</DisplayUpgrade>
+	</GameObject>
+
+	<GameObject
+		id="NODVehicleAEMinefieldEgg"
+		Side="NOD"
+		EditorSorting="UNIT"
+		KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE DO_NOT_CLASSIFY"
+		EditorName="NODMinefieldEgg">
+		<DisplayName>NODMinefieldEgg</DisplayName>
+		<ArmorSet
+			Armor="NoArmor" />
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="1s"
+				MaxLifetime="1s" />
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_NODVehicleAEMineFieldOCL">
+				<DieMuxData
+					DeathTypes="ALL"/>
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event Index="onDeath" FX="FX_GDI_Builder_InfU_MineDeploy_AudioOnly" />
+			</FXListBehavior>
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+	</GameObject>
+
+	<AttributeModifier
+		id="AttributeModifier_NODVehicleAE_GarrisonBuff"
+		Category="NONE">
+		<Modifier Type="RANGE" Value="500%" />
+	</AttributeModifier>
+
+	<LocomotorTemplate
+		id="NODVehicleAELocomotor"
+		inheritFrom="GenericTreadLocomotor" />
+
+	<LogicCommandSet
+		id="NODVehicleAECommandSet">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+		<Cmd>Command_NODVehicleAEBuildNODStructureA</Cmd>
+		<Cmd>Command_NODVehicleAELayMines</Cmd>
+		<Cmd>Command_NODRepairStructure</Cmd>		
+	</LogicCommandSet>
+
+	<LogicCommandSet
+		id="NODVehicleAECommandSet_Building">
+		<Cmd>Command_NODVehicleAECancelStructureA</Cmd>
+	</LogicCommandSet>
+
+	<LogicCommand
+		id="Command_NODVehicleAEBuildNODStructureA"
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPower_NodBuildStructureA</SpecialPower>
+	</LogicCommand>
+
+	<LogicCommand
+		id="Command_NODVehicleAELayMines"
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPower_NodLayMines</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo
+				Heuristic="MINEFIELD"
+				InnerDistanceForMineLaying="300"
+				OuterDistanceForMineLaying="600"
+				DeployMinesAtCasterPosition="true"/>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommand
+		id="Command_NODVehicleAECancelStructureA"
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPower_CancelStructureA</SpecialPower>
+	</LogicCommand>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NodBuildStructureA"
+		TargetType="OBJECT_OR_LOCATION_AND_ANGLE"
+		Flags="PATHABLE_ONLY NOT_CLIFF_CELL"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceBuildStructure"/>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NodLayMines"
+		TargetType="LOCATION"
+		Flags="PATHABLE_ONLY NOT_CLIFF_CELL NO_FORBIDDEN_OBJECTS"
+		ReloadTime="30s"
+		ForbiddenObjectRange="70"
+		RadiusCursorRadius="70"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceLayMines" >
+		<ForbiddenObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE VEHICLE INFANTRY"
+			Exclude="AIRCRAFT"
+			Relationship="ALLIES NEUTRAL ENEMIES">
+			<ExcludeThing>NodVehicleAE</ExcludeThing>
+		</ForbiddenObjectFilter>
+	</SpecialPowerTemplate>
+
+	<ObjectFilterAsset
+	 id="NodVehicleAELayMinesObjectFilter">
+		<Filter
+			Rule="NONE"/>
+	</ObjectFilterAsset>
+
+	<ExperienceLevelTemplate
+		id="NODVehicleAESquadExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_01"
+		ExperienceAward="3">
+		<Target>NODVehicleAE</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAESquadExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_02"
+		Prerequisite="NODVehicleAESquadExperienceLevel_1"
+		RequiredExperience="6"
+		ExperienceAward="4">
+		<Target>NODVehicleAE</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAESquadExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_03"
+		Prerequisite="NODVehicleAESquadExperienceLevel_2"
+		RequiredExperience="15"
+		ExperienceAward="5">
+		<Target>NODVehicleAE</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAESquadExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_04"
+		Prerequisite="NODVehicleAESquadExperienceLevel_3"
+		RequiredExperience="27"
+		ExperienceAward="6">
+		<Target>NODVehicleAE</Target>
+	</ExperienceLevelTemplate>
+
+	<WeaponTemplate
+		id="Weapon_NODVehicleAEMineLayerWeapon"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<WeaponOCLNugget WeaponOCL="OCL_NODVehicleAEMineEggOCL" />
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="NODVehicleAEStructureABuildWeapon"
+		AttackRange="20.0"
+		ChaseWeapon="true"
+		WeaponSpeed="999999.0"
+		ReAcquireDetailType="PRE_FIRE"
+		AcceptableAimDelta="10d"
+		CanFireWhileMoving="true"
+		RequiredAntiMask="ANTI_STRUCTURE"
+		RadiusDamageAffects="ALLIES">
+		<PreAttackDelay
+			MinSeconds="0.0s"
+			MaxSeconds="0.0s" />
+		<FiringDuration
+			MinSeconds="=$SECONDS_PER_HEAL_TICK+'s'"
+			MaxSeconds="=$SECONDS_PER_HEAL_TICK+'s'" />
+		<Nuggets>
+			<SpecialPowerNugget
+				SpecialPowerTemplate="SpecialPower_NodBuildStructureA">
+				<SpecialObjectFilter
+					Rule="NONE"
+					Relationship="SAME_PLAYER"
+					StatusBitFlags="PARTIALLY_ASSEMBLED">
+					<IncludeThing>NODStructureA</IncludeThing>
+				</SpecialObjectFilter>
+			</SpecialPowerNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODVehicleAEHealWeapon"
+		AttackRange="20.0"
+		ChaseWeapon="true"
+		WeaponSpeed="999999.0"
+		ReAcquireDetailType="PRE_FIRE"
+		AcceptableAimDelta="10d"
+		CanFireWhileMoving="true"
+		Flags="IGNORE_FORCE_FIRE" 
+		RequiredAntiMask="ANTI_GROUND"
+		ForbiddenAntiMask=" ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY" 
+		RadiusDamageAffects="ALLIES"
+		FireSound="GDI_Engineer_InfJ_RepairWeaponBeam"
+		FireFX="FX_HealingBeam">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<HOTNugget
+				id="Nugget_HOT" 
+				Damage="18"
+				DamageType="HEALING"
+				DeathType="NORMAL"
+				DamageFXType="NOD_HEAL"
+				HealDuration="1.0s"
+				AlwaysActive="true"
+				ObjectFilterRef="ObjectFilter_RepairWeapons">
+			</HOTNugget>
+			<ActivateLaserNugget
+				Lifetime="1.0s"
+				LaserId="1"
+				ObjectFilterRef="ObjectFilter_RepairWeapons">
+			</ActivateLaserNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODVehicleAEHealWeaponUpgraded"
+		inheritFrom="NODVehicleAEHealWeapon"
+		FireFX="FX_HealingBeamUG"	>
+		<Nuggets>
+			<HOTNugget
+				id="Nugget_HOT" 
+				Damage="24">
+			</HOTNugget>
+		</Nuggets>					
+	</WeaponTemplate>
+	
+	<GameObject
+		id="NODVehicleAEIncendiaryMine"
+		inheritFrom="NODIncendiaryMine"
+		KindOf="+GRANT_PLAYER_THREAT">
+		<Behaviors>
+
+			<!-- how long will the mines stick around -->
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="120.0s"
+				MaxLifetime="120.0s" />
+			
+		</Behaviors>
+	</GameObject>
+
+	<ObjectCreationList
+		id="OCL_NODVehicleAEMineEggOCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODVehicleAEMinefieldEgg</ObjectTemplate>
+					<ObjectOffset />
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+	   
+	<ObjectCreationList
+		id="OCL_NODVehicleAEMineFieldOCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODVehicleAEIncendiaryMine</ObjectTemplate>
+					<ObjectTemplate>NODVehicleAEIncendiaryMine</ObjectTemplate>
+					<ObjectTemplate>NODVehicleAEIncendiaryMine</ObjectTemplate>
+					<ObjectTemplate>NODVehicleAEIncendiaryMine</ObjectTemplate>
+					<ObjectOffset x="50" />
+					<ObjectOffset y="50" />
+					<ObjectOffset x="-50" />
+					<ObjectOffset y="-50" />
+					<SubModules>
+						<AlignToTerrain/>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+</AssetDeclaration>

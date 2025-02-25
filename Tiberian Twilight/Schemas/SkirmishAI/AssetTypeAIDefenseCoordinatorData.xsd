@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="../includes/RegisteredObjectSetId.xsd" />
+	<xs:include schemaLocation="../includes/ObjectFilter.xsd" />
+	<xs:include schemaLocation="../AssetTypeGameplayMode.xsd" />
+
+	<xs:simpleType name="AIDefenseTargetPriority">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PRIMARY_TARGET"/>
+			<xs:enumeration value="SECONDARY_TARGET"/>
+			<xs:enumeration value="LOWEST_PRIOIRITY_TARGET"/>
+		</xs:restriction>
+	 </xs:simpleType>
+	
+	<!-- A type of thing we'd want to defend -->
+	<xs:complexType name="AIDefensibleTarget" xas:typeGroup="Xml">
+		<xs:sequence>
+			<!-- Note: If you use the Relationship field in this ObjectFilter, it is always
+				   tested against an arbitrary player in the alliance block, not the player who
+					 will actually be defending the target. -->
+			<xs:element name="TargetFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="TargetROS" type="RegisteredObjectSetId" use="required" />
+		<xs:attribute name="TargetPriority" type="AIDefenseTargetPriority" default="PRIMARY_TARGET"/>
+		
+		<!-- Normal # of defending crawlers at this point. We can exceed this if we run out of 
+			   things to defend (e.g. monument game where all shield generators are held by enemy =
+				 everyone defends the monument. -->
+		<xs:attribute name="MaxDefendingPlayers" type="SageInt" default="1" />
+	</xs:complexType>
+	
+	<!-- Data used to decide whether a human player is already defending a potential target -->
+	<!-- The Human player is considered to be defending the target if they have a sufficient 
+				number ("NumObjectsNeededToDefend") of units (defined in "HumanPlayerObjectFilter") near
+				the target (within radius defined in "NearTargetDistance").  The Crawler should be added
+				in this Object Filter for CnC4 because that handles all base operations.  It is a mobile
+				unit, so its location can change with ease and thus needs to be picked up by the object 
+				filter.  -->
+	<xs:complexType name="HumanPlayerDefendingTarget" xas:typeGroup="Xml">
+		<xs:sequence>
+			<!-- Note: Don't bother to use the Relationship field in this ObjectFilter, it is only 
+							tested against one player.  A human it is always tested for since the AI keeps 
+							track of its own intentions without the need for this. -->
+			<xs:element name="HumanPlayerObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<!-- The Number of objects that pass the filter that need to be in the area 
+					for the target to be considered "defended".  NOTE: this should always be one or greater, 
+					otherwise, the AI will always consider undefended targets as already being protected -->
+		<xs:attribute name="NumObjectsNeededToDefend" type="SageInt" default="1" />
+
+		<!-- The distance that the objects defined in the filter need to be to "defend" the target location.
+					This is a random distance chosen for a first pass implementation, but in the future, it might
+					be a good idea to use the "capture radius" of the targets or at least tune this value
+					with that radius in mind. -->
+		<xs:attribute name="NearTargetDistance" type="SageReal" default="400.0" />
+	</xs:complexType>
+	
+	<!-- These define how & what a team of AI Defensive Players defends. Since this is bound to a team,
+	     not just a player, it is not part of the AI Personality definition. For now, this is just bound
+			 (loosely) to a gameplay mode via the Mode attribute. -->
+	<xs:complexType name="AIDefenseCoordinatorData" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="DefensibleTarget" type="AIDefensibleTarget" minOccurs="1" maxOccurs="unbounded" />
+					<xs:element name="HumanPlayerDefendingTarget" type="HumanPlayerDefendingTarget" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="Mode" type="GameplayModeType" use="required" />
+
+				<!-- Defense class information for C&C4. Likely to be inapplicable in future games -->
+				<!-- Radius around the defended object to search for defense structures and garrisoned buildings -->
+				<xs:attribute name="DefenseClassProtectionRadius" type="xs:float" default="250.0"/>
+				<!-- Percentage of opposing force you expect the area to need to defend against -->
+				<xs:attribute name="DefenseClassProtectPercentage" type="Percentage" default="40"/>
+				<!-- How much of an advantage you want against that opposing force before you think the area is defended. -->
+				<xs:attribute name="DefenseClassPowerAdvantageToMove" type="xs:float" default="1.2"/>
+				
+				<!-- How close to the goal point does the crawler need to be. 
+						Should be the same as CrawlerPackAndUnpackTargetDistanceForIdle -->
+				<xs:attribute name="DefenseClassCrawlerAccuracy" type="SageReal" default="250.0"/>
+				<!-- How long should the crawler remain unpacked and building defenses before moving to another point 
+						around the same goal structure. Should be enough to build 3-5 buildings -->
+				<xs:attribute name="DefenseClassCrawlerLocalBuildTime" type="Time" default="30s"/>
+
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

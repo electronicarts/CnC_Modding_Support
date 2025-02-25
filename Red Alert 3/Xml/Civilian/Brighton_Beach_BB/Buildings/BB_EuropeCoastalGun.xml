@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseStructure.xml" />
+		<Include type="all"	source="ART:BB_EuropeCoastalGun.W3X" />
+    <Include type="all"	source="ART:EXSovietShell.W3X" />
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="instance" source="DATA:Civilian/Brighton_Beach_BB/Props/BB_EuropeCoastalGun_Collapse.xml" />
+		
+	</Includes>
+	<GameObject
+		id="BB_EuropeCoastalGun"
+		inheritFrom="BaseStructure"
+		EditorName="BB_EuropeCoastalGun"	
+		EditorSorting="STRUCTURE"		
+		KindOf="-NOT_AUTOACQUIRABLE +CAN_ATTACK +FS_BASE_DEFENSE +NOT_SELLABLE"
+		Browser="REGION Brighton_Beach_BB STRUCTURE"
+		SelectPortrait="Portrait_EuropeCoastalGun"
+		ButtonImage="Button_EuropeCoastalGun"
+		Description="DESC:EuropeCoastalGun"
+		TypeDescription="TYPE:EuropeCoastalGun">
+		<DisplayName xai:joinAction="Replace">Name:EuropeCoastalGun</DisplayName> 
+    <ArmorSet
+			id="BB_EuropeCoastalGunArmor"
+			Armor="A01_CoastalGunArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18 BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="BB_EuropeCoastalGun" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_FireWeapon" />					
+					<!--
+					<WeaponMuzzleFlash
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon_" /> -->
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_FireWeapon" />
+					<Turret
+						TurretNameKey="Bone_Pivot_rotate"
+						TurretPitch="Bone_Pivot_Tilt"
+						TurretID="1" />
+				</ModelConditionState>
+				<AnimationState
+						ParseCondStateType="PARSE_NORMAL"
+						ConditionsYes="FIRING_OR_RELOADING_A">
+					<Animation
+						AnimationName="BB_EuropeCoastalGun"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+    <Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_Weapon01SetUpdate">				
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="BB_EuropeCoastalGunWeapon"/>
+					<TurretSettings
+						TurretTurnRate="60"
+						MinimumPitch="-20d"
+						AllowsPitch="true"
+						TurretPitchRate="60"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="10.0"
+						MaxIdleScanAngle="25.0"
+						ComeToHaltJiggle="0d"
+						MaxDeflectionClockwise="25d"
+						MaxDeflectionAntiClockwise="25d">
+						<TurretAITargetChooserData
+							IdleScanDelay="=$FAST_IDLE_SCAN_DELAY"
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="FX_BuildingDebrisExplosion"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Small" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="BB_EuropeCoastalGun_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+		<xi:include href="DATA:Includes/GenericEngineerContain.xml" />
+		<xi:include	href="DATA:Includes/GenericBuildingRepair.xml" />
+
+		<!-- civ buildings should have a CreateObjectDie to make a collapse version. -->
+		<DestroyDie
+			id="ModuleTag_DestroyDie">
+			<DieMuxData
+				DeathTypes="ALL" />
+		</DestroyDie>
+	</Behaviors>
+	<AI>
+		<AIUpdate
+			id="ModuleTag_AI"
+			AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="OffensiveStructureAIStateMachine">
+        <UnitAITargetChooserData />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="10000"
+				/>
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "30.0"
+				MinorRadius = "30.0"
+				Height = "40.0"
+				ContactPointGeneration="STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry Sound="A01_CoastalGun_SelectMS" AudioType="voiceSelect" />
+			<AudioEntry Sound="BuildingRepaired" AudioType="voiceDefectingTowards" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+		  VisionRange="2000"
+		  ShroudClearingRange="=$STANDARD_SHROUD_CLEAR" />    
+	</GameObject>
+
+	<ObjectCreationList
+		id="BB_EuropeCoastalGun_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>BB_EuropeCoastalGun_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+
+  <GameObject
+		id="FXCostalGunProjectile"
+		Side="Allies"
+		EditorName="FXCostalGunProjectile">
+    <ArmorSet
+			Armor="NoArmor" />
+    <Draws>
+      <ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="EXSovietShell" />
+        </ModelConditionState>
+      </ScriptedModelDraw>
+    </Draws>
+    <Behaviors>
+      <ProjectileUpdate
+				id="ModuleTag_ProjectileUpdate"
+				StateMachine="StraightLineProjectile"
+				MinTargetDistance="5">
+        <Movement>
+          <MoveInStraightLine
+						MuzzleVelocity="50.0" />
+        </Movement>
+      </ProjectileUpdate>
+      <DestroyDie
+				id="ModuleTag_Die">
+        <DieMuxData
+					DeathTypes="ALL" />
+      </DestroyDie>
+      <FXListBehavior
+				id="ModuleTag_FXLists">
+        <DieMuxData
+					DeathTypes="ALL" />
+        <Event
+					Index="onDeath"
+					FX="FX_CostalGunImpact" />
+        <Event
+          Index="onTerrainCollision"
+          FX="FX_CostalGunImpact"/>
+      </FXListBehavior>
+    </Behaviors>
+    <Body>
+      <PropBody
+				id="ModuleTag_Body" />
+    </Body>
+    <VisionInfo
+			VisionRange="0" />
+  </GameObject>
+
+  <!-- GroundHitFX with CameraShake -->
+  <FXList id="FX_CostalGunImpact">
+    <NuggetList>
+    	<Sound Value="A01_CoastalGun_ImpactExplosion"/>
+      <ParticleSystem
+                  Particle="Soviet_SPC_Artillery_XP_Add"
+              OrientToObject="false" />
+      <ParticleSystem
+                  Particle="Soviet_SPC_Artillery_XP_Add2"
+              OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Dome_Fire_Light2"
+			  OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Artillery_XP_Flash"
+					  OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Artillery_XP_Smoke"
+					  OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Artillery_XP_Embers"
+					  OrientToObject="false" />
+      <ParticleSystem
+           Particle="Soviet_SPC_Artilery_XP_Burst"
+           OrientToObject="false" />
+      <ParticleSystem
+        Particle="Torpedo_Hit_water"
+        OnlyIfOnWater ="true">
+      </ParticleSystem>
+      <ParticleSystem
+        Particle="SovietV4RocketExplosionWake"
+        OnlyIfOnWater ="true">
+      </ParticleSystem>
+      <ParticleSystem
+        Particle="SovietV4RocketExplosionWaterMist"
+        OnlyIfOnWater ="true">
+      </ParticleSystem>
+    </NuggetList>
+  </FXList>
+
+  <WeaponTemplate
+		id="BB_EuropeCoastalGunWeapon"
+		AttackRange="2000.0"
+		MinimumAttackRange="100"
+		WeaponSpeed="800"
+		AcceptableAimDelta="25d"
+		FireSound="A01_CoastalGun_Fire"
+		FireFX="FX_Soviet_Apoc_Gun"
+		FireVeteranFX="FX_Soviet_Apoc_Gun"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		CanFireWhileMoving="true"
+		ClipSize="2"
+		PreAttackType="PER_CLIP"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		ReAcquireDetailType="PER_SHOT"
+		ShotsPerBarrel="1"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER">
+    <PreAttackDelay
+			MinSeconds="0.1s"
+			MaxSeconds="0.1s" />
+		<ClipReloadTime
+				MinSeconds="5s"
+				MaxSeconds="5s" />
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="FXCostalGunProjectile"
+				WarheadTemplate="BB_EuropeCoastalGunWeaponWarhead">
+			</ProjectileNugget>
+			<SuppressionNugget
+					  Radius="100.0"
+					  Suppression="100"
+					  DurationSeconds="5s" />
+			<InformTargetNugget />
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="BB_EuropeCoastalGunWeaponWarhead"
+		ProjectileCollidesWith = "ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_STRUCTURE ANTI_WATER ANTI_GROUND"
+		Flags="">
+		<Nuggets>
+			<DamageNugget
+				Damage="70.0"
+				Radius="50.0"
+				DamageType="EXPLOSIVE"
+				DeathType="EXPLODED"
+			/>
+		</Nuggets>
+	</WeaponTemplate>
+  
+  
+
+</AssetDeclaration>

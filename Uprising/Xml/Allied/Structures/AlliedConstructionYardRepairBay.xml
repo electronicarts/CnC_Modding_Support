@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+
+		<Include
+			type="all"
+			source="ART:ABWarFactoryRepairBay.w3x" />
+		<Include
+			type="all"
+			source="ART:ABWarFactoryRepairBay.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="AlliedConstructionYardRepairBay"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_GDICrane"
+		ButtonImage="Portrait_GDICrane"
+		Side="Allies"
+		EditorSorting="STRUCTURE"
+		BuildTime="10"
+		CommandSet="AlliedConstructionYardRepairBayCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_FACTORY NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER SCORE"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="AlliedConstructionYardRepairBay"
+		EnergyProduction="0"
+		Description="Desc:AlliedConstructionYardRepairBay"
+		TypeDescription="Type:AlliedConstructionYardRepairBay">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:AlliedConstructionYardRepairBay</DisplayName>
+		<GameDependency>
+			<RequiredObject>AlliedConstructionYard</RequiredObject>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="1500"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="SubStructureArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="CENTER" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABWarFactoryRepairBay" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			<!-- draw a decal when this thing is selected -->
+			<!-- This is duplicated in several files. Please do a search and update those too -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Selected_Repair_Decal"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model Name="" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Model Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$REPAIR_DRONE_HOME_DECAL_SIZE"
+						SizeY="=$REPAIR_DRONE_HOME_DECAL_SIZE"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						Texture="Decal_Rig_CO"
+					/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<AssignSlavesTargetObjectSpecialPower
+				id="ModuleTag_SpecialPowerRepairVehicle"
+				SpecialPowerTemplate="SpecialPower_TargetedRepairVehicle" />
+			<SpawnBehavior
+				id="ModuleTag_SpawnRepairDrones"
+				SpawnNumberData="3"
+				InitialBurst="3"
+				SpawnReplaceDelayData="10s"
+				SpawnedRequireSpawner="true"
+				KillSpawnsOnCaptured="true"
+				SpawnInsideBuilding="true"
+				KillSpawnsOnDisabled="true">
+				<Die
+					DeathTypes="ALL" />
+				<SpawnTemplate>AlliedWarFactoryRepairDrone</SpawnTemplate>
+			</SpawnBehavior>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestructionMain"
+				AssociatedModule="ModuleTag_Draw"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="SovietPowerPlant_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_None" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_None" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_None" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpack"
+				UnpackTime="0s" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<SubStructureBehavior
+					 id="ModuleTag_SubStructureBehavior" />
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="10.0"
+				MinorRadius="10.0"
+				Height="20.0">
+				<Offset
+					x="0"
+					y="0"
+					z="0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="-13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="-13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="-13.0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-13.0"
+					y="13.0"
+					z="0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="ALL_ConstructionYard_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+<!--
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+	</GameObject>
+</AssetDeclaration>

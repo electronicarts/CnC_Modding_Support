@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!--
+		Attribute Types
+	-->
+	
+	<xs:simpleType name="ProcessorType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="UNKNOWN" />
+			<xs:enumeration value="PENTIUM_4" />
+			<xs:enumeration value="CORE_DUO" />
+			<xs:enumeration value="ATHLON" />
+			<xs:enumeration value="ATHLON_64" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="GameLODType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="UNKNOWN" />
+			<xs:enumeration value="VERY_LOW" />
+			<xs:enumeration value="LOW" />
+			<xs:enumeration value="MEDIUM" />
+			<xs:enumeration value="HIGH" />
+			<xs:enumeration value="ULTRA_HIGH" />
+			<xs:enumeration value="CUSTOM" /> <!-- Make sure this is last -->
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ShaderLODType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LOW" />
+			<xs:enumeration value="MEDIUM" />
+			<xs:enumeration value="HIGH" />
+			<xs:enumeration value="ULTRA_HIGH" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="AudioLODType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="UNKNOWN" />
+			<xs:enumeration value="LOW" />
+			<xs:enumeration value="HIGH" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="InGameUILODType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LOW" />
+			<xs:enumeration value="HIGH" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="ProcessorRequirement">
+		<xs:attribute name="Type"
+						type="ProcessorType"
+						use="required" />
+		<xs:attribute name="MinMHz"
+						type="SageInt"
+						use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="GraphicsDevice">
+		<xs:attribute name="VendorId" type="SageUnsignedInt" use="required" />
+		<xs:attribute name="DeviceId" type="SageUnsignedInt" use="required" />
+		<xs:attribute name="Name" type="xs:string" use="required" />
+		<xs:attribute name="Level" type="GameLODType" use="required" />
+	</xs:complexType>
+	
+	<!--
+		LOD Assets
+	-->
+	
+	<!-- This is the list of graphics card that map to a level of Static LOD -->
+	<xs:complexType name="GraphicsHardware" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Device" type="GraphicsDevice" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>	
+
+
+	<!-- This is the system requirements to set the level of Static LOD -->
+	<xs:complexType name="GameLODPreset" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Processor" type="ProcessorRequirement" minOccurs="1" maxOccurs="unbounded" />
+				</xs:sequence>
+
+				<xs:attribute name="Level"
+								type="GameLODType"
+								default="MEDIUM" />
+				<xs:attribute name="SystemMemory"
+								type="SageInt"
+								default="500" />
+				<xs:attribute name="XRes"
+								type="SageInt"
+								default="800" />
+				<xs:attribute name="YRes"
+								type="SageInt"
+								default="600" />
+				<xs:attribute name="XResWs"
+								type="SageInt"
+								default="1280" />
+				<xs:attribute name="YResWs"
+								type="SageInt"
+								default="720" />
+
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- The static LOD level That has all the settings based on the level of LOD selected -->
+	<xs:complexType name="StaticGameLOD" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+
+				<xs:attribute name="Level"
+								type="GameLODType"
+								default="MEDIUM" />
+				<xs:attribute name="ModelLOD"
+								type="ModelLODType"
+								default="HIGH" />
+				<xs:attribute name="EffectsLOD"
+								type="EffectsLODType"
+								default="MEDIUM" />
+				<xs:attribute name="MaxParticleCount"
+								type="SageInt"
+								default="1500" />
+				<xs:attribute name="WeatherScale"
+								type="Percentage"
+								default="100" />
+				<xs:attribute name="UseShadowDecals"
+								type="SageBool"
+								default="true" />
+				<xs:attribute name="UseShadowMapping"
+								type="SageBool"
+								default="false" />
+				<xs:attribute name="ShadowLOD"
+								type="ShadowLODType"
+								default="MEDIUM" />
+				<xs:attribute name="TerrainLOD"
+								type="TerrainLODType"
+								default="MEDIUM" />
+				<xs:attribute name="UseTerrainNormalMap"
+								type="SageBool"
+								default="false" />
+				<xs:attribute name="WaterLOD"
+								type="WaterLODType"
+								default="MEDIUM" />
+				<xs:attribute name="MaxTankTrackEdges"
+								type="SageInt"
+								default="100" />
+				<xs:attribute name="MaxTankTrackOpaqueEdges"
+								type="SageInt"
+								default="25" />
+				<xs:attribute name="MaxTankTrackFadeDelay"
+								type="SageInt"
+								default="30000" />
+				<xs:attribute name="ShowProps"
+								type="SageBool"
+								default="true" />
+				<xs:attribute name="TextureReductionFactor"
+								type="SageInt"
+								default="0" />
+				<xs:attribute name="AnimationLOD"
+								type="AnimationLODType"
+								default="HIGH" />
+				<xs:attribute name="ShaderLOD"
+								type="ShaderLODType"
+								default="MEDIUM" />
+				<xs:attribute name="DecalLOD"
+								type="DecalLODType"
+								default="HIGH" />
+				<xs:attribute name="MinParticlePriority"
+								type="FXParticleSystem_Priority"
+								default="MEDIUM_OR_ABOVE" />
+				<xs:attribute name="MinParticleSkipPriority"
+								type="FXParticleSystem_Priority"
+								default="ALWAYS_RENDER" />
+				<xs:attribute name="AntiAliasingQuality"
+								type="SageInt"
+								default="0" />
+				<xs:attribute name="EnableVSync"
+								type="SageBool"
+								default="true" />
+
+
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Dynamic LOD settings -->
+	<xs:complexType name="DynamicGameLOD" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+
+				<xs:attribute name="Level"
+								type="GameLODType"
+								default="MEDIUM" />
+				<xs:attribute name="MinimumFPS"
+								type="SageInt"
+								default="10" />
+				<xs:attribute name="ParticleSkipMask"
+								type="SageInt"
+								default="1" />
+				<xs:attribute name="DebrisSkipMask"
+								type="SageInt"
+								default="0" />
+				<xs:attribute name="SlowDeathScale"
+								type="SageReal"
+								default="1.0" />
+
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Audio LOD settings -->
+	<xs:complexType name="AudioLOD" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Processor" type="ProcessorRequirement" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Level"
+								type="AudioLODType"
+								use="required" />
+				<xs:attribute name="AllowReverb"
+								type="SageBool"
+								use="required" />
+				<xs:attribute name="MaximumAmbientStreams"
+								type="SageInt"
+								use="required" />
+				<xs:attribute name="AllowCPULimiter"
+									type="SageBool"
+									use="required" />
+				<xs:attribute name="CPULimiterLevel"
+									type="Percentage"
+									use="required" />
+				<xs:attribute name="CPULimiterLevelDebug"
+									type="Percentage"
+									use="required" />
+				<xs:attribute name="MaxVoices"
+									type="SageInt"
+									use="required" />
+				<xs:attribute name="OutputBitRate"
+									type="SageInt"
+									use="required" />
+				<xs:attribute name="AllowVolumeCompressor"
+									type="SageBool"
+									use="required" />
+				<xs:attribute name="MinimumLogicalProcessors"
+								type="SageUnsignedInt"
+								use="required" />
+
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="us-ascii" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset">
+	<Tags />
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+	</Includes>
+	<Defines>
+
+		<Define name="PLAYER_POWER_BURROW_MINE_DAMAGE_RANK_01" value="600" />
+		<Define name="PLAYER_POWER_BURROW_MINE_DAMAGE_RANK_02" value="800" />
+		<Define name="PLAYER_POWER_BURROW_MINE_DAMAGE_RANK_03" value="1000" />
+
+		<Define name="PLAYER_POWER_SPACE_STATION_INFANTRY_DAMAGE" value="200.0" />
+		<Define name="PLAYER_POWER_SPACE_STATION_DAMAGE" value="10000.0" />
+		
+		<Define name="PLAYER_POWER_THORS_HAMMER_INFANTRY_DAMAGE" value="30.0" />
+		<Define name="PLAYER_POWER_THORS_HAMMER_DAMAGE_01" value="3000.0" />
+		<Define name="PLAYER_POWER_THORS_HAMMER_DAMAGE_02" value="4000.0" />
+		<Define name="PLAYER_POWER_THORS_HAMMER_DAMAGE_03" value="5000.0" />
+
+		<Define name="PLAYER_POWER_URBANRENEWAL_HEAL_AMOUNT_01" value="5000.0" />
+		<Define name="PLAYER_POWER_URBANRENEWAL_HEAL_AMOUNT_02" value="15000.0" />
+		<Define name="PLAYER_POWER_URBANRENEWAL_HEAL_AMOUNT_03" value="25000.0" />
+		<Define name="PLAYER_POWER_URBANRENEWAL_OBJECTFILTER" value="STRUCTURE CRAWLER"/>
+
+		<Define name="PLAYER_POWER_FIELDREPAIRS_HEAL_AMOUNT_01" value="1000.0" />
+		<Define name="PLAYER_POWER_FIELDREPAIRS_HEAL_AMOUNT_02" value="2000.0" />
+		<Define name="PLAYER_POWER_FIELDREPAIRS_HEAL_AMOUNT_03" value="3000.0" />
+		<Define name="PLAYER_POWER_FIELDREPAIRS_DURATION_01" value="1.0s" />
+		<Define name="PLAYER_POWER_FIELDREPAIRS_DURATION_02" value="1.5s" />
+		<Define name="PLAYER_POWER_FIELDREPAIRS_DURATION_03" value="2.0s" />
+		<Define name="PLAYER_POWER_FIELDREPAIRS_OBJECTFILTER" value="VEHICLE CRAWLER"/>
+		
+		<Define name="PLAYER_POWER_SUPERSONIC_AIR_ATTACK_DAMAGE_1" value="1600.0" />
+		<Define name="PLAYER_POWER_SUPERSONIC_AIR_ATTACK_DAMAGE_2" value="2400.0" />
+		<Define name="PLAYER_POWER_SUPERSONIC_AIR_ATTACK_DAMAGE_3" value="3200.0" />
+
+		<Define name="PLAYER_POWER_SPACE_STATION_RADIUS" value="30.0" />
+		<Define name="PLAYER_POWER_SPACE_STATION_DAMAGE" value="300.0" />
+
+	</Defines>
+
+	<WeaponTemplate
+		id="RedeploymentCrawlerKill"
+		AttackRange="9999999.0"
+		RequiredAntiMask="ANTI_VEHICLE ANTI_STRUCTURE"
+		RadiusDamageAffects="ALLIES">
+		<Nuggets>
+			<DamageNugget
+				Damage="999999"
+				Radius="999999"
+				DeathType="REDEPLOYED"
+				ForbiddenTargetModelCondition="JUST_BUILT">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="SAME_PLAYER"
+					Include="CRAWLER" />
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="CrawlerRedeploymentEnemyKill"
+		RadiusDamageAffects="ENEMIES"
+		AttackRange="10000"
+		RequiredAntiMask="ANTI_VEHICLE ANTI_INFANTRY"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<!-- The big explosion -->
+			<DamageNugget
+				Damage="100000.0"
+				Radius="=$GDI_REDEPLOYMENT_PLACEMENT_RADIUS"
+				DamageType="CANNON"
+				DeathType="DETONATED"
+				PartitionFilterTestType="CIRCLE" >
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ENEMIES">
+					<ExcludeThing>GDIAircraftS</ExcludeThing>
+				</SpecialObjectFilter>
+				<DamageScalarDetails Scalar= "50%">
+					<Filter
+						Rule="ANY">
+						<IncludeThing>Monument</IncludeThing>
+					</Filter>
+				</DamageScalarDetails>
+				<DamageScalarDetails Scalar= "25%">
+					<Filter
+						Rule="ANY">
+						<IncludeThing>MonumentShieldGenerator</IncludeThing>
+					</Filter>
+				</DamageScalarDetails>
+				<DamageScalarDetails Scalar= "250%">
+					<Filter
+						Rule="ANY"
+						Include="VEHICLE" />
+				</DamageScalarDetails>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+
+	<!-- Burrow Mines mine explosion weapons -->
+	<WeaponTemplate
+		id="Nod_BurrowMine_Weapon_01"
+		RadiusDamageAffects="ENEMIES NEUTRALS SELF"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<DamageNugget
+				Damage="=$PLAYER_POWER_BURROW_MINE_DAMAGE_RANK_01"
+				Radius="20.0"
+				DelayTimeSeconds="0.0s"
+				DamageType="MINE"
+				DamageFXType="GDI_MINE"
+				DeathType="EXPLODED">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="HORDE"
+				/>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="Nod_BurrowMine_Weapon_02"
+		RadiusDamageAffects="ENEMIES NEUTRALS SELF"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<DamageNugget
+				Damage="=$PLAYER_POWER_BURROW_MINE_DAMAGE_RANK_02"
+				Radius="20.0"
+				DelayTimeSeconds="0.0s"
+				DamageType="MINE"
+				DamageFXType="GDI_MINE"
+				DeathType="EXPLODED">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="HORDE"
+				/>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	<WeaponTemplate
+		id="Nod_BurrowMine_Weapon_03"
+		RadiusDamageAffects="ENEMIES NEUTRALS SELF"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT">
+		<Nuggets>
+			<DamageNugget
+				Damage="=$PLAYER_POWER_BURROW_MINE_DAMAGE_RANK_03"
+				Radius="20.0"
+				DelayTimeSeconds="0.0s"
+				DamageType="MINE"
+				DamageFXType="GDI_MINE"
+				DeathType="EXPLODED">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="HORDE"
+				/>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+		
+
+	<WeaponTemplate
+		id="UrbanRenewalWeapon"
+		AttackRange="10000000.0"
+		RadiusDamageAffects="ALLIES NEUTRALS">
+		<Nuggets>
+			<!-- rank 1 -->
+			<DamageNugget
+				Damage="=$PLAYER_POWER_URBANRENEWAL_HEAL_AMOUNT_01"
+				Radius="=$PLAYER_POWER_URBANRENEWAL_RADIUS_01"
+				DamageType="HEALING"
+				PartitionFilterTestType="CIRCLE">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES NEUTRAL"
+					Include="=$PLAYER_POWER_URBANRENEWAL_OBJECTFILTER">
+					<ExcludeThing>Monument</ExcludeThing>
+				</SpecialObjectFilter>
+				<RequiredUpgrade>Upgrade_UrbanRenewal_01</RequiredUpgrade>
+			</DamageNugget>
+			<!-- rank 2 -->
+			<DamageNugget
+				Damage="=$PLAYER_POWER_URBANRENEWAL_HEAL_AMOUNT_02"
+				Radius="=$PLAYER_POWER_URBANRENEWAL_RADIUS_02"
+				DamageType="HEALING"
+				PartitionFilterTestType="CIRCLE">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES NEUTRAL"
+					Include="=$PLAYER_POWER_URBANRENEWAL_OBJECTFILTER">
+					<ExcludeThing>Monument</ExcludeThing>
+				</SpecialObjectFilter>
+				<RequiredUpgrade>Upgrade_UrbanRenewal_02</RequiredUpgrade>
+			</DamageNugget>
+			<!-- rank 3 -->
+			<DamageNugget
+				Damage="=$PLAYER_POWER_URBANRENEWAL_HEAL_AMOUNT_03"
+				Radius="=$PLAYER_POWER_URBANRENEWAL_RADIUS_03"
+				DamageType="HEALING"
+				PartitionFilterTestType="CIRCLE">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES NEUTRAL"
+					Include="=$PLAYER_POWER_URBANRENEWAL_OBJECTFILTER">
+					<ExcludeThing>Monument</ExcludeThing>
+				</SpecialObjectFilter>
+				<RequiredUpgrade>Upgrade_UrbanRenewal_03</RequiredUpgrade>
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="RallyTrigger"
+		RadiusDamageAffects="ALLIES"
+		AttackRange="50000.0"
+		ClipSize="1">
+		<NuggetObjectFilter
+			Rule="ANY"
+			Relationship="ALLIES"
+			Include="VEHICLE HUGE_VEHICLE" 
+			Exclude="AIRCRAFT"/>
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<Nuggets>
+			<AttributeModifierNugget
+				Radius="=$PLAYER_POWER_RAILGUN_ACCELERATOR_RADIUS_01"
+				PartitionFilterTestType="CIRCLE"
+				ForbiddenTargetObjectStatus="IN_STASIS"
+				AttributeModifierName="AttributeModifier_Rally_Rank01">
+				<RequiredUpgrade>Upgrade_Rally_Rank01</RequiredUpgrade>
+			</AttributeModifierNugget>
+			<TintObjectsNugget
+				Radius="=$PLAYER_POWER_RAILGUN_ACCELERATOR_RADIUS_01"
+				PreColorTime="0s"
+				SustainedColorTime="=$PLAYER_POWER_RAILGUN_ACCELERATOR_DURATION_01"
+				PostColorTime="0s"
+				Frequency="0.3"
+				Amplitude="1">
+				<RequiredUpgrade>Upgrade_Rally_Rank01</RequiredUpgrade>
+				<Color R="0.0" G="0.3" B="0.1"/>
+			</TintObjectsNugget>
+			<DOTNugget
+				Damage="200.0"
+				Radius="=$PLAYER_POWER_RAILGUN_ACCELERATOR_RADIUS_01"
+				DamageInterval="1s"
+				DamageDuration="=$PLAYER_POWER_RAILGUN_ACCELERATOR_DURATION_01"
+				DamageType="HEALING"
+				RemoveIfHealed="false">
+				<RequiredUpgrade>Upgrade_Rally_Rank01</RequiredUpgrade>
+			</DOTNugget>
+			<AttributeModifierNugget
+				Radius="=$PLAYER_POWER_RAILGUN_ACCELERATOR_RADIUS_02"
+				PartitionFilterTestType="CIRCLE"
+				ForbiddenTargetObjectStatus="IN_STASIS"
+				AttributeModifierName="AttributeModifier_Rally_Rank02">
+				<RequiredUpgrade>Upgrade_Rally_Rank02</RequiredUpgrade>
+			</AttributeModifierNugget>
+			<TintObjectsNugget
+				Radius="=$PLAYER_POWER_RAILGUN_ACCELERATOR_RADIUS_02"
+				PreColorTime="0s"
+				SustainedColorTime="=$PLAYER_POWER_RAILGUN_ACCELERATOR_DURATION_02"
+				PostColorTime="0s"
+				Frequency="0.3"
+				Amplitude="1">
+				<RequiredUpgrade>Upgrade_Rally_Rank02</RequiredUpgrade>
+				<Color R="0.0" G="0.3" B="0.1"/>
+			</TintObjectsNugget>
+			<DOTNugget
+				Damage="200.0"
+				Radius="=$PLAYER_POWER_RAILGUN_ACCELERATOR_RADIUS_02"
+				DamageInterval="1s"
+				DamageDuration="=$PLAYER_POWER_RAILGUN_ACCELERATOR_DURATION_02"
+				DamageType="HEALING"
+				RemoveIfHealed="false">
+				<RequiredUpgrade>Upgrade_Rally_Rank02</RequiredUpgrade>
+			</DOTNugget>
+			<AttributeModifierNugget
+				Radius="=$PLAYER_POWER_RAILGUN_ACCELERATOR_RADIUS_03"
+				PartitionFilterTestType="CIRCLE"
+				ForbiddenTargetObjectStatus="IN_STASIS"
+				AttributeModifierName="AttributeModifier_Rally_Rank03">
+				<RequiredUpgrade>Upgrade_Rally_Rank03</RequiredUpgrade>
+			</AttributeModifierNugget>
+			<TintObjectsNugget
+				Radius="=$PLAYER_POWER_RAILGUN_ACCELERATOR_RADIUS_03"
+				PreColorTime="0s"
+				SustainedColorTime="=$PLAYER_POWER_RAILGUN_ACCELERATOR_DURATION_03"
+				PostColorTime="0s"
+				Frequency="0.3"
+				Amplitude="1">
+				<RequiredUpgrade>Upgrade_Rally_Rank03</RequiredUpgrade>
+				<Color R="0.0" G="0.3" B="0.1"/>
+			</TintObjectsNugget>
+			<DOTNugget
+				Damage="250.0"
+				Radius="=$PLAYER_POWER_RAILGUN_ACCELERATOR_RADIUS_03"
+				DamageInterval="1s"
+				DamageDuration="=$PLAYER_POWER_RAILGUN_ACCELERATOR_DURATION_03"
+				DamageType="HEALING"
+				RemoveIfHealed="false">
+				<RequiredUpgrade>Upgrade_Rally_Rank03</RequiredUpgrade>
+			</DOTNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="TibVeinDetonation"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="SELF ALLIES ENEMIES NEUTRALS"
+		AttackRange="50000.0"
+		>
+		<Nuggets>
+			<DamageNugget
+				Damage="1000"
+				DamageTaperOff="15"
+				DelayTimeSeconds="2.1s"
+				Radius="=$PLAYER_POWER_TIB_VEIN_DETONATION_RADIUS_01"
+				DamageType="CANNON"
+				DeathType="DETONATED" >
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="AIRCRAFT"/>
+				<RequiredUpgrade>Upgrade_TibVeinDetonation_Rank01</RequiredUpgrade>
+			</DamageNugget>
+			<DamageNugget
+				Damage="2000"
+				DamageTaperOff="15"
+				DelayTimeSeconds="2.1s"
+				Radius="=$PLAYER_POWER_TIB_VEIN_DETONATION_RADIUS_02"
+				DamageType="CANNON"
+				DeathType="DETONATED" >
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="AIRCRAFT"/>
+				<RequiredUpgrade>Upgrade_TibVeinDetonation_Rank02</RequiredUpgrade>
+			</DamageNugget>
+			<DamageNugget
+				Damage="3000"
+				DamageTaperOff="15"
+				DelayTimeSeconds="2.1s"
+				Radius="=$PLAYER_POWER_TIB_VEIN_DETONATION_RADIUS_03"
+				DamageType="CANNON"
+				DeathType="DETONATED" >
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="AIRCRAFT"/>
+				<RequiredUpgrade>Upgrade_TibVeinDetonation_Rank03</RequiredUpgrade>
+			</DamageNugget>
+			<WeaponOCLNugget
+				WeaponOCL="OCL_GenericTreeCrusher" />
+			<ReportWeaponFiredStatNugget/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+	  id="VeinDetonationRadiusWeapon"
+		  RadiusDamageAffects="SELF ALLIES ENEMIES NEUTRALS"
+		  AttackRange="50000.0">
+		<Nuggets>
+			<DamageNugget
+				Damage="100"
+				Radius="100"
+				DelayTimeSeconds="3.5s"
+				DamageType="CANNON"
+				DeathType="DETONATED" >
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="Weapon_NOD_FirestormIgnition"
+		AttackRange="9999999.0"
+		RadiusDamageAffects="ALLIES"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY">
+		<Nuggets>
+			<DamageNugget
+				ForceKill="true"
+				Radius="9999999.0"
+				PartitionFilterTestType="CIRCLE"
+				DamageType="BLAST"
+				DamageFXType="NOD_FLAMETHROWER"
+				DeathType="FIRESTORM_DETONATED">
+				<SpecialObjectFilter
+					Rule="ANY"
+					Relationship="ALLIES SAME_PLAYER"
+					Include="FIRESTORM HAS_FIRE_GROUP_CENTER_UPDATE">
+				</SpecialObjectFilter>
+			</DamageNugget>
+			<AttributeModifierNugget
+				Radius="99999"
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifier_NOD_FirestormIgnition">
+				<SpecialObjectFilter
+					Rule="NONE"
+					Relationship="ALLIES SAME_PLAYER">
+					<IncludeThing>NODCrawlerBVehicle</IncludeThing>
+					<IncludeThing>NODCrawlerBStructure</IncludeThing> 
+					<IncludeThing>NODStructureF</IncludeThing>
+					<IncludeThing>NODAircraftC</IncludeThing>
+					<IncludeThing>NODAircraftM</IncludeThing>
+					<IncludeThing>NODInfantryB</IncludeThing>
+					<IncludeThing>NODVehicleF</IncludeThing>
+				</SpecialObjectFilter>
+			</AttributeModifierNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<WeaponTemplate
+		id="NODEMPCounterMeasures"
+		RadiusDamageAffects="ALLIES">
+		<Nuggets>
+			<ParalyzeNugget
+				RemoveParalyzeType="EMP"
+				Radius="99999"
+				DurationSeconds="1s"
+				FXListVictim="FX_NODEMPCountermeasures">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ALLIES"
+					Include="INFANTRY VEHICLE AIRCRAFT STRUCTURE" 
+					Exclude="MINE"/>
+			</ParalyzeNugget>
+			<AttributeModifierNugget
+				Radius="99999"
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifier_EMPReset_Immunity_Rank01">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ALLIES"
+					Include="INFANTRY VEHICLE AIRCRAFT STRUCTURE"
+					Exclude="MINE"/>
+			</AttributeModifierNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIPersonalShields"
+		AttackRange="999999"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		RadiusDamageAffects="ALLIES">
+		<Nuggets>
+			<FireOnObjectsNugget
+			   Radius="300.0"
+			   FireOnVictimObject="true"
+			   PartitionFilterTestType="CIRCLE">
+				<Filter
+					Rule="ANY"
+					Relationship="ALLIES"
+					StatusBitFlagsExclude="POINT_DEFENSE_DRONE_ATTACHED"
+					Include="VEHICLE INFANTRY AIRCRAFT CRAWLER STRUCTURE">
+					<ExcludeThing>GDIPersonalShield</ExcludeThing>
+				</Filter>
+				<Weapon
+					WeaponName="GDIPersonaShields_Individual" />
+			</FireOnObjectsNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIPersonaShields_Individual"
+		AttackRange="999999"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		RadiusDamageAffects="ALLIES">
+		<!-- FireSound="GDI_Power_PersonalShields"
+		FireFX="FX_GDISonic_Artillery_Hit" no worky -->
+		<Nuggets>
+			<WeaponOCLNugget
+				WeaponOCL="OCL_GDIPointDefenseShield"
+				TargetAsPrimaryObject="true">
+			</WeaponOCLNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIMassPromotionWeapon"
+		AttackRange="999999"
+		RequiredAntiMask="ANTI_GROUND ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		RadiusDamageAffects="ALLIES">
+		<Nuggets>
+			<ExperienceNugget
+				ExperienceOptions="MAINTAIN_SURPLUS_EXPERIENCE SHOW_FLASH"		 
+				Levels="2"
+				Radius="=$GDI_MASSPROMOTION_RADIUS"
+				ObjectFilterRef="ObjectFilterAsset_GDI_MassPromotion">
+			</ExperienceNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="Weapon_NOD_RadarJam">
+		<Nuggets>
+			<InformationWarfareNugget
+				InfoWarType="RADAR_DECOY RADAR_CLOAK RADAR_JAM"
+				RadarJamRadius="-1.0"
+				RadarJamDuration="30s"
+				Relationship="ENEMIES">
+				<RadarDecoyInfo Interval="5s"/>
+			</InformationWarfareNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="Weapon_SubterraneanStrike_SpawnDrill">
+		<Nuggets>
+			<WeaponOCLNugget
+				WeaponOCL="OCL_SubterraneanStrike_SpawnDrill" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="Weapon_SubterraneanStrike_Drill">
+		<Nuggets>
+			<DamageNugget
+				Damage="100"
+				Radius="=$NOD_SUBTERRANEANSTRIKE_DRILL_AOE_RADIUS"
+				DamageType="BLAST"
+				FXListVictim="FX_NODSubterraneanStrike" 
+				DeathType="EXPLODED"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDISonicArtilleryWeapon">
+		<Nuggets>
+			<DamageNugget
+				Damage="100.0"
+				Radius="=$GDI_SONIC_ARTILLERY_EFFECT_RADIUS"
+				DamageType="BLAST"
+				DamageFXType="GDI_MINE"
+				DeathType="EXPLODED"/>
+			<ParalyzeNugget
+				Radius="=$GDI_SONIC_ARTILLERY_EFFECT_RADIUS"
+				DurationSeconds="10s"
+				ParalyzeType="EMP"
+				FXListVictim="FX_EMPEE">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="UNATTACKABLE CIVILIAN_BUILDING AIRCRAFT">
+					<ExcludeThing>NeutralInfantryA</ExcludeThing>
+				</SpecialObjectFilter>
+			</ParalyzeNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate id="GDISonicArtilleryDummyWeaponForAudio"/>
+
+</AssetDeclaration>

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xai="uri:ea.com:eala:asset:instance"
+	xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags/>
+
+	<Includes>
+    <Include 
+  source = "DATA:GlobalData\Weather.xml"
+  type = "instance"/>
+		<Include source="DATA:NOD\Units\NODVertigo.xml" type="instance"/>
+		<Include source="DATA:GlobalData/Weapon.xml" type="instance"/>
+		<Include source="DATA:GlobalData\Armor.xml" type="instance"/>
+		<Include source = "DATA:GDI\Units\GDIV35Ox_Summoned.xml" type = "instance"/>
+		<Include source = "DATA:GDI\Units\GDIV35Ox_SummonedForVehicle.xml" type = "instance"/>
+		<Include source = "DATA:GDI\Units\GDICommando.xml" type = "instance"/>
+		<Include source="DATA:Neutral/Crates/HealCrate.xml" type="instance"/>
+		<Include source="DATA:GlobalData\SpecialPowerTemplates.xml" type="instance"/>	 
+   </Includes>
+
+<GameObject
+		id="HealCrate"
+		inheritFrom = "HealCrate">
+		<VisionInfo
+			VisionRange="175"
+			ShroudClearingRange="170"
+			/>
+</GameObject>
+
+<ArmorTemplate
+		id="GDICommandoArmor"
+		inheritFrom ="GDICommandoArmor"
+		SideDamageScalar="100"
+		RearDamageScalar="100"
+		xai:joinAction="Replace"
+		>
+		<Armor
+			Damage="CANNON"
+			Percent="5"
+			 />
+		<Armor
+			Damage="ROCKET"
+			Percent="5" 
+			/>
+		<Armor
+			Damage="GRENADE"
+			Percent="5" 
+			/>
+		<Armor
+			Damage="GUN"
+			Percent="10" 
+			/>
+		<Armor
+			Damage="SNIPER"
+			Percent="5" 
+			/>
+</ArmorTemplate>
+
+<GameObject
+       id = "GDIV35Ox_Summoned" inheritFrom="GDIV35Ox_Summoned">
+    <Behaviors>
+      <HordeTransportContain
+            id = "ModuleTag_Contain"
+            ContainMax = "6"
+            Slots = "6"
+            FlyOffMapOnEmpty="true">
+       </HordeTransportContain>
+   </Behaviors>
+</GameObject>
+
+<GameObject
+       id = "GDIV35Ox_SummonedForVehicle" inheritFrom="GDIV35Ox_SummonedForVehicle">
+    <Behaviors>
+      <HordeTransportContain
+            id = "ModuleTag_Contain"
+            ContainMax = "1"
+            Slots = "1"
+            FlyOffMapOnEmpty="true">
+       </HordeTransportContain>
+   </Behaviors>
+</GameObject>
+
+<GameObject
+		id="NODVertigo"
+		inheritFrom = "NODVertigo" >
+	<Behaviors>
+		<InvisibilityUpdate
+			id="ModuleTag_Invisibility_Intrinsic" xai:joinAction="Remove">
+		</InvisibilityUpdate>
+	</Behaviors>
+</GameObject>	
+
+
+
+<GameObject
+		id="GDICommando" inheritFrom="GDICommando" >
+	<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1000" />
+		</Body>
+	<Behaviors>
+		<SuppressionUpdate
+				id="ModuleTag_SuppressionUpdate"
+				UpdateDelay="1s"
+				Suppressability="10000"
+				SuppressionDuration="3s"
+				AttributeModifierSuppressed="Modifier_Test_Suppression"
+				AttributeModifierForceMove="Modifier_Test_Suppression_ForceMove" />	
+	</Behaviors>
+</GameObject>
+ 
+ <SpecialPowerTemplate
+		id="SpecialPower_SpotTargetBombard"
+		inheritFrom="SpecialPower_SpotTargetBombard"
+		ReachableTargetsCircleDisplayRadius="600">
+</SpecialPowerTemplate>
+<!-- Original Bombard range was 500 -->		
+
+<WeaponTemplate
+		id="ExplodingBarrelWeapon"
+		Name="ExplodingBarrelWeapon" 
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		FireFX="FX_NODBombHit">
+		<Nuggets>
+			<DamageNugget 
+				Damage="4000" 
+				Radius="100" 
+				DamageType="CANNON" 
+				DeathType="NORMAL">
+			  <DamageScalarDetails 
+				Scalar= "1%">
+				<Filter
+				Rule="NONE"
+				Include="UNIQUE_UNIT"/>
+			 </DamageScalarDetails>
+			</DamageNugget>
+		</Nuggets>
+		
+	</WeaponTemplate> 
+	
+	<WeaponTemplate
+		id="GDICommandoRailCarbine"
+		inheritFrom="GDICommandoRailCarbine" 
+		xai:joinAction="Overwrite"
+		AttackRange="300.0" 
+		WeaponSpeed="999999.0" 
+		FireSound="GDI_Commando_Weapon1FireMS"
+		FireSoundPerClip="GDI_Commando_Weapon1Fire"
+		FireFX="FX_GDICommandoFire"
+		FireVeteranFX="FX_GDICommandoFireHeroic"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		ClipSize="5"
+		CanFireWhileMoving="true"
+		AcceptableAimDelta="10d"
+		>
+		<!-- 		FireSoundPerClip="GDI_Commando_Weapon1Fire" -->
+		<!-- ;;;;; CanFireWhileMoving is TEMP !!!!!!!!!!!!!!!!! -->
+		<FiringDuration
+			MinSeconds="0.2s"
+			MaxSeconds="0.3s" />
+		<ClipReloadTime
+			MinSeconds="0.1s"
+			MaxSeconds="0.3s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.75s"
+				LaserId="0">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="STRUCTURE VALID_TARGET_FOR_C4" />
+			</ActivateLaserNugget>
+			<DamageNugget 
+				Damage="750.0" 
+				Radius="0.0" 
+				DamageType="SNIPER" 
+				DamageFXType="GDI_MACHINEGUN"		
+				DeathType="NORMAL" >
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="STRUCTURE VALID_TARGET_FOR_C4" />
+			</DamageNugget>
+			<SuppressionNugget
+				Radius="10.0"
+				Suppression="25"
+				DurationSeconds="5s">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Exclude="STRUCTURE VALID_TARGET_FOR_C4" />
+			</SuppressionNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		  id="NODVertigoBomb"
+		  inheritFrom="NODVertigoBomb"
+		  AttackRange="10.0" >
+	</WeaponTemplate>
+  
+  <Weather id="Weather" inheritFrom="Weather">
+    <Snow
+			SnowTexture = "FXRainDrop"
+			SnowFrequencyScaleX = "0"
+			SnowFrequencyScaleY = "0"
+			SnowAmplitude = "0"
+			SnowPointSize = "1.0"
+			SnowMinPointSize = "60.0"
+			SnowMaxPointSize = "120.0"
+			SnowQuadSize = "8.0"
+			SnowBoxHeight = "400.0"
+			SnowSpacing = "40.0"
+			SnowSpeed = "100.0"
+			SnowPointSprites = "false"
+				
+			SnowEnabled = "true"
+			IsSnowing = "true"
+			NumberTiles = "4"
+		/>
+		
+    <Rain
+			IsRaining = "true"/>		
+			
+    <Cloud>
+      <CloudTextureSize x="660.0" y="660.0"/>
+      <CloudOffsetPerSecond x="-.03" y="-.02"/>
+    </Cloud>
+  </Weather>
+
+<MissionObjectiveList id="MissionObjectives">
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_1_3_Objective_1"
+			Description= "SCRIPT:GDI_1_3_Obj_1_Detail">
+			<PresentationSettings
+				ID = "GDI_ToW_1_3_Objective_1"
+				Dialog = "MG13_GDIEVA01">
+				<Duration>6s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>	
+			</PresentationSettings>
+		</MissionObjectiveTag> 
+		
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_1_3_Objective_2"
+			Description= "SCRIPT:GDI_1_3_Obj_2_Detail">
+			<PresentationSettings
+				ID = "GDI_ToW_1_3_Objective_2"
+				Dialog = "MG13_GDIEVA03">
+				<Duration>5s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>
+				<CameraFieldOfView>55d</CameraFieldOfView>	
+			</PresentationSettings>
+			<PresentationSettings
+				ID = "GDI_ToW_1_3_Objective_2b">
+				<Duration>2.5s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>
+				<CameraFieldOfView>55d</CameraFieldOfView>	
+			</PresentationSettings>
+		</MissionObjectiveTag>
+		
+		<MissionObjectiveTag
+			Script="SCRIPT:GDI_1_3_Objective_3"
+			Description= "SCRIPT:GDI_1_3_Obj_3_Detail">
+			<PresentationSettings
+				ID = "GDI_ToW_1_3_Objective_3"
+				Dialog = "MG13_GDIEVA05">
+				<Duration>3s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>	
+			</PresentationSettings>
+			
+			<PresentationSettings
+				ID = "GDI_ToW_1_3_Objective_3b">
+				<Duration>3s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>	
+			</PresentationSettings>
+		</MissionObjectiveTag>
+	
+		<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:GDI_1_3_BonusObjective_1"
+			Description= "SCRIPT:GDI_1_3_BonusObjective_1_Detail">
+			<PresentationSettings
+				ID = "GDI_ToW_1_3_Objective_4"
+				Dialog = "MG13_GDIEVA07">
+				<Duration>3s</Duration>
+				<CameraStartAngle>10d</CameraStartAngle>
+				<CameraEndAngle>20d</CameraEndAngle>
+				<CameraFieldOfView>20d</CameraFieldOfView>	
+			</PresentationSettings>
+		</MissionObjectiveTag>
+	</MissionObjectiveList>
+
+  <!-- Start in Explore mode; timeout of zero -->
+  <MusicScriptConditionNugget_TimeFromStartOfLevel
+		id="MusicScriptCondition_ExploreCheckTime"
+		Timeout="-1s" />
+
+</AssetDeclaration>

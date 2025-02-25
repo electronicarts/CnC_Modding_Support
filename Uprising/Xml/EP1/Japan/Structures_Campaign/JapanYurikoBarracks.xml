@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include
+			type="all"
+			source="ART:JBYBarracks_SKN.w3x" />	
+		<Include
+			type="all"
+			source="ART:JBYBarracks_OPN.w3x" />				
+		
+		<Include
+			type="all"
+			source="ART:JBBarracks_FX.w3x" />						
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="JapanYurikoBarracks"
+		inheritFrom="BaseStructure"
+		Side="Japan"
+		EditorSorting="STRUCTURE"		
+		BuildTime="10"
+		SelectPortrait="Portrait_JapanBarracks"
+		ButtonImage="Button_JapanBarracks"
+		EnergyProduction="-25"
+		CommandSet="JapanBarracksCommandSet"
+		KindOf="-CAN_BUILD_ON_WATER -CAN_BUILD_ON_DEEP_WATER +FS_FACTORY +AUTO_RALLYPOINT +FS_BARRACKS"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="JapanYurikoBarracks"
+		Description="Desc:JapanBarracks"
+		TypeDescription="Type:JapanBarracks"
+		HealthBoxHeightOffset="20">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:JapanBarracks</DisplayName>
+		<GameDependency>
+			<RequiredObject>JapanPowerPlant</RequiredObject>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="750"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="JapanBarracksArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="FRONT">
+      <ConstructionBaseSelectionCriteria
+        ExcludedBaseTypes="NO_BUILD_RADIUS CAPTURED"/>
+    </SkirmishAIInformation>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JBYBarracks_SKN" />
+				</ModelConditionState>
+
+			
+
+				<AnimationState
+				ParseCondStateType="PARSE_DEFAULT"
+				Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="JBYBarracks_OPN"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_WAITING_OPEN"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="JBYBarracks_OPN"
+						AnimationMode="ONCE" 
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_OPENING"
+					StateName="STATE_Open">
+					<Animation
+						AnimationName="JBYBarracks_OPN"
+						AnimationMode="ONCE" 
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_CLOSING"
+					StateName="STATE_Closed"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="JBYBarracks_OPN"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+		
+			</ScriptedModelDraw>
+			
+	
+
+
+
+
+
+		</Draws>
+
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="JapanStructureHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+				<Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData DeathTypes="ALL" DeathTypesForbidden="SUICIDED" />
+					<Event Index="onDeath" FX="FX_LargeBuildingDieExplosion" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="JBYBarracks_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+<!--			ExemptStatus="STATE_Closed"/>-->
+			</CreateObjectDie>
+<!--			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="JBYBarracks_open_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"
+					ExemptStatus="STATE_Open"/>
+			</CreateObjectDie>-->
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED"/>
+			</DestroyDie>
+					
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				GiveNoXP="true"
+				Type="INFANTRY"
+				NumDoorAnimations="1"
+				DoorOpeningTime="3.33s"
+				DoorWaitOpenTime="1.0s"
+				DoorCloseTime="3.33s">
+				<GiveUpgradeToProduced>
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_VETERAN"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_VETERAN" />
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_ELITE"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_ELITE" />
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_HEROIC"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_HEROIC" />
+				</GiveUpgradeToProduced>
+			</ProductionUpdate>
+			<QueueProductionExitUpdate
+				id="ModuleTag_ExitUpdate"
+				PlacementViewAngle="45d"
+				ExitDelaySeconds="0.07s">
+				<UnitCreatePoint
+					x="0.0"
+					y="0.0" />
+				<NaturalRallyPoint
+					x="40.0"
+					y="0.0" />
+			</QueueProductionExitUpdate>
+			<SubObjectsUpgrade
+				id="ModuleTag_Upgrade_Tech2">
+				<TriggeredBy>Upgrade_JapanBarracksTech2</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Upgrade_02"
+					HideSubObjects="Upgrade_01 Upgrade_03"
+					Upgrade="Upgrade_JapanBarracksTech2">
+					<CustomAnimAndDuration AnimState="USER_2" />
+				</Nugget>
+			</SubObjectsUpgrade>			
+			<SubObjectsUpgrade
+				id="ModuleTag_Upgrade_Tech3">
+				<TriggeredBy>Upgrade_JapanBarracksTech3</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Upgrade_03"
+					HideSubObjects="Upgrade_01 Upgrade_02"					
+					Upgrade="Upgrade_JapanBarracksTech3">
+					<CustomAnimAndDuration AnimState="USER_3"/>
+				</Nugget>
+			</SubObjectsUpgrade>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GenericJapanBuildingFunctions" />									
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericJapanBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericJapanBuildingSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainInfantry.xml" />				
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="Generic" />
+			<CommandSetUpgrade
+				id="ModuleTag_CommandSetUpgrade"
+				CommandSet="JapanBarracksCommandSetTech2">
+				<TriggeredBy>Upgrade_JapanBarracksTech2</TriggeredBy>
+			</CommandSetUpgrade>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIForLua"
+				StateMachine="StructureAIStateMachine" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1000" />
+		</Body>
+		<Geometry>
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "45.0"
+           MinorRadius = "45.0"
+           Height = "10.0"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "-10.417"
+            y = "0.0"
+            z = "0.0" />
+      </Shape>
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "22.5"
+           MinorRadius = "22.5"
+           Height = "33.3"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "0.373463"
+            y = "0.0"
+            z = "0.0" />
+      </Shape>
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "16.2"
+           MinorRadius = "23.85"
+           Height = "33.3"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "-41.4277"
+            y = "0.0"
+            z = "0.0" />
+      </Shape>
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "4.95"
+           MinorRadius = "35.0"
+           Height = "42.957"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "0.373462"
+            y = "0.0"
+            z = "0.0" />
+      </Shape>
+		</Geometry>
+		<ClientBehaviors>
+      <AnimationSoundClientBehavior id="ModuleTag_ASCB">
+            <Sound Sound="JAP_YurikoBarracks_OpenAnimation1" RequiredMC="DOOR_1_OPENING" Animation="JBYBarracks_OPN" Frame="1" />
+            <Sound Sound="JAP_YurikoBarracks_OpenAnimation2" RequiredMC="DOOR_1_OPENING" Animation="JBYBarracks_OPN" Frame="58" />
+            <Sound Sound="JAP_YurikoBarracks_OpenAnimation3" RequiredMC="DOOR_1_OPENING" Animation="JBYBarracks_OPN" Frame="95" />
+            <Sound Sound="JAP_YurikoBarracks_CloseAnimation1" RequiredMC="DOOR_1_CLOSING" Animation="JBYBarracks_OPN" Frame="95" />
+            <Sound Sound="JAP_YurikoBarracks_CloseAnimation2" RequiredMC="DOOR_1_CLOSING" Animation="JBYBarracks_OPN" Frame="42" />
+            <Sound Sound="JAP_YurikoBarracks_CloseAnimation3" RequiredMC="DOOR_1_CLOSING" Animation="JBYBarracks_OPN" Frame="4" />                  
+      </AnimationSoundClientBehavior>
+			<ModelConditionAudioLoopClientBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_StructureConstructionAudio">
+				<ModelConditionSound
+					Sound="JAP_Nanocore_DeployStructureLand"
+					RequiredFlags="STRUCTURE_UNPACKING"
+					ExcludedFlags="OVER_WATER"/>
+				<ModelConditionSound
+					Sound="JAP_Nanocore_DeployStructureWaterMS"
+					RequiredFlags="STRUCTURE_UNPACKING OVER_WATER"/>
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="JAP_InstantDojo_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+		<AudioEntry Sound="JAP_Nanocore_DeployLoop" AudioType="soundUnderConstruction" />
+<!--
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="300" />
+		<ProjectedBuildabilityInfo
+			Radius="105"
+			BuildPlacementTypes="OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

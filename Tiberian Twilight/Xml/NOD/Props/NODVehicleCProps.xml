@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="ART:FXNodLaser.xml" />
+		<Include type="instance" source="ART:FXEnergyBeam.xml" />
+	</Includes>
+	<GameObject
+		id="NODVehicleCLaserNodeManager"
+		KindOf="DEFLECT_BY_SPECIAL_POWER INERT NO_COLLIDE HIDE_IF_FOGGED">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="1s"
+				MaxLifetime="1s" />
+
+			<!-- This manages the complete Scattering effect of a weapon -->
+			<WeaponScatterEffectUpdate
+				 id="Base_ScatterEffect"
+				 WeaponTemplate="NODVehicleCLaserNode"
+				 Options="NO_DUPLICATE_TARGETS STOP_SCATTER_IF_NO_TARGET_OBJECTS_HIT">
+				<!-- Define the prioritization of the targets to scatter to -->
+				<TargetSelection>
+					<!-- units first, then structures -->
+					<ObjectPriorityFilter
+						Rule="ALL"
+						Relationship="ENEMIES"
+						Exclude="STRUCTURE" />
+					<ObjectPriorityFilter
+						Rule="ALL"
+						Relationship="ENEMIES" />
+				</TargetSelection>
+
+				<!-- Define the specifics for each scatter of the weapon -->
+				<ScatterSettings
+					ScatterDelay="0s">
+					<ScatterInfo
+						ScatterAmount="5"
+						ScatterDistance="50"
+						PercentDamage="100%"
+						NodeOCL="OCL_NODVehicleCLaserNodeDisplay" />
+				</ScatterSettings>
+			</WeaponScatterEffectUpdate>
+		</Behaviors>
+
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody"/>
+		</Body>
+	</GameObject>
+
+	<GameObject
+		id="NODVehicleCLaserNodeLaser"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER">
+		<ArmorSet
+			Armor="NoArmor"/>
+		<Draws>
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile="1"
+				Texture1_UScrollRate="0.2"
+				Texture1_VScrollRate=".3"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="0"
+				Texture2_UTile="1"
+				Texture2_VTile="1"
+				Texture2_UScrollRate="-.2"
+				Texture2_VScrollRate="-.3"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="0"
+				LaserWidth="5"
+				LightMin="0"
+				LightMax="5"
+				WeaponSlotID="1"
+				LaserStateID="1">
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+						<Float Name="ColorEmissive">
+							<Value>4.000000</Value>
+							<Value>4.000000</Value>
+							<Value>4.000000</Value>
+						</Float>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+		</Draws>
+
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<LaserScatterUpdate
+				id="ModuleTag_LaserScatterUpdate"
+				LaserLifetime="0.75s" />
+		</Behaviors>
+
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody"/>
+		</Body>
+	</GameObject>
+
+	<ObjectCreationList
+		id="OCL_NODVehicleCLaserNodeRegular">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODVehicleCLaserNodeManager"/>
+				<CopyParentUpgrades/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_NODVehicleCLaserNodeDisplay">
+		<OCLModule>
+			<Modules>
+				<TargetRelativePrePosition/>
+				<CreateObject
+					ObjectTemplate="NODVehicleCLaserNodeLaser"/>
+				<CopyParentUpgrades/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+</AssetDeclaration>

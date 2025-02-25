@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseUpgradeCrystal.xml" />
+
+		<Include type="all"	source="ART:NB_TechStructO_TibLift_BlueCrystal.w3x" />
+		<Include type="all"	source="ART:NB_TechStructO_SuperCrystalFX.w3x" />
+		<Include type="all"	source="ART:NB_TechStructO_SuperCrystalFX_CPTR.w3x" />
+		<Include type="all"	source="ART:NB_TechStructO_SuperCrystalFX_FLY.w3x" />
+		<Include type="all"	source="ART:FXInvisBone.w3x" />
+		
+	</Includes>
+	<GameObject
+		id="SuperUpgradeCrystal"
+		inheritFrom="BaseUpgradeCrystal"
+		KindOf="+OBJECTIVE_UNIT" 
+		SelectPortrait="Portrait_Neutral_TiberiumCrystal_GDI"
+		ButtonImage="Portrait_Neutral_TiberiumCrystal_GDI"
+		Description="Desc:SuperUpgradeCrystal"
+		TypeDescription="Type:SuperUpgradeCrystal">
+		<DisplayName>NAME:SuperUpgradeCrystal</DisplayName>
+		<SkirmishAIInformation
+				TiberiumCrystalValueWeight="1.5" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechStructO_TibLift_BlueCrystal" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TibCrystal_SuperDots"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TibCrystal_SuperGlow"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TibCrystal_SuperLight"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NB_TechStructO_TibLift_BlueCrystal"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+			
+			<!-- Crystal FX geo when picked up (Aram) -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawFX">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"/>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ATTACHED">
+					<Model
+						Name="NB_TechStructO_CrystalFX_CPTR" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TibCrystal_SuperDots"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TibCrystal_SuperGlow"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TibCrystal_SuperLight"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ATTACHED">
+					<Animation
+						AnimationName="NB_TechStructO_CrystalFX_CPTR"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Behaviors>
+			<AttachCrateCollide
+				id="ModuleTag_AttachCrateCollide"
+				Flags="HUMAN_PICKUP_ONLY_IN_SP_CAMPAIGN">
+				<ObjectStatusValidation
+					ForbiddenStatus="CARRIED_UPGRADE_CRYSTAL"/>
+				<AllowedCollectorObjectFilter
+					Rule="ALL"
+					Exclude="CRAWLER"
+					StatusBitFlagsExclude="UPGRADE_CRYSTAL_ATTACHED GRAB_UPDATE_ACTIVE"/>
+			</AttachCrateCollide>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SuperUpgradeCrystal_IonStorm">
+				<DieMuxData
+					DeathTypes="CRYSTAL_DETONATED"/>
+			</CreateObjectDie>
+			<GiveUpgradePointsDie
+				id="ModuleTag_GiveUpgradePointsDie"
+				PointsToGive="2">
+				<DieMuxData
+					DeathTypes="DROPPED_OFF" />
+			</GiveUpgradePointsDie>
+			<GiveTeamPointsDie
+				id="ModuleTag_GiveTeamPointsDie"
+				PointsToGive="20">
+				<DieMuxData
+					DeathTypes="DROPPED_OFF" />
+			</GiveTeamPointsDie>
+
+			<FXListBehavior
+				id="ModuleTag_FXListDie">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="DROPPED_OFF" />
+				<Event
+					Index="onDeath"
+					FX="FX_UpgradeCrystal_Death" />
+				<Event Index="onDeath" FX="FX_Crystal_DieExplosion_AudioOnly"/>
+			</FXListBehavior>
+			<FXListBehavior
+				id="ModuleTag_FXListDieDeposit">
+				<DieMuxData
+					DeathTypes="DROPPED_OFF" />
+				<Event
+					Index="onDeath"
+					FX="FX_UpgradeCrystal_Death" />
+				<Event Index="onDeath" FX="FX_BlueCrystal_Deposit_AudioOnly" Flags="REVERSE_PRIMARY_SECONDARY"/>
+			</FXListBehavior>			
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500" />
+		</Body>
+	</GameObject>
+
+	<!-- OCL -->
+	<ObjectCreationList
+		id="SuperUpgradeCrystal_IonStorm">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>SuperIonStorm</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<SubModules>
+						<CreateObject/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+</AssetDeclaration>

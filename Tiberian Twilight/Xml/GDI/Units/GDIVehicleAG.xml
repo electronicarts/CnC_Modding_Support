@@ -1,0 +1,975 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<!-- GDI Heavy Defense Tank T3 / GDI Vehicle AG / Rhino -->
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:GUL_VehicleAG_SKN.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAG_SKL.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAG_ATKA.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAG_ATKB.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAG_IDLA.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAG_IDLU.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAG_MOVA.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAG_PACK.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAG_UPCK.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAG_DMG.xml" />
+		<Include type="all" source="ART:GUL_VehicleAG_GTPA.w3x" />
+		
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseHeavyVehicle.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:GDI/Props/GDIVehicleAGProps.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+	</Includes>
+	<Defines>
+		<Define name="GDIVEHICLEAG_SONIC_AOE_RADIUS" value="250.0" />
+	</Defines>
+
+	<GameObject
+		id="GDIVehicleAG"
+		inheritFrom="BaseHeavyVehicle"
+		SubGroupPriority="103"
+		HealthBoxHeightOffset="40"
+		HealthBar="Large"
+		SelectPortrait="Portrait_GDI_Vehicle_AG_tech1"
+		ButtonImage="Btn_GDI_Vehicle_AG_tech1"
+		Side="GDI"
+		KindOf="+SPAWNS_HUSK"
+		ParticipationValue="=$GDIVEHICLEAG_PARTICIPATION_VALUE"
+		BuildTime="20"
+		WeaponCategory="BLAST" 
+		CommandSet="GDIVehicleAGCommandSet"
+		CommandPoints="=$GDI_VEHICLE_AG_COMMANDPOINT_COST" 
+		ThreatLevel="10"
+		EditorName="GDI_D3_Heavy_Blast(Rhino)"
+		EditorSorting="UNIT"
+		Description="Desc:GDIVehicleAG"
+		TypeDescription="Type:GDIVehicleAG">
+
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:GDIVehicleAG</DisplayName>
+		
+		<LocomotorSet
+			Locomotor="GDIVehicleAGLocomotor"
+			Condition="NORMAL"
+			Speed="60.0" />
+
+		<!-- 0-speed locomotor for the deployed state -->
+		<LocomotorSet
+			Locomotor="GDIVehicleAGLocomotor"
+			Condition="SPECIALABILITY_ACTIVE"
+			Speed="0.0" />
+
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+
+		<Draws>
+			<TankDraw
+				id="ModuleTag_Draw"
+				ExtraPublicBone="Bone_Tread_Left Bone_Tread_Right GAG_Mirror12 GAG_Mirror17 GAG_Chassis Turret"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="FXTreadL"
+				TrackMarksRightBone="FXTreadR"
+				TrackMarkWidth="2"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="16.0"
+				MaxRecoilDistance="16.0"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUL_VehicleAG_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+					<WeaponRecoilBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+				</ModelConditionState>
+   				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DEPLOYED REALLYDAMAGED">
+					<Model
+						Name="GUL_VehicleAG_SKN" />
+					<Texture
+						Original="GUL_VehicleAG"
+						New="GUL_VehicleAG_DMG" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+					<WeaponRecoilBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretID="1" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage03"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DEPLOYED DAMAGED">
+					<Model
+						Name="GUL_VehicleAG_SKN" />
+					<Texture
+						Original="GUL_VehicleAG"
+						New="GUL_VehicleAG_DMG" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+					<WeaponRecoilBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretID="1" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GUL_VehicleAG_SKN" />
+					<Texture
+						Original="GUL_VehicleAG"
+						New="GUL_VehicleAG_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage03"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GUL_VehicleAG_SKN" />
+					<Texture
+						Original="GUL_VehicleAG"
+						New="GUL_VehicleAG_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DEPLOYED">
+					<Model
+						Name="GUL_VehicleAG_SKN" />
+
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+					<WeaponRecoilBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="GAG_Mirror17" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretID="1" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="GUL_VehicleAG_IDLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+						<Script>
+									CurDrawableHideSubObjectPermanently( "GUL_VEHICLEAG_UPG" )
+									CurDrawableHideSubObjectPermanently( "UPG_SHIELD_FX" )
+						</Script>
+				</AnimationState>
+
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="true"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="GUL_VehicleAG_IDLA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"
+						AnimationSpeedFactorMin="0.8"
+						AnimationSpeedFactorMax="1.2" />
+				</AnimationState>
+
+				<!-- packing -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DEPLOYED UNPACKING">
+					<Animation
+						AnimationName="GUL_VehicleAG_PACK"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+				<!-- unpacking -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName="GUL_VehicleAG_UPCK"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				
+				<!-- deployed state, recycled -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DEPLOYED RECYCLED">
+					<Animation
+						AnimationName="GUL_VehicleAG_ATKA"
+						AnimationMode="MANUAL" />
+				</AnimationState>
+				<!-- deployed state, actively firing -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DEPLOYED">
+					<Animation
+						AnimationName="GUL_VehicleAG_ATKA"
+						AnimationMode="LOOP" />
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Effect="FX_SonicEarthquake"
+						Bone="" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="GUL_VehicleAG_MOVA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					StateName="STATE_Getup"
+					ConditionsYes="USER_5">
+					<Animation
+						AnimationName="GUL_VehicleAG_GTPA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"
+						AnimationSpeedFactorMin="2.2"
+						AnimationSpeedFactorMax="2.2" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GUL_VehicleAG_GTPA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5"/>
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Bone="FXTracksRF"
+						Effect="FX_NODDamageSmoke"/>
+					<FXEvent
+						Frame="1"
+						FireWhenSkipped="true"
+						Bone="FXTracksLR"
+						Effect="FX_NODDamageSmoke"/>
+				</AnimationState>
+
+			</TankDraw>
+
+			<TreadScrollDraw
+				id="ModuleTag_TreadDraw">
+				<TreadScrollingMap
+					LeftTrack="Bone_Tread_Left"
+					RightTrack="Bone_Tread_Right"
+					SpeedMultiplier="0.02"
+					TreadDriveSpeedFraction="5%"/>
+			</TreadScrollDraw>
+
+			<ScriptedModelDraw
+				id="ModuleTag_FX"
+				ExtraPublicBone="FXTreadDust01 FXTreadDust02"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<ParticleSysBone
+						BoneName="FXTreadDust01"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTreadDust02"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+				</AnimationState>
+				
+			</ScriptedModelDraw>
+		</Draws>
+
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="GDIVehicleAGArtilleryWeapon"
+						ObjectStatus="DEPLOYED"/>
+					<TurretSettings
+						TurretTurnRate="100"
+						TurretTurnRateOutsideArcOfFire="20"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-30d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="180.0"
+						MaxFiringArcClockwise="45d"
+						MaxFiringArcAntiClockwise="45d">
+						<TurretAITargetChooserData/>
+						
+						<TurretTurnRateOverrideData
+								TurretTurnRate="1000">
+							<ObjectStatusValidation
+								RequiredStatus="SPECIAL_ABILITY_PACKING_UNPACKING_OR_USING"/>
+						</TurretTurnRateOverrideData>
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+
+			<!-- Sonic weapon -->
+			<FireWeaponUpdate
+				id="ModuleTag_SonicFireWeaponUpdate"
+				FireInterval="1.866s"
+				AliveOnly="true"
+				Flags="AFFECTED_BY_RATE_OF_FIRE_ATTRIBUTE_MODIFIER">
+				<FireWeaponNugget
+					WeaponName="GDIVehicleAGSonicWeapon"
+					OneShot="false" />
+				<ObjectStatusValidation
+					RequiredStatus="DEPLOYED"
+					ForbiddenStatus="DISABLED_FOR_RECYCLE"/>
+			</FireWeaponUpdate>
+
+			<SpecialPower
+				id="ModuleTag_ToggleDeploy"
+				SpecialPowerTemplate="SpecialPower_GDIVehicleAGToggleDeploy"
+				UpdateModuleStartsAttack="true" />
+
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleDeployUpdate"
+				SpecialPowerTemplate="SpecialPower_GDIVehicleAGToggleDeploy"
+				UnpackTime="3.0s"
+				Options="BUSY_DURING_UNPACK">
+				<ToggleState
+					AIUpdateModuleId="ModuleTag_AI"
+					LocomotorSet="NORMAL"
+    			InitiateIntentToExitStateSound="GDI_Rhino_VehAG_DeployPlayer">
+    			<SkirmishAiInfo
+						ToggleHint="TOGGLE_COMBAT_DEPLOY">
+					</SkirmishAiInfo>
+				</ToggleState>
+
+				<ToggleState
+					ObjectStatus="SWITCHED_WEAPONS DEPLOYED TRANSFORMATION_TOGGLE_STATE IMMOBILE"
+					AIUpdateModuleId="ModuleTag_DeployedAI"
+					LocomotorSet="SPECIALABILITY_ACTIVE"
+					ModelConditions="DEPLOYED"
+					AttributeModifier="AttributeModifier_GDIVehicleAGDeployed"
+					InitiateIntentToExitStateSound="GDI_Rhino_VehAG_UndeployPlayer"
+					Flags="ACTIVATE_FIRE_WEAPON_UPDATE_MODULES">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_COMBAT_DEPLOY"
+						NeverUseInState="IDLE RETREAT"
+						NeverUseWhenDodgingThreat="true"
+						MaxWeaponRangePercent="90%"
+						DeployedUnitRangedWeaponType="SINGLE_TARGET"
+						TimeToWaitForTarget="3s">
+						<StateWeapon
+							Weapon="GDIVehicleAGArtilleryWeapon" />
+					</SkirmishAiInfo>
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+
+			<!-- dozer blade related -->
+			<ShieldSphereUpgrade
+				id="ModuleTag_GDIVehicleAGDozerActivate"
+				Permanent="true">
+				<TriggeredBy>Upgrade_GDIDefenseDozerBlades</TriggeredBy>
+			</ShieldSphereUpgrade>
+
+			<FXListBehavior
+				xmlns="uri:ea.com:eala:asset"
+				id="ModuleTag_FXListUpgrade">
+				<TriggeredBy>Upgrade_GDIDefenseDozerBlades</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeGDIReflDozer" />
+			</FXListBehavior>
+
+			<RefractionBehavior
+				id="ModuleTag_RefractionBehavior">
+				<Data/>
+			</RefractionBehavior>
+			<ReflectiveShieldSphereUpdate
+				id="ModuleTag_GDIVehicleAGDozerReflector"
+				MajorShieldHitFX="FX_GDILaser_Medium_Hit"
+				RadiusMin="55"
+				RadiusMax="55"
+				ScanFrequency="999999s"
+				MaxDamage="9999999999"
+				HandleDamageArc="45d"
+				DamageTypesToAbsorb="LASER CANNON GUN"
+				DamageTypesNotToAbsorb="BLAST ROCKET"
+				ShieldReactChance="50%"
+				Options="NO_SHIELD_BAR"
+				MinorShieldDamageTypes="GUN CANNON"
+				SphereModuleOptions="INCLUDE_SELF IGNORE_PROJECTILES"/>
+
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GDIVehicleAGFunctions"/>
+
+			<!-- This will unhide the upgraded model -->
+		<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+		<TriggeredBy>Upgrade_GDIDefenseDozerBlades</TriggeredBy>
+		<Nugget
+				ShowSubObjects="GUL_VehicleAG_UPG UPG_SHIELD_FX"
+				Upgrade="Upgrade_GDIDefenseDozerBlades"
+				FadeTime="0.0s"
+				SkipFlashOnCreate="false"
+				UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+				FlashTime="1.5s"/>
+		</SubObjectsUpgrade>
+		<!--<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+		<TriggeredBy>Upgrade_GDIDefenseDozerBlades</TriggeredBy>
+		<Nugget
+				ShowSubObjects="UPG_SHIELD_FX"
+				Upgrade="Upgrade_GDIDefenseDozerBlades"
+				FadeTime="0.0s"
+				SkipFlashOnCreate="true"
+				UpgradeFlashShader="ShaderOverride_MirrorShield"
+				FlashTime="1.5s"/>
+		</SubObjectsUpgrade>-->
+
+		<!-- Spawn a husk -->
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_GDIVehicleAGDie">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED SLAUGHTERED" />
+				<UpgradeRequired>Upgrade_BackupSystems</UpgradeRequired>
+			</CreateObjectDie>
+			<!-- If we have backup systems, then spawn husk on neutral team -->
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieNoBackup"
+				CreationList="OCL_GDIVehicleAGDieNoBackup">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED SLAUGHTERED" />
+				<UpgradeForbidden>Upgrade_BackupSystems</UpgradeForbidden>
+			</CreateObjectDie>
+			<FXListBehavior
+				id="ModuleTag_FXListBackupSystems">
+				<TriggeredBy>Upgrade_BackupSystems</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeGDIBackupSystems" />
+			</FXListBehavior>
+			
+			<!-- Don't spawn a husk-->
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDieNoHusk"
+				CreationList="GDI_Generic_Large_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+      <FXListBehavior
+				id="ModuleTag_FXList">
+        <DieMuxData
+					DeathTypes="ALL" />
+        <Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplode_Large" />
+		<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+      </FXListBehavior>
+
+			<!-- This object creates a husk, so we replace the crate spawn module from base object -->
+			<ChanceCreateObjectDie
+				id="ModuleTag_CreateUpgradeObjectDie"
+				CreationList="OCL_CrateSpawnOnDeathWithHusk">
+			</ChanceCreateObjectDie>			
+			
+			<xi:include	href="DATA:Includes/FXListBehaviorCrateUpgrade.xml" />
+		</Behaviors>
+
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData />
+			</AIUpdate>
+			<AIUpdate
+				id="ModuleTag_DeployedAI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine"
+				DefaultLocomotorSet="SPECIALABILITY_ACTIVE">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false" />
+			</AIUpdate>
+		</AI>
+
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="2000"/>
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+				<Key>LargeGroupAudioKey_TankLarge</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<ClientBehaviors>
+			<!-- <ModelConditionAudioLoopClientBehavior id="ModuleTag_NOD_Reckoner_deploy">
+				<ModelConditionSound Sound="NOD_Reckoner_deploy" RequiredFlags="UNPACKING" ExcludedFlags="RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior> -->
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+				<!-- deploy -->
+				<Sound Sound="GDI_Rhino_VehAG_DeployAnimation3" ExcludedMC="RECYCLED DYING" Animation="GUL_VehicleAG_UPCK" Frame="0"/>
+				<Sound Sound="GDI_Rhino_VehAG_DeployAnimation1" ExcludedMC="RECYCLED DYING" Animation="GUL_VehicleAG_UPCK" Frame="14"/>
+				<Sound Sound="GDI_Rhino_VehAG_UndeployAnimation3" ExcludedMC="RECYCLED DYING" Animation="GUL_VehicleAG_UPCK" Frame="12"/>
+				<Sound Sound="GDI_Rhino_VehAG_DeployAnimation2" ExcludedMC="RECYCLED DYING" Animation="GUL_VehicleAG_UPCK" Frame="48"/>
+				<!-- pack up -->
+				<Sound Sound="GDI_Rhino_VehAG_UndeployAnimation1Others" ExcludedMC="RECYCLED DYING" Animation="GUL_VehicleAG_PACK" Frame="0"/>
+				<Sound Sound="GDI_Rhino_VehAG_DeployAnimation2" ExcludedMC="RECYCLED DYING" Animation="GUL_VehicleAG_PACK" Frame="5"/>
+				<!-- <Sound Sound="GDI_Rhino_VehAG_UndeployAnimation2" ExcludedMC="RECYCLED DYING" Animation="GUL_VehicleAG_PACK" Frame="21"/> -->
+				<Sound Sound="GDI_Rhino_VehAG_UndeployAnimation4" ExcludedMC="RECYCLED DYING" Animation="GUL_VehicleAG_PACK" Frame="17"/>
+				<Sound Sound="GDI_Rhino_VehAG_UndeployAnimation3" ExcludedMC="RECYCLED DYING" Animation="GUL_VehicleAG_PACK" Frame="25"/>
+				<Sound Sound="GDI_Rhino_VehAG_UndeployAnimation5" ExcludedMC="RECYCLED DYING" Animation="GUL_VehicleAG_PACK" Frame="56"/>
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "40.0"
+					 MinorRadius = "30.0"
+					 Height = "40.0"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+		</Geometry>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_VehAGRhino_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="GDI_VehAGRhino_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="GDI_VehAGRhino_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="GDI_VehAGRhino_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="GDI_VehAGRhino_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="GDI_VehAGRhino_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="GDI_VehAGRhino_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+			<!-- <NamedEntry Sound="GDI_VehAGRhino_VoiceMoveDeploy" Name="VoiceRhinoMoveDeploy" /> -->
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleMedium_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="GDI_Rhino_VehAG_MoveStart" AudioType="soundMoveStart" />
+			<AudioEntry Sound="TankLarge_Generic_MoveLoop" AudioType="soundMoveLoop" />
+		</AudioArraySound>
+
+		<VisionInfo
+			VisionRange="750"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_BackupSystems</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_GDIDefenseDozerBlades</DisplayUpgrade>
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    MODIFIERS								-->
+	<!-- ////////////////////////////////////////	-->
+
+
+	<SpecialPowerTemplate
+		id="SpecialPower_GDIVehicleAGToggleDeploy"
+		TargetType="NONE"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceRhinoMoveDeploy"
+		ReloadTime="5.0s"
+		Flags="CAN_NOT_BE_SCRAMBLED"
+		WaypointModeTerminal="false" />
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_GDIVehicleAGToggleDeploy">
+		<SpecialPower>SpecialPower_GDIVehicleAGToggleDeploy</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo	Heuristic="TOGGLE" />
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommandSet
+		id="GDIVehicleAGCommandSet">
+		<Cmd>Command_GDIVehicleAGToggleDeploy</Cmd>
+	</LogicCommandSet>
+
+
+	<AttributeModifier
+		id="AttributeModifier_GDIVehicleAGDeployed"
+		Category="NONE">
+		<Modifier Type="ARMOR" Value="100%" />
+	</AttributeModifier>
+
+	<LocomotorTemplate
+		id="GDIVehicleAGLocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		CanReverseMove="true"
+		TurnTimeSeconds="2.5s"
+		TurnTimeDamagedSeconds="2.5s"
+		MaxSpeedDamaged="100%"
+		AccelerationSeconds="1.0s"
+		BrakingSeconds="0.5s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="50.0"
+		UseTerrainSmoothing="true"
+		ReverseMoveSpeed="100%"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="FOUR_WHEELS"
+		AccelPitchLimit="10d"
+		BounceKick="0d"
+		PitchStiffness="0.4"
+		RollStiffness="0.5"
+		PitchDamping="0.4"
+		RollDamping="0.75"
+		ForwardAccelerationPitchFactor="0.1"
+		LateralAccelerationRollFactor="1.0"
+		HasSuspension="true"
+		ClampOrientationToPathTangent="true" />
+
+	<!-- Artillery Weapon -->
+	<WeaponTemplate
+		id="GDIVehicleAGArtilleryWeapon"
+		AttackRange="700.0"
+		MinimumAttackRange="300.0"
+		WeaponSpeed="300"
+		FireSound="GDI_Rhino_VehAG_ArtilleryWeaponFire"
+		FireFX="FX_GDI_ArtilleryFire"
+		AcceptableAimDelta="180d"
+		ClipSize="=$UNLIMITED_CLIP_SIZE"
+		AutoReloadsClip="AUTO"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT CAN_FIRE_ON_GROUND"
+		ReAcquireDetailType="PER_SHOT"
+		ShotsPerBarrel="1"
+		RequiredAntiMask="ANTI_GROUND"
+ 		>
+		<FiringDuration
+				MinSeconds="8.0s"
+				MaxSeconds="8.0s"
+		/>
+		<Nuggets>
+			<ProjectileNugget
+					id="NuggetTag_ProjectileNugget"
+					WarheadTemplate="GDIVehicleAGArtilleryWeaponWarhead"
+					ProjectileTemplate="GDIVehicleAGProjectile" >
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="GDIVehicleAGArtilleryWeaponWarhead"
+		ProjectileCollidesWith="ENEMIES"
+		RadiusDamageAffects="ENEMIES NEUTRALS NOT_SIMILAR"
+		RequiredAntiMask="ANTI_GROUND" >
+		<Nuggets>
+			<DamageNugget
+				id="NuggetTag_DamageNugget"
+				Damage="120.0"
+				Radius="100.0"
+				DamageType="BLAST"
+				DamageFXType="GDI_MISSILE"
+				DeathType="EXPLODED">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Sonic Weapon related -->
+	<AttributeModifier
+		id="AttributeModifer_GDIVehicleAGSonic"
+		Category="NONE"
+		Duration="5s">
+		<Modifier Type="SPEED" Value="25%"/>
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-50%"/>
+	</AttributeModifier>
+
+	<WeaponTemplate
+		id="GDIVehicleAGSonicWeapon"
+		AttackRange="50.0"
+		RequiredAntiMask="ANTI_GROUND"
+		AcceptableAimDelta="180d"
+		CanFireWhileMoving="true"
+		FireSound="GDI_Rhino_VehAG_PoundWeaponPoundMS"
+		FireFX="">
+		<FiringDuration
+			MinSeconds=".1s"
+			MaxSeconds=".1s" />
+		<Nuggets>
+			<DamageNugget
+				Damage="1.0"
+				Radius="=$GDIVEHICLEAG_SONIC_AOE_RADIUS"
+				DamageType="BLAST"
+				DamageFXType="GDI_SHOCKWAVE"
+				FXListVictim="FX_GDIVehicleAG_SlowdownDebuff"
+				DeathType="NORMAL" >
+			</DamageNugget>
+			<AttributeModifierNugget
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifer_GDIVehicleAGSonic"
+				Radius="=$GDIVEHICLEAG_SONIC_AOE_RADIUS" >
+			</AttributeModifierNugget>
+			<ForceToggleToDefaultNugget
+				Radius="=$GDIVEHICLEAG_SONIC_AOE_RADIUS">
+				<SpecialObjectFilter
+					Rule="ALL"
+					Relationship="ENEMIES"
+					StatusBitFlags="BURROWING">
+				</SpecialObjectFilter>
+			</ForceToggleToDefaultNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   OBJECT CREATION LISTS									-->
+	<!-- ////////////////////////////////////////	-->
+
+	<ObjectCreationList
+		id="OCL_GDIVehicleAGDie">
+		<OCLModule>
+			<Modules>
+				<!-- Kick unit off of SkirmishAI teams when dead; immobile husk can confuse team -->
+				<SetTeam
+					ChangeSkirmishAITeamToDefaultSkirmishTeam="true"
+					SetToDefaultNeutralTeam="false" />
+				<SetTimedModelCondition
+					ModelCondition="USER_2"
+					Duration="6.2s"/>
+				<!-- This status is set on creation and removed via lua script from the husk when buildability is restored -->
+				<SetStatus Status="CANNOT_PROVIDE_BUILDABILITY"/>
+				<CreateObject
+					ObjectTemplate="GDIVehicleAGHusk"/>
+				<CopyParentExperience/>
+				<CopyParentLayer/>
+				<CopyParentUpgrades/>
+				<SetHealth
+					MinHealth="50%"
+					MaxHealth="50%"/>
+				<SetInvulnerable
+					Duration="4.0s"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<!-- If the user does NOT have the backup systems, then we spawn the husk on the neutral team -->
+	<ObjectCreationList
+		id="OCL_GDIVehicleAGDieNoBackup">
+		<OCLModule>
+			<Modules>
+				<SetTeam />
+				<SetTimedModelCondition
+					ModelCondition="USER_2"
+					Duration="6.2s"/>
+				<!-- This status is set on creation and removed via lua script from the husk when buildability is restored -->
+				<SetStatus Status="CANNOT_PROVIDE_BUILDABILITY"/>
+				<CreateObject
+					ObjectTemplate="GDIVehicleAGHusk"/>
+				<CopyParentExperience/>
+				<CopyParentLayer/>
+				<CopyParentUpgrades/>
+				<SetHealth
+					MinHealth="50%"
+					MaxHealth="50%"/>
+				<SetInvulnerable
+					Duration="4.0s"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ObjectCreationList
+		id="OCL_GDIVehicleAGHuskReplace">
+		<OCLModule>
+			<Modules>
+				<ClearRemovables/>
+				<SetTimedModelCondition
+					ModelCondition="USER_5"
+					Duration="3.0s"/>
+				<CreateObject
+					ObjectTemplate="GDIVehicleAG"
+					DisableScoring="true"/>
+				<SetBusyState
+					Duration="3.0s"
+					DisableWhileBusy="true"/>
+				<CopyParentExperience/>
+				<CopyParentLayer/>
+				<CopyParentUpgrades/>
+				<SetHealthToParentPercent/>
+				<SetStatus
+					Status="NO_EXPERIENCE_LEVEL_ON_CREATTION"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+  <ObjectCreationList
+		id="OCL_GDIVehicleAGHuskDebris">
+    <OCLModule>
+      <Modules>
+        <ParentRelativePrePosition>
+          <Offset x="50.29" y="12.26" z="0.0" />
+        </ParentRelativePrePosition>
+        <CreateObject
+					ObjectTemplate="GDI_Generic_Large_Die_OCL"/>
+        <SetLifetime
+					MinLifetime="1.0s"
+					MaxLifetime="3.0s"/>
+        <FlingObject
+					MinForceMagnitude="5.0"
+					MaxForceMagnitude="8.0"
+					MinForcePitch="25d"
+					MaxForcePitch="30d"/>
+      </Modules>
+    </OCLModule>
+  </ObjectCreationList>
+  <!-- Experience Templates -->
+	
+	<ExperienceLevelTemplate
+		id="GDIVehicleAGExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_01"
+		ExperienceAward="12">
+		<Target>GDIVehicleAG</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAGExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_02"
+		Prerequisite="GDIVehicleAGExperienceLevel_1"
+		RequiredExperience="24"
+		ExperienceAward="14">
+		<Target>GDIVehicleAG</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAGExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_03"
+		Prerequisite="GDIVehicleAGExperienceLevel_2"
+		RequiredExperience="60"
+		ExperienceAward="16">
+		<Target>GDIVehicleAG</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="GDIVehicleAGExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_GDI_Rank_04"
+		Prerequisite="GDIVehicleAGExperienceLevel_3"
+		RequiredExperience="108"
+		ExperienceAward="18">
+		<Target>GDIVehicleAG</Target>
+	</ExperienceLevelTemplate>
+
+</AssetDeclaration>

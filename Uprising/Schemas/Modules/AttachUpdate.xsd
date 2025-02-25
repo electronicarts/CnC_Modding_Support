@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="AttachUpdateFlagsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FIND_BEST_PARENT" />
+			<xs:enumeration value="UNCONTAINED_ONLY" />
+			<xs:enumeration value="SAME_PLAYER_ONLY" />
+			<xs:enumeration value="ONE_ATTACH_PER_PARENT" />
+			<xs:enumeration value="STICK_TO_PARENT" />
+			<xs:enumeration value="TELEPORT" />
+			<xs:enumeration value="USE_GEOMETRY" />
+			<xs:enumeration value="USE_PARENT_POSITION_ELEVATION" />
+			<xs:enumeration value="DETACH_WHEN_PARENT_HEALED" />
+			<xs:enumeration value="DETACH_WHEN_PARENT_OUT_OF_SLAVE_RANGE" />
+			<xs:enumeration value="PARENT_MUST_BE_FULL_HEALTH_TO_DETACH" />
+			<xs:enumeration value="SCAN_FOR_NEW_PARENT_WHEN_DETACHED" />
+			<xs:enumeration value="CAN_ATTACH_TO_HORDE_MEMBERS" />
+			<xs:enumeration value="DIE_WHEN_DETACH_ALWAYS" />
+			<xs:enumeration value="DIE_WHEN_DETACH_FROM_PARENT_HEAL" />
+			<xs:enumeration value="DIE_WHEN_PARENT_DIES_FROM_NOT_ME" />
+			<xs:enumeration value="LEECH_DAMAGE_FROM_PARENT" />
+			<xs:enumeration value="MOVE_ORDER_FORCES_DETACH" />
+			<xs:enumeration value="TELEPORT_AND_ALIGN_WITH_PARENT" />
+			<xs:enumeration value="INSTANT_TELEPORT_ON_PARENT_TELEPORT" />
+			<xs:enumeration value="ADD_BOUNCE_TO_PARENT" />
+			<xs:enumeration value="TRANSFER_ON_REPLACE_SELF" />
+			<xs:enumeration value="ABSORB_ALL_DAMAGE" />
+			<xs:enumeration value="DIE_WHEN_PARENT_HAS_FORBIDDEN_STATUS" />
+			<xs:enumeration value="DEFECT_WHEN_PARENT_DEFECTS" />
+			<xs:enumeration value="DETACH_WHEN_IDLE" />
+			<xs:enumeration value="DETACH_WHEN_MULTIPLE_ARE_ATTACHED" />
+			<xs:enumeration value="USE_BONE_POSITION" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="AttachUpdateFlagsBitFlags">
+		<xs:list itemType="AttachUpdateFlagsType"></xs:list>
+	</xs:simpleType>
+
+	<xs:complexType name="AttachUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+					<xs:element name="ModifierToLeechFromParent" type="AttributeModifierRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="ParentStatus" type="ObjectStatusBitFlags" />
+				<xs:attribute name="ParentStatusAttached" type="ObjectStatusBitFlags" />
+				<xs:attribute name="AttachedObjectStatus" type="ObjectStatusBitFlags" />
+				<xs:attribute name="AttachedModelConditions" type="ModelConditionBitFlags"/>
+				<xs:attribute name="ForbiddenParentStatus" type="ObjectStatusBitFlags" />
+				<xs:attribute name="IgnoreForbiddenParentStatusStatus" type="ObjectStatusBitFlags" /> <!-- if object has any of these, skip the check for ForbiddenParentStatus -->
+				<!-- this status will be mirrored on the attached object. -->
+				<xs:attribute name="ParentStatusToCopy" type="ObjectStatusBitFlags" use="optional" />
+				<xs:attribute name="ParentStatusToPrefer" type="ObjectStatusBitFlags" use="optional" />
+				<xs:attribute name="Range" type="SageReal" />
+				<!-- if we are closer than CloseEnoughRange we will be considered attached. -->
+				<xs:attribute name="CloseEnoughRange" type="SageReal" default="1000.0" />
+				<xs:attribute name="ParentOwnerAttachmentEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="ParentAllyAttachmentEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="ParentEnemyAttachmentEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="AttachFXList" type="FXListRef" />
+				<xs:attribute name="DetachFXList" type="FXListRef" />
+				<xs:attribute name="ParentOwnerDiedEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="ParentAllyDiedEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="ParentEnemyDiedEvaEvent" type="EvaEventRef" default="" />
+				<xs:attribute name="InitialAttachDelay" type="Time" />
+				<xs:attribute name="IdleScanDelay" type="Time" default="0.35s" />
+				<xs:attribute name="Flags" type="AttachUpdateFlagsBitFlags" default="STICK_TO_PARENT TELEPORT USE_GEOMETRY" />
+				<xs:attribute name="ParentDeathTypeToListenFor" type="DeathType" default="ALL" />
+				<xs:attribute name="NoDieIfStatusActive" type="ObjectStatusBitFlags" />
+				<xs:attribute name="ParentPositionElevation" type="SageReal" />
+				<xs:attribute name="BounceAmount" type="SageReal" default="0.2" />
+				<xs:attribute name="BounceTimeout" type="Time" default="0.33s" />
+				<xs:attribute name="DamageTypesToNotLeech" type="DamageBitFlags" use="optional" />
+				<xs:attribute name="DeathTypesToNotLeech" type="DeathBitFlags" use="optional" />
+				<xs:attribute name="ForbiddenParentStatusDieDeathType" type="DeathType" default="NORMAL" />
+				<xs:attribute name="AttachBoneName" type="xs:string" default="" />
+				
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

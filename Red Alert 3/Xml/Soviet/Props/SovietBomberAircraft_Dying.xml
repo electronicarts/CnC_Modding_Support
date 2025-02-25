@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+		
+		<Include
+			type="all"
+			source="ART:SUBomberAircraft_Dying_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:SUBomberAircraft_DYING.w3x" />			
+		<Include
+			type="all"
+			source="ART:SUBomberAircraft_D.xml" />				
+	</Includes>
+	<GameObject
+		id="SovietBomberAircraft_Dying"
+		EditorName="SovietBomberAircraft_Dying"
+		Description="Desc:SovietBomberAircraft_Dying"
+		KindOf="INERT NO_COLLIDE HIDE_IF_FOGGED">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FX_Fire_01 FX_Fire_02 FX_Fire_03 FX_Lfan FX_Rfan">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SUBomberAircraft_Dying_SKN" />
+					<Texture
+						Original="SUBomberAircraft"
+						New="SUBomberAircraft_D" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="KirovDestructionMainExplosion"
+						FollowBone="true" />          
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="KirovDestructionMainFire01"
+						FollowBone="true" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="KirovDestructionMainFireLight"
+						FollowBone="true" />          
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="KirovDestructionMainSmoke01"
+						FollowBone="true" />												
+				</ModelConditionState>							
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="SUBomberAircraft_DYING"
+						AnimationMode="ONCE"
+						AnimationSpeedFactorMin="1.4"
+						AnimationSpeedFactorMax="1.8" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		
+		</Draws>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_SOV_KirovCrash" />
+			</FXListBehavior>
+			<ProjectileUpdate
+				id="ModuleTag_BombUpdate"
+				StateMachine="BombProjectile"
+				MinDetonationHeight="12"
+				MinTargetDistance="5">
+				<Movement>
+					<MoveToGround
+						Acceleration="0.1"
+						TerminalVelocity="2.5"
+						ForwardVelocityDamping="5%"/>
+				</Movement>
+			</ProjectileUpdate>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SUBomberAircraft_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<FireWeaponWhenDead
+				id="ModuleTag_SovietBomberDeathWeapon"
+				DeathWeapon="SovietBomberAircraftDeathWeapon"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<ShipSlowDeath
+				id="ModuleTag_Rotate"
+				DestructionDelay="10s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</ShipSlowDeath>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="100" />
+		</Body>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="300" />		
+	</GameObject>
+</AssetDeclaration>

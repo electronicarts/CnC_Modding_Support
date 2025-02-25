@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+  <xs:include schemaLocation="AIDifficulties.xsd"/>
+  <xs:include schemaLocation="AIBank.xsd"/>
+  <xs:include schemaLocation="AssetTypeAITeamTemplate.xsd"/>
+
+	<xs:simpleType name="AITargetType">
+		<xs:restriction base="xs:string">
+      <xs:enumeration value="PrimaryTarget" />
+      <xs:enumeration value="SecondaryTarget" />
+      <xs:enumeration value="FocusedTarget" />
+      <xs:enumeration value="SpreadTarget" />
+      <xs:enumeration value="SiegeTarget" />
+      <xs:enumeration value="ExtraTarget" />
+      <xs:enumeration value="Guard" />
+      <xs:enumeration value="SpecialDefense" />
+      <xs:enumeration value="EngineerDefense" />
+      <xs:enumeration value="CommandoDefense" />
+      <xs:enumeration value="ExpansionDefense" />
+      <xs:enumeration value="Counterattack" />
+      <xs:enumeration value="Airstrike" />
+      <xs:enumeration value="AssaultAirstrike" />
+      <xs:enumeration value="BombingAirstrike" />
+      <xs:enumeration value="Superweapon" />
+      <xs:enumeration value="Engineer" />
+      <xs:enumeration value="Commando" />
+      <xs:enumeration value="CaptureTech" />
+      <xs:enumeration value="Garrison" />
+      <xs:enumeration value="AntiGarrison" />
+      <xs:enumeration value="Bridge" />
+      <xs:enumeration value="Isolation" />
+      <xs:enumeration value="Beacon" />
+      <xs:enumeration value="Crate" />
+      <xs:enumeration value="Husk" />
+
+      <xs:enumeration value="Capture" />
+      <xs:enumeration value="Structure" />
+      <xs:enumeration value="Unit" />
+      <xs:enumeration value="Defensive" />
+      <xs:enumeration value="Diversion" />
+      <xs:enumeration value="Expansion" />
+      <xs:enumeration value="Opportunity" />
+      <xs:enumeration value="Targetless" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+  <!-- State Heuristics -->
+  <xs:complexType name="AIStateHeuristic" xas:isPolymorphic="true">
+  </xs:complexType>
+
+  <xs:complexType name="AIStateConstantHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Weight" type="xs:float" default="1.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateTimerHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="StartTime" type="Time" default="0s" />
+        <xs:attribute name="EndTime" type="Time" default="20s" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateIntervalHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="IntervalTime" type="Time" default="60s" />
+        <xs:attribute name="ActiveTime" type="Time" default="30s" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateOpeningMoveHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Complete" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="AIStateHarvesterCapHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="MaxHarvesters" type="SageUnsignedInt" default="5" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateMoneyHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Money" type="SageUnsignedInt" default="1000" />
+        <xs:attribute name="Above" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateFullInvestmentHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Threshold" type="SageUnsignedInt" default="1000" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="AIStateFullTechHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Threshold" type="SageUnsignedInt" default="1000" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateAntiGarrisonTechHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="EnemyGarrisons" type="SageUnsignedInt" default="4" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStatePathToTargetHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="PathExists" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateCounterattackHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Threshold" type="xs:float" default="1.0" />
+        <xs:attribute name="AttackerKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="DefenderKindOf" type="KindOfBitFlags"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateEnemyNearbyHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Distance" type="xs:float" default="1000.0"/>
+        <xs:attribute name="EnemyNearby" type="xs:boolean" default="true"/>
+        <xs:attribute name="AttackerKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="DefenderKindOf" type="KindOfBitFlags"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateFocusedThresholdHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="AttackerKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="DefenderKindOf" type="KindOfBitFlags"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateSpreadThresholdHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="AttackerKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="DefenderKindOf" type="KindOfBitFlags"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateSiegeThresholdHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="SiegeMode" type="xs:boolean" default="true"/>
+        <xs:attribute name="Threshold" type="xs:float" default="1.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="AIStateBalanceOfPowerHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="AttackerKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="DefenderKindOf" type="KindOfBitFlags"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="AIStatePowerAdvantageHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="AttackerKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="DefenderKindOf" type="KindOfBitFlags"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStatePenetrabilityHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="AttackerKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="DefenderKindOf" type="KindOfBitFlags"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateVulnerabilityHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="AttackerKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="DefenderKindOf" type="KindOfBitFlags"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateOpponentAAPowerHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="AttackerKindOf" type="KindOfBitFlags"/>
+        <xs:attribute name="DefenderKindOf" type="KindOfBitFlags"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateOpponentFundsHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateOpponentPowerThresholdHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateMiddleGameHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateLateGameHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateProductionAdvantageHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateBridgeExistsHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="BridgeHealthMinimumPercentage" type="Percentage" default="50%"/>
+        <xs:attribute name="BridgeHealthMaximumPercentage" type="Percentage" default="100%"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateSuperweaponHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateOverpowerHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="PowerAdvantageHeuristic" type="AIStatePowerAdvantageHeuristic"/>
+          <xs:element name="PenetrabilityHeuristic" type="AIStatePenetrabilityHeuristic"/>
+        </xs:sequence>
+        <xs:attribute name="PowerAdvantageWeight" type="xs:float"/>
+        <xs:attribute name="PenetrabilityWeight" type="xs:float"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateResourceSqueezeHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="PenetrabilityHeuristic" type="AIStatePenetrabilityHeuristic"/>
+          <xs:element name="OpponentFundsHeuristic" type="AIStateOpponentFundsHeuristic"/>
+        </xs:sequence>
+        <xs:attribute name="PenetrabilityWeight" type="xs:float"/>
+        <xs:attribute name="OpponentFundsWeight" type="xs:float"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateProductionHaltHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="PenetrabilityHeuristic" type="AIStatePenetrabilityHeuristic"/>
+          <xs:element name="BalanceOfPowerHeuristic" type="AIStateBalanceOfPowerHeuristic"/>
+        </xs:sequence>
+        <xs:attribute name="PenetrabilityWeight" type="xs:float"/>
+        <xs:attribute name="BalanceOfPowerWeight" type="xs:float"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateBaseCrackHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="LateGameHeuristic" type="AIStateLateGameHeuristic"/>
+          <xs:element name="PenetrabilityHeuristic" type="AIStatePenetrabilityHeuristic"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateOverrunEarlyHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="MiddleGameHeuristic" type="AIStateMiddleGameHeuristic"/>
+          <xs:element name="LateGameHeuristic" type="AIStateLateGameHeuristic"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateOverrunMiddleHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="MiddleGameHeuristic" type="AIStateMiddleGameHeuristic"/>
+          <xs:element name="LateGameHeuristic" type="AIStateLateGameHeuristic"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateOverrunLateHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="LateGameHeuristic" type="AIStateLateGameHeuristic"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStatePowerCutHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="OpponentPowerThresholdHeuristic" type="AIStateOpponentPowerThresholdHeuristic"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateEmergencyHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="VulnerabilityHeuristic" type="AIStateVulnerabilityHeuristic"/>
+        </xs:sequence>
+        <xs:attribute name="Threshold" type="xs:float"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateScriptedFlagHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="FlagName" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="AIAlliedBeaconExistsHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateLinearCombinationHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="WeightedHeuristic" minOccurs="2" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Heuristic" minOccurs="1" maxOccurs="1">
+                  <xs:complexType>
+                    <xs:choice>
+                      <xs:element name="TimerHeuristic" type="AIStateTimerHeuristic" />
+                      <xs:element name="ConstantHeuristic" type="AIStateConstantHeuristic" />
+                      <xs:element name="BalanceOfPowerHeuristic" type="AIStateBalanceOfPowerHeuristic"/>
+                      <xs:element name="PowerAdvantageHeuristic" type="AIStatePowerAdvantageHeuristic"/>
+                      <xs:element name="PenetrabilityHeuristic" type="AIStatePenetrabilityHeuristic"/>
+                      <xs:element name="VulnerabilityHeuristic" type="AIStateVulnerabilityHeuristic"/>
+                      <xs:element name="OpponentAAPowerHeuristic" type="AIStateOpponentAAPowerHeuristic"/>
+                      <xs:element name="OpponentFundsHeuristic" type="AIStateOpponentFundsHeuristic"/>
+                      <xs:element name="OpponentPowerThresholdHeuristic" type="AIStateOpponentPowerThresholdHeuristic"/>
+                      <xs:element name="MiddleGameHeuristic" type="AIStateMiddleGameHeuristic"/>
+                      <xs:element name="LateGameHeuristic" type="AIStateLateGameHeuristic"/>
+                      <xs:element name="ProductionAdvantageHeuristic" type="AIStateProductionAdvantageHeuristic"/>
+                      <xs:element name="BridgeExistsHeuristic" type="AIStateBridgeExistsHeuristic"/>
+                    </xs:choice>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+              <xs:attribute name="Weight" type="xs:float" default="0.5"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateDefinition" xas:runtimeWrapper="::AIState">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+
+				  <xs:element name="Heuristic">
+				    <xs:complexType>
+					    <xs:choice minOccurs="1" maxOccurs="unbounded">
+                
+                <!--Basic Heuristics-->
+                <xs:element name="ConstantHeuristic" type="AIStateConstantHeuristic" />
+                <xs:element name="TimerHeuristic" type="AIStateTimerHeuristic" />
+                <xs:element name="IntervalHeuristic" type="AIStateIntervalHeuristic" />
+
+                <!--Binary Value Heuristics-->
+                <xs:element name="FocusedThresholdHeuristic" type="AIStateFocusedThresholdHeuristic" />
+                <xs:element name="SpreadThresholdHeuristic" type="AIStateSpreadThresholdHeuristic" />
+                <xs:element name="SiegeThresholdHeuristic" type="AIStateSiegeThresholdHeuristic" />
+                <xs:element name="CounterattackHeuristic" type="AIStateCounterattackHeuristic" />
+                <xs:element name="EnemyNearbyHeuristic" type="AIStateEnemyNearbyHeuristic" />
+                <xs:element name="MiddleGameHeuristic" type="AIStateMiddleGameHeuristic"/>
+                <xs:element name="LateGameHeuristic" type="AIStateLateGameHeuristic"/>
+                <xs:element name="ProductionAdvantageHeuristic" type="AIStateProductionAdvantageHeuristic"/>
+
+                <xs:element name="OpeningMoveHeuristic" type="AIStateOpeningMoveHeuristic" />
+                <xs:element name="HarvesterCapHeuristic" type="AIStateHarvesterCapHeuristic" />
+                <xs:element name="MoneyHeuristic" type="AIStateMoneyHeuristic" />
+                <xs:element name="FullInvestmentHeuristic" type="AIStateFullInvestmentHeuristic" />
+                <xs:element name="FullTechHeuristic" type="AIStateFullTechHeuristic" />
+                <xs:element name="AntiGarrisonTechHeuristic" type="AIStateAntiGarrisonTechHeuristic" />
+                
+                <xs:element name="PathToTargetHeuristic" type="AIStatePathToTargetHeuristic"/>
+                <xs:element name="BridgeExistsHeuristic" type="AIStateBridgeExistsHeuristic"/>
+
+                <xs:element name="SuperweaponHeuristic" type="AIStateSuperweaponHeuristic"/>
+                <xs:element name="ScriptedFlagHeuristic" type="AIStateScriptedFlagHeuristic"/>
+                <xs:element name="AlliedBeaconExistsHeuristic" type="AIAlliedBeaconExistsHeuristic"/>
+
+                <!--Real Value Heuristics-->
+                <xs:element name="BalanceOfPowerHeuristic" type="AIStateBalanceOfPowerHeuristic"/>
+                <xs:element name="PowerAdvantageHeuristic" type="AIStatePowerAdvantageHeuristic"/>
+                <xs:element name="PenetrabilityHeuristic" type="AIStatePenetrabilityHeuristic"/>
+                <xs:element name="VulnerabilityHeuristic" type="AIStateVulnerabilityHeuristic"/>
+                <xs:element name="OpponentAAPowerHeuristic" type="AIStateOpponentAAPowerHeuristic"/>
+                <xs:element name="OpponentFundsHeuristic" type="AIStateOpponentFundsHeuristic"/>
+                <xs:element name="OpponentPowerThresholdHeuristic" type="AIStateOpponentPowerThresholdHeuristic"/>                
+                
+
+                <!--Combinatorial State Heuristics-->
+                <xs:element name="OverpowerHeuristic" type="AIStateOverpowerHeuristic"/>
+                <xs:element name="ResourceSqueezeHeuristic" type="AIStateResourceSqueezeHeuristic"/>
+                <xs:element name="ProductionHaltHeuristic" type="AIStateProductionHaltHeuristic"/>
+                <xs:element name="BaseCrackHeuristic" type="AIStateBaseCrackHeuristic"/>
+                <xs:element name="OverrunEarlyHeuristic" type="AIStateOverrunEarlyHeuristic"/>
+                <xs:element name="OverrunMiddleHeuristic" type="AIStateOverrunMiddleHeuristic"/>
+                <xs:element name="OverrunLateHeuristic" type="AIStateOverrunLateHeuristic"/>
+                <xs:element name="EmergencyHeuristic" type="AIStateEmergencyHeuristic"/>
+                
+                <xs:element name="LinearCombinationHeuristic" type="AIStateLinearCombinationHeuristic"/>
+                
+              </xs:choice>
+		        </xs:complexType>
+		      </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStrategicStateDefinition" xas:runtimeWrapper="::AIStrategicState">
+    <xs:complexContent>
+      <xs:extension base="AIStateDefinition">
+        <xs:sequence>
+          <xs:element name="TargetHeuristic" type="StateTargetHeuristic" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="Tactic" type="AIStateTactic" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="UnitModifierByKind" type="AIStateUnitKindofModifier" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="UnitModifierByName" type="AIStateUnitModifier" minOccurs="0" maxOccurs="unbounded" />
+          <xs:element name="UnitOverride" type="AIStateUnitOverride" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="UnitUpgradeMultiplier" type="xs:float" default="1.0" />
+        <xs:attribute name="UnitBuilderCostEffectivenessWeight" type="xs:float" use="optional" />
+        <xs:attribute name="UnitBuilderMoneyVersusTimePreference" type="xs:float" use="optional" />
+        <xs:attribute name="UnitBuilderOverallOffensivePreference" type="Percentage" use="optional" />
+        <xs:attribute name="UnitBuilderOverallDefensivePreference" type="Percentage" use="optional" />
+        <xs:attribute name="UnitBuilderEnemyTowerWeight" type="Percentage" use="optional" />
+        <xs:attribute name="UnitBuilderSimpleUnitCap" type="xs:int" use="optional" />
+      </xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+  <xs:complexType name="AIBudgetStateDefinition" xas:runtimeWrapper="::AIBudgetState">
+    <xs:complexContent>
+      <xs:extension base="AIStateDefinition">
+        <xs:sequence>
+          <xs:element name="Budget" type="AIBankBudget" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- Target Heuristics in a state -->
+  <xs:complexType name="StateTargetHeuristic">
+    <xs:attribute name="TargetHeuristic" type="AssetReference" xas:refType="AITargetingHeuristic" use="required"/>
+    <xs:attribute name="WeightMultiplier" type="xs:float" default="1.0"/>
+    <xs:attribute name="TargetType" type="AITargetType" use="optional"/>
+  </xs:complexType>
+  
+  <!-- Tactic and unit builder modifiers-->
+	<xs:simpleType name="Tactics">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SimpleAttack" />
+			<xs:enumeration value="FlankAttack" />
+      <xs:enumeration value="DefenseAvoidanceAttack" />
+			<xs:enumeration value="SimpleSiege" />
+			<xs:enumeration value="SiegeGates" />
+      <xs:enumeration value="Superweapon" />
+      <xs:enumeration value="Engineer" />
+			<xs:enumeration value="BasePenetrationTroops" />
+			<xs:enumeration value="SimpleDefense" />
+      <xs:enumeration value="StaticDefense" />
+      <xs:enumeration value="ReactiveDefense" />
+			<xs:enumeration value="SimpleExpansion" />
+			<xs:enumeration value="FarmKill" />
+			<xs:enumeration value="Hunt" />
+			<xs:enumeration value="RoamingDefense" />
+			<xs:enumeration value="StructureCreep" />
+      <xs:enumeration value="GarrisonBuilding"/>
+		</xs:restriction>
+	</xs:simpleType>
+  <xs:complexType name="AIStateTactic">
+    <xs:sequence>
+      <xs:element name="TeamTemplate" type="AITeamTemplate" minOccurs="0" maxOccurs="4"/>
+    </xs:sequence>
+    <xs:attribute name="Tactic" type="Tactics" use="required"/>
+    <xs:attribute name="TargetType" type="AITargetType" use="required"/>
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>    
+  </xs:complexType>
+	<xs:complexType name="AIStateUnitBuilderModifier" xas:isPolymorphic="true">
+    <xs:attribute name="UnitBonus" type="xs:int" default="10" />
+    <xs:attribute name="UnitPreferenceOffensiveModifier" type="Percentage" default="100%" />
+    <xs:attribute name="UnitPreferenceDefensiveModifier" type="Percentage" default="100%" />
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+	</xs:complexType>
+	<xs:complexType name="AIStateUnitKindofModifier">
+		<xs:complexContent>
+			<xs:extension base="AIStateUnitBuilderModifier">
+				<xs:attribute name="UnitKind" type="KindOfBitFlags" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AIStateUnitModifier">
+		<xs:complexContent>
+			<xs:extension base="AIStateUnitBuilderModifier">
+				<!-- I don't like that this is a WeakRef, rather than an AssetRef. But the states are in the global list, while units
+					are in the static list, so this is all I've got for now. Revisit later -->
+				<xs:attribute name="UnitName" type="GameObjectWeakRef"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+  <xs:complexType name="AIStateUnitOverride">
+    <!-- I don't like that this is a WeakRef, rather than an AssetRef. But the states are in the global list, while units
+					are in the static list, so this is all I've got for now. Revisit later -->
+    <xs:attribute name="UnitName" type="GameObjectWeakRef"/>
+    <xs:attribute name="Percentage" type="Percentage" default="100%" />
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+  </xs:complexType>
+</xs:schema>

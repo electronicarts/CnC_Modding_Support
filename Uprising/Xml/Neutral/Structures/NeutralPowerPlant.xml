@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+
+		<Include
+			type="all"
+			source="ART:NUObservationPostTechStructure.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTechStructure.xml" />
+	</Includes>
+	<GameObject
+		id="NeutralPowerPlant"
+		inheritFrom="BaseTechStructure"
+		SelectPortrait="Portrait_AlliedPowerPlant"
+		ButtonImage="Button_AlliedPowerPlant_on"
+		Side="Neutral"
+		BuildTime="15"
+		EnergyProduction="500"
+		EditorSorting="STRUCTURE"
+		CommandSet="EmptyCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH"
+		RadarPriority="STRUCTURE"
+		EditorName="NeutralPowerPlant"
+		Description="Desc:TechBuildingPowerPlant"
+		TypeDescription="TYPE:TechStructure">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:TechBuildingPowerPlant</DisplayName>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="=$TECH_STRUCTURE_EFFECTIVE_COST"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="StructureArmor"
+			DamageFX="VehicleDamageFX"  />
+		<Draws>
+				
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUObservationPostTechStructure" />
+				</ModelConditionState>
+				<!-- ANIMATIONS -->
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<DistributeEnergyToAlliesBehavior
+					 id="ModuleTag_DistributeEnergyToAllies"/>
+					 
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="BuildingPowerFunctions"
+			/>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIForLua"
+				StateMachine="StructureAIStateMachine" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="5000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="18.0"
+				Height="48.0"></Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="14.0"
+				Height="20.0">
+				<Offset
+					x="13"
+					y="35"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="14.0"
+				Height="20.0">
+				<Offset
+					x="-13"
+					y="35"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="30.0"
+				MinorRadius="32.5"
+				Height="18.0">
+				<Offset
+					x="0"
+					y="-9"
+					z="0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-20.0"
+					y="24.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="26.0"
+					y="24.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="26.0"
+					y="-32.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="26.0"
+					y="24.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-26.0"
+					y="-32.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="26.0"
+					y="24.0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-26.0"
+					y="-32.0"
+					z="30" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="-20.0"
+					y="24.0"
+					z="0" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry EvaEvent="BuildingCaptured" AudioType="voiceDefectingTowards" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="400"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="90.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

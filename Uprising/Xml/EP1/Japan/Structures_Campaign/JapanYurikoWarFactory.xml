@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="all"
+			source="ART:JBYWarFactory_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:JBYWarFactory_OPN.w3x" />
+		<Include 
+			type="all"	
+			source="ART:JBWarFactory_LIGHTS.w3x" />
+		<Include
+			type="all"
+			source="ART:JBWarFactory_FX.w3x" />										
+		<Include
+			type="all"
+			source="ART:FXInvisBone.w3x" />
+		<Include
+			type="all"	
+			source="ART:Decal_Rig_CO.xml" />
+									 
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="JapanYurikoWarFactory"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_JapanWarFactory"
+		ButtonImage="Button_JapanWarFactory"
+		Side="Japan"
+		EditorSorting="STRUCTURE"		
+		BuildTime="20"
+		HealthBoxHeightOffset="30"
+		EnergyProduction="-50"
+		CommandSet="JapanWarFactoryCommandSet"
+		KindOf="-CAN_BUILD_ON_WATER -CAN_BUILD_ON_DEEP_WATER +FS_FACTORY +AUTO_RALLYPOINT +FS_WAR_FACTORY +ACTIVATE_AFTER_UNPACK"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="-45d"
+		ThreatLevel="1.0"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		EditorName="JapanYurikoWarFactory"
+		Description="Desc:JapanWarFactory"
+		TypeDescription="Type:JapanWarFactory">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:JapanWarFactory</DisplayName>
+		<GameDependency>
+			<RequiredObject>JapanPowerPlant</RequiredObject>
+			<RequiredObject>JapanRefinery</RequiredObject>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="2000"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="JapanWarFactoryArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="FRONT">
+      <ConstructionBaseSelectionCriteria
+        ExcludedBaseTypes="NO_BUILD_RADIUS CAPTURED"/>
+    </SkirmishAIInformation>
+		<Draws>
+		
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				StaticModelLODMode="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JBYWarFactory_SKN" />
+				</ModelConditionState>
+
+				<AnimationState
+				ParseCondStateType="PARSE_DEFAULT"
+				Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="JBYWarFactory_OPN"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_WAITING_OPEN"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="JBYWarFactory_OPN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_OPENING"
+					StateName="STATE_Open">
+					<Animation
+						AnimationName="JBYWarFactory_OPN"
+						AnimationMode="ONCE" 
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DOOR_1_CLOSING"
+					StateName="STATE_Closed"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="JBYWarFactory_OPN"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+		
+			</ScriptedModelDraw>
+		
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction"
+				FillerMesh="NEWSKIN_FILL">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="JapanStructureHit"
+					CreationObject="AlliedBarracks_Debris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+				<Event
+					Index="onDeath"
+					FX="FX_YU_Hotel02_Explode" />
+				<Event
+					Index="onDeath"
+					FX="FX_LargeBuildingDieExplosionRumble" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData DeathTypes="ALL" DeathTypesForbidden="SUICIDED" />
+					<Event Index="onDeath" FX="FX_LargeBuildingDieExplosion" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="JBYWarFactory_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</DestroyDie>		
+			<AssignSlavesTargetObjectSpecialPower
+				id="ModuleTag_SpecialPowerRepairVehicle"
+				SpecialPowerTemplate="SpecialPower_TargetedRepairVehicle" />
+			<!--
+			<SpawnBehavior
+				id="ModuleTag_SpawnRepairDrones"
+				SpawnNumberData="3"
+				InitialBurst="3"
+				SpawnReplaceDelayData="10s"
+				SpawnedRequireSpawner="true"
+				KillSpawnsOnCaptured="true"
+				SpawnInsideBuilding="true"
+				KillSpawnsOnDisabled="true">
+				<Die
+					DeathTypes="ALL" />
+				<SpawnTemplate>JapanWarFactoryRepairDrone</SpawnTemplate>
+			</SpawnBehavior>
+			-->	
+			<ProductionUpdate
+				id="ModuleTag_ProductionUpdate"
+				GiveNoXP="true"
+				Type="VEHICLE"
+				NumDoorAnimations="1"
+				DoorOpeningTime="3.33s"
+				DoorWaitOpenTime="3.00s"
+				DoorCloseTime="3.33s">
+				<GiveUpgradeToProduced>
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_VETERAN"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_VETERAN" />
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_ELITE"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_ELITE" />
+					<UpgradeTranslate
+						RequiredUpgrade="Upgrade_ProductionVeterancy_HEROIC"
+						ProvidedUpgrade="Upgrade_CreationVeterancy_HEROIC" />
+				</GiveUpgradeToProduced>
+			</ProductionUpdate>
+			<QueueProductionExitUpdate
+				id="ModuleTag_QueueProduction"
+				ExitDelaySeconds="0.07s">
+				<UnitCreatePoint
+					x="-12.0"
+					y="0.0"
+					z="0.0" />
+				<NaturalRallyPoint
+					x="80.0"
+					y="0.0"
+					z="0.0" />
+			</QueueProductionExitUpdate>
+
+			<SubObjectsUpgrade
+				id="ModuleTag_SubObjectsUpgrade">
+				<TriggeredBy>Upgrade_JapanWarFactoryTech2</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Upgrade_02"
+					HideSubObjects="Upgrade_01 Upgrade_03"					
+					Upgrade="Upgrade_JapanWarFactoryTech2">
+					<CustomAnimAndDuration AnimState="USER_2"/>
+				</Nugget>
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_SubObjectsUpgrade2">
+				<TriggeredBy>Upgrade_JapanWarFactoryTech3</TriggeredBy>
+				<Nugget
+					ShowSubObjects="Upgrade_03"
+					HideSubObjects="Upgrade_01 Upgrade_02"						
+					Upgrade="Upgrade_JapanWarFactoryTech3">
+					<CustomAnimAndDuration AnimState="USER_3"/>
+				</Nugget>
+			</SubObjectsUpgrade>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="GenericJapanBuildingFunctions" />	
+							
+			<BuildingBehavior
+				id="ModuleTag_BuildingBehavior"
+				NightWindowObject="LIGHT_01" />			
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="16s" />
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="DATA:Includes/GenericJapanBuildingDestruction.xml" />
+			<xi:include
+				href="DATA:Includes/GenericJapanBuildingSuicide.xml" />
+			<xi:include
+				href="DATA:Includes/InfiltratorContainVehicle.xml" />
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="Generic" />
+			<CommandSetUpgrade
+				id="ModuleTag_CommandSetUpgrade"
+				CommandSet="JapanWarFactoryCommandSetTech2">
+				<TriggeredBy>Upgrade_JapanWarFactoryTech2</TriggeredBy>
+			</CommandSetUpgrade>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIForLua"
+				StateMachine="StructureAIStateMachine" />
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_StructureBody"
+				MaxHealth="2500" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "73.628"
+           MinorRadius = "67.3781"
+           Height = "13.0335"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "-2.99648"
+            y = "-0.762192"
+            z = "0.0" />
+      </Shape>
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "44.1768"
+           MinorRadius = "41.7744"
+           Height = "74.5518"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "-2.99648"
+            y = "-0.762196"
+            z = "0.0" />
+      </Shape>
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "7.49239"
+           MinorRadius = "63.0793"
+           Height = "84.333"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "-2.99648"
+            y = "-0.762196"
+            z = "0.0" />
+      </Shape>
+      <Shape 
+           Type= "BOX"
+           MajorRadius = "7.49239"
+           MinorRadius = "6.93873"
+           Height = "84.333"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "-60.112"
+            y = "-0.762196"
+            z = "0.0" />
+      </Shape>
+    </Geometry>
+		<ClientBehaviors>
+      <AnimationSoundClientBehavior id="ModuleTag_ASCB">
+            <Sound Sound="JAP_YurikoWarFactory_OpenAnimation1" RequiredMC="DOOR_1_OPENING" Animation="JBYWarFactory_OPN" Frame="1" />
+            <Sound Sound="JAP_YurikoWarFactory_OpenAnimation2" RequiredMC="DOOR_1_OPENING" Animation="JBYWarFactory_OPN" Frame="58" />
+            <Sound Sound="JAP_YurikoWarFactory_OpenAnimation3" RequiredMC="DOOR_1_OPENING" Animation="JBYWarFactory_OPN" Frame="95" />
+            <Sound Sound="JAP_YurikoWarFactory_CloseAnimation1" RequiredMC="DOOR_1_CLOSING" Animation="JBYWarFactory_OPN" Frame="95" />
+            <Sound Sound="JAP_YurikoWarFactory_CloseAnimation2" RequiredMC="DOOR_1_CLOSING" Animation="JBYWarFactory_OPN" Frame="42" />
+            <Sound Sound="JAP_YurikoWarFactory_CloseAnimation3" RequiredMC="DOOR_1_CLOSING" Animation="JBYWarFactory_OPN" Frame="4" />                    
+      </AnimationSoundClientBehavior>
+			<ModelConditionAudioLoopClientBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_StructureConstructionAudio">
+				<ModelConditionSound
+					Sound="JAP_Nanocore_DeployStructureLand"
+					RequiredFlags="STRUCTURE_UNPACKING"
+					ExcludedFlags="OVER_WATER"/>
+				<ModelConditionSound
+					Sound="JAP_Nanocore_DeployStructureWaterMS"
+					RequiredFlags="STRUCTURE_UNPACKING OVER_WATER"/>
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="JAP_MechaBay_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+		<AudioEntry Sound="JAP_Nanocore_DeployLoop" AudioType="soundUnderConstruction" />
+<!--
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="150"
+			ShroudClearingRange="500" />
+		<ProjectedBuildabilityInfo
+			Radius="120"
+			BuildPlacementTypes="OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<!-- model conditions set by included CaptureStructureBehavior.xml -->
+	<!-- USER 1: Captured by anyone -->
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="ART:NB_TechStructE_SKN.w3x" />
+		<Include type="all" source="ART:NB_TechStructE_ATKA.w3x" />
+		<Include type="all" source="ART:NB_TechStructE_CPTR.w3x" />
+		<Include type="all" source="ART:NB_TechStructE_CPTR2.w3x" />
+		<Include type="all" source="ART:NB_TechStructE_CPTR3.w3x" />
+		<Include type="all" source="ART:NB_TechStructE_CPTR4.w3x" />
+		<Include type="all" source="ART:NB_TechStructE_ENDA.w3x" />
+		<Include type="all" source="ART:NB_TechStructE_D.xml" />
+		<Include type="all" source="ART:CBEMPD2.w3x" />
+		<Include type="all" source="ART:CBEMPD3.w3x" />
+		<Include type="all" source="ART:TEMP_Red.xml" />
+		<Include type="all" source="ART:CBDefTow_D2.w3x" />
+		
+		<Include type="instance" source="DATA:BaseObjects/BaseTechStructure.xml" />
+		<Include type="instance" source="DATA:Neutral/Props/TechStructureEProps.xml" />
+        <Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+        <Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+	</Includes>
+
+	<Defines>
+		<Define name="PREP_TIME" value="1.1s" />
+	</Defines>
+	
+	<GameObject
+		id="TechStructureE"
+		inheritFrom="BaseTechStructure"
+		HealthBoxHeightOffset="16"
+		SubGroupPriority="47"
+		SelectPortrait="Portrait_Neutral_TechStr_E_GDI"
+		ButtonImage="Portrait_Neutral_TechStr_E_GDI"
+		Side="Neutral"
+        ParticipationValue="=$NEUTRALTECHSTRUCTUREE_PARTICIPATION_VALUE"
+		KindOf="+ALLIES_CAN_USE_ABILITIES +NO_HEALTH_BAR" 
+		CommandSet="TechStructureECommandSet"
+		RadarPriority="STRUCTURE"
+		EditorName="NEUTRAL_Struct_Superweapon(Nuke Launcher)"
+		EditorSorting="STRUCTURE" 
+		Description="Desc:MissileSilo">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:MissileSilo</DisplayName>
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FXVent01 FXVent02 FXLaunch01 FXLaunch02 FXLaunch03 FXLaunch04 FXLaunch05 FXLaunch06 FXExhaust01 FXExhaust02 FXExhaust03 FXExhaust04 FXExhaust05 FXExhaust06"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NB_TechStructE_SKN" />
+					<ParticleSysBone
+						BoneName="FXVent01"
+						FXParticleSystemTemplate="NukeLauncher_VentSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone
+						BoneName="FXVent02"
+						FXParticleSystemTemplate="NukeLauncher_VentSmoke"
+						FollowBone="true"/>
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXLaunch" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXLaunch" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretPitch="Pitch"
+						TurretID="1" />
+				</ModelConditionState>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NB_TechStructE_SKN" />
+					<Texture
+						Original="NB_TechStructE"
+						New="NB_TechStructE_D" />
+				</ModelConditionState>
+				
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NB_TechStructE_SKN" />
+					<Texture
+						Original="NB_TechStructE_D"
+						New="TEMP_Red" />
+				</ModelConditionState>
+
+				<!--
+						$note (MD) commented out since this was causing pink geo to be spawned in the level
+									Before uncommenting make sure that
+									1) all geo spawns in correct location (currently spawn is different location than building)
+									2) correct textures are applied.
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="CBEMPD3" />
+					<Texture
+						Original="TEMP_Red"
+						New="TEMP_Red" />
+				</ModelConditionState>
+										-->
+
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="UNCAPTURED_IDLE">
+					<Animation
+						AnimationName="NB_TechStructE_CPTR"
+						AnimationMode="MANUAL"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING"
+					StateName="UNPACKING">
+					<Animation
+						AnimationName="NB_TechStructE_CPTR4"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PACKING"
+					StateName="PACKING">
+					<Animation
+						AnimationName="NB_TechStructE_ENDA"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREPARING">
+					<Animation
+						AnimationName="NB_TechStructE_ATKA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+
+
+				<!-- Captured and ready. -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1 USER_2"
+					StateName="CAPTURED_READY"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NB_TechStructE_CPTR3"
+						AnimationMode="MANUAL"/>
+					<Script>
+						CurDrawableHideSubObjectPermanently("FXTopLightRED")
+						CurDrawableShowSubObjectPermanently("FXTopLightRED_Bulb")
+						CurDrawableShowSubObjectPermanently("FXTopLightGREEN")
+						CurDrawableHideSubObjectPermanently("FXTopLightGREEN_Bulb")
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "CAPTURED" then
+						CurDrawableSetTransitionAnimState("TRANS_ToReady")
+						elseif Prev == "UNCAPTURED_IDLE" then
+						CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+						end
+					</Script>
+				</AnimationState>
+
+				<!--when captured -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="CAPTURED"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NB_TechStructE_CPTR2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+					<Script>
+						CurDrawableHideSubObjectPermanently("FXTopLightGREEN")
+						CurDrawableHideSubObjectPermanently("FXTopLightGREEN_Bulb")
+						CurDrawableShowSubObjectPermanently("FXTopLightRED")
+						CurDrawableShowSubObjectPermanently("FXTopLightRED_Bulb")
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "UNCAPTURED_IDLE" then
+						CurDrawableSetTransitionAnimState("Transition_ToCaptured")
+						end
+					</Script>
+				</AnimationState>
+<!--
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBDefTow_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="CBDefTow_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+-->				
+				<!-- TRANSITIONS -->
+				<!-- transition to captured state -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="Transition_ToCaptured">
+					<Animation
+						AnimationName="NB_TechStructE_CPTR"
+						AnimationMode="ONCE" />
+				</AnimationState>
+
+				<!-- transition to ready state -->
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_ToReady">
+					<Animation
+						AnimationName="NB_TechStructE_CPTR3"
+						AnimationMode="ONCE" />
+				</AnimationState>
+<!--
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="CBDefTow_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="CBDefTow_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>  
+-->
+			</ScriptedModelDraw>
+			
+			<xi:include href="DATA:Includes/CaptureStructureFeedbackDraw.xml" />
+			
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="4s"
+				SinkRate="3.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="StructureLarge_DieExplosionMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<RebuildHoleExposeDie
+				id="ModuleTag_RebuildHoleExposeDie"
+				HoleObject="TechStructureEHole"
+				FadeInTimeSeconds="3.0s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</RebuildHoleExposeDie>
+
+			<!-- allows object to be captured -->
+			<xi:include	href="DATA:Includes/CaptureStructureBehavior.xml" />
+			
+			<SpecialPower
+				id="ModuleTag_FireMissiles_SpecialPower"
+				SpecialPowerTemplate="SpecialPower_TechStructureE_Missiles"
+				UpdateModuleStartsAttack="true"
+				AvailableOnCaptureFromNeutral="false"
+				AvailableOnCapture="false" 
+				AvailableAtStart="false" 
+				MaintainStateOnCapture="true" 
+				ForceAllowRechargeWhileUnderConstruction="true"
+				TriggerFX="FX_NukeTarget"
+			/>
+
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_FireMissiles_SpecialAbilityUpdate"
+				PreparationTime="=$PREP_TIME"
+				PersistentPrepTime="=$PREP_TIME"
+				PersistentCount="1"
+				UnpackTime="1.1s" 
+				PackTime="3.5s"
+				SpecialPowerTemplate="SpecialPower_TechStructureE_Missiles"
+				SpecialWeapon="TechStructureEWeapon"
+				StartRechargeOnExit="true"
+			/>
+
+			<MonitorSpecialPowerTimerUpdate
+				id="ModuleTag_IonCannonReadyToFireUpdate"
+				SpecialPowerTemplate="SpecialPower_TechStructureE_Missiles"
+				ReadyCondition="USER_2"
+				RequiredConditions="USER_1"
+			/>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="2.0s" />
+
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="TechStructureEFunctions"
+			/>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				StateMachine="StructureAIStateMachine"
+				AutoAcquireEnemiesWhenIdle="NO">
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				InitialHealth="1.0"
+				MaxHealth="1000.0" />
+		</Body>
+		<Geometry>
+			<PlacementShape
+				Type="BOX"
+				MajorRadius="45.0"
+				MinorRadius="45.0"
+				Height="5.0"/>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="45.0"
+				Height="75.0"
+				ContactPointGeneration="STRUCTURE"/>
+		</Geometry>
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_Footsteps">
+				<Sound Sound="NEU_MissileSilo_StrE_Captured" Animation="NB_TechStructE_CPTR" Frame="0"/>
+				<Sound Sound="NEU_MissileSilo_StrE_Prelaunch" Animation="NB_TechStructE_CPTR4" Frame="0"/>
+				<Sound Sound="NEU_MissileSilo_StrE_LaunchMissileMS" Animation="NB_TechStructE_ENDA" Frame="0"/>
+				<Sound Sound="NEU_MissileSilo_StrE_Postlaunch" Animation="NB_TechStructE_ENDA" Frame="25"/>
+			</AnimationSoundClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Ready">
+				<ModelConditionSound Sound="NEU_MissileSilo_StrE_ReadyMS" RequiredFlags="USER_1 USER_2" ExcludedFlags="DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="NEU_MissileSilo_StrE_Select" AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+	<LogicCommandSet
+		id="TechStructureECommandSet">
+		<Cmd>Command_TechStructureE_LaunchMissiles</Cmd>
+	</LogicCommandSet>
+	
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_TechStructureE_LaunchMissiles">
+		<SpecialPower>SpecialPower_TechStructureE_Missiles</SpecialPower>
+	</LogicCommand>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_TechStructureE_Missiles"
+		Flags="FOGGED_SHROUDED_CELLS_OK WATER_OK "
+		ReloadTime="240s"
+		TargetType="NONE"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceAttackEMP"
+		PreventConditions="UNDER_CONSTRUCTION"
+	/>
+
+	<WeaponTemplate
+		id="TechStructureEWeapon"
+		AttackRange="10.0"
+		WeaponSpeed="350"
+		FireFX="FX_NukeLaunch"
+		ScatterRadius="180"
+		AcceptableAimDelta="180d">
+		<FiringDuration
+			MinSeconds="=$EPSILON_SECONDS"
+			MaxSeconds="=$EPSILON_SECONDS" />
+		<Nuggets>
+			<WeaponOCLNugget
+				WeaponOCL="TechStructureEMissile"
+				InitiatingSpecialPowerTemplate="SpecialPower_TechStructureE_Missiles"
+				Flags="DEFECT_TO_SPECIAL_POWER_ISSUER"
+				/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<ExperienceLevelTemplate
+		id="TechStructureEExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_01"
+		ExperienceAward="300">
+		<Target>TechStructureE</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="TechStructureEExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_02"
+		Prerequisite="TechStructureEExperienceLevel_1"
+		RequiredExperience="900"
+		ExperienceAward="450">
+		<Target>TechStructureE</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="TechStructureEExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_03"
+		Prerequisite="TechStructureEExperienceLevel_2"
+		RequiredExperience="2700"
+		ExperienceAward="600">
+		<Target>TechStructureE</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="TechStructureEExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Neutral_Rank_04"
+		Prerequisite="TechStructureEExperienceLevel_3"
+		RequiredExperience="4500"
+		ExperienceAward="900">
+		<Target>TechStructureE</Target>
+	</ExperienceLevelTemplate>
+	
+</AssetDeclaration>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:AlliedTimeBombLvl3.w3x" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseTimeBombEffect.xml" />
+	</Includes>
+	<GameObject
+		id="AlliedTimeBombLvl3"
+		inheritFrom="BaseTimeBombEffect"
+		Side="Allies"
+		EditorSorting="SYSTEM"
+		EditorName="AlliedTimeBombLvl3"		
+		Description="Desc:AlliedTimeBombLvl3"
+		TypeDescription="Type:AlliedTimeBombLvl3"
+    		SelectPortrait="Portrait_AlliedTimeBomb3"
+		ButtonImage="Button_AlliedTimeBomb3">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:AlliedTimeBombLvl3</DisplayName>
+		<DisplayName>AlliedTimeBombLvl3</DisplayName>
+		<ArmorSet
+			Armor="AlliedTimeBombArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AlliedTimeBombLvl3" />
+				</ModelConditionState>
+
+        <ModelConditionState
+						ParseCondStateType="PARSE_NORMAL"
+						ConditionsYes="FROZEN">
+          <Model
+						Name="AlliedTimeBombLvl3" />
+          <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedCryoFrozenMistLarge"
+						FollowBone="true"/>
+          <Material
+					  ShaderName="ObjectsFrozen.fx"
+					  TechniqueName="Default">
+            <Constants>
+              <Texture Name="DiffuseTexture">
+                <Value>AlliedTimeBomb</Value>
+              </Texture>
+              <Texture Name="NormalMap">
+                <Value>AlliedTimeBomb_NRM</Value>
+              </Texture>
+              <Texture Name="SpecMap">
+                <Value>AlliedTimeBomb_SPM</Value>
+              </Texture>
+              <Float Name="EnvMult">
+                <Value>1.000000</Value>
+              </Float>
+              <Bool Name="AlphaTestEnable">
+                <Value>false</Value>
+              </Bool>
+            </Constants>
+          </Material>
+        </ModelConditionState>        
+        
+        <AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_bored">
+          <Animation
+						AnimationName="AlliedTimeBombLvl3"
+            AnimationMode="ONCE"/>
+        </AnimationState>        
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifetimeUpdate"
+				MinLifetime="22.0s"
+				MaxLifetime="22.0s" 
+				CountdownSound="ALL_TimeBombBeep1" 
+				CountdownCompleteSound="ALL_TimeBombBeep2"
+				NumberOfCountdownSoundPlays="20" 
+				TimeBeforeDeathThatCountdownCompletes="960ms" 
+				TimeBetweenCountdownSounds="1s"/>							
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_TimeBombLvl3_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeapon"
+				InitiallyActive="true"
+				DeathWeapon="AlliedTimeBomb_Level3">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="AIRBORNE_TARGET"/>
+			</FireWeaponWhenDead>
+			<FireWeaponWhenDead
+				id="ModuleTag_FinalWeaponWeakened"
+				InitiallyActive="true"
+				DeathWeapon="AlliedTimeBomb_Level2">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="AIRBORNE_TARGET"/>
+			</FireWeaponWhenDead>
+			<DestroyObjectsUpdate
+				id="ModuleTag_DestroyObjectsUpdate"
+				Radius="500">
+				<ObjectFilter Rule="NONE" Include="CIVILIAN_UNIT"/>
+			</DestroyObjectsUpdate>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+      <FXListBehavior id="ModuleTag_FXList">
+        <DieMuxData
+          DeathTypes="ALL" />
+        <Event Index="onCreate" FX="FX_TimeBombFlash" />
+      </FXListBehavior>      
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="2000.0" />
+    </Body>
+		<ClientBehaviors>
+      <AnimationSoundClientBehavior id="ModuleTag_ASCB">
+            <Sound Sound="ALL_TimeBomb_Animation_AlliedTimeBombLvl3_1" Animation="AlliedTimeBombLvl3" Frame="62" />
+            <Sound Sound="ALL_TimeBomb_Animation_AlliedTimeBombLvl3_2" Animation="AlliedTimeBombLvl3" Frame="95" />                 
+      </AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="15.0"
+				Height="30.0"></Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="ALL_Timebomb_AmbientLoop" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<ShadowInfo
+			Type="NONE" />
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrushableLevel="0" />
+		<VisionInfo
+			VisionRange="200"
+			ShroudClearingRange="300" />	
+	</GameObject>
+</AssetDeclaration>

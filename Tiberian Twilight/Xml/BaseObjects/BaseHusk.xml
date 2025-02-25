@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Tags></Tags>
+	<Includes>
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+	</Includes>
+	<GameObject
+		id="BaseHusk"
+		inheritFrom="BaseObject" 
+		ShockwaveResistance="100"
+		ReinvisibilityDelay="7s"
+		RadarPriority="UNIT"
+		EditorSorting="UNIT"
+		TransportSlotCount="0"
+		KindOf="SELECTABLE CAN_CAST_REFLECTIONS IMMOBILE NOT_AUTOACQUIRABLE HUSK VALID_TARGET_FOR_C4 ALLY_TARGETABLE CAN_HAVE_BUILDABILITY">
+		<ArmorSet
+			id="BaseHuskArmor"
+			Armor="HuskArmor"
+			DamageFX="NormalDamageFX" />
+		<Behaviors>
+			<AttributeModifierPoolUpdate 
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<SquishCollide
+				id ="DefaultSquishCollide"/>
+			<Physics id="ModuleTag_Physics" />
+			<LifetimeUpdate
+				id="ModuleTag_HuskLifetime"
+				MinLifetime="300s"
+				MaxLifetime="300s">
+				<ForbiddenUpgrade>Upgrade_BackupSystems</ForbiddenUpgrade>
+			</LifetimeUpdate>
+
+			<!-- override healing amount in the actual husk object -->
+			<AutoHealBehavior
+				id="ModuleTag_BackupSystemsHeal"
+				StartHealingDelay="5s"
+				HealOnlyIfNotUnderAttack="true"
+				HealFXList="FX_Husk_Repair"
+				HealingDelay="1.0s">
+				<TriggeredBy>Upgrade_BackupSystems</TriggeredBy>
+			</AutoHealBehavior>
+
+			<!-- allows objects to capture/revive the husk, OCL should be set by specific Husk unit -->
+			<CaptureContain
+				id="ModuleTag_CaptureHusk"
+				Flags="ENABLE_IMMEDIATELY DESTROY_RIDER DESTROY_CONTAINER"
+				CanEnterFilter="ObjectFilter_CaptureHusk"
+				OnCaptureNameOfVoiceToUse="VoiceCaptureHusk"
+				OnCaptureEvaEvent="HuskRepaired"
+				OnCaptureFX="FX_Husk_Captured_AudioOnly"
+				>
+			</CaptureContain>
+
+			<ProjectedBuildabilityOverrideBehavior
+				id="ModuleTag_BuildabilityOverride" >
+				<Override
+					id="ProjectedBuildability_OverrideBlock"
+					StatusToReject="CANNOT_PROVIDE_BUILDABILITY">
+					<ProjectedBuildabilityInfo
+						id="ProjectedBuildability_Blocked"
+						Radius="0"
+						BuildPlacementTypes="BLOCKED">
+						<AllowedObjectFilter
+								Rule="NONE"/>
+					</ProjectedBuildabilityInfo>
+				</Override>
+				<Override
+						id="ProjectedBuildability_EmptyOverrideBlock">
+					<!-- Otherwise, we have no buildability - not even the default DISPLAY_ONLY buildability 
+							 (e.g. we don't want to display a buildability box when we are full) -->
+				</Override>
+			</ProjectedBuildabilityOverrideBehavior>
+			
+			<!-- upgrade crate with be spawned n% of the time on units death -->
+			<xi:include href="DATA:Includes/CrateSpawnOnDeath_Husk.xml" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<CrusherInfo
+			CrusherLevel="0"
+			CrushEqualLevelProps="true"
+			CrushableLevel="9" />
+		<VisionInfo
+			VisionRange="50"
+			ShroudClearingRange="50" />
+		<DisplayUpgrade>Upgrade_BackupSystems</DisplayUpgrade>
+
+		<ProjectedBuildabilityInfo
+			id="ProjectedBuildability_DisplayOnly" 
+			Radius="0"
+			BuildPlacementTypes="DISPLAY_ONLY" />
+	</GameObject>
+
+</AssetDeclaration>

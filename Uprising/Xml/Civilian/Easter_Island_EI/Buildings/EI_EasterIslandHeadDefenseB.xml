@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+		<Include type="all"	source="ART:EI_EasterIslandHeadDefenseB_SKN.W3X" />
+		<Include type="all"	source="ART:EI_EasterIslandHeadDefenseB_GAG.W3X" />
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="instance" source="DATA:Civilian/Easter_Island_EI/Props/EI_EasterIslandHeadDefenseB_Collapse.xml" />
+		
+	</Includes>
+	<GameObject
+		id="EI_EasterIslandHeadDefenseB"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"
+		EditorName="EI_EasterIslandHeadDefenseB"
+    	EditorSorting="STRUCTURE"
+		Browser="REGION Easter_Island_EI STRUCTURE"
+		RadarPriority="STRUCTURE"
+		CommandSet="EI_EasterIslandHeadDefenseB"		
+		BuildTime="0.0"
+		EnergyProduction="0"
+		SelectPortrait="Portrait_Special_EasterIslandDefense"
+		ButtonImage="Button_Special_EasterIslandDefense"
+		TypeDescription="Type:EasterIslandDefense"
+		Description="Desc:EasterIslandDefense">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:EasterIslandDefense</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FX_WEAPON_01">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="EI_EasterIslandHeadDefenseB_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_WEAPON_01" />
+				</ModelConditionState>				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="State_Idle">
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "State_PowerActive" then
+							CurDrawableSetTransitionAnimState("TRANS_EndPower")
+						end
+					</Script>						
+				</AnimationState>				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="State_PowerActive"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="EI_EasterIslandHeadDefenseB_GAG"
+						AnimationBlendTime="0"
+						AnimationMode="MANUAL"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "State_Idle" then
+							CurDrawableSetTransitionAnimState("TRANS_StartPower")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_StartPower">
+					<Animation
+						AnimationName="EI_EasterIslandHeadDefenseB_GAG"
+						AnimationBlendTime="0"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_EndPower"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="EI_EasterIslandHeadDefenseB_GAG"
+						AnimationBlendTime="0"
+						AnimationMode="ONCE_BACKWARDS"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="FX_BuildingDebrisExplosion"
+					CreationObject="YU_HotelDebris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_CIV_EasterIslandHead_Die" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="EI_EasterIslandHeadDefenseB_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>	
+			
+			<!-- civ buildings should have a CreateObjectDie to make a collapse version. -->
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<!-- Man Cannon functionality -->
+			<TransportContain
+				id="ModuleTag_Contain"
+				ObjectStatusOfContained="UNSELECTABLE ENCLOSED"
+				ContainMax="10"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="true"
+				AllowNeutralInside="false"
+				AllowOwnPlayerInsideOverride="true"
+				ShowPips="true"
+				EnterSound="VehicleEnter"
+				ExitSound="SOV_BullFrog_ManCannonLaunch"
+				KillPassengersOnDeath="true"
+				ConditionForEntry="INVALID">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY" />
+				<DieMuxData
+					DeathTypes="ALL" />
+				<PassengerData
+					BonePrefix="NONE">
+					<Filter
+						Rule="NONE"
+						Include="INFANTRY" />
+				</PassengerData>
+			</TransportContain>
+			<SpecialPower
+				id="ModuleTag_ManCannon"
+				SpecialPowerTemplate="SpecialPower_EjectPassengers"
+				UpdateModuleStartsAttack="true"/>
+			<EjectPassengersSpecialAbilityUpdate
+				id="ModuleTag_ManCannonUpdate"
+				SpecialPowerTemplate="SpecialPower_EjectPassengers"
+				ActiveModelCondition="USER_1" 
+				TimePerPassenger="0.5s"
+				Radius="50.0" 
+				UnpackTime="3s"				
+				Height="150.0"
+				ApexHeight="20.0"
+				EjectionFX="FX_SovietManCannon"
+				EjectionBoneName="FX_WEAPON_01">				
+			</EjectPassengersSpecialAbilityUpdate>
+			<!-- End Man Cannon functionality -->
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="2000"
+				/>
+		</Body>
+		<Geometry
+			IsSmall="false">
+      
+      <Shape
+           Type= "BOX"
+           MajorRadius = "20.2102"
+           MinorRadius = "18.4499"
+           Height = "70.724"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "-0.254629"
+            y = "-0.922922"
+            z = "0.0" />
+      </Shape>
+      
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="S08_SOV_EasterIslandHead_Damage" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="S08_SOV_EasterIslandHead_Damage" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="310"
+			ShroudClearingRange="350" />
+	</GameObject>
+
+	<ObjectCreationList
+		id="EI_EasterIslandHeadDefenseB_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="5"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>EI_EasterIslandHeadDefenseB_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>	
+</AssetDeclaration>

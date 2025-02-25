@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes></Includes>
+  
+	<AIPersonalityDefinition
+		id="BasePersonality"
+		PersonalityType="BasePersonality"
+		SkirmishPersonality="false"
+		SecondsTillTargetsExpire="5"
+		DesiredExcessPowerBuffer="100"
+		BaseCompactness="0.75"
+		UnitBuilderOverallDefensivePreference="25%"
+		UnitBuilderEnemyNearbyDistance="800.0"
+		UnitBuilderEnemyNearbyMultiplier="4"
+		UnitBuilderEnemyUnitsROS="UNITS"
+		UnitBuilderEnemyTowerROS="BASE_DEFENSES"
+		UnitBuilderEnemyTowerWeight="50%"
+		UnitBuilderCanRemoveUnitsToFreeUpResourcesAt="EASY MEDIUM HARD BRUTAL"
+		UnitBuilderPreferToRemoveUnitsWithHealthBelowPercent="20%"
+		UnitBuilderMinAgeToRemoveUnitForResources="20s"
+		UnitBuilderMinTimeOutOfCombatToRemoveUnitForResources="20s"
+		ResourceNodeSearchRadius="700"
+		ResourceNodeValueRemainingForExpansion="22000"
+		RefineryPlacementStartDistanceDelta="-30.0"
+		RefineryPlacementIncreaseTickAmount="30.0"
+		RefineryPlacementNumberOfIncreaseTicksBeforeGivingUp="15"
+		ReactiveDefenseRadius="750"
+		UsePlayerPowersAtDifficulty="EASY MEDIUM HARD BRUTAL" 
+		RepairBuildingsAtDifficulty="MEDIUM HARD BRUTAL"
+		ConyardInDangerEmergencyUnderAttackTime="5s"
+		ConyardInDangerEmergencyHealthPercent="70%"
+		ConyardInDangerEmergencyEngineerDistance="175.0"
+		CleanupRefineries="true"
+		BuildTechEfficiencyThreshold="0.5"
+		BuildTechMinPowerAdvantage="1.25"
+		DefaultThreatFindRadius="600.0"
+		GuardTargetRadius="500.0"
+		EnemySortingBrutalDifficulty="Flat"
+		EnemySortingHardDifficulty="Flat" 
+		EnemySortingMediumDifficulty="Flat"
+		EnemySortingEasyDifficulty="Flat"
+		EnemyResortingTime="15s"
+		MaxWallDestroyTimeToCountAsGoThroughWalls="10s"
+		CoordinatedAttackRegisteredObjectSetToConsiderForStrength="UNITS"
+		>
+		  
+		<!-- Grabs idle engineers and sends them back to base.  This only happens in a few situations such as a tech building was destroyed
+			 while an engineer was on its way to capture it. -->
+		<StrategicState id="EngineerIdle" State="EngineerIdle" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+		<BuildingPlacementState id="BuildingPlacementDefault" State="BuildingPlacementDefault" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<BuildingPlacementState id="BuildingPlacementDefense" State="BuildingPlacementDefense" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<BuildingPlacementState id="BuildingPlacementSpread" State="BuildingPlacementSpread" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<BuildingPlacementState id="BuildingPlacementCenter" State="BuildingPlacementCenter" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<BuildingPlacementState id="BuildingPlacementBack" State="BuildingPlacementBack" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+		<BuildingPlacementState id="BuildingPlacementFront" State="BuildingPlacementFront" Difficulty="EASY MEDIUM HARD BRUTAL"/>
+
+		<!-- By default, which base does a EndBehavior="RETURN_HOME_AND_DISBAND" tactic go home to?
+			   Start with crawlers, then look for captured nodes & spawn zones. -->
+		<DefaultTacticHomeBaseCriteria PreferredBaseTypes="CRAWLER_BASE SPAWN_ZONE"  PreferredNotBaseTypes="CAPTURED_BASE" SortOrder="PREFER_CLOSEST" />
+
+		<!-- If units are near the AI's crawler, they are counted more when deciding what to build, so that we
+			 can counter the stuff attack our crawler. -->
+		<UnitBuilderEnemyNearbyBaseCriteria RequiredBaseTypes="CRAWLER_BASE" RequireOwner="OWNER_THIS_PLAYER" SortOrder="PREFER_CLOSEST" />
+
+		<!-- As far as the Japanese are concerned, building an egg is the same as building a structure, in terms of priority -->
+		<CountAsStructureForBuildPurposesFilter
+			Rule="ANY"
+			Include="STRUCTURE UNPACKS_INTO_BUILDING" >
+		</CountAsStructureForBuildPurposesFilter>
+
+		<!-- What is being counted towards our strength when deciding to go into a coordinated attack -->
+		<CoordinatedAttackFilterForUnitsToConsiderForStrength
+			Rule="ANY"
+			Include="CAN_ATTACK"
+			Exclude="CRAWLER STRUCTURE" />
+
+	</AIPersonalityDefinition>
+  
+</AssetDeclaration>

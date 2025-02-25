@@ -1,0 +1,10 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2008 Electronic Arts Inc
+//
+// FX Shader for simple material with one texture
+//////////////////////////////////////////////////////////////////////////////
+
+//#define SUPPORT_RECOLORING 1 // Defined only in Infantry.fx!
+#define SUPPORT_RADIATION 1 // Used only for defining radiation infantry deaths
+
+#include "BasicW3D.fxh"

@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes />
+  
+	<AIStrategicStateDefinition id="AIState_A02_Coop_TakeConventionCenter" MaxTargets="2">
+		<Heuristic>
+			<TimerHeuristic StartTime="75s" EndTime="-1s" CountFrom="AI_START" />
+			<ScriptedFlagHeuristic FlagName="Soviet05/FLAG - Convention Center Unliberated" />
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="AITarget_A02_ConventionCenter" Priority="30" />
+		<Tactic 
+				id="Attack" 
+				Tactic="SimpleAttack" 
+				EndBehavior="DISBAND" 
+				DisbandAfterRetreatTeamSize="999" 
+				EndIfStateTurnsOff="true">
+				
+		<TeamTemplate 
+				MinUnits="5" 
+				MaxUnits="20" 
+				IncludeKindOf="CAN_ATTACK" 
+				ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND" 
+				Priority="STANDARD" 
+				AlwaysRecruit="false" 
+				MicroManager="DefenseMicroManager" />
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition id="AIState_A02_Coop_DestroySovietBase" MaxTargets="3">
+		<Heuristic>
+			<ScriptedFlagHeuristic FlagName="FLAG - Objective 01 Complete" />
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestGroundUnitHeuristic" Priority="20" />
+		<TargetHeuristic TargetHeuristic="SafestToGroundStructureHeuristic" Priority="10" />
+		<Tactic 
+				id="Attack" 
+				Tactic="SimpleAttack" 
+				EndBehavior="DISBAND" 
+				DisbandAfterRetreatTeamSize="999">
+				
+		<TeamTemplate 
+				MinUnits="10" 
+				MaxUnits="20" 
+				IncludeKindOf="CAN_ATTACK" 
+				ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AMPHIBIOUS" 
+				Priority="STANDARD" 
+				AlwaysRecruit="false" 
+				MicroManager="A02_CoopAttackMicroManager" />
+				
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition id="AIState_A02_LandDefense" MaxTargets="3">
+		<Heuristic>
+			<ConstantHeuristic />
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="FriendlyLandStructureHeuristic" />
+		<Tactic 
+				id="Defense" 
+				Tactic="StaticDefense" 
+				Distance="200" 
+				EndBehavior="DISBAND">
+				
+		<TeamTemplate 
+				MinUnits="1" 
+				MaxUnits="14" 
+				IncludeKindOf="CAN_ATTACK" 
+				ExcludeKindOf="IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AMPHIBIOUS AIR" 
+				Priority="DEFENSE" 
+				AlwaysRecruit="true" 
+				SortByDistance="true"
+				MicroManager="DefenseMicroManager">
+				
+				<ObjectFilter Rule="ALL">
+					<!-- Exclude all ammo based aircraft -->
+					<ExcludeThing>AlliedFighterAircraft</ExcludeThing>
+					<ExcludeThing>AlliedAntiGroundAircraft</ExcludeThing>
+					<ExcludeThing>AlliedBomberAircraft</ExcludeThing>
+					<ExcludeThing>SovietFighterAircraft</ExcludeThing>
+				</ObjectFilter>
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition id="AIState_A02_CoopExpansion">
+		<Heuristic>
+			<TimerHeuristic StartTime="30s" EndTime="-1s" CountFrom="AI_START" />
+			<OpeningMoveHeuristic Complete="true" />
+			<EnemyNearbyHeuristic Distance="900.0" EnemyNearby="false" />
+			<AllNearbyNodesFullHeuristic />
+		</Heuristic>
+		
+		<TargetHeuristic TargetHeuristic="ExpansionHeuristic" />
+		
+		<Tactic id="Expand" Tactic="SimpleExpansion" Distance="250">
+		
+		<TeamTemplate 
+		
+				MinUnits="1" 
+				MaxUnits="10" 
+				IncludeKindOf="CAN_ATTACK" 
+				ExcludeKindOf="AIRCRAFT SIEGE_WEAPON IGNORES_SELECT_ALL HARVESTER"
+				AllowedLocomotorTypes="LAND AMPHIBIOUS" 
+				Priority="STANDARD" ReleaseType="NEVER_RELEASE" 
+				AlwaysRecruit="false"
+				MicroManager="DefenseMicroManager">
+				
+				<CreateUnits UnitName="AlliedMiner" MinUnits="1" MaxUnits="1" />
+			</TeamTemplate>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIBuildStateDefinition id="AIState_A02_AlliedTechBuildState">
+		<Heuristic>
+			<ConstantHeuristic />
+		</Heuristic>
+		<BuildEntry Upgrade="Upgrade_AlliedTech2" Heuristic="UPGRADE_TECH" ForceTime="30s" />
+	</AIBuildStateDefinition>
+	
+	<AIBudgetStateDefinition id="AIBudgetState_A02_AlliedDefenseBudget">
+		<Heuristic>
+			<OpeningMoveHeuristic Complete="true" />
+			<EnemyNearbyHeuristic Distance="700.0" EnemyNearby="true" />
+			<ConstantHeuristic Weight="0.75" />
+		</Heuristic>
+		<Budget>
+			<AccountShare Account="PRODUCTION" Percent="80%" />
+			<AccountShare Account="DEFENSE" Percent="10%" />
+			<AccountShare Account="SLUSH_FUND" Percent="0%" />
+		</Budget>
+	</AIBudgetStateDefinition>
+</AssetDeclaration>

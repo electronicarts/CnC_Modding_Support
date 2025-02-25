@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+<!-- aka Cryocopter -->
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include type="all"	source="ART:AUSupportAircraft.w3x" />	
+		<Include type="all"	source="ART:AUSupportAircraft_D.xml" />
+		<Include type="all"	source="ART:AUSupportAircraft_FP.w3x" />
+		<Include type="all"	source="ART:FXCryoBeamLaser.xml" />
+		<Include type="all"	source="ART:FXShrinkRay.xml" />
+		<Include type="all"	source="ART:FXInterlacedMask.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseVehicle.xml" />
+		<Include type="all"	source="ART:AUSupportAircraft_02.xml" />
+		<Include type="all"	source="ART:AUSupportAircraft_02_D.xml" />
+	</Includes>
+	<GameObject
+		id="CC_InvisibleCryoCopter"
+		inheritFrom="BaseVehicle"
+		RadarPriority="NOT_ON_RADAR"
+		SelectPortrait="Portrait_AlliedSupportAircraft"
+		ButtonImage="Button_AlliedSupportAircraft_on"
+		Side="Allies"
+		EditorSorting="CAMPAIGN_UNITS"
+		CommandSet="AlliedSupportAircraftCommandSet"
+		KindOf="CAN_ATTACK VEHICLE LINE_OF_SIGHT_IGNORES_BUILDINGS NOT_AUTOACQUIRABLE"
+		WeaponCategory="MISSILE"
+		EditorName="CC_InvisibleCryoCopter">
+    <!--
+    <LocomotorSet
+			Locomotor="BaseRepairDroneLocomotor"
+			Condition="NORMAL"
+			Speed="0" />
+    -->
+		<ArmorSet
+			Armor="AlliedSupportAircraftArmor"
+			DamageFX="AircraftDamageFX" />		
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+        <ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="" />
+        </ModelConditionState>
+        <ModelConditionState
+          ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="WORLD_BUILDER">
+          <Model
+						Name="locator" />
+        </ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>			
+			<Physics
+				id="ModuleTag_Physics" />			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<SpecialPower
+				id="ModuleTag_ShrinkRaySpecialPower"
+				SpecialPowerTemplate="SpecialPower_ShrinkRay"
+				UpdateModuleStartsAttack="true"
+			/>
+			<WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_ShrinkRaySpecialAbilityUpdate"
+				SpecialPowerTemplate="SpecialPower_ShrinkRay"
+				WeaponSlotType="PRIMARY_WEAPON"
+				WeaponSlotID="1"
+				SpecialWeapon="CC_InvisibleCryoCopterShrinkRay"
+				StartAbilityRange="9999"
+				UnpackTime="0s"
+				PackTime="1s"
+        FaceTarget="false"
+			/>
+			
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					RotateToTargetWhenAiming="false"/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="750" />
+		</Body>		
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="16.0"
+				MinorRadius="11.0"
+				Height="8.0"
+				ContactPointGeneration="VEHICLE">
+			</Shape>
+		</Geometry>
+		<VisionInfo
+			VisionRange="9999"
+			ShroudClearingRange="=$STANDARD_SHROUD_CLEAR" />
+	</GameObject>
+
+</AssetDeclaration>

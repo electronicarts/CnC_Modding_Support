@@ -1,0 +1,666 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" /> 
+
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="all"	source="ART:ABBaseDefense.w3x" />				
+		<Include type="all"	source="ART:ABBaseDefense_BLD_SKN.w3x" />				
+		<Include type="all"	source="ART:ABBaseDefense_BLD_BLD.w3x" />
+		<Include type="all"	source="ART:ABBaseDefense_BLD_BLDW.w3x" />								
+		<Include type="all"	source="ART:ABBaseDefense_FX.w3x" />
+		<Include type="all"	source="ART:ABBaseDefense_Platform.w3x" />
+		<Include type="all"	source="ART:ABBaseDefense_Platform_BLD.w3x" />										
+		<Include type="all"	source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="AlliedBaseDefense"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_AlliedBaseDefense"
+		ButtonImage="Button_AlliedBaseDefense_on"
+		Side="Allies"
+		HealthBoxHeightOffset="20"
+		EditorSorting="STRUCTURE"		
+		BuildTime="20"
+		EnergyProduction="-25"
+		CommandSet="AlliedBaseDefenseCommandSet"
+		KindOf="-NOT_AUTOACQUIRABLE +CAN_ATTACK +FS_BASE_DEFENSE +GARRISONABLE_UNTIL_DESTROYED +POWERED"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		CampnessValue="=$CAMPNESS_DEFENSIVE_STRUCTURE"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="AlliedBaseDefense"
+		WeaponCategory="GUN"
+		TypeDescription="Type:AlliedBaseDefense"
+		Description="Desc:AlliedBaseDefense">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:AlliedBaseDefense</DisplayName>
+		<GameDependency>
+			<RequiredObject>AlliedPowerPlant</RequiredObject>
+		</GameDependency>
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_ORE" Amount="800"/>
+		</ObjectResourceInfo>
+		<ArmorSet
+			Armor="AlliedPrimaryBaseDefenseArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="DEFENSE" >
+			<ConstructionBaseSelectionCriteria
+				ExcludedBaseTypes="NO_BUILD_RADIUS"
+				PreferredBaseTypes="ENEMIES_IN_BASE UNDER_ATTACK"
+				SortOrder="PREFER_MOST_RECENTLY_ATTACKED" />
+		</SkirmishAIInformation>
+		<Draws>
+			<!-- DRAW GUN -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Gun"
+				OkToChangeModelColor="true"
+				ExtraPublicBone=" UPGRADE_DEFAULT_MISSILE BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABBaseDefense" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="UPGRADE_DEFAULT_MISSILE" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="UPGRADE_DEFAULT_MISSILE" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretPitch="Turret_Pitch"
+						TurretID="1" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="ABBaseDefense" />
+				</ModelConditionState>        
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="ABBaseDefense_BLD_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD">
+					<Model
+						Name="ABBaseDefense_BLD_SKN" />
+				</ModelConditionState>					
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Script>
+						CurDrawableHideSubObjectPermanently("Upgrade_Blaster_Rifles")
+						CurDrawableHideSubObjectPermanently("Upgrade_Engineer")
+						CurDrawableHideSubObjectPermanently("Upgrade_Flak")
+						CurDrawableHideSubObjectPermanently("Upgrade_GoldenGun")
+						CurDrawableHideSubObjectPermanently("Upgrade_MachineGun")
+						CurDrawableHideSubObjectPermanently("Upgrade_MissileLauncher")
+						CurDrawableHideSubObjectPermanently("Upgrade_Natasha_Sniper")
+						CurDrawableHideSubObjectPermanently("Upgrade_Ninja_Star")
+						CurDrawableHideSubObjectPermanently("Upgrade_Plasma")
+						CurDrawableHideSubObjectPermanently("Upgrade_Psyonic")
+						CurDrawableHideSubObjectPermanently("Upgrade_Psyonic_Turret")
+						CurDrawableHideSubObjectPermanently("Upgrade_Shotgun")
+						CurDrawableHideSubObjectPermanently("Upgrade_Speakers")
+						CurDrawableHideSubObjectPermanently("Upgrade_Tesla")
+						CurDrawableHideSubObjectPermanently("Upgrade_Tesla_Turret")
+						CurDrawableHideSubObjectPermanently("Upgrade_Turret")
+					</Script>
+				</AnimationState>									
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING ">
+					<Animation
+						AnimationName="ABBaseDefense_BLD_BLDW"
+						AnimationBlendTime="0"
+						AnimationMode="ONCE"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>									
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="ABBaseDefense_BLD_BLD"
+						AnimationBlendTime="0"
+						AnimationMode="ONCE"
+						AnimationAbsoluteTime="2s" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABBaseDefense_BLD_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+				</AnimationState>								
+<!--				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+
+					<Script>
+						CurDrawableHideSubObjectPermanently("MuzzleFlash_01")
+						CurDrawableHideSubObjectPermanently("MuzzleFlash_02")
+					</Script>
+				</AnimationState>
+
+
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING">
+					<Animation
+						AnimationName="GBWatchTwrGD3"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Des_Small"
+						FollowBone="false" />
+				</AnimationState>
+-->				
+			</ScriptedModelDraw>
+
+<!-- DRAW PLATFORM -->
+
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Platform"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABBaseDefense_Platform" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="ABBaseDefense_Platform" />
+				</ModelConditionState>
+        
+        
+        
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER STRUCTURE_UNPACKING">
+					<Model
+						Name="ABBaseDefense_Platform_BLD" />
+						 <ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="ABPowerPlantWakeSplash"
+						FollowBone="true" />          
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER SOLD">
+					<Model
+						Name="ABBaseDefense_Platform_BLD" />
+					<ParticleSysBone
+						 BoneName="None"
+						 FXParticleSystemTemplate="ABPowerPlantWakeSplash"
+						 FollowBone="true" />
+				</ModelConditionState>					
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Bib")
+						CurDrawableHideSubObjectPermanently("Platform")
+						CurDrawableHideSubObjectPermanently("Platform_FX")
+					</Script>
+				</AnimationState>	
+				
+					<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"  
+					ConditionsYes="STRUCTURE_UNPACKING OVER_WATER">
+					<Animation
+						AnimationName="ABBaseDefense_Platform_BLD"
+						AnimationMode="ONCE" />
+					<Script>
+						CurDrawableHideSubObjectPermanently("Bib")
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+					</Script>						
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+				</AnimationState>	
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SOLD OVER_WATER"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="ABBaseDefense_Platform_BLD"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationAbsoluteTime="2s"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupFroth"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="AlliedPowerPlantWaterBuildupMist"
+						FollowBone="true" />
+				</AnimationState>				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="OVER_WATER">
+					<Script>
+						CurDrawableShowSubObjectPermanently("Platform")
+						CurDrawableShowSubObjectPermanently("Platform_FX")
+						CurDrawableHideSubObjectPermanently("Bib")
+					</Script>
+				</AnimationState>		
+			</ScriptedModelDraw>
+
+<!-- DRAW PARTICLES -->
+
+      <ScriptedModelDraw
+				id="ModuleTag_Draw_FX"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="ABRefinery_FX" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="ABBaseDefense_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="ABBaseDefense_FX" />
+					<ParticleSysBone 
+						BoneName="FX_BONE01" 
+						FXParticleSystemTemplate="GenericDStateSmoke"
+						FollowBone="true"/>
+					<ParticleSysBone 
+						BoneName="FX_BONE01"
+ 						FXParticleSystemTemplate="GenericDStateFire"
+						FollowBone="true"/>
+
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			
+			<LaserDraw
+				id="ModuleTag_LaserDraw"
+				Texture1_UTile="1"
+				Texture1_VTile="1"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".3"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1.4"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="30"
+				LaserWidth="8"
+				LaserStateID="1">
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXObeliskLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXLaserOverlay</Value>
+						</Texture>
+						<Float Name="ColorEmissive">
+							<Value>5.000000</Value>
+							<Value>5.000000</Value>
+							<Value>2.000000</Value>
+						</Float>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+			
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1"
+					AllowInterleavedFiring="false"
+					InterleavedStyle="INTERLEAVE_FIRST_AVAILABLE"
+					WeaponChoiceCriteria="PREFER_MOST_DAMAGE"
+					AutoChooseWeapon="true">
+
+					<!-- Default unoccupied weapon -->
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="AlliedBaseDefenseRockets"
+						ForbiddenObjectStatus="CONTAINER_OCCUPIED"/>
+						
+					<Weapon
+						Ordering="SECONDARY_WEAPON"
+						Template="AlliedBaseDefenseRockets_Aircraft"
+						ForbiddenObjectStatus="CONTAINER_OCCUPIED"/>
+					
+					<!-- SovietAntiVehicleInfantry -->
+					<Weapon
+						Template="ABD_SovietAntiVehicleFlakLauncher"
+						Upgrade="Uprade_IFV_FlakTrooper"
+						Ordering="PRIMARY_WEAPON"/>
+					
+					<!-- AlliedInfiltrationInfantry -->
+					<Weapon
+						Template="ABD_PistolWeapon"
+						Upgrade="Uprade_IFV_GoldenGun"
+						Ordering="PRIMARY_WEAPON"/>
+					
+					<!-- SovietAntiInfantryInfantry & JapanAntiInfantryInfantry-->
+					<Weapon
+						Template="ABD_MachineGun"
+						Upgrade="Uprade_IFV_MachineGun"
+						Ordering="PRIMARY_WEAPON"/>
+						
+				<!-- JapanAntiInfantryInfantry-->
+						
+					<Weapon
+						Template="ABD_JapanMachineGun"
+						Upgrade="Uprade_IFV_JapanMachineGun"
+						Ordering="SECONDARY_WEAPON"/>		
+					
+					<!-- AlliedAntiVehicleInfantry -->
+					<Weapon
+						Template="ABD_AlliedAntiVehicleInfantryMissileLauncher"
+						Upgrade="Uprade_IFV_MissleTrooper"
+						Ordering="PRIMARY_WEAPON"/>
+					
+					<!-- AlliedCommandoTech1 -->
+					<Weapon
+						Template="ABD_PistolWeapon"
+						Upgrade="Uprade_IFV_Pistol"
+						Ordering="PRIMARY_WEAPON"/>
+
+					<!-- JapanAntiVehicleInfantry -->
+					<Weapon
+						Template="ABD_JapanAntiVehicleInfantryPlasmaBazooka"
+						Upgrade="Uprade_IFV_PlasmaBazooka"
+						Ordering="PRIMARY_WEAPON"/>
+
+					<!-- JapanCommandoTech1 -->
+					<Weapon
+						Template="ABD_JapanCommandoTech1PsyonicCrush"
+						Upgrade="Uprade_IFV_PsyonicCrush"
+						Ordering="PRIMARY_WEAPON"/>
+                    <Weapon
+                       Template="ABD_JapanCommandoTech1PsyonicAntiAirCrush"
+                       Upgrade="Uprade_IFV_PsyonicCrush"
+                       Ordering="SECONDARY_WEAPON"/>
+
+					<!-- AlliedEngineer, SovietEngineer & JapanEngineer -->
+					<Weapon
+						Template="ABD_RepairWeapon"
+						Upgrade="Uprade_IFV_Repair"
+						Ordering="PRIMARY_WEAPON"/>
+
+					<!-- SovietScoutInfantry & AlliedScoutInfantry-->
+					<Weapon
+						Template="ABD_RoarWeapon"
+						Upgrade="Uprade_IFV_Roar"
+						Ordering="PRIMARY_WEAPON"/>
+
+					<!-- AlliedAntiInfantryInfantry -->
+					<Weapon
+						Template="ABD_ShotgunWeapon"
+						Upgrade="Uprade_IFV_Shotgun"
+						Ordering="PRIMARY_WEAPON"/>
+
+					<!-- JapanInfiltrationInfantry -->
+					<Weapon
+						Template="ABD_JapanInfiltrationShiruken"
+						Upgrade="Uprade_IFV_Shuriken"
+						Ordering="PRIMARY_WEAPON"/>
+
+					<!-- SovietCommando -->
+					<Weapon
+						Template="ABD_SovietCommandoSniperRifle"
+						Upgrade="Uprade_IFV_SovietCommando"
+						Ordering="PRIMARY_WEAPON"/>
+
+					<!-- SovietHeavyAntiVehicleInfantry -->
+					<Weapon
+						Template="ABD_SovietHeavyAntiVehicleInfantryTeslaGun"
+						Upgrade="Uprade_IFV_TeslaTrooper"
+						Ordering="PRIMARY_WEAPON"/>
+					
+					<TurretSettings
+						TurretTurnRate="360"
+						MinimumPitch="-30d"
+						AllowsPitch="true" 
+						TurretPitchRate="180" 
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="4.0s"
+						MinIdleScanAngle="30.0"
+						MaxIdleScanAngle="50.0"
+						ComeToHaltJiggle="3d">
+						<TurretAITargetChooserData
+							CanAcquireDynamicIfAssignedOutOfRange="true">
+					</TurretAITargetChooserData>
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+      
+			<!-- For the Plasma Bazooka -->			
+			<LaserState id="ModuleTag_LaserState" LaserId="1" />
+
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="OffensiveStructures" />
+			
+			<!-- For the machine gun -->			
+			<StatusBitsUpgrade
+				id="ModuleTag_VeterancyUpgrade"
+				StatusToSet="ENABLE_TRACER_DRAW">
+				<TriggeredBy>Uprade_IFV_MachineGun</TriggeredBy>
+				<TriggeredBy>Uprade_IFV_JapanMachineGun</TriggeredBy>
+			</StatusBitsUpgrade>
+
+      <!-- For the Allied IFV Auto Repair Allies -->
+      <StatusBitsUpgrade
+				id="ModuleTag_UpgradeWeapon"
+				StatusToSet="REPAIR_ALLIES_WHEN_IDLE">
+        <TriggeredBy>Uprade_IFV_Repair</TriggeredBy>
+      </StatusBitsUpgrade>
+      
+			<!-- For the Psyonic Chrush -->
+            <LiftObjectUpdate
+                id="ModuleTag_PsyonicCrushLiftUpdate"
+                CrusherModifiesVelocity="false"
+                LiftVelocity="4.0"
+                MaxElevationFromGround="200.0"
+                TimeIncrement="0.5s"
+                MaxTimeLifted="8.0s"
+                MaxStructureShakeVelocity="0.25"
+                AirplaneCrashWeapon="JapanCommandoTech1AirplaneCrashWeapon"
+				/>
+			<Physics
+				id="ModuleTag_Physics"/>
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="SovietRefineryHit"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+				<Event
+					Index="onDeath"
+					FX="FX_None" />
+			</FXListBehavior>
+			<FXListBehavior xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_DieSound">
+				<DieMuxData 
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+				<Event Index="onDeath" FX="FX_SmallBuildingDieExplosion" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="ABBaseDefense_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="SUICIDED" />
+			</DestroyDie>	
+			
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpack"
+				UnpackTime="2.0s" />
+			<!-- Temp -->
+			<GarrisonContain
+				id="ModuleTag_Garrison"
+				ObjectStatusOfContained="ENCLOSED UNSELECTABLE NO_ATTACK"
+				ContainMax="1"
+				EnterSound="GenericBuilding_Garrison"
+				ExitSound="GenericBuilding_Ungarrison"
+				AllowEnemiesInside="false"
+				AllowAlliesInside="true"
+				AllowNeutralInside="false"
+				AllowOwnPlayerInsideOverride="true"
+				PassDisabilityToRiders="true"
+				ShowPips="true"
+				KillPassengersOnDeath="true">
+				<PassengerFilter
+					Rule="ANY"
+					Include="INFANTRY" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</GarrisonContain>
+
+			<xi:include
+				href="DATA:Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="DATA:Includes/GenericAlliedBuildingSuicideNoSpawn.xml" />			
+			<xi:include
+				href="DATA:Includes/InfantryFighting/IF_SecondaryObjectListener.xml" />
+			<xi:include
+				href="DATA:Includes/InfantryFighting/IF_SubObjectsUpgrade.xml" />
+			
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="AlliedBaseDefenseFunctions"
+			/>
+						
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					IdleScanDelay="=$FAST_IDLE_SCAN_DELAY">	
+				</UnitAITargetChooserData>	
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1000" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<PlacementShape
+				Type= "BOX"
+				MajorRadius = "15.0"
+				MinorRadius = "15.0"
+				Height = "3.0" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</PlacementShape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "4.02"
+				MinorRadius = "5.25141"
+				Height = "19.227"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				Type= "BOX"
+				MajorRadius = "8.93276"
+				MinorRadius = "8.02577"
+				Height = "7.9023"
+				ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "12.9889" />
+			</Shape>
+			<Shape
+				Type= "BOX"
+				MajorRadius = "7.5"
+				MinorRadius = "10.0"
+				Height = "6.09" >
+				<Offset
+					x = "0.0"
+					y = "0.0"
+					z = "0.0" />
+			</Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="AudioEvent:ALL_TurretSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+<!--
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+-->
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="310"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

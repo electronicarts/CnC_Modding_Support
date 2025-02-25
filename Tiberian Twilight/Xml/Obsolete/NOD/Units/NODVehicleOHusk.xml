@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- Nod Redeemer Husk -->
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NURedeemer_DIEA_SKN.W3X" />
+		<Include
+			type="all"
+			source="ART:NURedeemer_DIEA.W3X" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseHusk.xml" />
+	</Includes>
+	<GameObject
+		id="NodVehicleOHusk"
+		inheritFrom="BaseHusk"
+		SelectPortrait="Portrait_NODMegaUnit"
+		ButtonImage="Portrait_NODMegaUnit"
+		Side="NOD"
+		EditorName="NodVehicleOHusk"
+		Description="Desc:NODMegaUnitHusk">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODMegaUnitHusk</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NURedeemer_DIEA_SKN" />
+					<ParticleSysBone
+						BoneName="B_UArmL"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NURedeemer_DIEA"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="0" />					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2">
+					<Animation
+						AnimationName="NURedeemer_DIEA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0s"
+				SinkRate="2.4"
+				DestructionDelay="4s">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<OCL
+					Type="INITIAL">
+					<OCL>OCL_NodVehicleOHuskDebris</OCL>
+				</OCL>						
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleExplodeNoScorch" />
+			</FXListBehavior>
+
+			<!-- Override base capture functionality with revive specific OCL -->
+			<CaptureContain		 
+				id="ModuleTag_CaptureHusk"
+				OnCaptureOCL="NodVehicleOHuskReplace"
+				/>
+
+			<CreateObjectOnHealed
+				id="ModuleTag_CreateObjectOnHealed"
+				CreationList="NodVehicleOHuskReplace"/>
+			
+			<AutoHealBehavior
+				id="ModuleTag_BackupSystemsHeal"
+				HealingAmount="=$MEGAUNIT_HUSK_HEAL_PER_SECOND"/>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$MEGAUNIT_HUSK_HEALTH" />
+		</Body>
+		<Geometry>
+			<Shape
+				Type="BOX"
+				MajorRadius="30.0"
+				MinorRadius="50.0"
+				Height="13.0">
+				<Offset
+					x="0"
+					y="25"
+					z="0"/>
+			</Shape>
+		</Geometry>
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+	</GameObject>
+</AssetDeclaration>

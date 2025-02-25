@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+	<!--	<Include type="all" source="DATA:Civilian/Cape_Cod_CC/Props/CCBuildingDebris_02.xml" />	-->
+		<Include type="all"	source="ART:HV_Boxing.w3x" />
+		<Include type="all"	source="ART:YU_Hotel01_GAR.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureLarge.xml" />
+		<Include type="instance" source="DATA:Civilian/Havana_HV/Props/HV_Boxing_Collapse.xml" />
+    <Include type="all" source="ART:HV_Boxing_SIGNANIM.w3x" />
+    <Include type="all" source="ART:HV_Boxing_GAG.w3x" />
+
+	</Includes>
+	<GameObject
+		id="HV_Boxing"
+		inheritFrom="BaseCivilianStructureLarge"
+		EditorName="HV_Boxing"
+    	EditorSorting="STRUCTURE"
+		Browser="REGION Havana_HV STRUCTURE"
+		SelectPortrait="Portrait_Special_BoxingGym"
+		ButtonImage="Button_Special_BoxingGym"
+		TypeDescription="Type:ObjectiveStructure"
+		Description="Desc:KirovStadium">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:KirovStadium</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false"
+				AffectedByStealth="false"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18	BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20 BONEGARRISON01 BONEGARRISON02 BONEGARRISON03 BONEGARRISON04 BONEGARRISON05 BONEGARRISON06 BONEGARRISON07 BONEGARRISON08 BONEGARRISON09 BONEGARRISON10 BONEGARRISON11 BONEGARRISON12">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="HV_Boxing" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="HV_Boxing_SIGNANIM"
+						AnimationMode="LOOP"
+						AnimationBlendTime="0" />
+				</AnimationState>
+
+        <AnimationState
+          ParseCondStateType="PARSE_NORMAL"
+          ConditionsYes="USER_4">
+          <Animation
+						AnimationName="HV_Boxing_GAG"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+        </AnimationState>
+			
+      </ScriptedModelDraw>
+
+<!-- REPLACED GARRISON DRAW MODULE -->
+<!--
+			<xi:include
+				href="DATA:Includes/GarrisonFlagArmorDraw.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:CommonArmorDraws/child::*)" />
+-->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_Garrison"
+				OkToChangeModelColor="false"
+				AffectedByStealth="false">
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="YU_Hotel01_GAR" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_FIRST"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="YU_Hotel01_GAR"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationBlendTime="0"/>
+					<Script>
+						CurDrawableHideSubObjectPermanently("Garrison_Wall")
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Idle" and Prev ~= "TRANS_IntoIdle" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoIdle")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="GARRISONED"
+					Flags="START_FRAME_LAST"
+					StateName="STATE_Garrisoned">
+					<Animation
+						AnimationName="YU_Hotel01_GAR"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="0"/>
+					<Script>
+						CurDrawableShowSubObjectPermanently("Garrison_Wall")
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Garrisoned" and Prev ~= "TRANS_IntoGarrisoned" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoGarrisoned")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					Flags="START_FRAME_LAST"
+					StateName="STATE_Idle">
+					<Animation
+						AnimationName="YU_Hotel01_GAR"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="0"/>
+					<Script>
+						CurDrawableShowSubObjectPermanently("Garrison_Wall")
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Idle" and Prev ~= "TRANS_IntoIdle" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoIdle")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoGarrisoned"
+					Flags="START_FRAME_FIRST">
+					<Animation
+						AnimationName="YU_Hotel01_GAR"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+					<Script>
+						CurDrawableShowSubObjectPermanently("Garrison_Wall")
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoIdle"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="YU_Hotel01_GAR"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationBlendTime="0"/>
+					<Script>
+						CurDrawableShowSubObjectPermanently("Garrison_Wall")
+					</Script>
+				</AnimationState>
+			</ScriptedModelDraw>
+
+<!-- REPALCED GARRISON FLAG DRAW -->
+
+			<ScriptedModelDraw xmlns="uri:ea.com:eala:asset"
+				id="ModuleTag_FlagDraw"
+				AttachToBoneInAnotherModule="BoneFlag01"
+				OkToChangeModelColor="true" >
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT" >
+					<Model Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+				</AnimationState>
+
+			</ScriptedModelDraw>
+
+
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="FX_BuildingDebrisExplosion"
+					CreationObject="YU_HotelDebris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Large" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="HV_Boxing_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_MEDIUM" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+<Shape 
+     Type= "BOX"
+     MajorRadius = "47.6531"
+     MinorRadius = "71.3622"
+     Height = "62.9115"
+     ContactPointGeneration = "STRUCTURE" >
+    <Offset
+        x = "-0.523411"
+        y = "-0.019043"
+        z = "0.0" />
+</Shape>		
+
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+	</GameObject>
+
+<ObjectCreationList
+		id="HV_Boxing_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>HV_Boxing_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>	
+</AssetDeclaration>

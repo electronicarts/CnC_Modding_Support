@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:AURprDrn_SKN.w3x" />
+		<Include type="all"	source="ART:AURprDrn_ACCL.w3x" />
+		<Include type="all"	source="ART:AURprDrn_DECL.w3x" />
+		<Include type="all"	source="ART:AURprDrn_IDLA.w3x" />
+		<Include type="all"	source="ART:AURprDrn_MOVA.w3x" />
+		<Include type="all"	source="ART:AURprDrn_RPRA.w3x" />
+		<Include type="instance" source="DATA:BaseObjects/BaseRepairDrone.xml" />
+	</Includes>
+	<GameObject
+		id="AlienRepairDroneSpawned"
+		inheritFrom="BaseRepairDrone"
+		Side="ALIEN"
+		KindOf="=$SUMMONED_REPAIR_DRONE_KINDOF"
+		EditorName="AlienRepairDroneSpawned"
+		Description="Desc:AlienRepairDroneSpawned">
+		<LocomotorSet
+			Locomotor="AlienRepairDroneLocomotor"
+			Condition="NORMAL"
+			Speed="50.0" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="AURprDrn_SKN" />
+				</ModelConditionState>		
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					AllowRepeatInRandomPick="true"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="AURprDrn_IDLA"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<!-- placeholder until we get some real art -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DYING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="AURprDrn_RPRA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ATTACHED"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="AURprDrn_RPRA"
+						AnimationMode="LOOP"/>
+					<ParticleSysBone
+						BoneName="None"
+						FXParticleSystemTemplate="HealingFX"
+						FollowBone="true" />
+				</AnimationState>		
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="AURprDrn_ACCL"
+						AnimationMode="ONCE"
+						Distance="30" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="AURprDrn_DECL"
+						AnimationMode="ONCE"
+						Distance="30" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING"
+					Flags="RANDOMSTART">
+					<Animation
+						AnimationName="AURprDrn_MOVA"
+						AnimationMode="LOOP"
+						AnimationPriority="30"
+						Distance="30" />
+				</AnimationState>										
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<SlavedUpdate
+				xai:joinAction="Overwrite"
+				id="ModuleTag_SlavedUpdate"
+				LeashRange="=$REPAIR_DRONE_LEASH_DISTANCE"
+				GuardMaxRange="=$REPAIR_DRONE_LEASH_DISTANCE"
+				GuardWanderRange="50"
+				AttackRange="0"
+				FadeOutRange="0"
+				FadeTime="0"
+				UseSlaverAsControlForEvaObjectSightedEvents="false">
+			</SlavedUpdate>
+				
+
+			<PassiveAreaEffectBehavior
+				xai:joinAction="Overwrite"
+				id="ModuleTag_PassiveAreaEffect"
+				EffectRadius="0"
+				HealingPointsPerSecond="150"
+				AffectAttached="true"
+				AffectUnderAttack="true"
+				NonStackable="false"
+				HealFX="FX_Repair" >
+				<AllowFilter
+					Rule="ANY"
+					Include="VEHICLE HUGE_VEHICLE INFANTRY"
+					Exclude="AIRCRAFT HORDE PRODUCED_AT_HELIPAD" 
+					Relationship="ALLIES" />
+			</PassiveAreaEffectBehavior>
+			<AttachUpdate
+				xai:joinAction="Overwrite"
+				id="ModuleTag_Attach"
+				Range="=$REPAIR_DRONE_LEASH_DISTANCE"
+				CloseEnoughRange="20.0"
+				Teleport="false"
+				UseGeometry="true"
+				DetachWhenParentHealed="true" 
+				RequireFullyHealedToDetach="true"
+				ScanForNewParentWhenDetached="true"
+				DetachWhenParentOutOfSlavedRange="true"
+				InitialAttachDelay="4.0s"
+				ParentStatus="UNDERGOING_REPAIR"
+				ForbiddenParentStatus="UNATTACKABLE AIRBORNE_TARGET"
+				CanAttachToHordeMembers="true"
+				Flags="FIND_BEST_PARENT UNCONTAINED_ONLY SAME_PLAYER_ONLY ONE_ATTACH_PER_PARENT"
+				>
+				<ObjectFilter
+					Rule="ANY"
+					Include="VEHICLE HUGE_VEHICLE INFANTRY"
+					Exclude="AIRCRAFT HORDE PRODUCED_AT_HELIPAD" 
+					Relationship="ALLIES" />
+			</AttachUpdate>
+			<FXListBehavior
+				id="ModuleTag_BlinkFX">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onCreate"
+					FX="FX_AlienBlinkPack" />
+			</FXListBehavior>
+		</Behaviors>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ALI_RepairDrone_RepairLoop">
+				<ModelConditionSound Sound="ALI_RepairDrone_RepairLoop" RequiredFlags="ATTACHED" ExcludedFlags="DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		</GameObject>
+</AssetDeclaration>

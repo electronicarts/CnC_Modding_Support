@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NUHarbH_SKN.W3X" />
+		<Include
+			type="all"
+			source="ART:NUHarb_DIEB.W3X" />
+		<Include
+			type="all"
+			source="ART:NUMech_K.xml" />
+		<Include
+			type="all"
+			source="ART:NUMechD_K.xml" />			
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseVehicle.xml" />
+	</Includes>
+	<GameObject
+		id="NODHarbingerHusk"
+		inheritFrom="BaseVehicle"
+		SelectPortrait="Portrait_NodAvatarHusk"
+		ButtonImage="Portrait_NodAvatarHusk"
+		Side="NOD"
+		EditorSorting="UNIT"
+		TransportSlotCount="0"
+		CommandSet="EmptyCommandSet"
+		KindOf="PRELOAD SELECTABLE CAN_CAST_REFLECTIONS IMMOBILE NOT_AUTOACQUIRABLE HUSK VALID_TARGET_FOR_C4"
+		RadarPriority="UNIT"
+		ProductionQueueType="VEHICLE"
+		EditorName="NODHarbingerHusk"
+		Description="Desc:HarbingerWarmechHusk">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:HarbingerWarmechHusk</DisplayName>
+		<ArmorSet
+			Armor="NoArmor"
+			DamageFX="NormalDamageFX" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUHarbH_SKN" />
+					<ParticleSysBone
+						BoneName="B_UArmL"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_6">
+					<Model
+						Name="NUHarbH_SKN" />
+					<Texture
+						Original="NUMechD"
+						New="NUMechD_K" />							
+					<ParticleSysBone
+						BoneName="B_UArmL"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NUHarb_DIEB"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="0" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "STATE_Default" and Prev ~= "TRANS_ToDefault" then
+						CurDrawableSetTransitionAnimState("TRANS_ToDefault")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_ToDefault">
+					<Animation
+						AnimationName="NUHarb_DIEB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics" />
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="0s"
+				SinkRate="2.4"
+				DestructionDelay="4s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<EngineerContain
+				id="ModuleTag_EngineerContain"
+				NameOfVoiceToUseForFriendlyEnter="VoiceCaptureHusk"
+				NameOfVoiceToUseForHostileEnter="VoiceCaptureHusk"
+				EvaEventForReplace="HuskRepaired"
+				EvaEventForCaptureAndReplace="HuskRepaired"
+				FXForReplace="FX_Husk_Repaired" 
+				FXForCapture="FX_Husk_Captured"
+				FXForCaptureAndReplace="FX_Husk_Captured" 
+				ReplaceWith="NODAvatarHuskReplace">
+				<CanEnterFilter
+					Rule="NONE">
+					<IncludeThing>GDIEngineer</IncludeThing>
+					<IncludeThing>NODSaboteur</IncludeThing>
+					<IncludeThing>AlienAssimilator</IncludeThing>
+					<IncludeThing>SteelTalonsCombatEngineer</IncludeThing>
+					<IncludeThing>ZOCOMEngineer</IncludeThing>			
+				</CanEnterFilter>
+			</EngineerContain>			
+			<xi:include
+				href="DATA:Includes/GenericHuskLifetimeUpdate.xml" />				
+
+<!-- somehow we need to display the upgrade the model had when it was dead -->
+			
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowStealth"
+				ShowSubObjects="S_GENERATOR">
+				<TriggeredBy>Upgrade_AvatarInvisibility</TriggeredBy>
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowFlamer"
+				ShowSubObjects="FLAMETANK">
+				<TriggeredBy>Upgrade_AvatarFlamer</TriggeredBy>
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowBeamCannon"
+				ShowSubObjects="NUBEAM">
+				<TriggeredBy>Upgrade_AvatarBeamCannon</TriggeredBy>
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowStealthDetect"
+				ShowSubObjects="S_DETECTOR">
+				<TriggeredBy>Upgrade_AvatarStealthDetect</TriggeredBy>
+			</SubObjectsUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_AllFactionUpgrade"
+				AddConditionFlags="USER_6">
+				<TriggeredBy>Upgrade_AllFactionUpgrade</TriggeredBy>
+			</ModelConditionUpgrade>				
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				AILuaEventsList="NODAvatarFunctions">
+				<UnitAITargetChooserData />
+			</AIUpdate>
+		</AI>		
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$MECH_HUSK_HEALTH" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="60.0"
+				MinorRadius="28.0"
+				Height="26.0">
+				<Offset
+					x="60.0"
+					y="0.0"
+					z="0.0" />
+			</Shape>
+		</Geometry>
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<VisionInfo
+			VisionRange="50"
+			ShroudClearingRange="50" />
+		<CrusherInfo
+			CrusherLevel="0" 
+			CrushEqualLevelProps="true"
+			CrushableLevel="0" />
+	</GameObject>
+</AssetDeclaration>

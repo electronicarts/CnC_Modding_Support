@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>		
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:Alien/Units/AlienDevastatorWarship.xml" />
+		<Include
+			type="all"
+			source="ART:FXInvisBone.w3x" />				
+	</Includes>
+	<GameObject
+		id="Traveler59DevastatorWarship"
+		inheritFrom="AlienDevastatorWarship"
+		Side="Traveler59"
+		EditorSorting="UNIT"
+		CommandSet="Traveler59DevastatorWarshipCommandSet"
+		EditorName="Traveler59DevastatorWarship"
+		Description="Desc:Traveler59DevastatorWarship"
+		WorldMapArmoryUpgradesAllowed="Upgrade_TravelerEngines"
+		TypeDescription="Type:Traveler59DevastatorWarship">
+		<GameDependency
+			xai:joinAction="Replace">
+			<RequiredObject>Traveler59Reactor</RequiredObject>
+		</GameDependency>
+		<DisplayUpgrade
+			xai:joinAction="Replace"
+			id="Tag_DisplayUpgrade1">Upgrade_TravelerEngines</DisplayUpgrade>
+		<Draws>	
+			<ScriptedModelDraw		
+				id="ModuleTag_DrawTravelerEnginesFX"
+				AttachToBoneInAnotherModule="roottransform">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"/>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE">						
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE">						
+				</AnimationState>					
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2 MOVING">
+					<ParticleSysBone
+						BoneName="INVISBONE01"
+						FXParticleSystemTemplate="AlienTravEngDist_DevWarship"
+						FollowBone="true" />						
+				</AnimationState>
+			</ScriptedModelDraw>	
+			<ScriptedModelDraw		
+				id="ModuleTag_HideOrShowTravelerEnginesFX">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableHideSubObject("TravEng01")
+						CurDrawableHideSubObject("TravEng02")						
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DECELERATE">
+					<Script>
+						CurDrawableHideSubObject("TravEng01")
+						CurDrawableHideSubObject("TravEng02")						
+					</Script>						
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE">
+					<Script>
+						CurDrawableHideSubObject("TravEng01")
+						CurDrawableHideSubObject("TravEng02")						
+					</Script>						
+				</AnimationState>				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2 MOVING">
+					<Script>
+						CurDrawableShowSubObject("TravEng01")
+						CurDrawableShowSubObject("TravEng02")						
+					</Script>						
+				</AnimationState>
+			</ScriptedModelDraw>			
+		</Draws>
+		<Behaviors>      
+			<StatusBitsUpgrade
+				xai:joinAction="Remove"
+				id="ModuleTag_StatusBitUpgrade"
+				StatusToSet="SHIELDBODY_ENABLED">
+				<TriggeredBy>Upgrade_AlienReactorForcefieldGenerator</TriggeredBy>
+			</StatusBitsUpgrade>		
+			<AttributeModifierUpgrade
+				id="Upgrade_TravelerEngines"
+				AttributeModifier="AttributeModifier_TravelerEnginesLargeShips">
+				<TriggeredBy>Upgrade_TravelerEngines</TriggeredBy>
+			</AttributeModifierUpgrade> 
+			<ModelConditionUpgrade
+				id="ModuleTag_TravelerEnginesModel"
+				AddConditionFlags="USER_2">
+				<TriggeredBy>Upgrade_TravelerEngines</TriggeredBy>
+			</ModelConditionUpgrade>	
+		<!--	<SubObjectsUpgrade
+				id="ModuleTag_ShowTravelerEngines"
+				ShowSubObjects="TravEng01 TravEng02">
+				<TriggeredBy>Upgrade_TravelerEngines</TriggeredBy>
+			</SubObjectsUpgrade>			
+		-->
+			<AudioLoopUpgrade id="ALI_TravelerEngines_Upgrade" SoundToPlay="ALI_TravelerEngines_Upgrade"> 
+				<TriggeredBy>Upgrade_TravelerEngines</TriggeredBy> 
+			</AudioLoopUpgrade> 
+		</Behaviors>
+		<AI>
+			<JetAIUpdate
+				xai:joinAction="Replace"			
+				id="ModuleTag_03"
+				NeedsRunway="false"
+				KeepsParkingSpaceWhenAirborne="false"
+				AutoAcquireEnemiesWhenIdle="YES"
+				AILuaEventsList="">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					SympathyRange="25.0" />
+				<LockonInfo />
+			</JetAIUpdate>
+		</AI>		
+	</GameObject>
+</AssetDeclaration>

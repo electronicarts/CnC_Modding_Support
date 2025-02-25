@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	
+	<!--Name: NOD Vehicle I / Heavy Blast T3 / Heavy Cannon / Pulverizer / Underminer -->
+	<Includes>
+		<Include type="all" source="ART:NUVehicleI_SKN.w3x" />
+		<Include type="all"	source="ART:NUVehicleI_AIDA.w3x" />
+		<Include type="all"	source="ART:NUVehicleI_DPLY1.w3x" />
+		<Include type="all"	source="ART:NUVehicleI_DPLY2.w3x" />
+		<Include type="all"	source="ART:NUVehicleI_ATKA.w3x" />
+		<Include type="all"	source="ART:NUVehicleI_ATKB.w3x" />
+		<Include type="all"	source="ART:NUVehicleI_ATKC.w3x" />
+		<Include type="all"	source="ART:NUVehicleI_DMG.xml" />
+		<Include type="instance" source="DATA:Nod/Props/NODVehicleIProps.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseHeavyVehicle.xml" />
+		<Include  type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:UI/HealthBarTemplates.xml" />
+	</Includes>
+	<GameObject
+		id="NODVehicleI"
+		inheritFrom="BaseHeavyVehicle"
+		HealthBoxHeightOffset="40"
+		HealthBar="Large"
+		SubGroupPriority="130"
+		SelectPortrait="Portrait_NOD_Vehicle_I"
+		ButtonImage="Btn_NOD_Vehicle_I"
+		Side="NOD"
+		ParticipationValue="=$NODVEHICLEI_PARTICIPATION_VALUE"
+		TransportSlotCount="8"
+		BuildTime="15"
+		CommandSet="NODVehicleICommandSet"
+		CommandPoints="=$NOD_VEHICLE_I_COMMANDPOINT_COST"
+		KindOf="+TRANSPORT +SIEGE_WEAPON"
+		VoicePriority="160"
+		EditorName="NOD_D3_Heavy_Blast(Underminer)"
+		EditorSorting="UNIT"
+		WeaponCategory="BLAST"
+		Description="Desc:NODVehicleI"
+		TypeDescription="Type:NODVehicleI">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODVehicleI</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank2</NeededUpgrade>
+		</GameDependency>
+		<LocomotorSet
+			Locomotor="NodVehicleILocomotor"
+			Condition="NORMAL"
+			Speed="80.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true"
+			ConquerMetricsOverrideDPS="10"
+			ConquerMetricsOverrideDamageType="BLAST" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="FXTracksR FXTracksL nc_rfspike nc_lfspike nc_rbspike nc_lbspike"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="FXTracksL"
+				TrackMarksRightBone="FXTracksR"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NUVehicleI_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXMuzzle01" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXMuzzle01" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NUVehicleI_SKN" />
+					<Texture
+						Original="NUVehicleI"
+						New="NUVehicleI_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUVehicleI_SKN" />
+					<Texture
+						Original="NUVehicleI"
+						New="NUVehicleI_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODDamagedFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="NODDamagedSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="NUVehicleI_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NUVehicleI_AIDA"
+						AnimationMode="LOOP"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="NUVehicleI_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+					<ParticleSysBone
+						BoneName="FXTracksL"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXTracksR"
+						FXParticleSystemTemplate="GDIWheelDustHeavy"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="ACCELERATE">
+					<Animation
+						AnimationName="NUVehicleI_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="Exhaust"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="UNPACKING">
+					<Animation
+						AnimationName="NUVehicleI_DPLY1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PACKING"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NUVehicleI_DPLY1"
+						AnimationMode="ONCE_BACKWARDS"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RELOADING_A">
+					<Animation
+						AnimationName="NUVehicleI_ATKA"
+						AnimationMode="MANUAL"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_OR_RELOADING_A">
+					<Animation
+						AnimationName="NUVehicleI_ATKA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<Animation
+						AnimationName="NUVehicleI_ATKB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+					<Animation
+						AnimationName="NUVehicleI_ATKC"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DEPLOYED">
+					<Animation
+						AnimationName="NUVehicleI_DPLY2"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODVehicleIWeapon" />
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<DeployUnitUpdate
+				id="ModuleTag_DeployUnit"
+				UnpackTime="2.0s"
+				PackTime="2.0s"
+				UnpackingAttributeModifier="UnpackingAttributeModifier"
+				DeployedAttributeModifier="DeployedAttributeModifier"
+				PackingAttributeModifier="PackingAttributeModifier" />
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Large_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleLRG_Death" />
+				<Event Index="onDeath" FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+				<Event Index="onDeath" FX="FX_GDIArtilleryHitBIG"/>
+			</FXListBehavior>
+		</Behaviors>
+		
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="DeployWhenIdleUnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="true"
+					SympathyRange="200"/>
+			</AIUpdate>
+		</AI>
+		
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="1500" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+				<Key>LargeGroupAudioKey_TankLarge</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_ASCB">
+			<!--re-arranged frame number order due to animation change -->
+				<Sound Sound="NOD_VehicleI_AbilityDeploy1" RequiredMC="UNPACKING" ExcludedMC="RECYCLED" Animation="NUVehicleI_DPLY1" Frame="1" />
+				<Sound Sound="NOD_VehicleI_AbilityDeploy2" RequiredMC="UNPACKING" ExcludedMC="RECYCLED" Animation="NUVehicleI_DPLY1" Frame="35" />
+				<Sound Sound="NOD_VehicleI_AbilityDeploy3" RequiredMC="UNPACKING" ExcludedMC="RECYCLED" Animation="NUVehicleI_DPLY1" Frame="36 40 45 49" />
+				<Sound Sound="NOD_VehicleI_AbilityDeploy4" RequiredMC="UNPACKING" ExcludedMC="RECYCLED" Animation="NUVehicleI_DPLY1" Frame="48" />
+				<Sound Sound="NOD_VehicleI_AbilityDeploy5" RequiredMC="UNPACKING" ExcludedMC="RECYCLED" Animation="NUVehicleI_DPLY1" Frame="17" />
+				
+				<!--
+				<Sound Sound="NOD_VehicleI_AbilityDeployPack1" RequiredMC="PACKING" ExcludedMC="RECYCLED" Animation="NUVehicleI_DPLY1" Frame="8" />
+				<Sound Sound="NOD_VehicleI_AbilityDeployPack2" RequiredMC="PACKING" ExcludedMC="RECYCLED" Animation="NUVehicleI_DPLY1" Frame="31" />	
+				<Sound Sound="NOD_VehicleI_AbilityDeployPack3" RequiredMC="PACKING" ExcludedMC="RECYCLED" Animation="NUVehicleI_DPLY1" Frame="61" />
+				<Sound Sound="NOD_VehicleI_AbilityDeployPack4" RequiredMC="PACKING" ExcludedMC="RECYCLED" Animation="NUVehicleI_DPLY1" Frame="88" />
+				-->
+				<Sound Sound="NOD_VehicleI_AbilityDeployPack5" RequiredMC="PACKING" ExcludedMC="RECYCLED" Animation="NUVehicleI_DPLY1" Frame="51" />
+				<Sound Sound="NOD_VehicleI_AbilityDeployPack6MS" RequiredMC="PACKING" ExcludedMC="RECYCLED" Animation="NUVehicleI_DPLY1" Frame="11" />
+				<!-- <Sound Sound="NOD_Underminer_VehI_WeaponRecoil" ExcludedMC="RECYCLED" Animation="NUVehicleI_ATKA" Frame="8" />
+				<Sound Sound="NOD_Underminer_VehI_WeaponRecoil" ExcludedMC="RECYCLED" Animation="NUVehicleI_ATKB" Frame="8" />
+				<Sound Sound="NOD_Underminer_VehI_WeaponRecoil" ExcludedMC="RECYCLED" Animation="NUVehicleI_ATKC" Frame="8" /> -->
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "45.0"
+					 MinorRadius = "30.0"
+					 Height = "36.0"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+		</Geometry>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_VehIUnderminer_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="NOD_VehIUnderminer_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="NOD_VehIUnderminer_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="NOD_VehIUnderminer_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="NOD_VehIUnderminer_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="NOD_VehIUnderminer_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="NOD_VehIUnderminer_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="NOD_VehIUnderminer_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry
+				Sound="Nod_VehicleI_MoveStart"
+				AudioType="soundMoveStart" />
+			<AudioEntry
+				Sound="Nod_VehicleI_IdleLoop"
+				AudioType="soundAmbient" />
+			<AudioEntry
+				Sound="NOD_VehicleI_MoveLoop"
+				AudioType="soundMoveLoop" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="650"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+	<LocomotorTemplate
+		id="NodVehicleILocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		TurnTimeSeconds="3.0s"
+		TurnTimeDamagedSeconds="3.0s"
+		MaxSpeedDamaged="100%"
+		AccelerationSeconds="1.0s"
+		BrakingSeconds="0.5s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="50.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="TREADS"
+		UseTerrainSmoothing="true"
+		AccelPitchLimit="2d"
+		PitchStiffness="0.5"
+		RollStiffness="0.5"
+		PitchDamping="0.8"
+		RollDamping="0.3"
+		ForwardAccelerationPitchFactor="0.0"
+		LateralAccelerationRollFactor="0.0"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		CanReverseMove="true"
+		ReverseMoveSpeed="100%"
+	/>
+
+	<!-- Ground-pounder weapon -->
+	<WeaponTemplate
+		id="NODVehicleIWeapon"
+		RadiusDamageAffects="ENEMIES"
+		AttackRange="650.0"
+		MinimumAttackRange="50.0"
+		WeaponSpeed="2000.0"
+		RequiredAntiMask="ANTI_GROUND"
+		ClipSize="1"
+		ReAcquireDetailType="PER_SHOT"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_BUILDINGS CAN_FIRE_ON_GROUND ALLOW_WEAPON_SELECTION_WITH_INVALID_STATUS"
+		CanFireWhileMoving="false"
+		FireFX="FX_NODVehicleILaunch"
+		FireVeteranFX="FX_NODVehicleILaunch"
+		FireSound="NOD_Underminer_VehI_ArtilleryWeaponFireMS"
+		CheckStatusFlagsInRangeChecks="false"
+		AcceptableAimDelta="22.5d"
+		RevealShroudOnFire="true"
+		RequiredFiringObjectStatus="IDLE_DEPLOYED">
+		<FiringDuration
+			MinSeconds="4.5s"
+			MaxSeconds="4.5s"/>
+		<ClipReloadTime
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s"/>
+		<Nuggets>
+			<ProjectileNugget
+				WarheadTemplate="NODVehicleICannonWarhead"
+				ProjectileTemplate="NodVehicleIShell">
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODVehicleICannonWarhead"
+		RequiredAntiMask="ANTI_GROUND">
+		<Nuggets>
+			<DamageNugget
+				Damage="100.0"
+				Radius="60.0"
+				DamageType="BLAST"
+				DeathType="EXPLODED" >
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+
+	<!-- Nod Heavy Cannon -->
+	<ExperienceLevelTemplate
+		id="NODVehicleIExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_01"
+		ExperienceAward="10">
+		<Target>NODVehicleI</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleIExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_02"
+		Prerequisite="NODVehicleIExperienceLevel_1"
+		RequiredExperience="20"
+		ExperienceAward="12">
+		<Target>NODVehicleI</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleIExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_03"
+		Prerequisite="NODVehicleIExperienceLevel_2"
+		RequiredExperience="50"
+		ExperienceAward="14">
+		<Target>NODVehicleI</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleIExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_04"
+		Prerequisite="NODVehicleIExperienceLevel_3"
+		RequiredExperience="90"
+		ExperienceAward="16">
+		<Target>NODVehicleI</Target>
+	</ExperienceLevelTemplate>
+
+	<LogicCommandSet
+		id="NODVehicleICommandSet">
+		<Cmd>Command_AttackMove</Cmd>
+	</LogicCommandSet>
+		
+</AssetDeclaration>

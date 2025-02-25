@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+
+	<xs:simpleType name="GrabUpdateFlagsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ACTIVATE_FIRE_WEAPON_UPDATE" />
+			<xs:enumeration value="TOGGLE_SELF_TO_DEFAULT_STATE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="GrabUpdateFlagsBitFlags">
+		<xs:list itemType="GrabUpdateFlagsType"></xs:list>
+	</xs:simpleType>
+
+
+	<xs:complexType name="GrabVictimInfo">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="DragToBoneName" type="xs:string" default="" />
+		<!-- world units per second -->
+		<xs:attribute name="DragRate" type="SageReal" default="0.0" />
+		<xs:attribute name="LiftHeight" type="SageReal" default="0.0" />
+	</xs:complexType>
+
+	<!-- depending on what we grabbed, do more stuff -->
+	<xs:complexType name="GrabVictimBehavior">
+		<xs:sequence>
+			<xs:element name="VictimDragInfo" type="GrabVictimInfo" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="KindOf" type="KindOfBitFlags" use="required" />
+		<xs:attribute name="ObjectStatusSelf" type="ObjectStatusBitFlags" default="" />
+	</xs:complexType>
+
+	<xs:complexType name="GrabUpdateModuleData">
+		<xs:complexContent>
+			<xs:extension base="UpdateModuleData">
+				<xs:sequence>
+					<xs:element name="VictimBehavior" type="GrabVictimBehavior" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="ObjectStatusSelf" type="ObjectStatusBitFlags" default="" />
+				<xs:attribute name="ObjectStatusVictim" type="ObjectStatusBitFlags" default="" />
+				<xs:attribute name="Flags" type="GrabUpdateFlagsBitFlags" default="" />
+				<xs:attribute name="ModelConditionsSelf" type="ModelConditionBitFlags" default="" />
+				<xs:attribute name="CommandSetGrabbing" type="LogicCommandSetWeakRef" use="optional"/>
+				<xs:attribute name="OnReleaseRechargeSpecialPower" type="SpecialPowerWeakRef" default="" />
+				<xs:attribute name="VictimAttributeModifier" type="AttributeModifierRef" default="" />
+				<xs:attribute name="OwnerAttributeModifier" type="AttributeModifierRef" default="" />
+				<xs:attribute name="AllowedVictimRelationships" type="PlayerRelationFlags" default="ENEMIES NEUTRAL" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+</xs:schema>

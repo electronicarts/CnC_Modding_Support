@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:balance="uri:ea.com:eala:balance" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:include schemaLocation="Includes/WeaponEffectNugget.xsd" />
+	<xs:include schemaLocation="SkirmishAI/AssetTypeAISpecialPowerEnums.xsd" />
+	<xs:include schemaLocation="Includes/AIWeaponData.xsd" />
+	
+
+	<xs:include schemaLocation="WeaponNuggets/ActivateCircularDamageNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ActivateLaserNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ActivateLiftNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ActivateLinearDamageNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ActivateStreamNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ActivateWeaponSweepNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/AttachNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/AttributeModifierNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ContainedObjectAttackNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/CrushTiberiumNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/DamageAndSpawnNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/DamageContainedNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/DamageNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/DOTNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ExperienceNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/FireOnObjectsNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ForceToggleToDefaultNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/GiveMoneyNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/GrapplingHookNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/HOTNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/IndirectSpecialPowerNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/InformationWarfareNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/InformTargetNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/LaunchSpawnedChildNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/LeechHealthDamageNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/LeechPercentMaxHealthDamageNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/LineDamageNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/LuaEventNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/MetaImpactNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/MultipleVictimProjectileNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ModifyStoredResourceNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ParalyzeNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ProbabilityTrackerNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ProjectileNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ReduceAmmoNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ReportWeaponFiredStatNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/ScatterProjectileNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/SecondaryDamageNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/SeedTiberiumNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/SlavesAttackNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/SpecialPowerNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/SpendStolenTiberiumNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/StripMaxHealthPercentNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/SuppressionNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/TerrainCraterNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/TargetChooserNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/TauntNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/TintObjectsNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/WeaponOCLNugget.xsd" />
+	<xs:include schemaLocation="WeaponNuggets/WeaponScatterEffectNugget.xsd" />
+
+	<xs:complexType name="RangeReal">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="Min" type="SageReal" default="0"/>
+		<xs:attribute name="Max" type="SageReal" default="0"/>
+	</xs:complexType>
+	<xs:complexType name="RangeDuration">
+		<xs:sequence></xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:pipelineOnly="true" />
+		<xs:attribute name="MinSeconds" balance:field="MinSeconds" type="Time" default="0s"/>
+		<xs:attribute name="MaxSeconds" balance:field="MaxSeconds" type="Time" default="0s"/>
+	</xs:complexType>
+
+
+	<xs:simpleType name="WeaponFlagsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="SYNC_AMMO_ON_ACTIVATE" />
+			<xs:enumeration value="ORTHOGONAL_SCATTER" />
+			<xs:enumeration value="LENGTH_SCATTER" />
+			<xs:enumeration value="ATTACK_NEEDS_LINE_OF_SIGHT" />
+			<xs:enumeration value="ATTACK_LOS_IGNORES_BUILDINGS" />
+			<xs:enumeration value="ATTACK_LOS_IGNORES_ENEMY_BUILDINGS" />
+			<xs:enumeration value="RELOAD_WHEN_ATTACK_STOPS" />
+			<xs:enumeration value="IGNORE_TARGET_AS_OBSTACLE" />
+			<xs:enumeration value="NOT_ATTRACTED_BY_MAGNETS" />
+			<xs:enumeration value="CRUSH_VEHICLE" />
+			<!-- this blocks the AI so that nothing can happen once the unit begins shooting until it has emptied its clip.  dont give this an unlimited clip plz -->
+			<xs:enumeration value="FORCE_EMPTY_ENTIRE_CLIP" />
+			<!-- the tells the weapon not to check relationship flags if it is hitting a wall (intended for crush weapons) -->
+			<xs:enumeration value="IGNORE_WALL_RELATIONSHIP"/>
+			<!-- Used by final squadron aircraft to grab a target inside the nanoswarm hive and fly into it, exploding against the hive -->
+			<xs:enumeration value="IGNORE_ENCLOSURE_CHECK"/>
+			<!-- will create an ammo bar that represents the ammo for this weapon only -->
+			<xs:enumeration value="DRAW_AMMO_BAR"/>
+			<!-- will create an ammo bar that represents the total ammo for all weapons with this option -->
+			<xs:enumeration value="ADD_TOTAL_AMMO_BAR"/>			
+			<xs:enumeration value="SET_BARREL_MODELCONDITIONS"/>
+			<xs:enumeration value="CAN_FIRE_ON_GROUND"/>
+			<xs:enumeration value="CAN_FIRE_ON_WATER"/>
+			<xs:enumeration value="SPIN_DOWN_ONLY_ON_ACQUIRING_NEW_TARGET"/>
+			<!-- 
+				The DYNAMIC_RELOAD_TIME flag tells the WeaponReloadState to recalc the reload time every update,
+				allowing for reload modifiers to take instant effect on weapons with long reload times. This is used
+				in CNC4 for bomber aircraft with long reload times that get quick reload times when near a crawler.
+			-->
+			<xs:enumeration value="DYNAMIC_RELOAD_TIME"/>
+			<xs:enumeration value="RELOAD_RESETS_BARREL_COUNTER"/>
+
+			<xs:enumeration value="ALLOW_WEAPON_SELECTION_WITH_INVALID_STATUS"/>
+			<xs:enumeration value="DO_NOT_HANDLE_WHEN_NO_FIREFX"/>
+			<xs:enumeration value="SEPERATE_AMMO_BAR"/>
+
+			<xs:enumeration value="IGNORE_FORCE_FIRE"/>
+			<xs:enumeration value="ATTACK_ENTERS_TARGET"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponFlagsBitFlags">
+		<xs:list itemType="WeaponFlagsType"></xs:list>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="WeaponReloadType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AUTO" />
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="RETURN_TO_BASE" />
+			<xs:enumeration value="ONE_AT_A_TIME" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponPrefireType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PER_SHOT" />
+			<xs:enumeration value="PER_CLIP" />
+			<xs:enumeration value="PER_BURST" />
+			<xs:enumeration value="PER_TARGET" />
+			<xs:enumeration value="PER_POSITION" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Specifies the frequency of reacquiring a detail position on a target -->
+	<xs:simpleType name="WeaponReAcquireDetailType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PRE_SHOT" />
+			<xs:enumeration value="PER_SHOT" />
+			<xs:enumeration value="PER_CLIP" />
+			<xs:enumeration value="PER_ATTACK" />
+			<xs:enumeration value="PRE_FIRE" />
+			<xs:enumeration value="POST_FIRE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponCollideType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ALLIES" />
+			<xs:enumeration value="ENEMIES" />
+			<xs:enumeration value="NEUTRAL" />
+			<xs:enumeration value="STRUCTURES" />
+			<xs:enumeration value="SHRUBBERY" />
+			<xs:enumeration value="PROJECTILES" />
+			<xs:enumeration value="WALLS" />
+			<xs:enumeration value="TARGETABLE_MISSILES" />
+			<xs:enumeration value="BALLISTIC_MISSILES" />
+			<xs:enumeration value="CONTROLLED_STRUCTURES" />
+			<xs:enumeration value="MONSTERS" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponCollideBitFlags">
+		<xs:list itemType="WeaponCollideType"></xs:list>
+	</xs:simpleType>
+
+
+	<xs:simpleType name="WeaponAffectsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SELF" />
+			<xs:enumeration value="ALLIES" />
+			<xs:enumeration value="ENEMIES" />
+			<xs:enumeration value="NEUTRALS" />
+			<xs:enumeration value="SUICIDE" />
+			<xs:enumeration value="NOT_SIMILAR" />
+			<xs:enumeration value="NOT_AIRBORNE" />
+			<xs:enumeration value="PROJECTILES" />
+			<xs:enumeration value="SAME_HEIGHT_ONLY" />
+			<xs:enumeration value="MINES" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponAffectsBitFlags">
+		<xs:list itemType="WeaponAffectsType"></xs:list>
+	</xs:simpleType>
+
+	<xs:simpleType name="WpnAntiT">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ANTI_GROUND" />
+			<xs:enumeration value="ANTI_WATER" />
+			<xs:enumeration value="ANTI_SUBMERGED" />
+			<xs:enumeration value="ANTI_STRUCTURE" />
+			<xs:enumeration value="ANTI_PROJECTILE" />
+			<xs:enumeration value="ANTI_TARGETABLE_MISSILE" />
+			<xs:enumeration value="ANTI_AIRBORNE_VEHICLE" />
+			<xs:enumeration value="ANTI_AIRBORNE_INFANTRY" />
+			<xs:enumeration value="ANTI_BALLISTIC_MISSILE" />            
+			<xs:enumeration value="ANTI_MINE" />
+			<xs:enumeration value="ANTI_PARACHUTE" />
+            <xs:enumeration value="ANTI_LIFTED_GROUND_UNIT" />
+			<xs:enumeration value="ANTI_INFANTRY" />
+			<xs:enumeration value="ANTI_VEHICLE" />
+            <!-- RA3 hack - only should be used by Yuriko anti-ground weapons -->
+
+			<xs:enumeration value="ANTI_RESOURCE_STRUCTURE" />
+			<!-- ARENA -->
+			<xs:enumeration value="ANTI_HUSK" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponAntiBitFlags">
+		<xs:list itemType="WpnAntiT"></xs:list>
+	</xs:simpleType>
+
+	<xs:simpleType name="FireEffectType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INCREASE_BURN_RATE" />
+			<xs:enumeration value="DECREASE_BURN_RATE" />
+			<xs:enumeration value="INCREASE_FUEL" />
+			<xs:enumeration value="INCREASE_BURN_RATE_ON_EXISTING_FIRE" />
+			<xs:enumeration value="INCREASE_FUEL_ON_EXISTING_FIRE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="VirtualDamageType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE"/>
+			<xs:enumeration value="SOLO"/>
+			<xs:enumeration value="SHARE"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Stuff for the AI to help it figure out which weapon to use against a target -->
+	<xs:complexType name="WeaponAiHintInfo" >
+		<xs:complexContent>
+			<xs:extension base="AIWeaponData">
+				<xs:sequence />
+				<!-- If true, use this against garrisoned buildings -->
+				<xs:attribute name="IsAntiGarrisonWeapon" type="SageBool" default="false" />
+
+				<!-- If the target's locomotor's max speed is greater than MaxSpeedOfTarget, avoid using this weapon because it will miss -->
+				<xs:attribute name="MaxSpeedOfTarget" type="SageReal" use="optional" />
+				
+				<!-- Use special code which handles long lock-on delays; that is, weapons that have a long preattack delay
+						 which is paid ONCE when starting to attack a target. (e.g. Javelin Soldier in Radar Lock mode, where 
+						 he needs a long time to lock onto the target. Or Athena Cannon) -->
+				<xs:attribute name="UseLongLockOnTimeCode" type="SageBool" default="false" />
+
+				<!-- Normally, when the AI is calculating the power of a weapon, we notice when a weapon is a projectile and 
+						 use the damage of the warhead weapon. However, other relationships can be too complex for the code to
+						 follow. In that case, use this field to force the AI damage calculations to act as if we had a projectile
+						 nugget using this as a warhead -->
+				<xs:attribute name="UseAsWarheadForDamageCalculations" type="WeaponRef" />
+				
+				<!-- If true, this unit should use the kiting behavior, if the Micromanager supports it -->
+				<xs:attribute name="UseKitingBehavior" type="SageBool" default="false" />
+				
+				<!-- If true, when the unit begins kiting, it will be set to hold fire mode -->
+				<xs:attribute name="HoldFireWhileKiting" type="SageBool" default="false" />
+				
+				<!-- Used to determine when a unit should start running away in the Micromanager -->
+				<xs:attribute name="ActivateKitingAmmoPercentage" type="Percentage" default="10%" />
+				<!-- Used to determine when a unit should stop running away in the Micromanager -->
+				<xs:attribute name="DeactivateKitingAmmoPercentage" type="Percentage" default="90%" />
+				<!-- Used to control if the micromanager uses this weapon as an AOE attack-->
+				<xs:attribute name="UseAOETargetingBehavior" type="SageBool" default="false" />
+				<!-- Special attribute for hijacker weapon. Likely to be C&C4 specific -->
+				<xs:attribute name="UnitStealingWeapon" type="SageBool" default="false" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="ScatterRadiusType">
+		<xs:sequence>
+			<xs:element
+				name="Filter"
+				type="ObjectFilter"
+				minOccurs="1"
+				maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="Radius" type="SageReal" default="0.0"/>
+		<xs:attribute name="RequiredModelConditions" type="ModelConditionBitFlags"/>
+	</xs:complexType>
+
+	<xs:simpleType name="WeaponSpinUpFlagsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE" />
+			<xs:enumeration value="DO_NOT_MODIFY_FIRING_DURATION" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="WeaponSpinUpBitFlags">
+		<xs:list itemType="WeaponSpinUpFlagsType"></xs:list>
+	</xs:simpleType>
+	
+	<xs:complexType name="WeaponSpinUpModelCondition">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="PercentageSetAt" type="Percentage" use="required"/>
+		<xs:attribute name="ModelConditionToSet" type="ModelConditionFlagType" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="WeaponSpinUpAttributeModifier">
+		<xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="PercentageSetAt" type="Percentage" use="required"/>
+		<xs:attribute name="AttributeModifierToSet" type="AttributeModifierRef" use="required"/>
+	</xs:complexType>
+
+	<!-- Spin up is your traditional railgun firing rate acceleration. Spin up changes the FiringDuration of the weapon.-->
+	<xs:complexType name="WeaponSpinUpInfo">
+		<xs:sequence>
+			<!-- These SpinUpModelCondtion/SpinUpAttributeModifier needs to be in increasing order, based on PercentageSetAt.
+				The last entry should be 100% -->
+			<xs:element name="SpinUpModelCondition" type="WeaponSpinUpModelCondition" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="SpinUpAttributeModifier" type="WeaponSpinUpAttributeModifier" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="SpinUpDuration" type="Time" default="0.0s"/> 
+		<!-- Time to get up to 100% of the fire rate -->
+		<xs:attribute name="SpinDownDuration" type="Time" default="0.0s"/> 
+		<!-- Time to get down to the starting percentage -->
+		<xs:attribute name="SpinStartPercentage" type="Percentage" default="0%"/>
+		 <!-- The starting firing rate -->
+		<xs:attribute name="Flags" type="WeaponSpinUpBitFlags" default="NONE"/>
+	</xs:complexType>
+
+	<xs:simpleType name="MissType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SCATTER"/>
+			<xs:enumeration value="OVERSHOOT"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="AccuracyDetailVersusMovingType">
+		<xs:sequence>
+			<xs:element name="Filter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="HitModifier" type="Percentage" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="AccuracyParameterType">
+		<xs:sequence>
+			<xs:element name="AccuracyDetailVersusMoving" type="AccuracyDetailVersusMovingType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:pipelineOnly="true" />
+		<xs:attribute name="BaseHitPercentage" type="Percentage" default="100%" />
+		<xs:attribute name="HitModifierWhileMoving" type="Percentage" default="0%" />
+		<xs:attribute name="DefaultHitModifierVersusMoving" type="Percentage" default="0%" />
+		<xs:attribute name="MissType" type="MissType" default="SCATTER" />
+		<!-- MissDistance only makes sense w/ a MissType of SCATTER-->
+		<xs:attribute name="MissDistance" type="SageReal" default="0" />
+	</xs:complexType>
+
+	<xs:complexType name="WeaponTemplateNuggets">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element
+				name="DamageNugget"
+				type="DamageNuggetType"
+				balance:category="DamageNugget"
+			/>
+			<xs:element
+				name="DOTNugget"
+				type="DOTNuggetType"
+				balance:category="DOTNugget"
+			/>
+			<xs:element
+				name="DamageAndSpawnNugget"
+				type="DamageAndSpawnNuggetType"
+				balance:category="DamageAndSpawnNugget"
+			/>
+			<xs:element
+				name="ProjectileNugget"
+				type="ProjectileNuggetType"
+				balance:category="ProjectileNugget"
+			/>
+			<xs:element
+				name="SuppressionNugget"
+				type="SuppressionNuggetType"
+				balance:category="SuppressionNugget"
+			/>
+			<xs:element
+				name="TerrainCraterNugget"
+				type="TerrainCraterNuggetType"
+			/>
+			<xs:element
+				name="WeaponOCLNugget"
+				type="WeaponOCLNuggetType"
+			/>
+			<xs:element
+				name="ActivateLaserNugget"
+				type="ActivateLaserNuggetType"
+			/>
+			<xs:element
+				name="ActivateStreamNugget"
+				type="ActivateStreamNuggetType"
+			/>
+			<xs:element
+				name="ActivateLiftObjectNugget"
+				type="ActivateLiftObjectNuggetType"
+			/>
+			<xs:element
+				name="ActivateLinearDamageNugget"
+				type="ActivateLinearDamageNuggetType"
+			/>
+			<xs:element
+				name="ActivateCircularDamageNugget"
+				type="ActivateCircularDamageNuggetType"
+			/>
+			<xs:element
+				name="ActivateWeaponSweepNugget"
+				type="ActivateWeaponSweepNuggetType"
+			/>
+			<xs:element
+				name="SlavesAttackNugget"
+				type="SlavesAttackNuggetType"
+			/>
+			<xs:element
+				name="MetaImpactNugget"
+				type="MetaImpactNuggetType"
+			/>
+			<xs:element
+				name="LeechHealthDamageNugget"
+				type="LeechHealthDamageNuggetType"	/>
+
+			<xs:element
+				name="SecondaryDamageNugget"
+				type="SecondaryDamageNuggetType"	/>
+			
+			<xs:element
+				name="SpecialPowerNugget"
+				type="SpecialPowerNuggetType"
+			/>
+			<xs:element
+				name="AttributeModifierNugget"
+				type="AttributeModifierNuggetType"
+			/>
+			<xs:element
+				name="DamageContainedNugget"
+				type="DamageContainedNuggetType"
+			/>
+			<xs:element
+				name="LuaEventNugget"
+				type="LuaEventNuggetType"
+			/>
+			<xs:element
+				name="LineDamageNugget"
+				type="LineDamageNuggetType"
+			/>
+			<xs:element
+				name="SeedTiberiumNugget"
+				type="SeedTiberiumNuggetType"
+			/>
+			<xs:element
+				name="ParalyzeNugget"
+				type="ParalyzeNuggetType"
+			/>
+			<xs:element
+				name="InformationWarfareNugget"
+				type="InformationWarfareNuggetType"
+			/>
+			<xs:element
+				name="SpendStolenTiberiumNugget"
+				type="SpendStolenTiberiumNuggetType"
+			/>
+			<xs:element
+				name="ReportWeaponFiredStatNugget"
+				type="ReportWeaponFiredStatNuggetType"
+			/>
+
+			<xs:element
+				name="ScatterProjectileNugget"
+				type="ScatterProjectileNuggetType"
+			/>
+			<xs:element
+				name="FireOnObjectsNugget"
+				type="FireOnObjectsNuggetType"
+			/>
+			<xs:element
+				name="TintObjectsNugget"
+				type="TintObjectsNuggetType"
+			/>
+			<xs:element
+				name="ContainedObjectAttackNugget"
+				type="ContainedObjectAttackNuggetType"
+			/>
+			<xs:element
+				name="InformTargetNugget"
+				type="InformTargetNuggetType"
+			/>
+			<xs:element
+				name="AttachNugget"
+				type="AttachNugget"
+			/>
+			<xs:element
+				name="StripMaxHealthPercentNugget"
+				type="StripMaxHealthPercentNuggetType" 
+			/>
+			<xs:element
+				name="GrapplingHookNugget"
+				type="GrapplingHookNuggetType"
+			/>
+			<xs:element
+				name="LeechPercentMaxHealthDamageNugget"
+				type="LeechPercentMaxHealthDamageNuggetType"
+			/>
+			<xs:element
+				name="ModifyStoredResourceNugget"
+				type="ModifyStoredResourceNuggetType"
+			/>
+			<xs:element
+				name="MultipleVictimProjectileNugget"
+				type="MultipleVictimProjectileNuggetType"
+				balance:category="MultipleVictimProjectileNugget"
+			/>
+			<xs:element
+				name="TargetChooserNugget"
+				type="TargetChooserNuggetType"
+				balance:category="TargetChooserNugget"
+			/>
+			<xs:element
+				name="ProbabilityTrackerNugget"
+				type="ProbabilityTrackerNuggetType"
+			/>
+			<xs:element
+				name="GiveMoneyNugget"
+				type="GiveMoneyNuggetType"
+			/> 
+			<xs:element
+				name="IndirectSpecialPowerNugget"
+				type="IndirectSpecialPowerNuggetType"
+			/> 
+			<xs:element
+				name="LaunchSpawnedChildNugget"
+				type="LaunchSpawnedChildNuggetType"
+				balance:category="LaunchSpawnedChildNugget"
+			/>
+			<xs:element
+				name="CrushTiberiumNugget"
+				type="CrushTiberiumNuggetType"
+			/>
+			<xs:element
+				name="TauntNugget"
+				type="TauntNuggetType"
+			/>
+			<xs:element
+				name="ReduceAmmoNugget"
+				type="ReduceAmmoNuggetType"
+			/>
+			<xs:element
+				name="WeaponScatterEffectNugget"
+				type="WeaponScatterEffectNuggetType"
+			/>
+			<xs:element
+				name="ForceToggleToDefaultNugget"
+				type="ForceToggleToDefaultNuggetType"
+			/>
+			<xs:element
+				name="HOTNugget"
+				type="HOTNuggetType"
+				balance:category="HOTNugget"
+			/>
+			<xs:element
+				name="ExperienceNugget"
+				type="ExperienceNuggetType"
+			/>			
+		</xs:choice>
+	</xs:complexType>
+
+	<!-- Weapon Tooltip Hint Info -->
+	<xs:complexType name="WeaponTooltipHintInfo" >
+		<xs:sequence />
+		<xs:attribute name="GenericTextLabel" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="WeaponTemplate" xas:runtimeWrapper="::WeaponTemplate" xas:typeGroup="Tokenized">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="TooltipHint" type="WeaponTooltipHintInfo" minOccurs="0" maxOccurs="1" />
+					<xs:element name="NuggetObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+					<xs:element name="OverrideVoiceAttackSound"
+						type="SoundOrEvaEvent"
+						minOccurs="0"
+						maxOccurs="1" />
+					<xs:element name="OverrideVoiceEnterStateAttackSound"
+						type="SoundOrEvaEvent"
+						minOccurs="0"
+						maxOccurs="1" />
+					<xs:element name="PreAttackDelay"
+						type="RangeDuration"
+						minOccurs="0"
+						maxOccurs="1"
+						balance:category="PreAttackDelay" />
+					<xs:element name="FiringDuration"
+						type="RangeDuration"
+						minOccurs="0"
+						maxOccurs="1"
+						balance:category="FiringDuration" />
+					<xs:element name="CoolDownDelayBetweenShots"
+						type="RangeDuration"
+						minOccurs="0"
+						maxOccurs="1"
+						balance:category="CoolDownDelayBetweenShots" />
+					<xs:element name="ClipReloadTime"
+						type="RangeDuration"
+						minOccurs="0"
+						maxOccurs="1"
+						balance:category="ClipReloadTime" />
+					<xs:element name="WeaponAiHintInfo"
+						type="WeaponAiHintInfo"
+						minOccurs="0"
+						maxOccurs="1" />
+					<xs:element name="Nuggets"
+						type="WeaponTemplateNuggets"
+						minOccurs="0"
+						maxOccurs="1"
+						xas:byValue="true"
+						balance:category="Nuggets" />
+					<xs:element name="SurpriseAttackObjectFilter"
+						type="ObjectFilter"
+						minOccurs="0"
+						maxOccurs="1" />
+					<xs:element name="CombinedAttackObjectFilter"
+						type="ObjectFilter"
+						minOccurs="0"
+						maxOccurs="1" />
+					<xs:element name="HitStoredObjectFilter"
+						type="ObjectFilter"
+						minOccurs="0"
+						maxOccurs="1" />
+					<xs:element name="AccuracyParameters"
+						type="AccuracyParameterType"
+						minOccurs="0"
+						maxOccurs="1"/>
+					<xs:element name="ScatterRadiusVsType"
+						type="ScatterRadiusType"
+						minOccurs="0"
+						maxOccurs="unbounded" />
+					<xs:element name="IncompatibleAttributeModifier"
+						type="AttributeModifierRef"
+						minOccurs="0"
+						maxOccurs="unbounded" />
+					<xs:element name="SpinUpInfo"
+						type="WeaponSpinUpInfo"
+						minOccurs="0"
+						maxOccurs="1"/>
+					<xs:element name="TargetOffset"
+						type="Vector3"
+						minOccurs="0"
+						maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="AttackRange" balance:field="AttackRange" type="SageReal" default="0" balance:snapshot="true"/>
+				<xs:attribute name="MinimumAttackRange" type="SageReal" default="0"/>
+				<xs:attribute name="RangeBonusMinHeight" type="SageReal" default="0"/>
+				<xs:attribute name="RangeBonus" type="SageReal" default="0"/>
+				<xs:attribute name="RangeBonusPerFoot" type="SageReal" default="0"/>
+				<xs:attribute name="RequestAssistRange" type="SageReal" default="0"/>
+				<xs:attribute name="RequestAssistEquivalentOnly" type="SageBool" default="false" />
+				<xs:attribute name="AcceptableAimDelta" type="Angle" default="0d"/>
+				<xs:attribute name="AimDirection" type="Angle" default="0d"/>
+				<xs:attribute name="ScatterRadius" balance:field="ScatterRadius" type="SageReal" default="0"/>
+				<xs:attribute name="ScatterLength" type="SageReal" default="0"/>
+				<xs:attribute name="ScatterIndependently" type="SageBool" default="false" />
+
+				<!-- if WeaponSpeed is set to zero, code will randomly pick a speed from MinWeaponSpeed and MaxWeaponSpeed -->
+				<xs:attribute name="WeaponSpeed" balance:field="WeaponSpeed" type="SageReal" default="99999.0"/>
+				<xs:attribute name="MinWeaponSpeed" type="SageReal" default="99999.0"/>
+				<xs:attribute name="MaxWeaponSpeed" type="SageReal" default="99999.0"/>
+
+                <xs:attribute name="ScaleWeaponSpeed" type="SageBool" default="false" />
+                <xs:attribute name="IgnoresContactPoints" type="SageBool" default="false" />
+				<xs:attribute name="ScaleAttackRangeByAmmoRemaining" type="SageBool" default="false" />
+				<xs:attribute name="CanBeDodged" type="SageBool" default="true" />
+				<xs:attribute name="IdleAfterFiringDelaySeconds" type="Time" default="-1s" />
+				<xs:attribute name="HoldAfterFiringDelaySeconds" type="Time"  default="0s" />
+				<xs:attribute name="HoldDuringReload" type="SageBool" default="false" />
+				<xs:attribute name="CanFireWhileMoving" balance:field="CanFireWhileMoving" type="SageBool" default="false" />
+				<xs:attribute name="WeaponRecoil" balance:field="WeaponRecoil" type="Angle" default="0d"/>
+				<xs:attribute name="MinTargetPitch" balance:field="MinTargetPitch" type="Angle" default="-180d" />
+				<xs:attribute name="MaxTargetPitch" balance:field="MaxTargetPitch" type="Angle" default="180d" />
+				<xs:attribute name="PreferredTargetBone" type="xs:string" />
+				<xs:attribute name="FireSound" type="AudioEventInfoRef" use="optional" /><!-- Triggered once per shot -->
+				<xs:attribute name="FireSoundPerClip" type="AudioEventInfoRef" use="optional" /><!-- Triggered once per clip -->
+				<xs:attribute name="FiringLoopSound" type="AudioEventInfoRef" use="optional" /><!-- Played in loop entire time weapon is firing -->
+				<xs:attribute name="FiringLoopSoundContinuesDuringReload" type="SageBool" default="true" />
+				<xs:attribute name="FireFX" type="FXListRef" />
+				<xs:attribute name="FireVeteranFX" type="FXListRef" />
+				<xs:attribute name="FireFlankFX" type="FXListRef" />
+				<xs:attribute name="PreAttackFX" type="FXListRef" />
+				<xs:attribute name="FireStrongCounterFX" type="FXListRef" />
+				<xs:attribute name="FireWeakCounterFX" type="FXListRef" />
+
+				<!-- todo ini2xml
+						{ "FireFX",							parseAllVetLevelsFXList,		NULL,	offsetof(WeaponTemplate, m_fireFXs) },
+						{ "FireFlankFX",					iniParseFXList,					NULL,	offsetof(WeaponTemplate, m_fireFlankFX) },
+						{ "PreAttackFX",					parseAllVetLevelsFXList,		NULL,	offsetof(WeaponTemplate, m_preAttackFXs) },
+						{ "ProjectileExhaust",				parseAllVetLevelsPSys,			NULL,	offsetof(WeaponTemplate, m_projectileExhausts) },
+						{ "VeterancyFireFX",				parsePerVetLevelFXList,			NULL,	offsetof(WeaponTemplate, m_fireFXs) },
+						{ "VeterancyProjectileExhaust",		parsePerVetLevelPSys,			NULL,	offsetof(WeaponTemplate, m_projectileExhausts) },
+				-->
+				<xs:attribute name="ClipSize" balance:field="ClipSize" type="SageInt" default="0" />
+				<!-- Determines if clip reload happens in onEnter or onExit in reload state
+						 true means in onEnter, false means onExit -->
+				<xs:attribute name="PreloadClip" type="SageBool" default="true" />
+				<xs:attribute name="ContinuousFireOne" type="SageInt" default="99999"/>
+				<xs:attribute name="ContinuousFireTwo" type="SageInt" default="99999"/>
+				<xs:attribute name="ContinuousFireCoastSeconds" type="Time" default="0s" />
+				<xs:attribute name="AutoReloadWhenIdleSeconds" type="Time"  default="0s" />
+				<xs:attribute name="ShotsPerBarrel" balance:field="ShotsPerBarrel" type="SageInt" default="0"/>
+				<xs:attribute name="DamageDealtAtSelfPosition" type="SageBool" default="false" />
+
+				<xs:attribute name="RequiredFiringObjectStatus" type="ObjectStatusBitFlags" use="optional" />
+				<xs:attribute name="ForbiddenFiringObjectStatus" type="ObjectStatusBitFlags" use="optional" />
+				<xs:attribute name="CheckStatusFlagsInRangeChecks" type="SageBool" default="true" />
+
+				<xs:attribute name="ProjectileSelf" type="SageBool" default="false" />
+				<xs:attribute name="MeleeWeapon" type="SageBool" default="false" />
+				<xs:attribute name="ChaseWeapon" type="SageBool" default="false" />
+				<xs:attribute name="LeechRangeWeapon" type="SageBool" default="false" />
+				<xs:attribute name="HitStoredTarget" type="SageBool" default="false" />
+				<xs:attribute name="CapableOfFollowingWaypoints" type="SageBool" default="false" />
+				<xs:attribute name="ShowsAmmoPips" type="SageBool" default="false" />
+				<xs:attribute name="AllowAttackGarrisonedBldgs" type="SageBool" default="false" />
+				<xs:attribute name="PlayFXWhenStealthed" type="SageBool" default="false" />
+				<xs:attribute name="ContinueAttackRange" type="SageReal"  default="0" />
+				<xs:attribute name="SuspendFXDelaySeconds" type="Time" default="0s" />
+				<xs:attribute name="IsAimingWeapon" type="SageBool" default="false" />
+				<xs:attribute name="NoVictimNeeded" type="SageBool" default="false" />
+				<xs:attribute name="PassengerProportionalAttack" type="SageBool" default="false" />
+				<!-- The HealthProportionalResolution attribute will match damge to the percentage of health (if non zero) i.e. the value
+				is set to 4 - (the max health will be divided by this number to get the resolution), and the source has 80% health, the 
+				damage will be 80%. Some more examples:
+				value:	health:	actual damage:
+				4		70%		60%
+				4		10%		20%
+				2		40%		50%
+				-->
+				<xs:attribute name="HealthProportionalResolution" type="SageReal" default="0" />
+				<xs:attribute name="MaxAttackPassengers" type="SageInt" />
+				<xs:attribute name="FinishAttackOnceStarted" type="SageBool" default="false" />
+				<xs:attribute name="RestrictedHeightRange" type="SageReal" default="0.0"/>
+				<xs:attribute name="CannotTargetCastleVictims" type="SageBool" default="false" />
+				<xs:attribute name="RequireFollowThru" type="SageBool" default="false" />
+				<xs:attribute name="ShareTimers" type="SageBool" default="false" />
+				<xs:attribute name="ShouldPlayUnderAttackEvaEvent" type="SageBool" default="true" />
+				<xs:attribute name="InstantLoadClipOnActivate" type="SageBool" default="false" />
+				<xs:attribute name="Flags" type="WeaponFlagsBitFlags" default="NONE" />
+				<xs:attribute name="LockWhenUsing" type="SageBool" default="false" />
+				<xs:attribute name="BombardType" type="SageBool" default="false" />
+				<xs:attribute name="UseInnateAttributes" type="SageBool" default="false" />
+				<xs:attribute name="PreAttackType" balance:field="PreAttackType" type="WeaponPrefireType" default="PER_SHOT"/>
+				<xs:attribute name="ReAcquireDetailType" type="WeaponReAcquireDetailType" default="PER_SHOT"/>
+				<xs:attribute name="AutoReloadsClip" type="WeaponReloadType" default="AUTO"/>
+				<xs:attribute name="SingleAmmoReloadedNotFullSound" type="AudioEventInfoRef" default="" /> <!-- Played when a single bullet/missile/etc is loaded. Does NOT play if the clip is now full. Only really works for WeaponReloadType = RETURN_TO_BASE (e.g. airplanes); everything else loads an entire clip at once -->
+				<xs:attribute name="ClipReloadedSound" type="AudioEventInfoRef" default="" /> <!-- Played when the clip goes to completely full. -->
+				<xs:attribute name="RadiusDamageAffects" type="WeaponAffectsBitFlags" default="ENEMIES"/>
+				<xs:attribute name="FXTrigger" type="FXTriggerType" default="NONE" />
+				<xs:attribute name="ProjectileCollidesWith" type="WeaponCollideBitFlags" default="STRUCTURES"/>
+				<xs:attribute name="RequiredAntiMask" type="WeaponAntiBitFlags" default="ANTI_GROUND ANTI_WATER ANTI_STRUCTURE" />
+				<xs:attribute name="ForbiddenAntiMask" type="WeaponAntiBitFlags" default="" />
+				<xs:attribute name="StopFiringOnCanBeInvisible" type="SageBool" default="false" />
+				<xs:attribute name="ProjectileStreamName" type="GameObjectWeakRef" />
+				<xs:attribute name="ContactWeapon" type="SageBool" default="false"/>
+				<xs:attribute name="UseCenterForRangeCheck" type="SageBool" default="false" />
+				<xs:attribute name="VirtualDamage" type="VirtualDamageType" default="NONE" />
+				<xs:attribute name="VirtualDamageActiveDuration" type="Time" default="5s" />
+				<xs:attribute name="PreAttackWeapon" type="WeaponRef" use ="optional" />
+				<!-- NOTE: This fires the weapon at the source object's location only -->
+				<!-- By default weapons will reveal shroud when they hit you.  if this is true, weapons will reveal shroud as soon as they fire instead of when damage is done -->
+				<xs:attribute name="RevealShroudOnFire" type="SageBool" default="false" />
+				<xs:attribute name="RevealShroudRadiusOverride" type="SageReal" default="0" />
+				<xs:attribute name="ShouldPlayTargetDeadEvaEvent" type="SageBool" default="true" />
+				<xs:attribute name="WeaponCategory" balance:filter="Weapon" type="WeaponCategory" default="NONE" XmlEdit:Category="Design" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

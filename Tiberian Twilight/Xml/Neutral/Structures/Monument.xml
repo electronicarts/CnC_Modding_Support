@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GS_GameStructA_SKN.W3X" />
+		<Include
+			type="all"
+			source="ART:GS_GameStructA_D2.W3X" />
+		<Include
+			type="all"
+			source="ART:GS_GameStructA_D3.W3X" />
+		<Include
+			type="all"
+			source="ART:GS_StructABase.W3X" />
+		<Include
+			type="all"
+			source="ART:GS_GameStructA_IDLA.W3X" />
+		<Include
+			type="all"
+			source="ART:GS_GameStructA_IDLB.W3X" />
+		<Include
+			type="all"
+			source="ART:GS_GameStructA_SKL.W3X" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseCivilianStructureNoGarrison.xml" />
+	</Includes>
+	<GameObject
+		id="Monument"
+		inheritFrom="BaseCivilianStructureNoGarrison"
+		HealthBoxHeightOffset="105"
+		SelectPortrait="Portrait_GameStructA"
+		ButtonImage="Portrait_GameStructA"
+		Side="Neutral"
+		KindOf="MONUMENT_STRUCTURE TREAT_AS_TERRAIN_FOR_LINE_OF_SIGHT STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_TECHNOLOGY IGNORE_FOR_VICTORY NOT_SELLABLE REVEAL_TO_ALL AIRCRAFT_PATH_AROUND RESIST_REDEPLOYMENT_KILL RESIST_EMP REGISTER_GAMEMODE_SPAWN"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		EditorName="NEUTRAL_Struct_Monument(Monument)"
+		EditorSorting="STRUCTURE" 
+		Description="DESC:Monument">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:Monument</DisplayName>
+		<ArmorSet
+			id="DefaultArmor"
+			Armor="MonumentArmor"
+			DamageFX="GenericStructureDamageFX" />
+		<ArmorSet
+			Armor="MonumentArmorShieldBodyEnabled"
+			DamageFX="GenericStructureDamageFX"
+			Conditions="SHIELDBODY_ENABLED" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				AlphaCameraFadeOuterRadius="400.0"
+				AlphaCameraFadeInnerRadius="5.0"
+				AlphaCameraAtInnerRadius="10"
+				AffectedByStealth="false"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GS_GameStructA_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="GS_GameStructA_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="GS_GameStructA_D2" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIImpFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIImpDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpDist"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="GS_GameStructA_SKN" />
+					<Texture
+						Original="GS_GameStructA"
+						New="GS_GameStructA_D" />
+					<ParticleSysBone
+						BoneName="FXBone02"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXBone01"
+						FXParticleSystemTemplate="GDIImpSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GS_GameStructA_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="GS_GameStructA_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="GS_GameStructA_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="GS_GameStructA_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="IDLE">
+					<Animation
+						AnimationName="GS_GameStructA_IDLA"
+						AnimationMode="LOOP" />
+					<Animation
+						AnimationName="GS_GameStructA_IDLB"
+						AnimationMode="LOOP" />
+				</AnimationState>
+				
+				
+			</ScriptedModelDraw>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw_2"
+				AlphaCameraFadeOuterRadius="400.0"
+				AlphaCameraFadeInnerRadius="5.0"
+				AlphaCameraAtInnerRadius="10"
+				AffectedByStealth="false"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GS_StructABase" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+<!--
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3s"
+				SinkRate="2.4"
+				DestructionDelay="8s">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+-->
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					FX="FX_ScorchMedium" />
+				<Event Index="onDeath" FX="FX_Crawler_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<ShieldBodyUpdate
+				id="ModuleTag_ShieldBodyUpdate" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI" />
+		</AI>
+		<Body>
+			<ShieldBody
+				id="ModuleTag_Body"
+				Options="USE_PASS_THROUGH_DAMAGE_CALC" 
+				MaxHealth="7500"
+				ShieldAmount="0"
+				ShieldAmountMax="0"
+				ShieldArmor="MonumentShieldGeneratorArmor"
+				ShieldRechargeIdleTime="120s"
+				ShieldEnabledFX="FX_AlienShieldEnabled"
+				ShieldTakeDamageFX="FX_AlienShieldHit"
+				ShieldDepleteFX="FX_AlienShieldDeplete"
+				ShieldActiveModelCondition="USER_1"
+				IgnoreVirtualDamage="true" />
+		</Body>
+
+		<ClientUpdates>
+			<SchmevaHealthLossEventClientUpdate
+				id="MonumentLostHealth"
+				LocalPlayerRelationToOwner="ALLIES SAME_PLAYER">
+				<Entry HealthPercent="90%" Event="MonumentHealthNicked"/>
+				<Entry HealthPercent="65%" Event="MonumentHealthDamaged"/>
+				<Entry HealthPercent="40%" Event="MonumentHealthDangerous"/>
+				<Entry HealthPercent="20%" Event="MonumentHealthCritical"/>
+			</SchmevaHealthLossEventClientUpdate>
+		</ClientUpdates>
+
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="89.4877"
+				MinorRadius="89.4877"
+				Height="30.1994"
+				ContactPointGeneration="INFANTRY" />
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="30.9008"
+				MinorRadius="30.9008"
+				Height="235.487"
+				Options="ACTIVE"
+				ContactPointGeneration="INFANTRY" />
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="54.5404"
+				MinorRadius="54.5404"
+				Height="57.0601"
+				ContactPointGeneration="INFANTRY">
+				<Offset
+					z="45.8229" />
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_StructureLarge_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureLarge_DamagedMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		
+		<EvaEventArray>
+			<!-- <EvaEntry EvaEvent="MonumentUnderAttack" EvaType="damagedOwner" /> -->
+		</EvaEventArray>
+
+		<SchmevaEvents>
+			<Entry EventType="Damaged" LocalPlayerRelationToOwner="ALLIES SAME_PLAYER" Event="MonumentUnderAttack"/>
+			<Entry EventType="ShieldDepleted" LocalPlayerRelationToOwner="ALLIES SAME_PLAYER" Event="MonumentShieldDepleted"/>
+		</SchmevaEvents>
+
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="100" />
+	</GameObject>
+</AssetDeclaration>

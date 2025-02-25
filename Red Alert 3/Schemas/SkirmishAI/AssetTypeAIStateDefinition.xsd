@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type"
+	xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified"
+	xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+  <xs:include schemaLocation="AIDifficulties.xsd"/>
+  <xs:include schemaLocation="AIBank.xsd"/>
+  <xs:include schemaLocation="AssetTypeAIBuilderDefinition.xsd"/>
+  <xs:include schemaLocation="AssetTypeAITeamTemplate.xsd"/>
+  <xs:include schemaLocation="AIStrategicDirective.xsd"/>
+  <xs:include schemaLocation="AITargetDisposition.xsd"/>
+	<xs:include schemaLocation="AIBaseSelectionCriteria.xsd"/>
+  <xs:include schemaLocation="AssetTypeTargetHeuristics.xsd"/>
+  <xs:include schemaLocation="../Includes/BuildingPlacementSurface.xsd"/>
+  <xs:include schemaLocation="../Includes/PathfindingCheckType.xsd"/>
+	<xs:include schemaLocation="../Includes/AICannotAttackTargetReaction.xsd"/>
+
+	
+  <!-- State Heuristics -->
+  <xs:complexType name="AIStateHeuristic" xas:isPolymorphic="true">
+  </xs:complexType>
+
+  <xs:complexType name="AIStateConstantHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Weight" type="xs:float" default="1.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name="AITimerType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="MAP_START" />
+      <xs:enumeration value="AI_START" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="AIStateTimerHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="StartTime" type="Time" default="0s" />
+        <xs:attribute name="EndTime" type="Time" default="-1s" />
+        <xs:attribute name="CountFrom" type="AITimerType" default="MAP_START" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateIntervalHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="IntervalTime" type="Time" default="60s" />
+        <xs:attribute name="ActiveTime" type="Time" default="30s" />
+        <xs:attribute name="CountFrom" type="AITimerType" default="MAP_START" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateOpeningMoveHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Complete" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="AIStateHarvesterCapHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="MaxHarvesters" type="SageUnsignedInt" default="5" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateResourceNodeShareHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="PercentOfFairShare" type="Percentage" default="100%" />
+        <xs:attribute name="Above" type="xs:boolean" default="false" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateTechBuildingShareHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="PercentOfFairShare" type="Percentage" default="100%" />
+        <xs:attribute name="Above" type="xs:boolean" default="false" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateMoneyHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Money" type="SageUnsignedInt" default="1000" />
+				<xs:attribute name="Account" type="SageUnsignedInt" default="0" />
+        <xs:attribute name="Above" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateTimeSinceLastExpansionHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Time" type="Time" default="60s" />
+        <!-- Should we want to 1.0f true if it is before or past the given amount of time since our last expansion finished -->
+        <xs:attribute name="Past" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="AIStateIsBuildingHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="KindOf" type="KindOfBitFlags" default="" />
+        <xs:attribute name="PassIfBuilding" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateEnergyHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="ExcessEnergy" type="xs:int" default="-1" />
+        <xs:attribute name="Above" type="xs:boolean" default="false" />
+        <xs:attribute name="Relationship" type="ObjectFilterRelationship" default="ENEMIES" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateAllNearbyNodesFullHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateOpenNodeHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Exists" type="xs:boolean" default="true" />
+        <xs:attribute name="MinDistanceFromEnemy" type="xs:float" default="400.0" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateGarrisonHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="NumGarrisons" type="SageUnsignedInt" default="0" />
+        <xs:attribute name="Above" type="xs:boolean" default="true"/>
+        <xs:attribute name="Relationship" type="ObjectFilterRelationship" default="SAME_PLAYER" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStatePathToTargetHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Surface" type="AITargetLocationType" default="Land" />
+        <xs:attribute name="ObjectTypeToUseForTest" type="GameObjectWeakRef" use="required" />
+				<xs:attribute name="LocomotorConditionToUseForTest" type="LocomotorSetType" default="NORMAL" />
+        <xs:attribute name="PathExists" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateEnemyNearbyHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="EnemyFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="Distance" type="xs:float" default="1000.0"/>
+        <xs:attribute name="EnemyNearby" type="xs:boolean" default="true"/>
+        <xs:attribute name="MinEnemyValue" type="SageUnsignedInt" default="0"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateStructureOrHarvesterUnderAttackHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="UnderAttack" type="xs:boolean" default="true" />
+        <xs:attribute name="TimeSinceAttacked" type="Time" default="4s"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="AIStatePowerAdvantageHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Value" type="xs:float" default="1.0"/>
+        <xs:attribute name="Above" type="xs:boolean" default="true"/>
+        <xs:attribute name="IncludeOwnDefenses" type="xs:boolean" default="true"/>
+        <xs:attribute name="IncludeEnemyDefenses" type="xs:boolean" default="true"/>
+        <xs:attribute name="OwnKindOf" type="KindOfBitFlags" default="CAN_ATTACK"/>
+        <xs:attribute name="EnemyKindOf" type="KindOfBitFlags" default="CAN_ATTACK"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateIncomeAdvantageHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Value" type="xs:float" default="1.0"/>
+        <xs:attribute name="Above" type="xs:boolean" default="true"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateOpponentFundsHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateProductionAdvantageHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStateBridgeExistsHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="BridgeHealthMinimumPercentage" type="Percentage" default="50%"/>
+        <xs:attribute name="BridgeHealthMaximumPercentage" type="Percentage" default="100%"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+	<xs:complexType name="AIStateObjectOfTypeExistsHeuristic">
+		<xs:complexContent>
+			<xs:extension base="AIStateHeuristic">
+				<xs:sequence>
+					<xs:element name="ObjectFilter" type="ObjectFilter" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+        <xs:attribute name="Location" type="AITargetLocationBitFlags" default="Water Land"/>
+        <xs:attribute name="PassIfExists" type="SageBool" default="true" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<!-- Do we have enough placement cells on water/deep water/land? 
+	     Normally returns 1 if we can build, 0 if not. To reverse sense
+			 of test, set Min and MaxPlacementGridCells to 0 -->
+	<xs:complexType name="AIStateCanBuildBuildingsOnSurfaceHeuristic">
+		<xs:complexContent>
+			<xs:extension base="AIStateHeuristic">
+				<xs:attribute name="MinPlacementGridCells" type="SageInt" default="1"/>
+				<xs:attribute name="MaxPlacementGridCells" type="SageInt" use="optional"/>
+				<xs:attribute name="Surfaces" type="BuildingPlacementSurfaceBitFlags" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+  <xs:complexType name="AIStateScriptedFlagHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="FlagName" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="AIAlliedBeaconExistsHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="Exists" type="xs:boolean"/>
+        <xs:attribute name="Type" type="AIBeaconType"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStrategicDirectiveHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:attribute name="On" type="xs:boolean"/>
+        <xs:attribute name="Directive" type="AIStrategicDirective"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+	<xs:complexType name="AIRedAlertHeuristic">
+		<xs:complexContent>
+			<xs:extension base="AIStateHeuristic">
+				<xs:attribute name="On" type="xs:boolean" default="true"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AIStateLinearCombinationHeuristic">
+    <xs:complexContent>
+      <xs:extension base="AIStateHeuristic">
+        <xs:sequence>
+          <xs:element name="WeightedHeuristic" minOccurs="2" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Heuristic" minOccurs="1" maxOccurs="1">
+                  <xs:complexType>
+                    <xs:choice>
+                      <xs:element name="TimerHeuristic" type="AIStateTimerHeuristic" />
+                      <xs:element name="ConstantHeuristic" type="AIStateConstantHeuristic" />
+                      <xs:element name="PowerAdvantageHeuristic" type="AIStatePowerAdvantageHeuristic"/>
+                      <xs:element name="OpponentFundsHeuristic" type="AIStateOpponentFundsHeuristic"/>
+                      <xs:element name="ProductionAdvantageHeuristic" type="AIStateProductionAdvantageHeuristic"/>
+                      <xs:element name="BridgeExistsHeuristic" type="AIStateBridgeExistsHeuristic"/>
+                    </xs:choice>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+              <xs:attribute name="Weight" type="xs:float" default="0.5"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+	<xs:complexType name="HeuristicChoice">
+		<xs:choice minOccurs="1" maxOccurs="unbounded">
+      <!--Basic Heuristics-->
+      <xs:element name="ConstantHeuristic" type="AIStateConstantHeuristic" />
+      <xs:element name="TimerHeuristic" type="AIStateTimerHeuristic" />
+      <xs:element name="IntervalHeuristic" type="AIStateIntervalHeuristic" />
+
+      <!--Binary Value Heuristics-->
+      <xs:element name="PowerAdvantageHeuristic" type="AIStatePowerAdvantageHeuristic"/>
+      <xs:element name="IncomeAdvantageHeuristic" type="AIStateIncomeAdvantageHeuristic"/>
+      <xs:element name="EnemyNearbyHeuristic" type="AIStateEnemyNearbyHeuristic" />
+      <xs:element name="StructureOrHarvesterUnderAttackHeuristic" type="AIStateStructureOrHarvesterUnderAttackHeuristic" />
+      <xs:element name="ProductionAdvantageHeuristic" type="AIStateProductionAdvantageHeuristic"/>
+
+      <xs:element name="OpeningMoveHeuristic" type="AIStateOpeningMoveHeuristic" />
+      <xs:element name="HarvesterCapHeuristic" type="AIStateHarvesterCapHeuristic" />
+      <xs:element name="ResourceNodeShareHeuristic" type="AIStateResourceNodeShareHeuristic" />
+      <xs:element name="TechBuildingShareHeuristic" type="AIStateTechBuildingShareHeuristic" />
+      <xs:element name="MoneyHeuristic" type="AIStateMoneyHeuristic" />
+      <xs:element name="TimeSinceLastExpansionHeuristic" type="AIStateTimeSinceLastExpansionHeuristic" />
+      <xs:element name="IsBuildingHeuristic" type="AIStateIsBuildingHeuristic" />
+
+      <xs:element name="AllNearbyNodesFullHeuristic" type="AIStateAllNearbyNodesFullHeuristic" />
+      <xs:element name="OpenNodeHeuristic" type="AIStateOpenNodeHeuristic" />
+
+      <xs:element name="GarrisonHeuristic" type="AIStateGarrisonHeuristic" />
+      
+      <xs:element name="PathToTargetHeuristic" type="AIStatePathToTargetHeuristic"/>
+      <xs:element name="BridgeExistsHeuristic" type="AIStateBridgeExistsHeuristic"/>
+			<xs:element name="ObjectOfTypeExistsHeuristic" type="AIStateObjectOfTypeExistsHeuristic"/>
+			<xs:element name="CanBuildBuildingsOnSurfaceHeuristic" type="AIStateCanBuildBuildingsOnSurfaceHeuristic" />
+
+      <xs:element name="ScriptedFlagHeuristic" type="AIStateScriptedFlagHeuristic"/>
+      <xs:element name="BeaconExistsHeuristic" type="AIAlliedBeaconExistsHeuristic"/>
+      <xs:element name="StrategicDirectiveHeuristic" type="AIStrategicDirectiveHeuristic"/>
+			<xs:element name="RedAlertHeuristic" type="AIRedAlertHeuristic"/>
+
+      <!--Real Value Heuristics-->
+      <xs:element name="OpponentFundsHeuristic" type="AIStateOpponentFundsHeuristic"/>            
+      <xs:element name="LinearCombinationHeuristic" type="AIStateLinearCombinationHeuristic"/>
+		</xs:choice>
+ </xs:complexType>
+
+  <xs:complexType name="AIStateDefinition" xas:runtimeWrapper="::AIState" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+				  <xs:element name="Heuristic" type="HeuristicChoice" minOccurs="1" maxOccurs="1">
+		      </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIStrategicStateDefinition" xas:runtimeWrapper="::AIStrategicState" xas:typeGroup="Xml">
+	  <xs:complexContent>
+		  <xs:extension base="AIStateDefinition">
+			  <xs:sequence>
+				  <xs:element name="TargetHeuristic" type="StateTargetHeuristic" minOccurs="0" maxOccurs="unbounded"/>
+				  <xs:element name="Tactic" type="AIStateTactic" minOccurs="0" maxOccurs="unbounded" />
+			  </xs:sequence>
+			  <xs:attribute name="MaxTargets" type="xs:unsignedInt" default="1" />
+				<xs:attribute name="MaxRunningCopies" type="xs:unsignedInt" use="optional" />
+				<xs:attribute name="MaxInactiveCopies" type="xs:unsignedInt" use="optional" />
+				<xs:attribute name="PathfindingCheckType" type="PathfindingCheckType" use="optional" />
+				<xs:attribute name="CannotAttackTargetReaction" type="AICannotAttackTargetReaction" use="optional" />
+				<xs:attribute name="TeamGatherBeginFeedbackKey" type="StringHash" use="optional" />
+				<xs:attribute name="ExecutionBeginFeedbackKey" type="StringHash" use="optional" />
+				<xs:attribute name="ExecutionCanceledFeedbackKey" type="StringHash" use="optional" />
+				<xs:attribute name="ExecutionCompleteFeedbackKey" type="StringHash" use="optional" />
+			</xs:extension>
+	  </xs:complexContent>
+  </xs:complexType>
+	
+	<!-- Needed to get around the lack of asset name strings in final builds -->
+	<xs:complexType name="AIStrategicStateName" xas:typeGroup="Xml">
+	  <xs:complexContent>
+		  <xs:extension base="BaseAssetType">
+			  <xs:sequence>
+			  </xs:sequence>
+			  <xs:attribute name="State" type="AssetReference" xas:refType="AIStrategicStateDefinition" use="required" />
+			  <xs:attribute name="Name" type="xs:string" use="required" />
+			</xs:extension>
+	  </xs:complexContent>
+	 </xs:complexType>
+
+  <xs:complexType name="AIBudgetStateDefinition" xas:runtimeWrapper="::AIBudgetState" xas:typeGroup="Xml">
+	  <xs:complexContent>
+		  <xs:extension base="AIStateDefinition">
+			  <xs:sequence>
+				  <xs:element name="Budget" type="AIBankBudget" minOccurs="1" maxOccurs="1" />
+			  </xs:sequence>
+		  </xs:extension>
+	  </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AIBuildStateDefinition" xas:runtimeWrapper="::AIBuildState" xas:typeGroup="Xml">
+    <xs:complexContent>
+      <xs:extension base="AIStateDefinition">
+        <xs:sequence>
+          <xs:element name="BuildEntry" type="AIBuildEntry" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- Target Heuristics in a state -->
+  <xs:complexType name="StateTargetHeuristic">
+    <xs:attribute name="TargetHeuristic" type="AssetReference" xas:refType="AITargetingHeuristic" use="required"/>
+		<!-- Targetting heuristics with higher priority are checked first -->
+		<xs:attribute name="Priority" type="SageInt" default="10" />
+  </xs:complexType>
+  
+  <!-- Tactic and unit builder modifiers-->
+	<xs:simpleType name="Tactics">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SimpleAttack" />
+			<xs:enumeration value="FlankAttack" />
+      <xs:enumeration value="DefenseAvoidanceAttack" />
+			<xs:enumeration value="SimpleSiege" />
+      <xs:enumeration value="Engineer" />
+			<xs:enumeration value="SimpleDefense" />
+      <xs:enumeration value="StaticDefense" />
+      <xs:enumeration value="ReactiveDefense" />
+			<xs:enumeration value="SimpleExpansion" />
+			<xs:enumeration value="ExactExpansion" />
+			<xs:enumeration value="Hunt" />
+			<xs:enumeration value="RoamingDefense" />
+      <xs:enumeration value="GarrisonBuilding"/>
+      <xs:enumeration value="Scripted" />
+			<xs:enumeration value="NullTactic" />
+		</xs:restriction>
+	</xs:simpleType>
+  
+  <xs:simpleType name="TacticEndBehavior">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="RAMPAGE" />
+      <xs:enumeration value="DISBAND" />
+      <xs:enumeration value="RETURN_HOME_AND_DISBAND" />
+      <xs:enumeration value="PICK_NEW_TARGET" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="AIStateTactic">
+    <xs:sequence>
+			<xs:element name="TargetBaseCriteria" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1" /> <!-- For ReactiveDefense -->
+
+			<!-- For anything with EndBehavior="RETURN_HOME_AND_DISBAND", this is what "home" is. To avoid massive cut&paste, there
+				   is also a default HomeBaseCriteria in the personality -->
+			<xs:element name="HomeBaseCriteria" type="AIBaseSelectionCriteria" minOccurs="0" maxOccurs="1" />
+			
+			<xs:element name="TeamTemplate" type="AITeamTemplate" minOccurs="0" maxOccurs="4"/>
+    </xs:sequence>
+		<xs:attribute name="id" type="Poid" xas:refType="AIStateTactic" use="required"/>
+		<xs:attribute name="Tactic" type="Tactics" use="required"/>
+    <xs:attribute name="Targetless" type="xs:boolean" default="false"/>
+    <xs:attribute name="EndBehavior" type="TacticEndBehavior" default="RAMPAGE"/>
+    <xs:attribute name="DisbandAfterRetreatTeamSize" type="xs:int" default="0"/>
+    <xs:attribute name="EndIfStateTurnsOff" type="xs:boolean" default="false"/>
+    <xs:attribute name="UseAestheticsManager" type="xs:boolean" default="true"/>
+    <xs:attribute name="AestheticsManagerPatrolIdleTime" type="Time" default="10s"/>
+    <xs:attribute name="AestheticsManagerMinDistanceFromHarvester" type="SageReal" default="300.0"/>
+    <xs:attribute name="Difficulty" type="AIDifficultyBitFlags" default="EASY MEDIUM HARD BRUTAL"/>
+    <xs:attribute name="Distance" type="SageReal" default="400.0" />
+    <!-- Used by StaticDefense to prevent units from bouncing back and forth on the edge of their leash distance -->
+    <xs:attribute name="CombatLeashSlack" type="SageReal" default="1.5" />
+    <xs:attribute name="TargetDispositionToDisplay" type="AITargetDisposition" default="Invalid" />
+    <!-- Used by SimpleAttack to let designers override the gather location the team uses before engaging its target with a WorldBuilder waypoint -->
+    <xs:attribute name="GatherWaypoint" type="xs:string" use="optional"/>
+    <xs:attribute name="UseTransports" type="xs:boolean" default="true"/>
+    <xs:attribute name="UpdateTime" type="Time" default="1.0s"/>
+  </xs:complexType>
+
+</xs:schema>

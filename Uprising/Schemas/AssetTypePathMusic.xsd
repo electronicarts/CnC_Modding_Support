@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<!-- Pathfinder map data loaded into memory -->
+	<xs:complexType name="PathMusicMapRuntime" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence />
+				<xs:attribute name="MapData" type="SageInt" use="required" />
+				<!-- This will actually be a void * through the magic of xsd2cpp\[platform].config.xml -->
+				<xs:attribute name="MapDataSize" type="SageInt" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Pathfinder MPF file -->
+	<xs:complexType name="PathMusicMap" xas:typeGroup="Audio">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence />
+				<xs:attribute name="File" type="FileReference" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Pathfinder MUS file type -->
+	<xs:simpleType name="PathMusicTrackType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="MAIN" />
+			<xs:enumeration value="OVERLAY_0" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!-- Pathfinder MUS file -->
+	<xs:complexType name="PathMusicTrack" xas:typeGroup="Audio">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence />
+				<xs:attribute name="File" type="FileReference" use="required" />
+				<xs:attribute name="Type" type="PathMusicTrackType" use="required" />
+				<xs:attribute name="PathfinderTrackHeader" type="FileReference" use="required" />
+				<!-- Don't fill in the Handle value manually, it's done automatically in BAB -->
+				<xs:attribute name="Handle" type="SageInt" use="prohibited" />
+			</xs:extension>
+		</xs:complexContent> 
+	</xs:complexType>
+	
+	<!-- The ID of this type is the EventName we send to Pathfinder to trigger music changes -->
+	<xs:complexType name="PathMusicEvent" xas:typeGroup="Audio">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence />
+				<xs:attribute name="PathfinderEventHeader" type="FileReference" use="required" />
+				<xs:attribute name="RestartAlternateEvent" type="PathMusicEventWeakRef" use="optional" />
+				<xs:attribute name="IsCacheable" type="SageBool" default="true" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Pathfinder Event Runtime Data( has the verified hash ) -->
+	<xs:complexType name="PathMusicEventRuntime" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence />
+				<xs:attribute name="EventNameHash" type="SageInt" use="required" />
+				<xs:attribute name="RestartAlternateEvent" type="PathMusicEventWeakRef" use="optional" />
+				<xs:attribute name="IsCacheable" type="SageBool" default="true" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Although the reference here is "refType"d to PathMusicEvent, in-game it gives you a reference to
+		a PathMusicEventRuntime, the processed type with the hash.  This is done by a template specialization for
+		AssetRef<PathMusicEvent,PathMusicEvent>.  The reason this is necessary is that when other XML structures
+		use these Refs it needs to be an unprocessed PathMusicEvent, but in-game this needs to boil down to
+		a PathMusicEventRuntime pointer. -->
+	<xs:simpleType name="PathMusicEventRef" xas:isRef="true" xas:refType="PathMusicEvent">
+		<xs:restriction base="AssetReference" />
+	</xs:simpleType>
+
+	<xs:simpleType name="PathMusicEventWeakRef" xas:refType="PathMusicEvent">
+		<xs:restriction base="WeakReference" />
+	</xs:simpleType>
+
+	<!-- Pathfinder Event Set Catgory -->
+	<xs:simpleType name="PathMusicEventSetCategory">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SHELL" />
+			<xs:enumeration value="SCRIPT" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="PathMusicEventSet"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Event" type="PathMusicEventRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Category" type="PathMusicEventSetCategory" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<!-- Dynamic Game State -->
+	<xs:complexType name="PathMusicGameDynamicState" xas:runtimeWrapper="::PathMusicDynamicStateWrap" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseInheritableAsset">
+				<xs:sequence>
+					<xs:element name="Transition" type="PathMusicGameDynamicTransitionRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="EnterEvent" type="PathMusicEventRef" use="optional" />
+				<xs:attribute name="ExitEvent" type="PathMusicEventRef" use="optional" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- Corresponding Ref is in Ref.xsd -->
+
+	<!-- Pathfinder Dynamic Game State Set Catgory -->
+	<xs:simpleType name="PathMusicGameDynamicStateSetCategory">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="STANDARD"/>
+			<xs:enumeration value="SCRIPTED"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- List of Dynamic Game States -->
+	<xs:complexType name="PathMusicGameDynamicStateSet"  xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="State" type="PathMusicGameDynamicStateRef" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="Category" type="PathMusicGameDynamicStateSetCategory" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Dynamic Game Transition, from one State to another-->
+	<xs:complexType name="PathMusicGameDynamicTransition" xas:typeGroup="Xml">
+		<xs:complexContent>
+			<xs:extension base="BaseAssetType">
+				<xs:sequence>
+					<xs:element name="Condition" type="MusicScriptConditionRef" minOccurs="1" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="DestinationState" type="PathMusicGameDynamicStateWeakRef" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="PathMusicGameDynamicTransitionRef" xas:isRef="true" xas:refType="PathMusicGameDynamicTransition">
+		<xs:restriction base="AssetReference" />
+	</xs:simpleType>
+
+</xs:schema>

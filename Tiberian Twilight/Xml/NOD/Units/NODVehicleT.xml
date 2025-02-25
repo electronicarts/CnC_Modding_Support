@@ -1,0 +1,1078 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+
+	<!-- Nod Vehicle T / Medium Laser T1 / Scorpion Tank -->
+	<!-- Local Model Conditions:
+		USER_1: grabbing
+		USER_3: Unburrow
+	-->
+
+	<Includes>
+		<Include type="all"	source="ART:NUVehicleT_SKN.w3x" />
+		<Include type="all"	source="ART:NUVehicleT_AIDA.w3x" />
+		<Include type="all"	source="ART:NUVehicleT_ATKA.w3x" />
+		<Include type="all"	source="ART:NUVehicleT_ATKB1.w3x" />
+		<Include type="all"	source="ART:NUVehicleT_ATKB2.w3x" />
+		<Include type="all"	source="ART:NUVehicleT_BATA.w3x" />
+		<Include type="all"	source="ART:NUVehicleT_BIDA.w3x" />
+		<Include type="all"	source="ART:NUVehicleT_DSEL.w3x" />
+		<Include type="all"	source="ART:NUVehicleT_MOVA.w3x" />
+		<Include type="all"	source="ART:NUVehicleT_DMG.xml" />
+		<Include type="all"	source="ART:NUVehicleT_DIGA.w3x" />
+		<Include type="all"	source="ART:NUVehicleT_DIGB.w3x" />
+		<Include type="all"	source="ART:FXRailGunCoreMask.xml" />
+		<Include type="all"	source="ART:FXRailGunCoreDistortion.xml" />
+		<Include type="all"	source="ART:FXObeliskLaser.xml" />
+		<Include type="all"	source="ART:FXLaserOverlay.xml" />
+		<Include type="instance" source="ART:EXTnkTrack.xml" />
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:GlobalData/Locomotor.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseMediumVehicle.xml" />
+		
+		<!-- Laser Draw Includes -->
+		<Include type="instance" source="ART:FXNodLaser.xml" />
+		<Include type="instance" source="ART:FXNodLaser_Veteran.xml" />
+		<Include type="instance" source="ART:FXEnergyBeam.xml" />
+		<Include type="instance" source="ART:FXNodLaser_Secondary.xml" />
+		<Include type="instance" source="ART:FXNodLaser_Veteran_Secondary.xml" />
+		<Include type="instance" source="ART:FXRailDistort02.xml" />
+	</Includes>
+
+	<GameObject
+		id="NODVehicleT"
+		inheritFrom="BaseMediumVehicle"
+		HealthBoxHeightOffset="28"
+		SubGroupPriority="321"
+		SelectPortrait="Portrait_NOD_Vehicle_T"
+		ButtonImage="Btn_NOD_Vehicle_T"
+		Side="NOD"
+		ParticipationValue="=$NODVEHICLET_PARTICIPATION_VALUE"
+		TransportSlotCount="2"
+		BuildTime="12"
+		PathPriority="70"
+		CommandSet="NODVehicleTCommandSet"
+		CommandPoints="=$NOD_VEHICLE_T_COMMANDPOINT_COST"
+		VoicePriority="160"
+		EditorName="NOD_O1_Medium_Laser(Scorpion)"
+		EditorSorting="UNIT"
+		WeaponCategory="LASER"
+		ReinvisibilityDelay="0s"
+		Description="Desc:NODVehicleT"
+		TypeDescription="Type:NODVehicleT">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODVehicleT</DisplayName>
+		<LocomotorSet
+			Locomotor="NODVehicleTLocomotor"
+			Condition="NORMAL"
+			Speed="90.0" />
+		<!-- The speed is modified by Modifier_BurrowingVehicle, so leave it equal to its normal locomotor speed here -->
+		<LocomotorSet
+			id="NODVehicleTBurrowingLocomotor"
+			Locomotor="NODVehicleTBurrowingLocomotor"
+			Condition="BURROWING"
+			Speed="80.0" />
+		
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TankDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="Bone_Tread_Front_Left Bone_Tread_Front_Right GrabVictimPosition WEAPONFIRE FX_DamageBone"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="Bone_Tread_Front_Left"
+				TrackMarksRightBone="Bone_Tread_Front_Right"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT"
+					RetainSubObjects="true">
+					<Model
+						Name="NUVehicleT_SKN" />
+					<!-- main laser -->
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="WEAPONFIRE" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="WEAPONFIRE" />
+					
+					<!-- this set of bones is for the oneshot weapon fired while grabbing -->
+					<WeaponFireFXBone
+						WeaponSlotID="2"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="WEAPONFIRE" />
+					<WeaponLaunchBone
+						WeaponSlotID="2"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="WEAPONFIRE" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NUVehicleT_SKN" />
+					<Texture
+						Original="NUVehicleT"
+						New="NUVehicleT_DMG" />
+					<ParticleSysBone
+						BoneName="FX_DamageBone"
+						FXParticleSystemTemplate="NODVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					RetainSubObjects="true"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUVehicleT_SKN" />
+					<Texture
+						Original="NUVehicleT"
+						New="NUVehicleT_DMG" />
+					<ParticleSysBone
+						BoneName="FX_DamageBone"
+						FXParticleSystemTemplate="NODVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FX_DamageBone"
+						FXParticleSystemTemplate="NODVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="NUVehicleT_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+						<Script>
+									CurDrawableHideSubObjectPermanently( "NUVEHICLET_UPG" )
+						</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_bored"
+					AllowRepeatInRandomPick="true"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="NUVehicleT_BIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="18"
+						AnimationPriority="80" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" or Prev == "TRANS_Deselected" then
+						--Do Nothing and Re-Pick Animation
+						else
+						CurDrawableSetTransitionAnimState("TRANS_Deselected")
+						end 
+					</Script>
+				</AnimationState>
+				
+				<!-- play looping 'grabbed' anim with a 'grab' transition -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="NUVehicleT_ATKB2"
+						AnimationMode="LOOP"
+						AnimationBlendTime="6" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev ~= "STATE_Grab" then
+						CurDrawableSetTransitionAnimState("STATE_Grab")
+						end
+					</Script>	
+				</AnimationState>
+
+				<!-- LASER CHARGEUP -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_A">
+					<Animation
+						AnimationName=""
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="WEAPONFIRE"
+						FXParticleSystemTemplate="NODLaser_MedChargeup_Light" />
+					<ParticleSysBone
+						BoneName="WEAPONFIRE"
+						FXParticleSystemTemplate="NODLaser_MedChargeup_Rings" />
+					<ParticleSysBone
+						BoneName="WEAPONFIRE"
+						FXParticleSystemTemplate="NODLaser_MedChargeup_Sparks" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_A">
+					<Animation
+						AnimationName="NUVehicleT_ATKA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="6" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="NUVehicleT_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="5" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BURROWING MOVING">
+					<Animation
+						AnimationName="NUVehicleT_MOVA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+
+					<FXEvent
+						Frame="30"
+						FireWhenSkipped="true"
+						Effect="FX_NOD_Burrow_Large"
+						Bone="" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BURROWING_TRANSITION_ENTER">
+					<Animation
+						AnimationName="NUVehicleT_DIGA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<FXEvent
+						Frame="30"
+						FireWhenSkipped="true"
+						Effect="FX_NOD_Burrow_Large"
+						Bone="" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BURROWING_TRANSITION_EXIT">
+					<Animation
+						AnimationName="NUVehicleT_DIGB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<FXEvent
+						Frame="30"
+						FireWhenSkipped="true"
+						Effect="FX_NOD_Burrow_Large"
+						Bone="" />
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED"
+					Flags="RESTART_ANIM_WHEN_COMPLETE"
+					StateName="STATE_Selected">
+					<Animation
+						AnimationName="NUVehicleT_AIDA"
+						AnimationMode="ONCE"
+						AnimationPriority="85"
+						AnimationBlendTime="10"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState()
+						if Prev == "STATE_bored" then
+						CurDrawableSetTransitionAnimState("TRANS_IdleToSelected")
+						end
+					</Script>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_Deselected">
+					<Animation
+						AnimationName="NUVehicleT_DSEL"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IdleToSelected">
+					<Animation
+						AnimationName="NUVehicleT_BATA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="10"/>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="STATE_Grab">
+					<Animation
+						AnimationName="NUVehicleT_ATKB1"
+						AnimationMode="ONCE"
+						AnimationBlendTime="5" />
+				</AnimationState>
+
+			</TankDraw>
+			
+			<TreadScrollDraw
+				id="ModuleTag_TreadDraw">
+				<TreadScrollingMap
+					LeftTrack="Bone_Tread_Front_Left"
+					RightTrack="Bone_Tread_Front_Right"
+					SpeedMultiplier="-0.06"
+					TreadDriveSpeedFraction="10%" />
+			</TreadScrollDraw>
+			
+			
+			<ScriptedModelDraw
+				id="ModuleTag_FX"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TreadDustPred"
+						FollowBone="true" />
+
+				</AnimationState>
+			</ScriptedModelDraw>
+			<LaserDraw
+				id="ModuleTag_LaserDraw1"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="10"
+				LightMin="10"
+				LightMax="20"
+				CombatChainCounter="EQUAL WEAK"
+				LaserStateID="0">
+				<LightColor R="1.0" G="0.0" B="0.5" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+			
+			<!-- Perfect Hit Laser Draw -->
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw1_Strong"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="10"
+				LightMin="10"
+				LightMax="20"
+				CombatChainCounter="STRONG"
+				LaserStateID="0">
+				<LightColor R="1.0" G="0.0" B="0.5" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser_Veteran</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+			<LaserDraw
+				id="ModuleTag_LaserDrawGrab"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="10"
+				LightMin="10"
+				LightMax="20"
+				CombatChainCounter="EQUAL WEAK"
+				LaserStateID="1">
+				<LightColor R="1.0" G="0.0" B="0.5" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+			<!-- Perfect Hit Laser Draw -->
+
+			<LaserDraw
+				id="ModuleTag_LaserDrawGrab_Strong"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="10"
+				LightMin="10"
+				LightMax="20"
+				CombatChainCounter="STRONG"
+				LaserStateID="1">
+				<LightColor R="1.0" G="0.0" B="0.5" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser_Veteran</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+			<!--
+			<LaserDraw
+				id="ModuleTag_LaserDraw_Strong"
+				UseDistortionShader="true"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="5"
+				LightMin="5"
+				LightMax="15"
+				LaserStateID="1">
+				<LightColor R="1.0" G="0.0" B="0.5" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser_Veteran_Secondary</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXRailDistort02</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+			-->
+			
+			<!-- Distortion laser draw -->
+			<!--
+			<LaserDraw
+				id="ModuleTag_LaserDistort1"
+				UseDistortionShader="true"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="50"
+				LightMin="50"
+				LightMax="80" 
+				LaserStateID="1">
+				<LightColor R="1.0" G="0.0" B="0.3" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXRailGunCoreDistortion</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXRailGunCoreMask</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+			-->
+
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotHardpoint
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODVehicleTLaserWeapon"
+						ForbiddenObjectStatus="GRAB_UPDATE_ACTIVE SPECIALABILITY_ACTIVE BURROWING"/>
+				</WeaponSlotHardpoint>
+			</WeaponSetUpdate>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Medium_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleMED_Death" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<StopGrabSpecialPower
+				id="ModuleTag_StopGrabSpecialPower"
+				SpecialPowerTemplate="SpecialPower_NODVehicleTGrabStop"/>
+			
+			<SpecialPower
+				id="ModuleTag_GrabSpecialPower"
+				SpecialPowerTemplate="SpecialPower_NODVehicleTGrab"
+				UpdateModuleStartsAttack="true"/>
+
+			<GrabSpecialAbilityUpdate
+				id="ModuleTag_GrabSpecialAbilityUpdate"
+				SpecialPowerTemplate="SpecialPower_NODVehicleTGrab"
+				StartAbilityRange="20"
+				Options="CHECK_SPECIALPOWER_REQUIREMENTS_DURING_UPDATE USE_OBJECT_GEOMETRY_FOR_WITHIN_RANGE_CHECK FAIL_WITH_INVALID_APPROACH"/>
+			<GrabUpdate
+				id="ModuleTag_GrabUpdate"
+				Flags="ACTIVATE_FIRE_WEAPON_UPDATE TOGGLE_SELF_TO_DEFAULT_STATE"
+				ObjectStatusSelf="NO_ATTACK NO_AUTO_ACQUIRE"
+				ObjectStatusVictim="NO_ATTACK NO_SPECIAL_ABILITY UNATTACKABLE UNSELECTABLE EXCLUDE_FROM_SELECT_ALL"
+				CommandSetGrabbing="NODVehicleTCommandSetGrabbing"
+				OnReleaseRechargeSpecialPower="SpecialPower_NODVehicleTGrab"
+				VictimAttributeModifier="AttributeModifier_NodVehicleTGrabVictim"
+				OwnerAttributeModifier="AttributeModifier_NodVehicleTGrabbedVictimSelf"
+				ModelConditionsSelf="USER_1">
+				<!-- can't move while lifting medium vehicle -->
+				<VictimBehavior KindOf="MEDIUM_UNIT" ObjectStatusSelf="IMMOBILE">
+					<VictimDragInfo
+						DragToBoneName="GrabVictimPosition"
+						DragRate="40"/>
+				</VictimBehavior>
+				<!-- everything else: can move and lift -->
+				<VictimBehavior KindOf="VEHICLE INFANTRY">
+					<VictimDragInfo
+						DragToBoneName="GrabVictimPosition"
+						DragRate="40"/>
+				</VictimBehavior>
+			</GrabUpdate>
+			<FireWeaponUpdate
+				id="Moduletag_GrabWeapon"
+				UpdateRequiresTarget="true"
+				FireInterval="0.2s">
+				<ObjectStatusValidation
+					RequiredStatus="GRAB_UPDATE_ACTIVE" />
+				<FireWeaponNugget
+					WeaponName="NODVehicleTGrabbedWeapon"
+					SlotType="SECONDARY_WEAPON"
+					SlotID="2"
+					FireDelay="0s">
+				</FireWeaponNugget>
+			</FireWeaponUpdate>
+			<LaserState
+				id="ModuleTag_LaserStateNormal"
+				LaserId="0"/>
+			<LaserState
+				id="ModuleTag_LaserStateGrabbing"
+				LaserId="1"
+				OriginBoneName="WEAPONFIRE"/>
+
+			<!-- burrowing -->
+			<InvisibilityBehavior
+				id="ModuleTag_NODVehicleTInvisibility"
+				InvisibilityTemplate="NODVehicleBurrowInvisibilityTemplate" />
+
+			<SpecialPower
+				id="ModuleTag_ToggleBurrowingTrigger"
+				SpecialPowerTemplate="SpecialPower_BurrowVehicle"/>
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleBurrowing"
+				SpecialPowerTemplate="SpecialPower_BurrowVehicle">
+				<!-- NOTE: Use the ModelConditions attibute in the following Toggle states to put some animation on the Transformation -->
+				<ToggleState
+					LocomotorSet="NORMAL"
+					InitiateIntentToExitStateSound="Burrow_VehicleMS"
+					EnterFX="FX_NOD_Burrow_Small"
+					TransitionModelConditions="BURROWING_TRANSITION_EXIT"
+					TransitionDuration="=$SHORT_BURROW_TRANSITION_DURATION"
+					ForbidTransitionRadius="25">
+					<ForbidTransitionNearFilter
+						Rule="ANY"
+						Include="VEHICLE INFANTRY CRAWLER"
+						StatusBitFlagsExclude="AIRBORNE_TARGET ENCLOSED">
+					</ForbidTransitionNearFilter>
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_DEFAULT">
+					</SkirmishAiInfo>
+				</ToggleState>
+				<ToggleState
+					LocomotorSet="BURROWING"
+					AttributeModifier="Modifier_BurrowingVehicle"
+					InitiateIntentToExitStateSound="UnBurrow_VehicleMS"
+					EnterFX="FX_NOD_Burrow_Small"
+					TransitionModelConditions="BURROWING_TRANSITION_ENTER"
+					Flags="SHADER_OVERRIDE_AFTER_TRANSITION"
+					ShaderOverride="ShaderOverride_Burrowing"
+					TransitionDuration="=$SHORT_BURROW_TRANSITION_DURATION">
+					<ObjectStatusValidation
+						ForbiddenStatus="STEALTH_AND_BURROW_FORBIDDEN GRAB_UPDATE_ACTIVE UPGRADE_CRYSTAL_ATTACHED" />
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_UNIT_BURROW">
+					</SkirmishAiInfo>
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+
+			<!-- Reload Boost upgrade. -->
+			<AttributeModifierUpgrade
+				id="Upgrade_NODVehicleA_ReloadUpgrade"
+				AttributeModifier="Modifier_Generic_PreAttack_NODReloadUpgrade">
+				<TriggeredBy>Upgrade_Nod_Offense_Reload</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Range Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_NODVehicleA_WeaponRangeUpgrade"
+				AttributeModifier="Modifier_Generic_NODWeaponRange_T1">
+				<TriggeredBy>Upgrade_Nod_Offense_Range</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- Speed Boost upgrade.-->
+			<AttributeModifierUpgrade
+				id="Upgrade_NODVehicleA_SpeedBoostUpgrade"
+				AttributeModifier="Modifier_Generic_NODSpeedBoostUpgrade">
+				<TriggeredBy>Upgrade_Nod_Offense_Speed</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- this attmod affects both the main laser and the grabbing laser. If we want them to 
+					 be affected separately we will have to give them different damage nuggets triggered by the upgrade -->
+			<AttributeModifierUpgrade
+				id="ModuleTag_AddAttributes"
+				AttributeModifier="AttributeModifier_NODVehicleT_Crate">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+			</AttributeModifierUpgrade>
+
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NodVehicleTFunctions"/>
+
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+				<Nugget
+					ShowSubObjects="NUVehicleT_UPG"
+					Upgrade="Upgrade_Crate_Level1"
+          FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>          
+			</SubObjectsUpgrade>
+
+			<xi:include
+				href="DATA:Includes/GenericReflectedWeaponTracker.xml" />
+
+			<xi:include
+				href="DATA:Includes/FXListBehaviorCrateUpgrade.xml" />
+		
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="true"
+					SympathyRange="200.0"
+					RotateToTargetWhenAiming="false" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="900" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+				<Key>LargeGroupAudioKey_TankMedium</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "25.0"
+					 MinorRadius = "20.0"
+					 Height = "15.0"
+					 ContactPointGeneration = "VEHICLE" >
+				<Offset
+						x = "13.4661"
+						y = "-0.109247"
+						z = "0.0" />
+			</Shape>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "6.0"
+					 MinorRadius = "6.0"
+					 Height = "30.0"
+					 ContactPointGeneration = "VEHICLE" >
+				<Offset
+						x = "-5.06731"
+						y = "-0.109246"
+						z = "14.9461" />
+			</Shape>
+		</Geometry>
+
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MoveLoop">
+				<ModelConditionSound Sound="NOD_Scorpion_VehT_MoveLoop" RequiredFlags="MOVING" ExcludedFlags="RECYCLED DYING DECELERATE BURROWING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<AnimationSoundClientBehavior id="ModuleTag_AnimationSound">
+				<Sound Sound="NOD_Scorpion_VehT_SelectAnimation1" Animation="NUVehicleT_BATA" Frame="0"/>
+				<Sound Sound="NOD_Scorpion_VehT_SelectAnimation2" Animation="NUVehicleT_BATA" Frame="16"/>
+			</AnimationSoundClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ClawGrab">
+				<ModelConditionSound Sound="NOD_Scorpion_VehT_ClawGrab" RequiredFlags="USER_1" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ClawGrabLaserWeaponFireLoop">
+				<ModelConditionSound Sound="NOD_Scorpion_VehT_ClawGrabLaserWeaponFireLoopMS" RequiredFlags="USER_1" ExcludedFlags="RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_Idle">
+				<ModelConditionSound Sound="NOD_VehicleT_IdleLoop" ExcludedFlags="BURROWING RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ReallyDamaged">
+				<ModelConditionSound Sound="Fire1_VehicleMedium_LoopMS" RequiredFlags="REALLYDAMAGED" ExcludedFlags="BURROWING RECYCLED DYING" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_Burrowed">
+				<Override RequiredFlags="BURROWING">
+					<!-- <AudioArrayVoice>
+						<AudioEntry Sound="NOD_VehTScorpionTank_VoiceMoveBurrowed" AudioType="voiceMove" />
+					</AudioArrayVoice> -->
+					<AudioArraySound>
+						<AudioEntry Sound="" AudioType="soundMoveStart" />
+						<AudioEntry Sound="Burrowed_MoveLoop" AudioType="soundMoveLoop" />
+					</AudioArraySound>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_VehTScorpion_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="NOD_VehTScorpion_VoiceAttackMismatch" AudioType="voiceAttackMismatchLight"/>
+			<AudioEntry Sound="NOD_VehTScorpion_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="NOD_VehTScorpion_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="NOD_VehTScorpion_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="NOD_VehTScorpion_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="NOD_VehTScorpion_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="NOD_VehTScorpion_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="NOD_VehTScorpion_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+			<NamedEntry Sound="NOD_VehTScorpion_VoiceMove" Name="voiceMoveBurrowSpecial" />
+			<NamedEntry Sound="NOD_VehTScorpion_VoiceAttack" Name="VoiceSpecialAttackGrab" />
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Scorpion_VehT_MoveStart" AudioType="soundMoveStart" />
+		</AudioArraySound>
+
+		<EvaEventArray>
+			<EvaEntry EvaEvent="BurrowedUnitDetected" EvaType="detectedEnemy" />
+		</EvaEventArray>
+
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_Nod_Offense_Reload</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_Nod_Offense_Range</DisplayUpgrade>
+		<DisplayUpgrade>Upgrade_Nod_Offense_Speed</DisplayUpgrade>
+	</GameObject>
+
+
+	<LocomotorTemplate
+		id="NODVehicleTLocomotor"
+		inheritFrom="GenericTreadLocomotor" 
+		TurnTimeSeconds="1.0s"
+		TurnTimeDamagedSeconds="1.0s"
+		MaxSpeedDamaged="100%"
+		BrakingSeconds="0.1s"
+		FastTurnRadius="20.0"
+		AccelPitchLimit="1.8d"
+		BounceKick="0.8d"
+		PitchDamping="0.4"
+		RollDamping="0.5"
+		ForwardAccelerationPitchFactor="0.1"
+		HasSuspension="true"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="TREADS"
+		StickToGround="true"
+		PreferredHeightLerpDuration="=$SHORT_BURROW_TRANSITION_DURATION" 
+/>
+
+	<LocomotorTemplate
+		id="NODVehicleTBurrowingLocomotor"
+		inheritFrom="NODVehicleTLocomotor"
+		Surfaces="GROUND CLIFF CRUSHABLE_OBSTACLE"
+		ActiveObjectStatus="BURROWING"
+		PreferredHeight="-45" />
+
+
+	<AttributeModifier
+		id="AttributeModifier_NodVehicleTGrabVictim">
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-50%"/>
+	</AttributeModifier>
+	
+	<AttributeModifier
+		id="AttributeModifier_NodVehicleTGrabbedVictimSelf">
+		<Modifier Type="SPEED" Value="25%"/>
+	</AttributeModifier>
+	
+	<WeaponTemplate
+		id="NODVehicleTLaserWeapon"
+		inheritFrom="BaseLaserWeapon" 
+		AttackRange="300.0"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		FireFX="FX_NODLaserMedium_Fire"
+		FireStrongCounterFX="FX_NODLaserMedium_Fire_Veteran"
+		FireSound="NOD_Scorpion_VehT_LaserWeaponFire"
+		AcceptableAimDelta="180d">
+		<PreAttackDelay
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="3.0s"
+			MaxSeconds="3.0s" />
+		<WeaponAiHintInfo
+			UseLongLockOnTimeCode="true"/>
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.75s"
+				LaserId="0"
+				HitGroundFX="FX_NODLaser_Medium_Miss"/>
+			<LineDamageNugget
+				Damage="60.0"
+				DamageType="LASER"
+				DamageFXType="NOD_LASER"
+				DeathType="LASERED"
+				LineWidth="10.0"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	
+	<!-- range doesn't matter because weapon is fired from FireWeaponUpdate -->
+	<WeaponTemplate
+		id="NODVehicleTGrabbedWeapon"
+		AttackRange="9999"
+		FireFX="FX_NODLaserMedium_Fire"
+		FireStrongCounterFX="FX_NODLaserMedium_Fire_Veteran"
+		FireSound="NOD_Scorpion_VehT_LaserWeaponFire"
+		AcceptableAimDelta="180d"
+		RequiredAntiMask="ANTI_VEHICLE ANTI_INFANTRY"
+		ForbiddenAntiMask="ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		CanFireWhileMoving="true">
+		<PreAttackDelay
+			MinSeconds="0.0s"
+			MaxSeconds="0.0s" />
+		<FiringDuration
+			MinSeconds="0.5s"
+			MaxSeconds="0.5s" />
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="0.4s"
+				LaserId="1"/>
+			<DamageNugget
+				Damage="9.0"
+				DamageType="LASER"
+				DamageFXType="NOD_LASER"
+				DeathType="LASERED"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NODVehicleTGrab"
+		TargetType="OBJECT"
+		NameOfVoiceNameToUseAsInitiateIntendToDoVoice="VoiceSpecialAttackGrab"
+		ReloadTime="2s"
+		Flags="NEEDS_OBJECT_FILTER"
+		PreventConditions="BURROWING">
+		<ObjectFilter
+			Relationship="ENEMIES"
+			Rule="ANY"
+			Include="VEHICLE INFANTRY"
+			Exclude="AIRCRAFT HEAVY_UNIT CRAWLER"
+			StatusBitFlagsExclude="GRAB_UPDATE_VICTIM"/>
+	</SpecialPowerTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NodVehicleTGrabStop"
+		TargetType="NONE"
+		InitiateSound="NOD_Scorpion_VehT_ClawReleaseMS"
+		RequiredConditions="GRAB_UPDATE_ACTIVE"
+		PreventConditions="BURROWING"/>
+	
+	<LogicCommand
+		id="Command_NodVehicleTGrabStart"
+		Options="NEED_TARGET_ENEMY_OBJECT" 
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPower_NodVehicleTGrab</SpecialPower>
+	</LogicCommand>
+
+	<LogicCommand
+		id="Command_NodVehicleTGrabStop"
+		Type="SPECIAL_POWER">
+		<SpecialPower>SpecialPower_NodVehicleTGrabStop</SpecialPower>
+	</LogicCommand>
+	
+	<LogicCommandSet
+		id="NODVehicleTCommandSetBase">
+		<Cmd>Command_Stop</Cmd>
+		<Cmd>Command_AttackMove</Cmd>
+		<Cmd>Command_Burrow</Cmd>
+	</LogicCommandSet>
+
+	<LogicCommandSet
+		id="NODVehicleTCommandSet"
+		inheritFrom="NODVehicleTCommandSetBase">
+		<Cmd>Command_NodVehicleTGrabStart</Cmd>
+	</LogicCommandSet>
+
+	<LogicCommandSet
+		id="NODVehicleTCommandSetGrabbing"
+		inheritFrom="NODVehicleTCommandSetBase">
+		<Cmd>Command_NodVehicleTGrabStop</Cmd>
+	</LogicCommandSet>
+
+	<ExperienceLevelTemplate
+		id="NODVehicleTExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_01"
+		ExperienceAward="6">
+		<Target>NODVehicleT</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleTExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_02"
+		Prerequisite="NODVehicleTExperienceLevel_1"
+		RequiredExperience="12"
+		ExperienceAward="7">
+		<Target>NODVehicleT</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleTExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_03"
+		Prerequisite="NODVehicleTExperienceLevel_2"
+		RequiredExperience="30"
+		ExperienceAward="8">
+		<Target>NODVehicleT</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleTExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_04"
+		Prerequisite="NODVehicleTExperienceLevel_3"
+		RequiredExperience="54"
+		ExperienceAward="9">
+		<Target>NODVehicleT</Target>
+	</ExperienceLevelTemplate>
+
+	<AttributeModifier
+		id="AttributeModifier_NODVehicleT_Crate"
+		Category="NONE">
+		<Modifier Type="DAMAGE_MULT" Value="125%"/>
+	</AttributeModifier>
+	
+</AssetDeclaration>

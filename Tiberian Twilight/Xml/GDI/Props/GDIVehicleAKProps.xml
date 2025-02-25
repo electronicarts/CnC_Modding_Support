@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<!-- Data Includes -->
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+
+		<Include type="all" source="ART:GUL_VehicleAK_SKN.w3x" />
+		<Include type="all" source="ART:GUL_VehicleAK_DMG.xml" />
+		<Include type="all" source="ART:GUL_VehicleAK_AIDD.w3x" />
+	</Includes>
+
+	<Defines>
+		<Define
+			name="GDIVehicleAK_DAMAGE_BONE_NAMES"
+			value="
+				BONE_CONTACT_POINT_01
+				BONE_CONTACT_POINT_02
+				BONE_CONTACT_POINT_03
+				BONE_CONTACT_POINT_04
+				BONE_CONTACT_POINT_05
+				BONE_CONTACT_POINT_06
+				BONE_CONTACT_POINT_07
+				BONE_CONTACT_POINT_08
+				BONE_CONTACT_POINT_09
+				BONE_CONTACT_POINT_10
+				"/>
+	</Defines>
+
+	<!--    /////////////////////////////////////   -->
+	<!--		The Collapsing ship which falls					-->
+	<!--		from the sky when the unit is killed		-->
+	<GameObject
+		id="GDIVehicleAK_AircraftMode_Dying"
+		EditorName="GDIVehicleAK_AircraftMode_Dying"
+		Description="Desc:GDIVehicleAK_AircraftMode_Dying"
+		Side="GDI"
+		KindOf="=$BASE_DYING_AIRCRAFT_KINDOF">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw"
+				OkToChangeModelColor="true" 
+				ExtraPublicBone="=$GDIVehicleAK_DAMAGE_BONE_NAMES" >
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUL_VehicleAK_SKN" />
+					<Texture
+						Original="GUL_VehicleAK"
+						New="GUL_VehicleAK_DMG" />
+					<ParticleSysBone
+						BoneName="GAK_Tire04"
+						FXParticleSystemTemplate="GDIVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GAK_Tire04"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="GAK_Tire08"
+						FXParticleSystemTemplate="GDIVehicle_DamageFire"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="GUL_VehicleAK_AIDD"
+						AnimationMode="LOOP"
+						AnimationSpeedFactorMin="0.2"
+						AnimationSpeedFactorMax="0.2" />
+				</AnimationState>
+			</ScriptedModelDraw>
+
+		</Draws>
+		<Behaviors>
+				
+			<Physics
+				id="ModuleTag_Physics"
+				TumbleRandomly="true"
+				MaxXRotationVelocity="25"
+				MaxYRotationVelocity="5"
+				MaxZRotationVelocity="0"
+				KillWhenRestingOnGround="true"/>
+			
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIArtilleryHitBIG" />
+				<Event
+					Index="onDeath"
+					FX="FX_VehicleLarge_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDI_Generic_Aircraft_Large_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			
+			<FireWeaponWhenDead
+				id="ModuleTag_DeathWeapon"
+				DeathWeapon="GDIDyingAircraft_DeathWeapon_Large"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<!--This will hide the upgraded model-->
+			<LUAEventList
+        id="ModuleTag_LUAEventList"
+        EventListName="GDIVehicleAKFunctions"/>
+
+			<!--This will unhide the upgraded model-->
+			<SubObjectsUpgrade
+        id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_GDIVehicleAKGravityLaser</TriggeredBy>
+				<Nugget
+          ShowSubObjects="GUL_VehicleAK_UPG"
+          Upgrade="Upgrade_GDIVehicleAKGravityLaser"
+          FadeTime="0.0s"
+          SkipFlashOnCreate="true"/>
+			</SubObjectsUpgrade>
+			
+			<!-- Needed to copy damage from the original object during a swap -->
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					CreationObject="GDIVehicleL_Debris"
+					FlingVelocity="175.0"
+					FX="FX_GDIVehicleL_Damage"/>
+			</BuildingDestructionBehavior>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="Tag_PropBody"/>
+		</Body>
+
+		<xi:include	href="DATA:GDI/Includes/GDIVehicleAKGeometry.xml" />
+
+		<VisionInfo
+			VisionRange="700"
+			ShroudClearingRange="500" />
+	</GameObject>
+</AssetDeclaration>

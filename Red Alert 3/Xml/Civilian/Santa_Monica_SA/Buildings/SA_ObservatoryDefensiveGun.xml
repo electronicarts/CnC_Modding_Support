@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:SA_ObservatoryDefensiveGun_SKN.w3x" />
+		<Include type="all"	source="ART:SA_ObservatoryDefensiveGun_GAG.w3x" />
+		<Include type="all"	source="ART:SA_ObservatoryDefensiveGun_ATKA.w3x" />
+    <Include type="all"	source="ART:EXSovietShell.w3x" />
+    <!--		<Include type="all"	source="ART:SA_ObservatoryDefensiveGun_GAR.w3x" /> -->
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="instance" source="DATA:Civilian/Santa_Monica_SA/Props/SA_ObservatoryDefensiveGun_Collapse.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseCivilianStructureNoGarrisonDestructible.xml" />
+
+	</Includes>
+	<GameObject
+		id="SA_ObservatoryDefensiveGun"
+		inheritFrom="BaseCivilianStructureNoGarrisonDestructible"		
+		EditorName="SA_ObservatoryDefensiveGun"
+    	EditorSorting="STRUCTURE"
+		Browser="REGION SANTA_MONICA_SM STRUCTURE"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_BASE_DEFENSE POWERED AUTO_ACQUIRABLE_BY_AI COVER CAN_ATTACK CAN_SEE_THROUGH_STRUCTURE LINE_OF_SIGHT_IGNORES_BUILDINGS CAN_BUILD_ON_WATER CAN_BUILD_ON_DEEP_WATER SCORE"
+		SelectPortrait="Portrait_ObservatoryDefenseGun"
+		ButtonImage="Button_ObservatoryDefenseGun"
+		Description="Desc:SA_ObservatoryDefensiveGun"
+		TypeDescription="Type:SA_ObservatoryDefensiveGun">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:SA_ObservatoryDefensiveGun</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false"
+				InitialRecoilSpeed="0.1"
+				MaxRecoilDistance="0.1"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				AffectedByStealth="false"
+				ExtraPublicBone="FX_Weapon01 Turret Turret_pitch BONE_Gun_01">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="SA_ObservatoryDefensiveGun_SKN" />
+					<WeaponLaunchBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon01" />
+					<WeaponFireFXBone						
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon01" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretPitch="turret_pitch"
+						TurretID="1" />
+				</ModelConditionState>				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_Idle">
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Attacking" then
+							CurDrawableSetTransitionAnimState("TRANS_EndAttack")
+						end
+					</Script>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FIRING_OR_PREATTACK_A">
+					<Animation
+						AnimationName="SA_ObservatoryDefensiveGun_ATKA"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1"
+					StateName="STATE_Attacking"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SA_ObservatoryDefensiveGun_GAG"
+						AnimationBlendTime="0"
+						AnimationMode="MANUAL"/>
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev == "STATE_Idle" then
+							CurDrawableSetTransitionAnimState("TRANS_StartAttack")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_StartAttack">
+					<Animation
+						AnimationName="SA_ObservatoryDefensiveGun_GAG"
+						AnimationBlendTime="0"
+						AnimationMode="ONCE"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_EndAttack"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="SA_ObservatoryDefensiveGun_GAG"
+						AnimationBlendTime="0"
+						AnimationMode="ONCE_BACKWARDS"/>
+				</AnimationState>
+
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="ObservatoryArtilleryDomeMissle"/>
+					<TurretSettings
+						TurretTurnRate="60"
+						AllowsPitch="true"
+						MinIdleScanTime="0.0s"
+						MaxIdleScanTime="0.0s"
+						MinIdleScanAngle="30.0"
+						MaxIdleScanAngle="50.0"
+						MaxDeflectionClockwise="40d"
+						MaxDeflectionAntiClockwise="40d" 
+						ComeToHaltJiggle="3d">
+						<TurretAITargetChooserData
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<Physics
+				id="ModuleTag_Physics"/>
+
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="FX_BuildingDebrisExplosion"
+					CreationObject="YU_HotelDebris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Large" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="SA_ObservatoryDefensiveGun_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+			<xi:include
+				href="DATA:Includes/GenericEngineerContain.xml" />
+
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_MEDIUM" />
+		</Body>
+		<Geometry>
+
+      <Shape
+           Type= "BOX"
+           MajorRadius = "76.6402"
+           MinorRadius = "168.495"
+           Height = "64.2636"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "-159.298"
+            y = "-2.7005"
+            z = "0.202629" />
+      </Shape>
+      <Shape
+           Type= "BOX"
+           MajorRadius = "52.9018"
+           MinorRadius = "57.8973"
+           Height = "101.863"
+           ContactPointGeneration = "STRUCTURE" >
+        <Offset
+            x = "-71.0834"
+            y = "-1.37201"
+            z = "0.202621" />
+      </Shape>
+      
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="1500"
+			ShroudClearingRange="500" />
+	</GameObject>
+
+	<!-- Artillery Weapon -->
+	<WeaponTemplate
+		id="ObservatoryArtilleryDomeMissle"
+		AttackRange="9999.0"
+		MinimumAttackRange="10.0"
+		PreAttackType="PER_SHOT" 
+		WeaponSpeed="500"
+		ScatterRadius="50"
+		FireSound="J06_Observatory_WeaponFireMS"
+		FireFX="FX_Observatory_ArtilleryDomeBlast"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		CanFireWhileMoving="false"
+		ClipSize="1"
+		ReAcquireDetailType="PER_CLIP"
+		Flags="RELOAD_WHEN_ATTACK_STOPS"		
+		AcceptableAimDelta="360d"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS">
+		<PreAttackDelay
+			MinSeconds="0.46s"
+			MaxSeconds="0.46s"/>
+		<FiringDuration
+			MinSeconds="1.3s"
+			MaxSeconds="1.3s"/>
+		<ClipReloadTime
+			MinSeconds=".75s"
+			MaxSeconds=".75s"/>
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="ObservatoryArtilleryDomeMissleProjectile"
+				WarheadTemplate="ObservatoryArtilleryDomeMissleWarhead">
+			</ProjectileNugget>			
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<!-- Artillery Weapon Warhead -->
+	<WeaponTemplate
+		id="ObservatoryArtilleryDomeMissleWarhead"
+		ProjectileCollidesWith = "ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_STRUCTURE ANTI_WATER ANTI_GROUND"
+		Flags="">
+		<Nuggets>
+			<DamageNugget
+				Damage="20.0"
+				DamageTaperOff="5"
+				Radius="100.0"
+				DamageType="EXPLOSIVE"
+				DamageFXType="GDI_BOMB"
+				DeathType="NORMAL"
+			/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Artillery Weapon Projectile -->
+	<GameObject
+		id="ObservatoryArtilleryDomeMissleProjectile"
+		Side="Soviet"
+		KindOf="PROJECTILE NO_COLLIDE HIDE_IF_FOGGED">
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+          <Model
+						Name="EXSovietShell" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				Flags="ORIENT_TO_FLIGHT_PATH DETONATE_CALLS_KILL"
+				FirstHeightMin="0"
+				FirstHeightMax="0"
+				SecondHeightMin="0"
+				SecondHeightMax="0"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				GroundHitFX="FX_ObservatoryArtilleryExplosion"/>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="100.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0.8"></Shape>
+		</Geometry>
+		<VisionInfo
+			VisionRange="0" />
+	</GameObject>
+
+	<!-- FireFX with CameraShake -->
+	<FXList id="FX_Observatory_ArtilleryDomeBlast">
+      <NuggetList>
+        <ParticleSystem
+              Particle="Soviet_SPC_Dome_Fire_Flash"
+          OrientToObject="true" />
+        <ParticleSystem
+              Particle="Soviet_SPC_Dome_Fire_Light2"
+          OrientToObject="true" />
+        <ParticleSystem
+              Particle="Soviet_SPC_Dome_Fire_Spike"
+              OrientToObject="true" />
+        <!--ViewShake
+				Type = "CINE_INSANE" /-->
+        <CameraShakerVolume
+          Radius="300"
+          Duration="2.0s"
+          Amplitude="90d"/>
+      </NuggetList>
+
+	</FXList>
+
+	<!-- GroundHitFX with CameraShake -->
+	<FXList id="FX_ObservatoryArtilleryExplosion">
+    <NuggetList>
+    	<Sound Value="J06_Observatory_WeaponImpactExplosion"/>
+      <ParticleSystem
+                  Particle="Soviet_SPC_Artillery_XP_Add"
+              OrientToObject="false" />
+      <ParticleSystem
+                  Particle="Soviet_SPC_Artillery_XP_Add2"
+              OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Dome_Fire_Light2"
+			  OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Artillery_XP_Flash"
+					  OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Artillery_XP_Smoke"
+					  OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Artillery_XP_Embers"
+					  OrientToObject="false" />
+      <ParticleSystem
+           Particle="Soviet_SPC_Artilery_XP_Burst"
+           OrientToObject="false" />
+      <ViewShake
+				Type = "SEVERE" />
+    </NuggetList>
+	</FXList>
+	
+	<ObjectCreationList
+		id="SA_ObservatoryDefensiveGun_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>SA_ObservatoryDefensiveGun_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>		
+</AssetDeclaration>

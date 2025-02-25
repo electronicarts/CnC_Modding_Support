@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<!-- Nod Support player power Vein Detonation 
+		This power has 3 distinct phases:
+			  phase 1: Earthquake - low AOE damage, slow and reduce dodge.
+			  phase 2: Explosion - one shot high AOE damage.
+			  phase 3: Tib Cloud - low AOE damage, low AOE DOT damage, and reduce armor.
+	   -->
+	<Includes>
+		<!-- Art Includes-->
+		<!-- TODO: Add art for effects :) -->
+		
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseSpecialPowerFlare.xml" />
+	</Includes>
+	<Defines>
+		<Define name="NOD_VEINDETONATION_EARTHQUAKE_RADIUS" value="200" />
+		<Define name="NOD_VEINDETONATION_EXPLOSION_RADIUS" value="200" />
+		<Define name="NOD_VEINDETONATION_TIBERIUMCLOUD_RADIUS" value="200" />
+		<Define name="NOD_VEINDETONATION_TIBERIUMCLOUD_EFFECTDURATION" value="2.0s" />
+	</Defines>
+
+	<GameObject
+		id="NODVeinDetonation_WarningFlare"
+		inheritFrom="BaseSpecialPowerFlare"
+		KindOf="+SKIRMISH_AI_ATTEMPT_TO_DODGE">
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NOD_VEINDETONATION_EARTHQUAKE_RADIUS + $AI_DODGE_SAFETY_BUFFER" >
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"
+				StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+		</SkirmishAIInformation>
+		<Behaviors>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<Event
+					Index="onCreate"
+					FX="FX_NodWarningFlare" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_NOD_VeinDetonation">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+		</Behaviors>
+	</GameObject>
+	
+	<GameObject
+		id="NODVeinDetonation_Earthquake"
+		EditorName="Nod Power Vein Detonation (Earthquake phase)"
+		Side="NOD"
+		EditorSorting="SYSTEM"
+		KindOf="UNATTACKABLE INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER SKIRMISH_AI_ATTEMPT_TO_DODGE">
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NOD_VEINDETONATION_EARTHQUAKE_RADIUS + $AI_DODGE_SAFETY_BUFFER" >
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"
+				StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+		</SkirmishAIInformation>
+		<Draws>
+			   
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			
+		</Draws>		
+		<Behaviors>
+
+			<!-- fires tib explosion (phase 2) weapon when this phase ends -->
+			<FireWeaponWhenDead
+				id="ModuleTag_FireWeaponWhenDead"
+				InitiallyActive="true"
+				DeathWeapon="NODVeinDetonationWeapon_Explosion">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</FireWeaponWhenDead>
+
+			<!-- fires earthquake (phase 1) weapon  -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.25s">
+				<FireWeaponNugget
+					WeaponName="NODVeinDetonationWeapon_Earthquake" />
+			</FireWeaponUpdate>
+
+			<FXListBehavior
+				  id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onCreate"
+					FX="FX_NODVeinDetonation_Cracks" />
+			</FXListBehavior>
+
+			<!-- When the Earthquake phase is complete, we create the Tiberium Cloud phase -->
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="OCL_NODVeinDetonation_TiberiumCloud">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>			
+			
+			<!-- This defines the duration of the Vein Detonation power Earthquake phase  -->
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="10s"
+				MaxLifetime="10s"
+				DeathType="SUICIDED" />
+			
+			<DestroyDie 
+				id="ModuleTag_Die">
+				<DieMuxData 
+					DeathTypes="ALL" />
+			</DestroyDie>			
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Power_VeinDetonationStartMS" AudioType="soundAmbient"/>
+		</AudioArraySound>
+	</GameObject>
+
+	<GameObject
+		id="NODVeinDetonation_TiberiumCloud"
+		EditorName="Nod Power Vein Detonation (Tiberium Cloud phase)"
+		Side="NOD"
+		EditorSorting="SYSTEM"
+		KindOf="UNATTACKABLE INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER SKIRMISH_AI_ATTEMPT_TO_DODGE">
+		<ArmorSet
+			Armor="NoArmor" />
+		<SkirmishAIInformation
+			DodgeSafetyDistance="=$NOD_VEINDETONATION_EARTHQUAKE_RADIUS + $AI_DODGE_SAFETY_BUFFER" >
+			<DodgeWithUnits
+				Rule="ALL"
+				Relationship="ENEMIES NEUTRAL"
+				StatusBitFlagsExclude="AIRBORNE_TARGET"/>
+		</SkirmishAIInformation>
+		<Draws>
+			   
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			
+		</Draws>
+		<Behaviors>		
+			
+			<!-- fires tiberium cloud (phase 3) weapon  -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireInterval="0.25s">
+				<FireWeaponNugget
+					WeaponName="NODVeinDetonationWeapon_TiberiumCloud" />
+			</FireWeaponUpdate>
+
+			<FXListBehavior
+				  id="ModuleTag_FXList">
+				<DieMuxData
+					  DeathTypes="ALL" />
+				<Event
+					  Index="onCreate"
+					  FX="FX_NODVeinDetonation_Cloud" />
+			</FXListBehavior>
+
+			<!-- This defines the duration of the Vein Detonation power Tiberium Cloud phase  -->
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="10s"
+				MaxLifetime="10s"
+				DeathType="SUICIDED" />
+
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Power_VeinDetonationEarthquakeMS" AudioType="soundAmbient"/>
+		</AudioArraySound>
+	</GameObject>	
+
+	<!-- ////////////////////////////////////////	-->
+	<!--    WEAPONS									-->
+	<!-- ////////////////////////////////////////	-->
+
+	<!-- Phase 1 weapon -->
+	<WeaponTemplate
+		id="NODVeinDetonationWeapon_Earthquake"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		ClipSize="1"
+		FireFX=""
+		FireSound=""
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_GROUND"
+		ForbiddenAntiMask="ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		InstantLoadClipOnActivate="true"
+		FinishAttackOnceStarted="true">
+		<Nuggets>
+			<DamageNugget
+				PartitionFilterTestType="CIRCLE"
+				Damage="5.0"
+				Radius="=$NOD_VEINDETONATION_EARTHQUAKE_RADIUS"
+				DamageType="BLAST"
+				DeathType="EXPLODED"
+				DamageFXType="NOD_TIBCLOUD"
+				FXListVictim="FX_SeismicSlow" 
+				ForceFXPositionToVictim="true" >
+			</DamageNugget>
+			<AttributeModifierNugget
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifier_NODVeinDetonation_Earthquake"
+				Radius="=$NOD_VEINDETONATION_EARTHQUAKE_RADIUS" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Phase 2 weapon -->
+	<WeaponTemplate
+		id="NODVeinDetonationWeapon_Explosion"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		ClipSize="1"
+		FireFX=""
+		FireSound=""
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_GROUND"
+		ForbiddenAntiMask="ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		InstantLoadClipOnActivate="true"
+		FinishAttackOnceStarted="true">
+		<Nuggets>
+			<DamageNugget
+				PartitionFilterTestType="CIRCLE"
+				Damage="300.0"
+				Radius="=$NOD_VEINDETONATION_EXPLOSION_RADIUS"
+				DamageType="BLAST"
+				DeathType="EXPLODED"
+				DamageFXType="NOD_TIBCLOUD"
+				ForceFXPositionToVictim="true" >
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Phase 3 weapon -->
+	<WeaponTemplate
+		id="NODVeinDetonationWeapon_TiberiumCloud"
+		AttackRange="1.0"
+		WeaponSpeed="999999.0"
+		ClipSize="1"
+		FireFX=""
+		FireSound=""
+		Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_GROUND"
+		ForbiddenAntiMask="ANTI_SUBMERGED ANTI_AIRBORNE_VEHICLE ANTI_AIRBORNE_INFANTRY"
+		InstantLoadClipOnActivate="true"
+		FinishAttackOnceStarted="true">
+		<Nuggets>
+			<DamageNugget
+				PartitionFilterTestType="CIRCLE"
+				Damage="5.0"
+				Radius="=$NOD_VEINDETONATION_TIBERIUMCLOUD_RADIUS"
+				DamageType="BLAST"
+				DeathType="EXPLODED"
+				FXListVictim="FX_NODTibCloud_Hit">
+			</DamageNugget>				 
+			<DOTNugget
+				PartitionFilterTestType="CIRCLE"
+				Damage="5.0"
+				Radius="=$NOD_VEINDETONATION_TIBERIUMCLOUD_RADIUS"
+				DamageInterval="0.5s"
+				DamageDuration="=$NOD_VEINDETONATION_TIBERIUMCLOUD_EFFECTDURATION"
+				DamageType="BLAST"
+				FXListVictim="FX_NODTibCloud_Hit"
+				DeathType="EXPLODED">
+			</DOTNugget>
+			<AttributeModifierNugget
+				PartitionFilterTestType="CIRCLE"
+				AttributeModifierName="AttributeModifier_NODVeinDetonation_TiberiumCloud"
+				Radius="=$NOD_VEINDETONATION_TIBERIUMCLOUD_RADIUS" />
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   ATTRIBUTE MODIFIERS						-->
+	<!-- ////////////////////////////////////////	-->
+
+	<!-- Short duration so it wears off quickly when the unit leaves the earthquake area -->
+	<AttributeModifier
+		id="AttributeModifier_NODVeinDetonation_Earthquake"
+		Category="NONE"
+		Duration="0.5s"
+		RenderBuffEffectFlags="VEIN_DETONATION">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:SpecialPower_NODVeinDetonation" />
+		<Modifier Type="SPEED" Value="50%"/>
+		<Modifier Type="DODGE_PERCENTAGE_ADD" Value="-50%" />
+	</AttributeModifier>
+
+	<AttributeModifier
+		id="AttributeModifier_NODVeinDetonation_TiberiumCloud"
+		Category="NONE"
+		Duration="=$NOD_VEINDETONATION_TIBERIUMCLOUD_EFFECTDURATION">
+		<BuffInfo Type="DEFENSE_NEGATIVE" SourceString="Name:SpecialPower_NODVeinDetonation" />
+		<Modifier Type="ARMOR" Value="125%"/>
+	</AttributeModifier>
+
+	<!-- //////////////////////////////////////	-->
+	<!--		OBJECT CREATION LISTS			-->
+	<!-- //////////////////////////////////////	-->
+	<ObjectCreationList
+		id="OCL_NODVeinDetonation_TiberiumCloud">
+		<OCLModule>
+			<Modules>
+				<CreateObject
+					ObjectTemplate="NODVeinDetonation_TiberiumCloud"/>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>	
+	
+</AssetDeclaration>

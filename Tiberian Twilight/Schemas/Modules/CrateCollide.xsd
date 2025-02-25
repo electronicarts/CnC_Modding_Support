@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="uri:ea.com:eala:asset" xmlns:at="uri:ea.com:eala:asset:type" xmlns:xas="uri:ea.com:eala:asset:schema" targetNamespace="uri:ea.com:eala:asset" elementFormDefault="qualified" xmlns:XmlEdit="http://tempuri.org/XmlEdit.xsd">
+
+	<xs:simpleType name="CrateCollideFlagsType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FORBID_OWNER_PLAYER" />
+			<xs:enumeration value="BUILDING_PICKUP" />
+			<xs:enumeration value="HUMAN_PICKUP_ONLY" />
+			<xs:enumeration value="EXECUTE_ANIMATION_FADES" />
+			<xs:enumeration value="HUMAN_PICKUP_ONLY_IN_SP_CAMPAIGN" />
+			<xs:enumeration value="IGNORE_COLLECTOR_CHECK" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="CrateCollideBitFlags">
+		<xs:list itemType="CrateCollideFlagsType"></xs:list>
+	</xs:simpleType>
+	
+	<xs:complexType name="CrateCollideModuleData">
+		<xs:complexContent>
+			<xs:extension base="CollideModuleData">
+				<xs:sequence>
+					<xs:element name="ObjectStatusValidation" type="ObjectStatusValidationDataType" minOccurs="0" maxOccurs="1" /> <!-- make sure we are collectable -->
+					<xs:element name="AllowedCollectorObjectFilter" type="ObjectFilter" minOccurs="0" maxOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="ExecuteFX" type="FXListRef" /> 
+				<xs:attribute name="ExecutionAnimationTemplate" type="GameObjectWeakRef" />   
+				<xs:attribute name="ExecuteAnimationDisplayTimeInSeconds" type="SageReal" default="0" />  
+				<xs:attribute name="ExecuteAnimationZRisePerSecond" type="SageReal" default="0" />  
+				<xs:attribute name="ExecuteAudioEvent" type="AudioEventInfoRef" />
+				<xs:attribute name="Flags" type="CrateCollideBitFlags" default="HUMAN_PICKUP_ONLY_IN_SP_CAMPAIGN" />
+				<xs:attribute name="PlayerClassFlags" type="PlayerClassTypeBitFlags" />
+				<xs:attribute name="CollideDeathType" type="DeathType" default="NORMAL"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:BaseObjects/BaseStructure.xml" />
+		<Include type="all"	source="ART:KR_ArtilleryDome.W3X" />
+		<Include type="instance" source="DATA:Civilian/Yucatan_YU/Props/YU_HotelDebris.xml" />
+		<Include type="instance" source="DATA:Civilian/Kremlin_KR/Props/KR_ArtilleryDome_Collapse.xml" />
+		<Include type="all"	source="ART:EXSovietShell.w3x" />	
+	</Includes>
+	
+	<!-- Artillery Dome Game Object -->
+	<GameObject
+		id="KR_ArtilleryDome"
+		inheritFrom="BaseStructure"		
+		KindOf="+FS_BASE_DEFENSE +POWERED +AUTO_ACQUIRABLE_BY_AI +CAN_ATTACK +CAN_SEE_THROUGH_STRUCTURE +LINE_OF_SIGHT_IGNORES_BUILDINGS +SCORE"
+		CommandSet="EmptyCommandSet"
+		EditorName="KR_ArtilleryDome"	
+    	EditorSorting="STRUCTURE"
+		Browser="REGION Kremlin_KR STRUCTURE"
+		SelectPortrait="Portrait_Soviet_ArtilleryDome"
+		ButtonImage="Button_Soviet_ArtilleryDome"
+		Description="Desc:KR_ArtilleryDome"
+		TypeDescription="Type:KR_ArtilleryDome">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:KR_ArtilleryDome</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="BONE_CONTACT_POINT_01 BONE_CONTACT_POINT_02 BONE_CONTACT_POINT_03 BONE_CONTACT_POINT_04 BONE_CONTACT_POINT_05 BONE_CONTACT_POINT_06 BONE_CONTACT_POINT_07 BONE_CONTACT_POINT_08 BONE_CONTACT_POINT_09 BONE_CONTACT_POINT_10 BONE_CONTACT_POINT_11 BONE_CONTACT_POINT_12 BONE_CONTACT_POINT_13 BONE_CONTACT_POINT_14 BONE_CONTACT_POINT_15 BONE_CONTACT_POINT_16 BONE_CONTACT_POINT_17 BONE_CONTACT_POINT_18 BONE_CONTACT_POINT_19 BONE_CONTACT_POINT_20">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="KR_ArtilleryDome" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_BONE_Muzzel" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_BONE_Muzzel" />
+					<Turret
+						TurretNameKey="Bone_Rotation"						
+						TurretID="1" />
+				</ModelConditionState>
+
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_Weapon01SetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="KremlinArtilleryDomeMissle"/>
+					<TurretSettings
+						MinimumPitch="-35d"
+						AllowsPitch="true"
+						PitchHeight="63%"
+						TurretPitchRate="10"
+						TurretTurnRate="60"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData
+							CanAcquireDynamicIfAssignedOutOfRange="true"
+							IdleScanDelay="=$FAST_IDLE_SCAN_DELAY"/>
+						</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			
+			<BuildingDestructionBehavior
+				id="ModuleTag_BuildingDestruction">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Item
+					BonePrefix="BONE_CONTACT_POINT_"
+					FX="FX_BuildingDebrisExplosion"
+					CreationObject="YU_HotelDebris"
+					FlingVelocity="100.0"/>
+			</BuildingDestructionBehavior>
+ 
+			<FXListBehavior
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance" id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_Civ_Explosion_Medium" />
+			</FXListBehavior>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="KR_ArtilleryDome_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>	
+			
+			<!-- civ buildings should have a CreateObjectDie to make a collapse version. -->
+			<DestroyDie
+				id="ModuleTag_DestroyDie">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>				
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CIV_HEALTH_MEDIUM"
+				/>
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape 
+				 Type= "BOX"
+				 MajorRadius = "39.534"
+				 MinorRadius = "45.3689"
+				 Height = "21.5331"
+				 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "-1.92206"
+					z = "0.0" />
+			</Shape>
+			<Shape 
+				 Type= "BOX"
+				 MajorRadius = "16.2593"
+				 MinorRadius = "18.6591"
+				 Height = "58.286"
+				 ContactPointGeneration = "STRUCTURE" >
+				<Offset
+					x = "0.0"
+					y = "-1.92206"
+					z = "13.3706" />
+			</Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="800"
+			ShroudClearingRange="800"/>
+	</GameObject>
+
+
+	<!-- Artillery Weapon -->
+	<WeaponTemplate
+		id="KremlinArtilleryDomeMissle"
+		AttackRange="800.0"
+		MinimumAttackRange="300.0"
+		WeaponSpeed="500"
+		ScatterRadius="50"
+		FireFX="FX_Kremlin_ArtilleryDomeBlast"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		CanFireWhileMoving="false"
+		ClipSize="3"
+		ReAcquireDetailType="PER_CLIP"
+		Flags="RELOAD_WHEN_ATTACK_STOPS"
+		ShotsPerBarrel="1"
+		AcceptableAimDelta="360d"
+		RequiredAntiMask="ANTI_GROUND ANTI_STRUCTURE ANTI_WATER"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<ClipReloadTime
+			MinSeconds="5s"
+			MaxSeconds="5s"
+		/>
+		<Nuggets>
+			<ProjectileNugget
+				ProjectileTemplate="KremlinArtilleryDomeMissleProjectile"
+				WarheadTemplate="KremlinArtilleryDomeMissleWarhead">
+			</ProjectileNugget>
+			<SuppressionNugget
+				Radius="200.0"
+				Suppression="100"
+				DurationSeconds="5s"
+			/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<!-- Artillery Weapon Warhead -->
+	<WeaponTemplate
+		id="KremlinArtilleryDomeMissleWarhead"
+		ProjectileCollidesWith = "ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+		RequiredAntiMask="ANTI_STRUCTURE ANTI_WATER ANTI_GROUND"
+		Flags="">
+		<Nuggets>
+			<DamageNugget
+				Damage="1000.0"
+				DamageTaperOff="25"
+				Radius="200.0"
+				DamageType="EXPLOSIVE"
+				DeathType="NORMAL"
+			/>
+      <MetaImpactNugget
+          ShockWaveAmount="200.0"
+          ShockWaveRadius="200.0"
+          ShockWaveZMult="1.50" />
+    </Nuggets>
+	</WeaponTemplate>
+
+	<!-- Artillery Weapon Projectile -->
+	<GameObject
+		id="KremlinArtilleryDomeMissleProjectile"
+		Side="Soviet"
+		EditorSorting="SYSTEM"
+		KindOf="PROJECTILE NO_COLLIDE HIDE_IF_FOGGED"
+		EditorName="KremlinArtilleryDomeMissleProjectile">
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_ScriptedModelDraw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="EXSovietShell" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<BezierProjectile
+				id="ModuleTag_BezierProjectileBehavior"
+				Flags="ORIENT_TO_FLIGHT_PATH DETONATE_CALLS_KILL"
+				FirstHeightMin="50"
+				FirstHeightMax="50"
+				SecondHeightMin="50"
+				SecondHeightMax="50"
+				FirstPercentIndent="33"
+				SecondPercentIndent="66"
+				GroundHitFX="FX_KremlinArtilleryExplosion"/>
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_ActiveBody"
+				MaxHealth="100.0" />
+		</Body>
+		<Geometry
+			IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0.8"></Shape>
+		</Geometry>
+		<VisionInfo
+			VisionRange="0" />
+	</GameObject>
+
+	<!-- FireFX with CameraShake -->
+	<FXList id="FX_Kremlin_ArtilleryDomeBlast">
+		<NuggetList>
+			<Sound Value="J03_KremlinArtilleryDome_Fire" />
+			<ParticleSystem
+					  Particle="Soviet_SPC_Dome_Fire_Flash"
+			  OrientToObject="true" />
+			<ParticleSystem
+					  Particle="Soviet_SPC_Dome_Fire_Light2"
+			  OrientToObject="true" />
+			<ParticleSystem
+					  Particle="Soviet_SPC_Dome_Fire_Spike"
+					  OrientToObject="true" />
+			<!--ViewShake
+				Type = "CINE_INSANE" /-->
+			<CameraShakerVolume
+				Radius="300"
+				Duration="2.0s"
+				Amplitude="90d"/>
+		</NuggetList>
+
+	</FXList>
+	
+	<!-- GroundHitFX with CameraShake -->
+	<FXList id="FX_KremlinArtilleryExplosion">
+		<NuggetList>
+			<Sound Value="J03_KremlinArtilleryDome_ImpactExplosion" />
+      <ParticleSystem
+                  Particle="Soviet_SPC_Artillery_XP_Add"
+              OrientToObject="false" />
+      <ParticleSystem
+                  Particle="Soviet_SPC_Artillery_XP_Add2"
+              OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Dome_Fire_Light2"
+			  OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Artillery_XP_Flash"
+					  OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Artillery_XP_Smoke"
+					  OrientToObject="false" />
+      <ParticleSystem
+					  Particle="Soviet_SPC_Artillery_XP_Embers"
+					  OrientToObject="false" />
+       <ParticleSystem
+					  Particle="Soviet_SPC_Artilery_XP_Burst"
+					  OrientToObject="false" />
+			<ViewShake
+				Type = "SEVERE" />
+		</NuggetList>
+	</FXList>
+	
+	<!-- OCL Debris when Dome is destroyed-->
+	<ObjectCreationList
+		id="KR_ArtilleryDome_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING RANDOM_FORCE"
+			Count="1"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>KR_ArtilleryDome_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>	
+</AssetDeclaration>

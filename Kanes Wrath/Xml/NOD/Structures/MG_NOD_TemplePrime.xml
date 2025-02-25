@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NSAComCntr.w3x" />
+		<Include
+			type="all"
+			source="ART:NSAComCntr_D2.w3x" />
+		<Include
+			type="all"
+			source="ART:NSAComCntr_D3.w3x" />
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="MG_NOD_TemplePrime"
+		inheritFrom="BaseStructure"
+		EditorName="MG_NOD_TemplePrime"
+		SelectPortrait="Portrait_NeutralKilianHQ"
+		ButtonImage="Portrait_NeutralKilianHQ"
+		Side="NOD"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="3000"
+		BuildTime="30"
+		EnergyProduction="-5"
+		CommandSet="EmptyCommandSet"
+		Browser="REGION METAGAME NOD"		
+		KindOf="STRUCTURE SELECTABLE UNIQUE_UNIT IMMOBILE CAN_CAST_REFLECTIONS NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER IGNORE_CAN_NOT_BUILD"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		Description="Desc:MetaNODTemplePrime" 
+		TypeDescription="Type:MetaNODTemplePrime">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">NAME:TemplePrime</DisplayName>
+    <ArmorSet
+      Armor="NODTempleOfNODArmor"
+      DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="HOMEBASE" />			
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="false">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NSAComCntr" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NSAComCntr_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NSAComCntr_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NSAComCntr" />
+					<Texture
+						Original="NSAComCntr"
+						New="NSAComCntr_D" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NSAComCntr_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NSAComCntr_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NSAComCntr_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NSAComCntr_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust"
+						FollowBone="false" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="CivBuildingDust02"
+						FollowBone="false" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<xi:include
+				href="../../Includes/GarrisonableStructureFlagDraw.xml" />
+		</Draws>
+		<Behaviors>
+<!--	
+			<StructureCollapseUpdate
+				id="ModuleTag_Collapse"
+				MinCollapseDelay="0"
+				MaxCollapseDelay="0"
+				CollapseDamping="0.5"
+				MaxShudder="0.6"
+				MinBurstDelay="250"
+				MaxBurstDelay="800"
+				BigBurstFrequency="4"
+				DestroyObjectWhenDone="true"
+				CollapseHeight="155" />
+-->				
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_LargeBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList"
+				xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Large" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Large" />
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"					
+					FX="FX_ScorchLarge" />
+			</FXListBehavior>
+			<xi:include
+				href="../../Includes/NodLaserFencingArmorUpgrade.xml" />			
+			<xi:include
+				href="../../Includes/NodLaserFencingStatusUpgrade.xml" />
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericEngineerContain.xml" />
+			<xi:include
+				href="../../Includes/AdvancedNODBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/AdvancedNODBuildingSuicide.xml" />			
+			
+	<!-- This needs to be in every Stategic Buildings XML
+            DO NOT CHANGE THE id. it must be the same in all files-->
+      <MetaGameStratButtonInfo
+        id="ModuleTag_MetaGameStratButtonInfo"
+        MetaGameDescription="Desc:MetaNODTemplePrime"
+        MetaGameTypeDescription="Type:MetaNODTempleofNod"
+        >
+        <!-- you can list as many powers as you want here -->
+        <Powers
+          Image="Button_PlayerPowerRaiseInsurrection"
+          Title="NAME:PlayerPowerRaise_Insurrection"
+          TypeDescription="TYPE:PlayerPowerRaise_Insurrection"
+          Description="DESC:PlayerPowerRaise_Insurrection"
+            	  			MetaGameOp="NOD_POWER_RAISE_INSURRECTION"
+/>
+          
+        <Powers
+	 Image="Button_PlayerPowerKaneLives"
+	 Title="NAME:PlayerPowerKaneLives"
+	 TypeDescription="TYPE:PlayerPowerKaneLives"
+         Description="DESC:PlayerPowerKaneLives"
+           	  			MetaGameOp="NOD_POWER_KANE_LIVES"
+/>
+         
+        <Powers
+	 Image="Button_PlayerPowerTheFuryOfNOD"
+	 Title="NAME:PlayerPowerTheFuryOfNOD"
+	 TypeDescription="TYPE:PlayerPowerTheFuryOfNOD"
+         Description="DESC:PlayerPowerTheFuryOfNOD"
+           	  			MetaGameOp="NOD_POWER_THE_FURY_OF_NOD"
+/>
+          
+      </MetaGameStratButtonInfo>
+      
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI" />
+		</AI>
+		<Body>
+		   <ActiveBody
+		    id="ModuleTag_Body"
+		    MaxHealth="6000.0">
+		    <DamageTrigger
+		     HealthLevelBelowPercent="66"
+		     RemoveUpgrade="Upgrade_LaserFencing"/>
+		   </ActiveBody>
+  		</Body> 
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="BOX"
+				MajorRadius="35.0"
+				MinorRadius="35.0"
+				Height="20.0">
+				<Offset
+					x="2.0"
+					y="0.0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="BOX"
+				MajorRadius="10.0"
+				MinorRadius="10.0"
+				Height="50.0">
+				<Offset
+					x="-42.0"
+					y="0.0"
+					z="0" />
+			</Shape>
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="23.0"
+				Height="10.0">
+				<Offset
+					x="47.0"
+					y="0.0"
+					z="0" />
+			</Shape>
+			<ContactPoint>
+				<Pos
+					x="-47"
+					y="0"
+					z="50" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="0"
+					y="0"
+					z="20" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="47"
+					y="0"
+					z="0" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="0"
+					y="30"
+					z="5" />
+			</ContactPoint>
+			<ContactPoint>
+				<Pos
+					x="0"
+					y="-30"
+					z="5" />
+			</ContactPoint>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound> 
+		<ShadowInfo
+			Type="VOLUME" />		
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+		<ProjectedBuildabilityInfo
+			Radius="175"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />			
+	</GameObject>
+</AssetDeclaration>

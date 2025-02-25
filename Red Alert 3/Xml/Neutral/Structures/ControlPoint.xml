@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all"	source="ART:TBCntrlPnt.w3x" />
+		<Include type="all"	source="ART:TBCntrlPnt_D2.w3x" />
+		<Include type="all"	source="ART:TBCntrlPnt_D3.w3x" />
+	</Includes>
+	<GameObject
+		id="ControlPoint"
+		Side="Neutral"
+		EditorSorting="STRUCTURE"
+		CommandSet="EmptyCommandSet"
+		KindOf="ALWAYS_VISIBLE STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS NOT_AUTOACQUIRABLE IGNORE_FOR_VICTORY NOT_SELLABLE NEUTRAL_TECH CAPTURABLE UNATTACKABLE NEVER_CULL_FOR_MP"
+		RadarPriority="STRUCTURE"
+		EditorName="ControlPoint">
+		<DisplayName>Name:ControlPoint</DisplayName>
+		<ArmorSet
+			Armor="StructureArmor"
+			DamageFX="GenericStructureDamageFX"/>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="TBCntrlPnt" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="TBCntrlPnt_D3" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="TBCntrlPnt_D2" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="TBCntrlPnt" />
+					<Texture
+						Original="TBContorlPoint"
+						New="TBContorlPointD" />						
+				</ModelConditionState>	
+
+<!-- This needs to be a different draw module -->
+<!--
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Script>
+						CurDrawableShowSubObjectPermanently( "100" )
+						CurDrawableShowSubObjectPermanently( "75" )
+						CurDrawableShowSubObjectPermanently( "50" )
+						CurDrawableShowSubObjectPermanently( "25" )
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ConditionsYes="CAPTURE_100"
+					ParseCondStateType="PARSE_NORMAL">
+					<Script>
+						CurDrawableShowSubObjectPermanently( "100" )
+						CurDrawableShowSubObjectPermanently( "75" )
+						CurDrawableShowSubObjectPermanently( "50" )
+						CurDrawableShowSubObjectPermanently( "25" )
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ConditionsYes="CAPTURE_75"
+					ParseCondStateType="PARSE_NORMAL">
+					<Script>
+						CurDrawableHideSubObjectPermanently( "100" )
+						CurDrawableShowSubObjectPermanently( "75" )
+						CurDrawableShowSubObjectPermanently( "50" )
+						CurDrawableShowSubObjectPermanently( "25" )
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ConditionsYes="CAPTURE_50"
+					ParseCondStateType="PARSE_NORMAL">
+					<Script>
+						CurDrawableHideSubObjectPermanently( "100" )
+						CurDrawableHideSubObjectPermanently( "75" )
+						CurDrawableShowSubObjectPermanently( "50" )
+						CurDrawableShowSubObjectPermanently( "25" )
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ConditionsYes="CAPTURE_25"
+					ParseCondStateType="PARSE_NORMAL">
+					<Script>
+						CurDrawableHideSubObjectPermanently( "100" )
+						CurDrawableHideSubObjectPermanently( "75" )
+						CurDrawableHideSubObjectPermanently( "50" )
+						CurDrawableShowSubObjectPermanently( "25" )
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ConditionsYes="CAPTURE_0"
+					ParseCondStateType="PARSE_NORMAL">
+					<Script>
+						CurDrawableHideSubObjectPermanently( "100" )
+						CurDrawableHideSubObjectPermanently( "75" )
+						CurDrawableHideSubObjectPermanently( "50" )
+						CurDrawableHideSubObjectPermanently( "25" )
+					</Script>
+				</AnimationState>
+-->				
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="TBCntrlPnt_D3"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="TBCntrlPnt_D2"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="TBCntrlPnt_D2"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="TBCntrlPnt_D3"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0"/>
+				</AnimationState>				
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<SubObjectsUpgrade
+				id="ModuleTag_SubObjectsUpgrade"
+				Permanent="true">
+				<TriggeredBy>Upgrade_GDIFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_NODFaction</TriggeredBy>
+				<TriggeredBy>Upgrade_AlienFaction</TriggeredBy>
+				<Nugget
+					Upgrade="Upgrade_GDIFaction"
+					ShowSubObjects="TB_CP_GDI LIGHTSF01"
+					HideSubObjects="TB_CP_ALN TB_CP_NOD" />
+				<Nugget
+					Upgrade="Upgrade_NODFaction"
+					ShowSubObjects="TB_CP_NOD LIGHTSF01"
+					HideSubObjects="TB_CP_ALN TB_CP_GDI" />
+				<Nugget
+					Upgrade="Upgrade_AlienFaction"
+					ShowSubObjects="TB_CP_ALN LIGHTSF01"
+					HideSubObjects="TB_CP_GDI TB_CP_NOD" />
+			</SubObjectsUpgrade>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="ControlPointFunctions"
+			/>
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AIForLua"
+				AutoAcquireEnemiesWhenIdle="NO"/>
+		</AI>
+		<Body>
+			<ImmortalBody
+				id="ModuleTag_ImmortalBody"
+				MaxHealth="1.0"/>
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="25.0"
+				Height="75.0"
+				ContactPointGeneration="INFANTRY"/>
+		</Geometry>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="200" />
+	</GameObject>
+
+</AssetDeclaration>

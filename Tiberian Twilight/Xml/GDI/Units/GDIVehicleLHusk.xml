@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<!-- GDI Mastadon Husk -->
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:GUVehicleL_SKN.W3X" />
+		<Include
+			type="all"
+			source="ART:GUVehicleL_DIEA.W3X" />
+		<Include
+			type="all"
+			source="ART:GUVehicleL_D.xml" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseHusk.xml" />
+	</Includes>
+	<Defines>
+		<Define name="GDIVEHICLEL_HUSK_NONBUILD_RADIUS" value="60.0" />
+	</Defines>
+	<GameObject
+		id="GDIVehicleLHusk"
+		inheritFrom="BaseHusk"
+		HealthBoxHeightOffset="40"
+		SelectPortrait="Portrait_GDI_Vehicle_L_Husk"
+		ButtonImage="Btn_GDI_Vehicle_L_Husk"
+		Side="GDI"
+		EditorName="GDI_O3_Heavy_Blast_Husk(Mastodon)"
+		EditorSorting="UNIT"
+		Description="Desc:GDIVehicleLHusk">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIVehicleLHusk</DisplayName>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="GUVehicleL_DIEA" />
+					<ParticleSysBone
+						BoneName="B_SHELL01"
+						FXParticleSystemTemplate="GDIDebrisSmallSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					Flags="START_FRAME_LAST"
+					StateName="STATE_Default">
+					<Animation
+						AnimationName="GUVehicleL_DIEA"
+						AnimationMode="MANUAL"
+						AnimationBlendTime="0" />					
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2">
+					<Animation
+						AnimationName="GUVehicleL_DIEA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+
+			<!-- This will hide the upgraded model -->
+			<LUAEventList
+					  id="ModuleTag_LUAEventList"
+					  EventListName="GDIVehicleLHuskFunctions"/>
+
+			<!-- This will unhide the upgraded model -->
+			<SubObjectsUpgrade
+					  id="ModuleTag_ShowUpgrade">
+				<TriggeredBy>Upgrade_Crate_Level1</TriggeredBy>
+				<Nugget
+							ShowSubObjects="Gun_Upgrade"
+							HideSubObjects="gun"
+							Upgrade="Upgrade_Crate_Level1"
+							FadeTime="0.0s"
+							SkipFlashOnCreate="true"
+							UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+							FlashTime="1.5s"/>
+			</SubObjectsUpgrade>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="GDIVehicleL_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_GDIVehicleLFinalExplode" />
+			</FXListBehavior>
+
+			<!-- Override base capture functionality with revive specific OCL -->
+			<CaptureContain
+				id="ModuleTag_CaptureHusk"
+				OnCaptureOCL="GDIVehicleLHuskReplace"
+				/>			
+			
+			<CreateObjectOnHealed
+				id="ModuleTag_CreateObjectOnHealed"
+				CreationList="GDIVehicleLHuskReplace"/>
+							
+			<AutoHealBehavior
+				id="ModuleTag_BackupSystemsHeal"
+				HealingAmount="=$MEGAUNIT_HUSK_HEAL_PER_SECOND"/>
+
+			<ProjectedBuildabilityOverrideBehavior
+				id="ModuleTag_BuildabilityOverride" >
+				<Override
+					id="ProjectedBuildability_OverrideBlock">
+					<ProjectedBuildabilityInfo
+						id="ProjectedBuildability_Blocked"
+						Radius="=$GDIVEHICLEL_HUSK_NONBUILD_RADIUS" />
+				</Override>
+			</ProjectedBuildabilityOverrideBehavior>
+			
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$MEGAUNIT_HUSK_HEALTH" />
+		</Body>
+		<Geometry>
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "60.0"
+					 MinorRadius = "55.0"
+					 Height = "40.0"
+					 ContactPointGeneration = "VEHICLE" >
+				<Offset
+						x = "10.237"
+						y = "-41.7175"
+						z = "0.0" />
+			</Shape>
+
+		</Geometry>
+		<ClientBehaviors>
+		<AnimationSoundClientBehavior
+				id="ModuleTag_ASCB">
+				<Sound Sound="GDI_VehicleL_Footstep_Impact" ExcludedMC="RECYCLED" Animation="GUVehicleL_DIEA" Frame="31" />    
+				<Sound Sound="GDI_VehicleL_Animation_DIEA1" ExcludedMC="RECYCLED" Animation="GUVehicleL_DIEA" Frame="1" /> 
+				<Sound Sound="GDI_VehicleL_Animation_DIEA2" ExcludedMC="RECYCLED" Animation="GUVehicleL_DIEA" Frame="119" /> 
+			</AnimationSoundClientBehavior>
+		</ClientBehaviors>
+		<AudioArrayVoice>
+			<AudioEntry Sound="GDI_MastadonHusk_VehLHusk_Select" AudioType="voiceSelect"/>
+		</AudioArrayVoice>
+		<!-- <AudioArraySound>
+		no flames as of 9/15/2009
+			<AudioEntry Sound="Fire1_VehicleLarge_LoopMS" AudioType="soundAmbient"/>
+		</AudioArraySound> -->
+		<ShadowInfo
+			Type="DECAL"
+			SizeX="14"
+			SizeY="14"
+			Texture="ShadowI" />
+		<ProjectedBuildabilityInfo
+			id="ProjectedBuildability_DisplayOnly"
+			Radius="=$GDIVEHICLEL_HUSK_NONBUILD_RADIUS" />
+	</GameObject>
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   OBJECT CREATION LISTS									-->
+	<!-- ////////////////////////////////////////	-->
+	<ObjectCreationList
+		id="GDIVehicleL_Die_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>GDIVehicleL_Collapse</ObjectTemplate>
+					<ObjectTemplate>GDIDebrisLarge_Collapse</ObjectTemplate>
+					<ObjectOffset />
+					<ObjectOffset />
+					<SubModules>
+						<CreateObject/>
+						<SetLifetime
+							MinLifetime="1.0s"
+							MaxLifetime="3.0s"/>
+						<FlingObject
+							MinForceMagnitude="10.0"
+							MaxForceMagnitude="20.0"
+							MinForcePitch="90d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+</AssetDeclaration>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include
+			type="instance"
+			source="ART:ShadowI.xml" />
+		<Include
+			type="instance"
+			source="BaseObject.xml" />
+		<Include
+			type="all"
+			source="ART:NPParachute_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NPParachuteAllied_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NPParachuteSoviet_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NPParachuteJapan_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NPParachute_FALL.w3x" />
+		<Include
+			type="all"
+			source="ART:NPParachute_LAND.w3x" />
+		<Include
+			type="all"
+			source="ART:NPParachute_OPEN.w3x" />
+	</Includes>
+	<GameObject
+		id="BaseInfantry"		
+		inheritFrom="BaseObject"
+		RadarPriority="UNIT"
+		TransportSlotCount="1"
+		ProductionQueueType="INFANTRY"
+		HealthBoxHeightOffset="20"
+		UnitCategory="INFANTRY"
+		CommandPoints="1"
+		EvaEventSecondDamageFarFromFirstScanRange="600"
+		VoiceSelectUnderFireTimeout="10s"
+		VoiceSelectUnderFireDamageTime="3s"
+		>
+        <ArmorSet
+			Armor="CryoBeamFrozenArmor"
+			DamageFX="VehicleDamageFX"
+			Conditions="SECONDARY_DAMAGE"
+		/>
+		<Behaviors>
+			<AttributeModifierPoolUpdate 
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<SquishCollide
+				id ="DefaultSquishCollide"/>
+			<CrushDie
+				id="ModuleTAg_CrushDie">
+				<DieMuxData
+					DeathTypes="CRUSHED" />
+			</CrushDie>
+			<StancesBehavior
+				id="ModuleTag_Stance"
+				StanceTemplate="Generic" />
+
+			<!-- handles being killed when frozen. -->
+	<!--		<FXListBehavior
+				id="ModuleTag_FrozenDeathFX">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="UNDER_FROZEN"/>
+				<Event
+					Index="onDeath"
+					FX="FX_AlliedTankGun" />
+			</FXListBehavior>-->
+			<DestroyDie
+				id="ModuleTag_FrozenDie">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="UNDER_FROZEN"/>
+			</DestroyDie>
+      <CreateObjectDie
+				id="ModuleTag_CreateFrozenObjectDie"
+				CreationList="InfantryShatter_OCL">
+        <DieMuxData
+					DeathTypes="ALL"
+          RequiredStatus="UNDER_FROZEN"/>
+      </CreateObjectDie>
+      <!-- end of frozen death modules -->
+
+			<FXListBehavior
+				id="SquishedFXPlayer">
+				<DieMuxData
+					DeathTypes="CRUSHED" />
+				<Event
+					Index="onDeath"
+					FX="FX_InfantrySquished" />
+			</FXListBehavior>
+			<FireWeaponWhenDead
+				id="ModuleTag_CatalystDeathWeapon"
+				InitiallyActive="true"
+				DeathWeapon="CatalystInfantryDeathWeapon"
+				ContinueToBezierDestination="false"
+				UseMyKillerAsWeaponSource="true">
+				<DieMuxData DeathTypes="CATALYST" />
+			</FireWeaponWhenDead>
+		
+			<AutoHealBehavior
+				id="Upgrade_HeroicHeal"
+				InitiallyActive="false"
+				HealOnlyIfNotInCombat="false"
+				HealOnlyIfNotUnderAttack="false"
+				StartHealingDelay="1s"
+				HealingAmount="1"
+				HealingDelay=".5s">
+				<TriggeredBy>Upgrade_Veterancy_HEROIC</TriggeredBy>
+			</AutoHealBehavior>
+			
+			<SecondaryDamageTracker
+				id="ModuleTag_SecondaryDamageTracker"
+				UpdateDuration="1s"
+				DissipateAmount="25"
+				MaxDamageClampScaler="=$MAX_SECONDARY_DAMAGE_SCALER">
+				<Color R="1.0" G="1.0" B="1.75"/>
+				<EffectInfo
+					Fraction="0.2"
+					AttributeModifier="AttributeModifer_CryoBeam_02"
+				/>
+				<EffectInfo
+					Fraction="0.4"
+					AttributeModifier="AttributeModifer_CryoBeam_04"
+				/>
+				<EffectInfo
+					Fraction="0.6"
+					AttributeModifier="AttributeModifer_CryoBeam_06"
+				/>
+				<EffectInfo
+					Fraction="0.8"
+					AttributeModifier="AttributeModifer_CryoBeam_08"
+				/>
+				<EffectInfo
+					Fraction="1.0"
+					SetUpgradedArmor="true"
+					OnEnterDisable="true"
+					OnEnterCancelSpecialAbilities="true"
+					AttributeModifier="AttributeModifer_CryoBeam_10"
+				/>
+			</SecondaryDamageTracker>
+
+			<RunOffMapBehavior
+				id="ModuleTag_RunOffMapBehavior"				
+				RequiresSpecificTrigger="true" 
+				RunOffMapWaypointName="RunOffMap"
+			/>
+
+			<LevelUpUpgrade
+				id="ModuleTag_LevelUpUpgrade_Veteran"
+				LevelCap="4"
+				LevelsToGain="1">
+				<TriggeredBy>Upgrade_CreationVeterancy_VETERAN</TriggeredBy>
+			</LevelUpUpgrade>
+			<LevelUpUpgrade
+				id="ModuleTag_LevelUpUpgrade_Elite"
+				LevelCap="4"
+				LevelsToGain="1">
+				<TriggeredBy>Upgrade_CreationVeterancy_ELITE</TriggeredBy>
+			</LevelUpUpgrade>
+			<LevelUpUpgrade
+				id="ModuleTag_LevelUpUpgrade_Heroic"
+				LevelCap="4"
+				LevelsToGain="1">
+				<TriggeredBy>Upgrade_CreationVeterancy_HEROIC</TriggeredBy>
+			</LevelUpUpgrade>
+			
+			<SuppressionUpdate
+				id="ModuleTag_SuppressionUpdate"
+				UpdateDelay="1s"
+				Suppressability="50"
+				SuppressionDuration="5s"
+				AttributeModifierSuppressed="Modifier_Test_Suppression"
+				AttributeModifierForceMove="Modifier_Test_Suppression_ForceMove" />
+			
+			<!-- for use on objects that don't have Dynamics
+				 but that still may fall out of the sky on death 
+				 Positive initial velocity means infantry will jump a little before falling -->
+			<FreefallUpdate
+				id="ModuleTag_FreefallUpdate"
+				ModelConditionsToSet="STUNNED_FLAILING"
+				InitialVelocity="5"
+				Acceleration="1"
+				TerminalVelocity="15"/>
+
+		</Behaviors>
+
+		<Body>
+			<ActiveBody
+				id="DefaultBody"/>
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_ShockDeathOverLand">
+				<ModelConditionSound Sound="Electro_BoneRattle_Death" RequiredFlags="DYING DEATH_1" ExcludedFlags="OVER_WATER" />
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionSoundSelectorClientBehavior id="Frozen">
+				<Override RequiredFlags="PARALYZED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="" AudioType="voiceAttack" />
+						<AudioEntry Sound="" AudioType="voiceAttackAir" />
+						<AudioEntry Sound="" AudioType="voiceAttackAfterMoving" />
+						<AudioEntry Sound="" AudioType="voiceAttackGarrisonedStructure" />
+						<AudioEntry Sound="" AudioType="voiceAttackStructure" />
+						<AudioEntry Sound="" AudioType="voiceCreated" />
+						<AudioEntry Sound="" AudioType="voiceDock" />
+						<AudioEntry Sound="" AudioType="voiceFear" />
+						<AudioEntry Sound="" AudioType="voiceGarrison" />
+						<AudioEntry Sound="" AudioType="voiceMove" />
+						<AudioEntry Sound="" AudioType="voiceAttackAfterMoving" />
+						<AudioEntry Sound="" AudioType="voiceMoveWaterToLand" />
+						<AudioEntry Sound="" AudioType="voiceMoveLandToWater" />
+						<AudioEntry Sound="" AudioType="voiceRepair" />
+						<AudioEntry Sound="" AudioType="voiceRetreatToCastle" />
+						<AudioEntry Sound="UnitSelectFrozen" AudioType="voiceSelect" />
+						<AudioEntry Sound="UnitSelectFrozen" AudioType="voiceSelectBattle" />
+						<AudioEntry Sound="UnitSelectFrozen" AudioType="voiceSelectUnderFire" /> 
+						<AudioEntry Sound="UnitSelectFrozen" AudioType="voiceSupply" />
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+<!--
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_TurnIntoIceSound">
+				<ModelConditionSound Sound="UnitFreeze" RequiredFlags="PARALYZED" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+-->
+		<EvaEventArray>
+			<EvaEntry EvaEvent="UnitLost" EvaType="dieOwner" />
+			<EvaEntry EvaEvent="UnitConstructionStarted" EvaType="productionStarted" />
+			<EvaEntry EvaEvent="UnitUnderAttack" EvaType="damagedOwner" />
+			<EvaEntry EvaEvent="UnitUnderAttackFromShroudedUnit" EvaType="damagedFromShroudedSourceOwner" />
+			<EvaEntry EvaEvent="GenericUnitBeingBurned" EvaType="damagedByFireOwner" />
+			<EvaEntry EvaEvent="AllyUnitUnderAttack" EvaType="damagedAlly" />
+			<EvaEntry EvaEvent="UnitAmbushed" EvaType="ambushed" />
+			<EvaEntry EvaEvent="GenericEnemyUnitSighted" EvaType="enemyObjectSighted" />
+			<EvaEntry EvaEvent="EnemyStealthUnitDiscovered" EvaType="detectedEnemy" />
+			<EvaEntry EvaEvent="NewConstructionOptions" EvaType="availableForProduction" />
+			<EvaEntry EvaEvent="BuildOnHold" EvaType="buildOnHold" />
+			<EvaEntry EvaEvent="BuildCancelled" EvaType="buildCancelled" />
+			<EvaEntry EvaEvent="UnitPromoted" EvaType="promotedOwner" />
+		</EvaEventArray>
+		
+		<CrusherInfo
+			id="id_CrusherInfo"
+			CrushableLevel="10" />
+	</GameObject>
+
+</AssetDeclaration>

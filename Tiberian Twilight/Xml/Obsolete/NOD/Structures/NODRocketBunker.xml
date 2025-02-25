@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBDHub.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDHub_ASN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDHub_AAN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDHub_D2SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDHub_D2AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDHub_D3SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDHub_D3AN.w3x" />
+		<Include
+			type="all"
+			source="ART:FXspotlight.w3x" />
+		<Include
+			type="all"
+			source="ART:wire.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+	</Includes>
+	<GameObject
+		id="NODRocketBunker"
+		inheritFrom="BaseDefensiveStructure"
+		SelectPortrait="Portrait_NODRocketBunker"
+		ButtonImage="Portrait_NODSAMTurret"
+		Side="NOD"
+		EditorSorting="STRUCTURE"
+		BuildTime="8"
+		EnergyProduction="-6"
+		CommandSet="NODRocketBunkerCommandSet"
+		KindOf="+CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="225d"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="NODRocketBunker"
+		WeaponCategory="MISSILE"
+		Description="Desc:NODRocketBunker"
+		TypeDescription="Type:NODRocketBunker">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="800"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODRocketBunker</DisplayName>
+    <GameDependency>
+      <RequiredObject>NODPowerPlant</RequiredObject>
+    </GameDependency>
+		<ArmorSet
+			Armor="NODBaseDefenceArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BuildingPlacementType="CenterDefault" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBDHub" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBDHub_ASN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NBDHub_D3SN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBDHub_D2SN" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBDHub" />
+					<Texture
+						Original="NBDHub"
+						New="NBDHub_D" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<!-- no anim -->
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBDHub_AAN"
+						AnimationMode="ONCE" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBDHub_D3AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBDHub_D2AN"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NBDHub_D2AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NBDHub_D3AN"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+			<SpotlightDraw
+				id="ModuleTag_Spotlight"
+				AttachToBoneInAnotherModule="bone_stealthdetector"
+				RefreshTime="2.0s"
+				SweepTime="1.0s">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXspotlight" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Model
+						Name="" />
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Script>
+						CurDrawableHideSubObject("Plane01")
+					</Script>	
+				</AnimationState>		
+			</SpotlightDraw>
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_SmallBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Small" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildRubble_Small" />
+			</FXListBehavior>
+			<StealthDetectorUpdate
+				id="ModuleTag_StealthDetect"
+				DetectionRange="200" />
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			<GatherSlavesUpdate
+				id="ModuleTag_GatherSlaves"
+				SlaveTemplate="NODRocketBunkerSpawn"
+				Radius="500.0"
+				Amount="3" />
+			<CompositeStructureInfoModule
+				id="ModuleTag_CompositeStructureInfoModule"
+				ThingTemplate="NODRocketBunkerSpawn"
+				Count="3"
+				BuildableDistance="150">
+				<ConnectionShadowInfo
+					Type="ALPHA_DECAL_DYNAMIC"
+					SizeX="256"
+					SizeY="32"
+					OpacityStart="0"
+					OpacityFadeInTime="3s"
+					OpacityPeak="1"
+					OpacityFadeOutTime="3s"
+					OpacityEnd="0"
+					OverrideLODVisibility="true"
+					Texture="wire" />
+			</CompositeStructureInfoModule>
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+			<xi:include
+				href="../../Includes/GenericNODBuildingSuicide.xml" />
+			<xi:include
+				href="../../Includes/RepairAlliesEngineerContain.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"
+				StateMachine="StructureAIStateMachine"/>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="7000.0" />
+		</Body>
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="25.0"
+				Height="30.0"></Shape>
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_RocketBunkerHubSelect"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry
+				Sound="AudioEvent:NOD_GenericTurret_MoveStart"
+				AudioType="soundTurretMoveLoop" />
+			<AudioEntry
+				Sound="NOD_GenericTurret_Deploy"
+				AudioType="soundPrepositioned" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_SmallBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="100"
+			ShroudClearingRange="100" />
+	</GameObject>
+</AssetDeclaration>

@@ -1,0 +1,646 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <Includes>
+    <Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+  </Includes>
+	
+	<!-- Please be careful of removing these. Many are referenced directly in code (via their SetId) -->
+
+	<!-- Remember to remove any ROS that is not in use by the end of the project. (You can leave its SetId if you
+	     want to leave the code in place; just don't define an ROS with that SetId.) Each XML entry imposes a 
+			 tiny-but-non-zero cost each time an Object is created, destroyed, or changes players -->
+
+	<!-- Global sets -->
+  <RegisteredObjectSet
+    id="GlobalCratesROS"
+    SetId="GLOBAL_CRATES"
+    Type="GLOBAL">
+		<ObjectFilter
+      Rule="NONE"
+      Include="CRATE">
+		</ObjectFilter>
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="GlobalTIberiumCrystalROS"
+    SetId="GLOBAL_TIBERIUM_CRYSTALS"
+    Type="GLOBAL">
+		<ObjectFilter
+      Rule="NONE"
+      Include="UPGRADE_CRYSTAL">
+		</ObjectFilter>
+  </RegisteredObjectSet>
+
+	<RegisteredObjectSet
+    id="GarrisonsROS"
+    SetId="GARRISONS"
+    Type="GLOBAL">
+		<ObjectFilter
+      Rule="NONE"
+      Include="GARRISON">
+		</ObjectFilter>
+  </RegisteredObjectSet>
+	
+	<RegisteredObjectSet
+		id="MapGoalStructureROS"
+		SetId="MAP_GOAL_STRUCTURES"
+		Type="GLOBAL">
+		<ObjectFilter
+			Rule="NONE"
+			Include="GOAL_STRUCTURE">
+		</ObjectFilter>
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="MapResourceStructureROS"
+		SetId="MAP_RESOURCE_STRUCTURES"
+		Type="GLOBAL">
+		<ObjectFilter
+			Rule="NONE">
+			<IncludeThing>ResourceStructure</IncludeThing>
+		</ObjectFilter>
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="MapShieldGeneratorROS"
+		SetId="MAP_SHIELD_GENERATORS"
+		Type="GLOBAL">
+		<ObjectFilter
+			Rule="NONE">
+			<IncludeThing>MonumentShieldGenerator</IncludeThing>
+		</ObjectFilter>
+	</RegisteredObjectSet>
+	
+	<RegisteredObjectSet
+		id="EnemyMonumentROS"
+		SetId="ENEMY_MONUMENT"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="ANY"
+			Relationship="ENEMIES NEUTRAL"> <!-- NEUTRAL so that the AI seems more intelligent in sandbox games -->
+			<IncludeThing>Monument</IncludeThing>
+		</ObjectFilter>
+	</RegisteredObjectSet>
+	
+	<RegisteredObjectSet
+		id="MyMonumentROS"
+		SetId="OWN_MONUMENT"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="ANY"
+			Relationship="SAME_PLAYER ALLIES">
+			<IncludeThing>Monument</IncludeThing>
+		</ObjectFilter>
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+    id="TechBuildingsROS" 
+    SetId="NEUTRAL_TECH"
+    Type="GLOBAL">
+    <ObjectFilter
+      Rule="ANY" 
+      Include="CAPTUREFLAG NEUTRAL_TECH"/>
+  </RegisteredObjectSet>
+
+	<!-- Player-specific sets -->
+	<RegisteredObjectSet
+    id="PlayerEverythingROS"
+    SetId="PLAYER_EVERYTHING"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="ALL"
+      Exclude="INERT"
+      Relationship="SAME_PLAYER"/>
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="PlayerTechBuildingsROS"
+    SetId="PLAYER_NEUTRAL_TECH"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="ANY"
+      Include="CAPTUREFLAG NEUTRAL_TECH"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+	<RegisteredObjectSet
+    id="StructuresROS" 
+    SetId="STRUCTURES"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="ANY" 
+      Include="STRUCTURE BEACON"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+	
+  <RegisteredObjectSet
+    id="FactionStructuresROS"
+    SetId="FACTION_STRUCTURES"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE"
+      Include="STRUCTURE"
+      Exclude="GARRISON NEUTRAL_TECH" 
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <!-- Things the SkirmishAI cares about defending -->
+  <RegisteredObjectSet
+    id="SkirmishAIDefenseTargetsROS"
+    SetId="SKIRMISH_AI_DEFENSE_TARGETS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="ANY"
+      Include="STRUCTURE HARVESTER UNPACKS_INTO_BUILDING"
+      Exclude="GARRISON" 
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="SkirmishAIThreatsToDodgeROS"
+    SetId="SKIRMISH_AI_THREATS_TO_DODGE"
+    Type="GLOBAL">
+    <ObjectFilter
+      Rule="NONE"
+      Include="SKIRMISH_AI_ATTEMPT_TO_DODGE"/>
+  </RegisteredObjectSet>
+
+  <!-- These are units that the AI can pretty much recruit onto any team and have them move and shoot as normal with competent behavior.
+       Units like aircraft that have to reload have more unusual behavior and tend to not work well when mixed with "normal" units. -->
+  <RegisteredObjectSet
+    id="SkirmishAINormalCombatUnitsROS"
+    SetId="SKIRMISH_AI_NORMAL_COMBAT_UNITS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE"
+      Include="CAN_ATTACK SELECTABLE"
+      Exclude="STRUCTURE IGNORES_SELECT_ALL HARVESTER ENGINEER UNPACKS_INTO_BUILDING CRAWLER"
+      Relationship="SAME_PLAYER">
+			<!--
+				<xi:include
+					href="DATA:SkirmishAI/Includes/ExcludeReloadingAircraft.xml"
+					xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ExcludeThingsList/child::*)"/>
+				-->
+    </ObjectFilter>
+  </RegisteredObjectSet>
+	
+  <RegisteredObjectSet
+    id="BeaconsROS"
+    SetId="BEACONS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE"
+      Include="BEACON"
+      Relationship="ALLIES" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="UnitsROS" 
+    SetId="UNITS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="SELECTABLE"
+      Exclude="STRUCTURE" 
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="UnitsAndStructuresROS"
+    SetId="UNITS_AND_STRUCTURES"
+    Type="PLAYER">
+	<ObjectFilter
+	  Rule="ANY"
+	  Include="SELECTABLE STRUCTURE"
+	  Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+	<RegisteredObjectSet
+    id="EnemyUnitsAndStructuresROS"
+    SetId="ENEMY_UNITS_AND_STRUCTURES"
+    Type="PLAYER">
+		<ObjectFilter
+			Rule="ANY"
+			Include="SELECTABLE STRUCTURE"
+			Relationship="ENEMIES" />
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="AlliedUnitsAndStructuresROS"
+		SetId="ALLIED_UNITS_AND_STRUCTURES"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="ANY"
+			Include="SELECTABLE STRUCTURE"
+			Relationship="ALLIES" />
+	</RegisteredObjectSet>
+	
+  <RegisteredObjectSet
+    id="VictoryConditionStructuresROS" 
+    SetId="VICTORY_CONDITION_STRUCTURES"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="STRUCTURE"
+      Exclude="FS_BASE_DEFENSE NEUTRAL_TECH GARRISON BEACON IGNORE_FOR_VICTORY" 
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="InfantryROS" 
+    SetId="INFANTRY"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="INFANTRY SELECTABLE"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="VehiclesROS" 
+    SetId="VEHICLES"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="VEHICLE SELECTABLE"
+      Exclude="AIRCRAFT SHIP" 
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="AircraftROS" 
+    SetId="AIRCRAFT"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="AIRCRAFT SELECTABLE"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="DozersROS"
+    SetId="DOZERS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE"
+      Include="DOZER SELECTABLE"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="HordesROS" 
+    SetId="HORDES"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="HORDE SELECTABLE"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="HordeMembersROS" 
+    SetId="HORDE_MEMBERS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="ANY" 
+      Include="CAN_ATTACK INFANTRY VEHICLE" 
+      Exclude="UNATTACKABLE STRUCTURE IMMOBILE SHIP" 
+      StatusBitFlags="HORDE_MEMBER"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+	<RegisteredObjectSet
+    id="UnpacksIntoBuildingUnitsROS"
+    SetId="UNPACKS_INTO_BUILDING_UNITS"
+    Type="PLAYER">
+		<ObjectFilter
+      Rule="NONE"
+      Include="UNPACKS_INTO_BUILDING SELECTABLE"
+      Relationship="SAME_PLAYER" />
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+    id="PowerPlantsROS" 
+    SetId="POWER_PLANTS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="FS_POWER"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="FactoriesROS" 
+    SetId="FACTORIES"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="FS_FACTORY"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="UnitFactoriesROS" 
+    SetId="UNIT_FACTORIES"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="ANY" 
+      Include="FS_BARRACKS FS_WAR_FACTORY FS_AIR_FIELD SPELL_BOOK"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+	
+  <RegisteredObjectSet
+    id="TechCentersROS" 
+    SetId="TECH_CENTERS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="ANY" 
+      Include="FS_TECH_CENTER FS_TECHNOLOGY"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="ConyardsROS" 
+    SetId="CONYARDS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="CONSTRUCTION_YARD"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="MCVsROS" 
+    SetId="MCVS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="MCV"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="AIRepairFacilitiesROS"
+		SetId="AI_REPAIR_FACILITIES"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="NONE"
+			Include="CRAWLER"
+			Relationship="SAME_PLAYER ALLIES" >
+			<IncludeThing>GDIVehicleAJ</IncludeThing> <!-- Conductor -->
+			<IncludeThing>GDIAircraftD</IncludeThing>	<!-- Archangle -->
+		</ObjectFilter>
+	</RegisteredObjectSet>
+
+
+	<RegisteredObjectSet
+		id="AIDeleteToFreeUpCP_ROS"
+		SetId="AI_DELETE_TO_FREE_UP_CP"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="NONE"
+			Include="SKIRMISH_AI_DELETE_TO_FREE_UP_CP"
+			Relationship="SAME_PLAYER" />
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="AIDeleteToFreeUpEnergyROS"
+		SetId="AI_DELETE_TO_FREE_UP_ENERGY"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="NONE"
+			Include="SKIRMISH_AI_DELETE_TO_FREE_UP_ENERGY"
+			Relationship="SAME_PLAYER" />
+	</RegisteredObjectSet>
+
+
+	<!-- Basically everything that is immobile and can potentially attack -->
+  <RegisteredObjectSet
+    id="BaseDefensesAndGarrisonROS"
+    SetId="BASE_DEFENSES_AND_GARRISONS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="ANY"
+      Include="FS_BASE_DEFENSE GARRISON"
+			Exclude="UNPACKS_INTO_BUILDING"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+	
+	<RegisteredObjectSet
+    id="BaseDefensesROS" 
+    SetId="BASE_DEFENSES"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="FS_BASE_DEFENSE"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="EnemyBaseDefensesROS" 
+    SetId="ENEMY_BASE_DEFENSES"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="FS_BASE_DEFENSE"
+      Relationship="ENEMIES" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="EngineersROS" 
+    SetId="ENGINEERS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="ENGINEER"
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="EnemyEngineersROS" 
+    SetId="ENEMY_ENGINEERS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="ENGINEER"
+      Relationship="ENEMIES" />
+  </RegisteredObjectSet>
+
+  <RegisteredObjectSet
+    id="MobileGroundUnitROS" 
+    SetId="MOBILE_GROUND_UNITS"
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include="SELECTABLE"
+      Exclude="STRUCTURE IMMOBILE AIRCRAFT" 
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+  
+  <!--
+  <RegisteredObjectSet
+    id="ROS" 
+    SetId=""
+    Type="PLAYER">
+    <ObjectFilter
+      Rule="NONE" 
+      Include=""
+      Relationship="SAME_PLAYER" />
+  </RegisteredObjectSet>
+  -->
+
+	<RegisteredObjectSet
+		id="CrawlerROS"
+		SetId="CRAWLERS"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="NONE"
+			Include="CRAWLER"
+			Relationship="SAME_PLAYER" />
+	</RegisteredObjectSet>
+
+	<!-- Includes the structure form of crawlers, but no other structures. Excludes Engineers. -->
+	<RegisteredObjectSet
+		id="UnitsAndCrawlerROS"
+		SetId="UNITS_AND_CRAWLERS"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="NONE"
+			Include="SELECTABLE"
+			Exclude="STRUCTURE" 
+			Relationship="SAME_PLAYER" >
+			<IncludeThing>NODCrawlerAStructure</IncludeThing>
+			<IncludeThing>NODCrawlerAVehicle</IncludeThing>
+			<IncludeThing>NODCrawlerBStructure</IncludeThing>
+			<IncludeThing>NODCrawlerBVehicle</IncludeThing>
+			<IncludeThing>NODCrawlerCStructure</IncludeThing>
+			<IncludeThing>NODCrawlerCVehicle</IncludeThing>
+			<IncludeThing>GDICrawlerAStructure</IncludeThing>
+			<IncludeThing>GDICrawlerAVehicle</IncludeThing>
+			<IncludeThing>GDICrawlerBStructure</IncludeThing>
+			<IncludeThing>GDICrawlerBVehicle</IncludeThing>
+			<IncludeThing>GDICrawlerCStructure</IncludeThing>
+			<IncludeThing>GDICrawlerCVehicle</IncludeThing>
+		</ObjectFilter>
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="EnemyUnitsAndCrawlerROS"
+		SetId="ENEMY_UNITS_AND_CRAWLERS"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="NONE"
+			Include="SELECTABLE"
+			Exclude="STRUCTURE"
+			Relationship="ENEMIES" >
+			<IncludeThing>NODCrawlerAStructure</IncludeThing>
+			<IncludeThing>NODCrawlerAVehicle</IncludeThing>
+			<IncludeThing>NODCrawlerBStructure</IncludeThing>
+			<IncludeThing>NODCrawlerBVehicle</IncludeThing>
+			<IncludeThing>NODCrawlerCStructure</IncludeThing>
+			<IncludeThing>NODCrawlerCVehicle</IncludeThing>
+			<IncludeThing>GDICrawlerAStructure</IncludeThing>
+			<IncludeThing>GDICrawlerAVehicle</IncludeThing>
+			<IncludeThing>GDICrawlerBStructure</IncludeThing>
+			<IncludeThing>GDICrawlerBVehicle</IncludeThing>
+			<IncludeThing>GDICrawlerCStructure</IncludeThing>
+			<IncludeThing>GDICrawlerCVehicle</IncludeThing>
+		</ObjectFilter>
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="DefenseHubROS"
+		SetId="DEFENSE_HUBS"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="NONE"
+			Include="STRUCTURE_HUB"
+			Relationship="SAME_PLAYER" />
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="GDIStructureJROS"
+		SetId="GDISTRUCTUREJ_ONLY"
+		Type="PLAYER">
+		<ObjectFilter
+		  Rule="NONE"
+		  Relationship="SAME_PLAYER">
+			<IncludeThing>GDIStructureJ</IncludeThing>
+		</ObjectFilter>
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="NODTunnelsROS"
+		SetId="NODTUNNELS_ONLY"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="NONE"
+			Relationship="SAME_PLAYER">
+			<IncludeThing>NODStructureE</IncludeThing>
+		</ObjectFilter>
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="GDITunnelsROS"
+		SetId="GDITUNNELS_ONLY"
+		Type="PLAYER">
+		<ObjectFilter
+		  Rule="NONE"
+		  Relationship="SAME_PLAYER">
+			<IncludeThing>GDIStructureE</IncludeThing>
+		</ObjectFilter>
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="HuskROS"
+		SetId="HUSKS"
+		Type="GLOBAL">
+		<ObjectFilter
+		  Rule="NONE"
+		  Include="HUSK" />
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="EnergyChangesOnUpgradeROS"
+		SetId="ENERGY_CHANGES_ON_UPGRADE"
+		Type="PLAYER">
+		<ObjectFilter
+		  Rule="NONE"
+		  Include="ENERGY_CHANGES_ON_UPGRADE" />
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="ChokePointsROS"
+		SetId="CHOKE_POINTS"
+		Type="GLOBAL">
+		<ObjectFilter
+		  Rule="NONE"
+		  Include="CHOKE_POINT" />
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="PlayerMinesROS"
+		SetId="PLAYER_MINES"
+		Type="PLAYER">
+		<ObjectFilter
+		  Rule="NONE"
+		  Include="MINE" />
+	</RegisteredObjectSet>
+
+	<RegisteredObjectSet
+		id="TargetAssistRequestersROS"
+		SetId="TARGET_ASSIST_REQUESTERS"
+		Type="PLAYER">
+		<ObjectFilter
+			Rule="NONE"
+			Relationship="ALLIES">
+			<IncludeThing>GDIStructureF</IncludeThing>
+			<IncludeThing>GDIStructureD</IncludeThing>
+		</ObjectFilter>
+	</RegisteredObjectSet>
+
+</AssetDeclaration>

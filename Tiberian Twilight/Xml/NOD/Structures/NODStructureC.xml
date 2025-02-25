@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<!-- NodStructure C / Nod Directional Cannon Tier 1 / Cobra Turret
+			 Has detonating ammo, can burrow, and upgraded to have more health and better armor 
+		USER_1 = unburrowing
+		USER_2 = upgraded -->
+			 
+		<Include type="all" source="ART:NSL_StructureC_SKN.w3x" />
+		<Include type="all" source="ART:NSL_StructureC_AIDA.w3x" />
+		<Include type="all" source="ART:NSL_StructureC_AIDU.w3x" />
+		<Include type="all" source="ART:NSL_StructureC_BLDA.w3x" />
+		<Include type="all" source="ART:NSL_StructureC_BRWD.w3x" />
+		<Include type="all" source="ART:NSL_StructureC_BRWU.w3x" />
+		<Include type="all" source="ART:NSL_StructureC_DMG.xml" />
+
+		<Include type="instance" source="DATA:GlobalData/upgrade.xml" />
+		<Include type="instance" source="DATA:Nod/Props/NODCannonProjectiles.xml" />
+		<Include type="instance" source="DATA:Nod/props/NODStructureBurrowingProps.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseDefensiveStructure.xml" />
+		<Include type="instance" source="DATA:GlobalData/SpecialPowerTemplates.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		
+	</Includes>
+	<Defines>
+		<Define name="NODSTRUCTUREC_ATTACK_RANGE" value="450.0" />
+	</Defines>
+	<GameObject
+		id="NODStructureC"
+		inheritFrom="BaseDefensiveStructure"
+		HealthBoxHeightOffset="20"
+		SubGroupPriority="457"
+		SelectPortrait="Portrait_NOD_Structure_C_tech1"
+		ButtonImage="Btn_NOD_Structure_C_tech1"
+		Side="NOD"
+		ParticipationValue="=$NODSTRUCTUREC_PARTICIPATION_VALUE"
+		BuildTime="15.0"
+		EnergyProduction="=$NOD_STRUCTURE_C_COMMANDPOINT_COST"
+		CommandSet="NODStructureCCommandSet"
+		KindOf="+CAN_SEE_THROUGH_STRUCTURE +CRUSHABLE_BUILDING +ENERGY_CHANGES_ON_UPGRADE"
+		RadarPriority="STRUCTURE"
+		ProductionQueueType="MAIN_STRUCTURE"
+		BuildPlacementTypeFlag="MAIN_STRUCTURE"
+		WeaponCategory="CANNON"
+		EditorName="NOD_D1_Struct_Cannon(Cobra Turret)"
+		EditorSorting="STRUCTURE"
+		Description="Desc:NODStructureC"
+		TypeDescription="Type:NODStructureC">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODStructureC</DisplayName>
+		<ArmorSet
+			Armor="HeavyStructureArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<ArmorSet
+			Armor="ReinforcedArmor"
+			DamageFX="FactionStructureDamageFX"
+			Conditions="PLAYER_UPGRADE"/>
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="16.0"
+				MaxRecoilDistance="6.0"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="3.0"
+				ExtraPublicBone="Turret Pitch FX_Weapon01 FXDamage01"
+				Options="RENDER_BUFF_EFFECTS">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NSL_StructureC_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon01" />
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon01" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FX_Weapon01" />
+					<Turret
+						TurretNameKey="Turret"
+						TurretPitch="Pitch"
+						TurretID="1" />
+				</ModelConditionState>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NSL_StructureC_SKN" />
+					<Texture
+						Original="NSL_StructureC"
+						New="NSL_StructureC_DMG" />
+				</ModelConditionState>
+
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NSL_StructureC_SKN" />
+					<Texture
+						Original="NSL_StructureC"
+						New="NSL_StructureC_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingFire01"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NSL_StructureC_SKN" />
+					<Texture
+						Original="NSL_StructureC"
+						New="NSL_StructureC_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="BuildingSmokeFx"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BUILD_PLACEMENT_CURSOR">
+					<Animation
+						AnimationName="NSL_StructureC_AIDA"
+						AnimationMode="LOOP" />
+					<Script>
+						CurDrawableHideSubObjectPermanently( "NSL_STRUCTUREC_UPG" )
+					</Script>
+				</AnimationState>
+
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NSL_StructureC_BLDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true" />
+				</AnimationState>
+
+				<!-- Burrowing up -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_1">
+					<Animation
+						AnimationName="NSL_StructureC_BRWU"
+						AnimationMode="ONCE"
+						AnimationAbsoluteTime="1.0s" />
+				</AnimationState>
+
+				<!-- Burrowing down -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BURROWING">
+					<Animation
+						AnimationName="NSL_StructureC_BRWD"
+						AnimationMode="ONCE"
+						AnimationAbsoluteTime="1.0s" />
+				</AnimationState>
+
+				<!-- Upgraded idle -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="USER_2">
+					<Animation
+						AnimationName="NSL_StructureC_AIDU"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+
+				<!-- Normal idle -->
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NSL_StructureC_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODStructureCWeapon"
+						ForbiddenObjectStatus="BURROWING USER_1" />
+					<TurretSettings
+						TurretTurnRate="200"
+						TurretTurnRateOutsideArcOfFire="20"
+						TurretPitchRate="100"
+						AllowsPitch="true"
+						MinimumPitch="-30d"
+						PitchHeight="90%"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="180.0"
+						MaxFiringArcClockwise="45d"
+						MaxFiringArcAntiClockwise="45d">
+						<TurretAITargetChooserData />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+			<AutoHealBehavior
+				id="BurrowedStructure_PassiveHeal"
+				InitiallyActive="true"
+				HealOnlyIfNotInCombat="false"
+				HealOnlyIfNotUnderAttack="false"
+				StartHealingDelay="1s"
+				HealingAmount="2"
+				HealingDelay="1s"
+				HealAlwaysActive="true">
+				<ObjectStatusValidation
+					RequiredStatus="BURROWING"
+					ForbiddenStatus="DISABLED_FOR_RECYCLE" />
+			</AutoHealBehavior>
+			<xi:include
+				href="DATA:Includes/GenericDefenseStructureProductionUpdate.xml" />
+			<EnergyPointsUpgrade
+				id="ModuleTag_EnergyPointsUpgrade"
+				EnergyPointsToChange="=$ENERGY_DEDUCTED_UPGRADED_STRUCTURE">
+				<TriggeredBy>UpgradeNODStructureC</TriggeredBy>
+			</EnergyPointsUpgrade>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODStructure_Death02" />
+				<Event Index="onDeath" FX="FX_StructureSmall_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NODStructureC_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<StructureUnpackUpdate
+				id="StructureUnpackUpdate"
+				UnpackTime="1.5s" />
+			<ArmorUpgrade
+				id="ModuleTag_ArmorUpgrade"
+				ArmorSetFlag="PLAYER_UPGRADE">
+				<TriggeredBy>UpgradeNODStructureC</TriggeredBy>
+			</ArmorUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_ModelConditionUpgrade"
+				AddConditionFlags="USER_2">
+				<TriggeredBy>UpgradeNODStructureC</TriggeredBy>
+			</ModelConditionUpgrade>
+			<MaxHealthUpgrade
+				id="ModuleTag_HealthUpgrade"
+				AddMaxHealth="150"
+				ChangeType="ADD_CURRENT_HEALTH_TOO">
+				<TriggeredBy>UpgradeNODStructureC</TriggeredBy>
+			</MaxHealthUpgrade>
+			<CommandSetUpgrade
+				id="ModuleTag_CommandSetUpgrade"
+				CommandSet="NODStructureCBurrowingCommandSet"
+				Permanent="true">
+				<TriggeredBy>UpgradeNODStructureC</TriggeredBy>
+			</CommandSetUpgrade>
+			<FXListBehavior
+				xmlns="uri:ea.com:eala:asset"
+				id="ModuleTag_BurrowUpgrade">
+				<TriggeredBy>UpgradeNODStructureC</TriggeredBy>
+				<DieMuxData DeathTypes="ALL" />
+				<Event
+					Index="onUpgraded"
+					FX="FX_UpgradeNODStructureC" />
+			</FXListBehavior>
+
+      <!-- This will hide the upgraded model -->
+      <LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="NODStructureCFunctions"/>
+
+      <!-- This will unhide the upgraded model -->
+      <SubObjectsUpgrade
+				id="ModuleTag_ShowUpgrade">
+        <Nugget
+					ShowSubObjects="NSL_StructureC_UPG IRIS"
+					Upgrade="UpgradeNODStructureC"
+          FadeTime="0.0s"
+          SkipFlashOnCreate="false"
+          UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+          FlashTime="1.5s"/>
+        <TriggeredBy>UpgradeNODStructureC</TriggeredBy>
+      </SubObjectsUpgrade>
+      
+			<!-- Burrowing Ability Modules -->
+			<SpecialPower
+				id="ModuleTag_ToggleBurrowingTrigger"
+				SpecialPowerTemplate="SpecialPower_NODStructureCBurrow"/>
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleBurrowing"
+				SpecialPowerTemplate="SpecialPower_NODStructureCBurrow">
+				<ToggleState
+					AttributeModifier="AttributeModifier_NODStructureCUnburrowing"
+					ForbidTransitionRadius="25.0"
+					InitiateIntentToExitStateSound="Burrow_StructureMS">
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_DEFAULT"
+						MaxWeaponRangePercent="90%"
+						DeployedUnitRangedWeaponType="SINGLE_TARGET"
+						NeverUseWhenDodgingThreat="true"
+						TimeToWaitForTarget="5s">
+						<StateWeapon
+							Weapon="NODStructureCWeapon" />
+					</SkirmishAiInfo>
+					<ForbidTransitionNearFilter
+						Rule="ANY"
+						Include="VEHICLE INFANTRY CRAWLER"
+						StatusBitFlagsExclude="AIRBORNE_TARGET">
+						<ExcludeThing>NODStructureBurrowingProxy</ExcludeThing>
+					</ForbidTransitionNearFilter>
+				</ToggleState>
+				<ToggleState
+					AttributeModifier="Modifier_BurrowingStructure"
+					Flags="REMOVE_FROM_PATHFINDER"
+					InitiateIntentToExitStateSound="UnBurrow_StructureMS">
+					<ObjectStatusValidation
+						ForbiddenStatus="STEALTH_AND_BURROW_FORBIDDEN" />
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_STRUCTURE_BURROW">
+					</SkirmishAiInfo>
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+
+			<InvisibilityBehavior
+				id="ModuleTag_Invisibility"
+				InvisibilityTemplate="NODStructureBurrowInvisibilityTemplate"/>
+			
+			<SpawnBehavior
+				id="ModuleTag_BurrowProxy"
+				SpawnNumberData="1"
+				InitialBurst="1"
+				SpawnedRequireSpawner="true"
+				SpawnInsideBuilding="true"
+				DisabledTypesToProcess="UNDERPOWERED SCRIPT_UNDERPOWERED">
+				<Die
+					DeathTypes="ALL" />
+				<SpawnTemplate>NODStructureBurrowingProxy</SpawnTemplate>
+			</SpawnBehavior>
+
+			<!-- This delays the stealth effect until the unit has finished
+			its burrow animation. -->
+			<DelayedObjectStatusTrigger
+				id="ModuleTag_DelayedObjectStatusTrigger"
+				ModelConditionsNeeded="BURROWING"
+				ObjectStatusToSet="BURROWING" 
+				SetDelay="1.2s" />	
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="AIUpdate"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="OffensiveStructureAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"
+					TargetingCompareList="BaseDefenseTargetingCompareList" />
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="500.0" />
+		</Body>
+
+		<ClientBehaviors>
+			<AnimationSoundClientBehavior id="ModuleTag_AnimationSound" >
+				<Sound Sound="NOD_CobraTurret_StrC_DeployAnimation" ExcludedMC="OVER_WATER" Animation="NSL_StructureC_BLDA" Frame="0" />
+			</AnimationSoundClientBehavior>	
+		</ClientBehaviors>
+
+		<Geometry>
+			<PlacementShape
+				Type="BOX"
+				MajorRadius="40.0"
+				MinorRadius="40.0"
+				Height="40.0" >
+			</PlacementShape>
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "35.0"
+					 MinorRadius = "35.0"
+					 Height = "40.0"
+					 ContactPointGeneration = "STRUCTURE" >
+			</Shape>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "35.0"
+					 MinorRadius = "35.0"
+					 Height = "40.0">
+			</Shape>
+
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_CobraTurret_StrC_Select"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="Fire1_StructureSmall_LoopMS" AudioType="soundAmbientReallyDamaged" />
+			<AudioEntry Sound="StructureSmall_DamagedMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="StructureSmall_DamagedMS" AudioType="soundOnReallyDamaged" />
+			<!-- <AudioEntry
+				Sound="AudioEvent:NOD_GenericTurret_MoveStart"
+				AudioType="soundTurretMoveLoop" />
+			<AudioEntry
+				Sound="NOD_GenericTurret_Deploy"
+				AudioType="soundPrepositioned" /> -->
+		</AudioArraySound>
+    <EvaEventArray>
+      <EvaEntry EvaEvent="BurrowedStructureDetected" EvaType="detectedEnemy" />
+    </EvaEventArray>
+    <VisionInfo
+			UIWeaponRangePreview="=$NODSTRUCTUREC_ATTACK_RANGE - 5.0"
+			VisionRange="475"
+			ShroudClearingRange="500" />
+
+	</GameObject>
+
+	<LogicCommand
+		Type="SPECIAL_POWER"
+		id="Command_NODStructureCBurrow">
+		<SpecialPower>SpecialPower_NODStructureCBurrow</SpecialPower>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo Heuristic="TOGGLE"/>
+		</AISpecialPower>
+	</LogicCommand>
+
+	<LogicCommand
+		Type="OBJECT_UPGRADE"
+		id="Command_UpgradeNODStructureC">
+		<Upgrade>UpgradeNODStructureC</Upgrade>
+		<AISpecialPower Manager="MICRO_MANAGER">
+			<AISpecialPowerInfo	Heuristic="STRUCTURE_UPGRADE" Distance="400.0"/>
+		</AISpecialPower>
+	</LogicCommand>
+	
+	<LogicCommandSet
+		id="NODStructureCCommandSet">
+		<Cmd>Command_UpgradeNODStructureC</Cmd>
+		<Cmd>Command_NODSellSelf</Cmd>
+	</LogicCommandSet>
+
+	<LogicCommandSet
+		id="NODStructureCBurrowingCommandSet">
+		<Cmd>Command_NODStructureCBurrow</Cmd>
+		<Cmd>Command_NODSellSelf</Cmd>
+	</LogicCommandSet>
+
+	<UpgradeTemplate
+		id="UpgradeNODStructureC"
+		inheritFrom="UpgradeNODBurrowingStructure"
+		DisplayName="UPGRADE:UpgradeNODStructureC"
+		Description="UPGRADE:UpgradeNODStructureC"
+		ResearchSound="Upgrade_NODReinforcedArmorAndBurrow"
+		BuildCost="0"
+		BuildTime="10s">
+	</UpgradeTemplate>
+
+	<SpecialPowerTemplate
+		id="SpecialPower_NODStructureCBurrow"
+		inheritFrom="SpecialPower_BurrowStructure">
+		<GameDependency>
+			<NeededUpgrade>UpgradeNODStructureC</NeededUpgrade>
+		</GameDependency>
+	</SpecialPowerTemplate>
+
+	<AttributeModifier
+		id="AttributeModifier_NODStructureCUnburrowing"
+		Category="NONE"
+		ModelConditionsSet="USER_1"
+		ObjectStatusToSet="USER_1" 
+		Duration="1.0s" />
+
+	<WeaponTemplate
+		id="NODStructureCWeapon"
+		inheritFrom="BaseCannonWeapon" 
+		AttackRange="=$NODSTRUCTUREC_ATTACK_RANGE"
+		MinTargetPitch="-15d"
+		MaxTargetPitch="15d"
+		FireSound="NOD_CobraTurret_StrC_CannonWeaponFire"
+		FireFX="FX_NODCannon_Heavy_FireDUST"
+		FireStrongCounterFX="FX_NODCannon_Heavy_Fire_Veteran"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT ATTACK_LOS_IGNORES_BUILDINGS">
+		<FiringDuration
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<CoolDownDelayBetweenShots
+			MinSeconds="4.0s"
+			MaxSeconds="4.0s" />
+		<Nuggets>
+			<ProjectileNugget
+			    ProjectileTemplate="NODCobraTurretCannonProjectile"
+				WarheadTemplate="NODStructureCWeaponWarhead" >
+				<CombatChainProjectiles
+					CombatChain="STRONG"
+					ProjectileTemplate="NODCobraTurretCannonProjectile_Veteran"/>
+			</ProjectileNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="NODStructureCWeaponWarhead">
+		<Nuggets>
+			<DamageNugget
+				Damage="55.0"
+				DamageType="CANNON"
+				DamageFXType="NOD_CANNON"
+				DeathType="AMMO_BURSTED">
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+	<!-- OCL -->
+	<ObjectCreationList
+		id="NODStructureC_OCL">
+		<OCLModule>
+			<Modules>
+				<ObjectList>
+					<ObjectTemplate>NODDebrisMedium_Collapse</ObjectTemplate>
+					<ObjectOffset x="0.0" y="0.0" z="0.0" />
+					<SubModules>
+						<CreateObject/>
+						<InheritVelocityFromParent/>
+						<ScaleVelocity
+							Scale="20.0"/>
+						<FlingObject
+							MinForceMagnitude="1.0"
+							MaxForceMagnitude="3.0"
+							MinForcePitch="75d"
+							MaxForcePitch="75d"/>
+					</SubModules>
+				</ObjectList>
+			</Modules>
+		</OCLModule>
+	</ObjectCreationList>
+
+	<ExperienceLevelTemplate
+		id="NODStructureCExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_01"
+		ExperienceAward="6">
+		<Target>NODStructureC</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODStructureCExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_02"
+		Prerequisite="NODStructureCExperienceLevel_1"
+		RequiredExperience="12"
+		ExperienceAward="7">
+		<Target>NODStructureC</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODStructureCExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_03"
+		Prerequisite="NODStructureCExperienceLevel_2"
+		RequiredExperience="30"
+		ExperienceAward="8">
+		<Target>NODStructureC</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODStructureCExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_04"
+		Prerequisite="NODStructureCExperienceLevel_3"
+		RequiredExperience="54"
+		ExperienceAward="9">
+		<Target>NODStructureC</Target>
+	</ExperienceLevelTemplate>
+</AssetDeclaration>

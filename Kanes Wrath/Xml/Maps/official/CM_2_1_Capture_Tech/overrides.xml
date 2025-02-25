@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration
+	xmlns="uri:ea.com:eala:asset"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xai="uri:ea.com:eala:asset:instance"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags/>
+  <Includes>
+
+    <Include
+      source="DATA:GlobalData\SpecialPowerTemplates.xml"
+      type="instance"/>
+    <Include
+      source="DATA:NOD\Units\NODSaboteur.xml"
+      type="instance"/>
+    <Include
+      source="DATA:GDI\Props\GDIPowerStore.xml"
+      type="instance"/>
+    <Include
+      source="DATA:GDI\Structures_SinglePlayerCampaign\GDILabRadarBuilding.xml"
+      type="instance"/>
+    <Include
+      source="DATA:GDI\Structures\GDIIonCannonControl.xml"
+      type="instance"/>
+    <Include
+      source="DATA:GDI\Structures\MG_GDI_ASATDefense.xml"
+      type="instance"/>     
+  </Includes>
+
+  <SpecialPowerTemplate
+		id="SpecialPowerIonCannonControlIonCannon"
+		DisplayName="NAME:SuperweaponTimerIonCannon"
+		Description="DESC:SuperweaponTimerIonCannon"
+		Flags="HAS_PUBLIC_TIMER IS_PLAYER_POWER FOGGED_SHROUDED_CELLS_OK WATER_OK IGNORE_MAP_EXTENTS SHARED_SYNC"
+		ReloadTime="324s"
+		TargetType="LOCATION"
+		RadiusCursorRadius="300"
+		RestrictionType="1"
+		EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+		EvaEventToPlayOnInitiateOwner="OwnIonCannonActivated"
+		EvaEventToPlayOnInitiateAlly="AlliedIonCannonActivated"
+		EvaEventToPlayOnInitiateEnemy="EnemyIonCannonActivated"
+		TimerImage="Button_PlayerPowerIonCannon" />
+
+  <SpecialPowerTemplate
+    id="SpecialPowerIonCannonControlIonCannon_2_1"
+    DisplayName="NAME:SuperweaponTimerIonCannon"
+    Description="DESC:SuperweaponTimerIonCannon"
+    Flags="HAS_PUBLIC_TIMER IS_PLAYER_POWER FOGGED_SHROUDED_CELLS_OK WATER_OK IGNORE_MAP_EXTENTS SHARED_SYNC"
+    ReloadTime="60s"
+    TargetType="LOCATION"
+    RadiusCursorRadius="300"
+    RestrictionType="1"
+    EvaEventToPlayWhenSelectingTarget="SelectSpecialPowerTarget"
+    EvaEventToPlayOnInitiateOwner="OwnIonCannonActivated"
+    EvaEventToPlayOnInitiateAlly="AlliedIonCannonActivated"
+    EvaEventToPlayOnInitiateEnemy="EnemyIonCannonActivated"
+    TimerImage="Button_PlayerPowerIonCannon" />
+
+  <SpecialPowerTemplate
+  id="SpecialPower_PlaceSatchelCharge_NOD"
+  TargetType="OBJECT"
+  NameOfVoiceNameToUseAsInitiateIntendToDoVoice="InitiatePlaceSatchelCharge_NOD"
+  Flags="NEEDS_OBJECT_FILTER CHECK_SPECIALPOWERSTORE_CANUSE"
+  ReloadTime="20s"
+  PreventConditions="AIRBORNE_TARGET IGNORE_AI_COMMAND">
+    <ObjectFilter
+			Rule="ANY"
+			Include="STRUCTURE"
+			Exclude="UNATTACKABLE"
+			Relationship="ENEMIES NEUTRAL"
+			RejectStatusBitFlags="RIDER1"/>
+  </SpecialPowerTemplate>
+
+  <GameObject
+  id="MG_GDI_ASATDefense"
+  inheritFrom="MG_GDI_ASATDefense">
+    <DisplayName
+      xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:GDIComCenterSP</DisplayName>
+
+  </GameObject>
+  
+  <GameObject
+  id="NODSaboteur"
+  inheritFrom="NODSaboteur">
+
+    <LocomotorSet
+      Locomotor="HumanLocomotor"
+      Condition="NORMAL"
+      Speed="50" />
+  </GameObject>
+
+  <GameObject
+    id="GDIIonCannonControl"
+    inheritFrom="GDIIonCannonControl">
+    <ClientUpdates>
+      <EvaAnnounceSpecialPowerReadyClientUpdate
+        id="IonCannonReady"
+        xai:joinAction="Remove"/>
+      <EvaAnnounceClientCreate
+        id="IonCannonDetected"
+        xai:joinAction="Remove"/>
+    </ClientUpdates>
+  </GameObject>
+  
+  <GameObject
+    id="GDIPowerStore"
+    inheritFrom="GDIPowerStore"
+    KindOf="IMMOBILE NO_COLLIDE IGNORE_FOR_VICTORY CANNOT_BE_DETECTED NOT_AUTOACQUIRABLE UNATTACKABLE">
+    <Behaviors>
+      <OCLSpecialPower
+				id="ModuleTag_IonCannon"
+				SpecialPowerTemplate="SpecialPowerIonCannonControlIonCannon_2_1"
+				UpdateModuleStartsAttack="true"
+				AvailableAtStart="false"
+				OCL="OCL_SuperweaponDestroyCiviliansHumanelyObject"
+				CreateLocation="CREATE_AT_LOCATION"
+			/>
+      <WeaponFireSpecialAbilityUpdate
+				id="ModuleTag_IonCannonUpdate"
+				SpecialPowerTemplate="SpecialPowerIonCannonControlIonCannon_2_1"
+				SpecialWeapon="IonCannonWeapon"
+				UnpackTime="0s"
+				PackTime="3s"
+				WhichSpecialWeapon="1"
+			/>
+    </Behaviors>
+    <ClientUpdates>
+      <EvaAnnounceSpecialPowerReadyClientUpdate
+        id="IonCannonReady"
+        xai:joinAction="Remove"/>
+      <EvaAnnounceClientCreate
+        id="IonCannonDetected"
+        xai:joinAction="Remove"/>
+    </ClientUpdates>
+  </GameObject>
+
+  <GameObject
+    id="GDI_LabRadarBuilding"
+    inheritFrom="GDI_LabRadarBuilding"
+    KindOf="UNATTACKABLE NOT_AUTOACQUIRABLE PRELOAD SELECTABLE CAN_CAST_REFLECTIONS SCORE STRUCTURE IMMOBILE KEEP_CLASSIFIED_WHEN_DEAD">
+    <Behaviors>
+      <xi:include
+        href="DATA:Includes/GenericEngineerContain.xml" />
+    </Behaviors>
+    <Body>
+			<ActiveBody
+				id="ModuleTag_02"
+				MaxHealth="12000.0"
+				InitialHealth="12000.0" />
+		</Body>
+  </GameObject>
+  
+  <LogicCommandSet
+    id="NODHangarCommandSet">
+    <Cmd>Command_ConstructNODVenom</Cmd>
+    <Cmd>Command_ConstructNODVertigo</Cmd>
+    <Cmd>Command_NODRecallAllAircraft</Cmd>
+    <Cmd>Command_UpgradeNODSignatureGenerator</Cmd>
+    <Cmd>Command_NODBurrowMines</Cmd>
+  </LogicCommandSet>
+	
+  <MissionObjectiveList id="MissionObjectives">
+
+		<MissionObjectiveTag
+			IsBonusObjective="false"
+			Script="SCRIPT:CM_2_1_Obj_1_Summary"
+			Description="SCRIPT:CM_2_1_Obj_1_Details">
+      <PresentationSettings
+				ID = "CM_2_1_Obj_1"
+				Dialog = "MN21_NodEVA02">
+        <Duration>7s</Duration>
+        <CameraStartAngle>10d</CameraStartAngle>
+        <CameraEndAngle>-10d</CameraEndAngle>
+      </PresentationSettings>
+		</MissionObjectiveTag>	<!--Destroy GDI Communications Center-->
+	
+		<MissionObjectiveTag
+			IsBonusObjective="false"
+			Script="SCRIPT:CM_2_1_Obj_2_Summary"
+			Description="SCRIPT:CM_2_1_Obj_2_Details">
+      <PresentationSettings
+        ID = "CM_2_1_Obj_2"
+        Dialog = "MN21_NodEVA01">
+        <Duration>10s</Duration>
+        <CameraStartAngle>10d</CameraStartAngle>
+        <CameraEndAngle>-10d</CameraEndAngle>
+      </PresentationSettings>
+		</MissionObjectiveTag>  <!--Destroy GDI Ion Cannon Uplink-->
+
+    <MissionObjectiveTag
+			IsBonusObjective="false"
+			Script="SCRIPT:CM_2_1_Obj_3_Summary"
+			Description="SCRIPT:CM_2_1_Obj_3_Details">
+      <PresentationSettings
+        ID = "CM_2_1_Obj_3_A"
+        Dialog = "MN21_NodEVA10">
+        <Duration>3s</Duration>
+        <CameraStartAngle>10d</CameraStartAngle>
+        <CameraEndAngle>-10d</CameraEndAngle>
+      </PresentationSettings>
+      <PresentationSettings
+        ID = "CM_2_1_Obj_3_B">
+        <Duration>2s</Duration>
+        <CameraStartAngle>10d</CameraStartAngle>
+        <CameraEndAngle>-10d</CameraEndAngle>
+      </PresentationSettings>
+		</MissionObjectiveTag>	<!--Capture GDI Research Labs before Ion Cannon re-aligns-->
+			
+		<MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:CM_2_1_BonusObj_1_Easy_Summary"
+			Description="SCRIPT:CM_2_1_BonusObj_1_Easy_Details">
+		</MissionObjectiveTag>	<!--Capture the GDI Labs 5 minutes prior to their uplink time.-->
+    
+    <MissionObjectiveTag
+			IsBonusObjective="true"
+			Script="SCRIPT:CM_2_1_BonusObj_1_Med_Summary"
+			Description="SCRIPT:CM_2_1_BonusObj_1_Med_Details">
+    </MissionObjectiveTag>  <!--Capture the GDI Labs 3 minutes prior to their uplink time.-->
+
+    <MissionObjectiveTag
+      IsBonusObjective="true"
+      Script="SCRIPT:CM_2_1_BonusObj_1_Hard_Summary"
+      Description="SCRIPT:CM_2_1_BonusObj_1_Hard_Details">
+    </MissionObjectiveTag>  <!--Capture the GDI Labs 2 minutes prior to their uplink time.-->
+    
+  </MissionObjectiveList>
+	
+</AssetDeclaration>

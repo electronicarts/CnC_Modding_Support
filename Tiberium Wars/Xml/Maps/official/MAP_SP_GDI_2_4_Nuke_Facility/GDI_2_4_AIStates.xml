@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Tags></Tags>
+	<Includes></Includes>
+
+	<!--GDI 2-4: Nuke Facility --> 
+    <!--NOD AI-->
+    
+    <!-- Unit Caps - added by arao 2/12 -->
+  	<AIStrategicStateDefinition
+		id="G_2_4_NODUnitCap_Easy"
+		UnitUpgradeMultiplier="0.0"
+		UnitBuilderSimpleUnitCap="10">
+		<Heuristic>
+			<ConstantHeuristic Weight="1.0"/>
+		</Heuristic>
+	</AIStrategicStateDefinition>
+	<AIStrategicStateDefinition
+		id="G_2_4_NODUnitCap_Medium"
+		UnitUpgradeMultiplier="0.0"
+		UnitBuilderSimpleUnitCap="15">
+		<Heuristic>
+			<ConstantHeuristic Weight="1.0"/>
+		</Heuristic>
+	</AIStrategicStateDefinition>
+	<AIStrategicStateDefinition
+		id="G_2_4_NODUnitCap_Hard"
+		UnitUpgradeMultiplier="0.0"
+		UnitBuilderSimpleUnitCap="20">
+		<Heuristic>
+			<ConstantHeuristic Weight="1.0"/>
+		</Heuristic>
+	</AIStrategicStateDefinition>
+
+    <!-- Make sure to tune: "UnitBuilderSimpleUnitCap" and the "MinUnits" and "MaxUnits" in the TeamTemplate -->
+    
+	<AIStrategicStateDefinition
+		id="G_2_4_NODWeakVehicles_Medium"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<TimerHeuristic StartTime="1s" EndTime="210s"/>
+			<ConstantHeuristic Weight="1.0"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="Structure"/>
+		<Tactic Tactic="SimpleAttack" TargetType="Structure">
+			<TeamTemplate MinUnits="5" MaxUnits="5" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT INFANTRY" AlwaysRelease="false" AlwaysRecruit="false">
+				<CreateUnits UnitName="NODAttackBike"/>
+				<CreateUnits UnitName="NODAttackBike"/>
+				<CreateUnits UnitName="NODScorpionBuggy"/>
+				<CreateUnits UnitName="NODScorpionBuggy"/>
+				<CreateUnits UnitName="NODFlameTank"/>
+			</TeamTemplate>
+		</Tactic>
+		<UnitModifierByName UnitName="NODScorpionBuggy" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODAttackBike" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODFlameTank" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODRaiderTank" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="0%"/>
+		<UnitModifierByName UnitName="NODBeamCannon" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="0%"/>
+	</AIStrategicStateDefinition>
+	
+ 	<AIStrategicStateDefinition
+		id="G_2_4_NODAssault_Medium"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+			<ConstantHeuristic Weight="1.0"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="Structure"/>
+		<Tactic Tactic="SimpleAttack" TargetType="Structure">
+			<TeamTemplate MinUnits="4" MaxUnits="6" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON" AlwaysRelease="false" AlwaysRecruit="false"/>
+		</Tactic>
+		<UnitModifierByName UnitName="NODBeamCannon" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="0%"/>
+	</AIStrategicStateDefinition>
+  
+  
+	<!-- For below: the TimerHeuristic just delays the starting of this heuristic.
+		 A negative end-time number means that it will run forever -->
+	<AIStrategicStateDefinition
+		id="G_2_4_NODAirStrikeUnits_Medium"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+			<ConstantHeuristic Weight="0.75"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestOffensiveUnitHeuristic" TargetType="Unit"/>
+		<Tactic Tactic="SimpleAttack" TargetType="Unit">
+			<TeamTemplate MinUnits="2" MaxUnits="3" IncludeKindOf="CAN_ATTACK AIRCRAFT" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="true"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	       
+	<AIStrategicStateDefinition
+		id="G_2_4_NODReactiveDefend_Medium"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<ConstantHeuristic Weight="0.75"/>
+			<TimerHeuristic StartTime="120s" EndTime="-1s"/>
+		</Heuristic>
+		<Tactic Tactic="ReactiveDefense" TargetType="Targetless">
+			<TeamTemplate MinUnits="1" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON" AlwaysRelease="true" AlwaysRecruit="true"/>
+		</Tactic>
+		<UnitModifierByName UnitName="NODScorpionBuggy" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="25%"/>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="G_2_4_NODOptimalSiege_Medium"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+			<IntervalHeuristic IntervalTime="240s" ActiveTime="30s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="SiegeTarget"/>
+		<Tactic Tactic="SimpleSiege" TargetType="SiegeTarget">
+			<TeamTemplate MinUnits="2" MaxUnits="2" IncludeKindOf="CAN_ATTACK SIEGE_WEAPON" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false">
+				<CreateUnits UnitName="NODBeamCannon"/>
+				<CreateUnits UnitName="NODBeamCannon"/>
+			</TeamTemplate>
+			<TeamTemplate MinUnits="4" MaxUnits="4" IncludeKindOf="CAN_ATTACK VEHICLE" ExcludeKindOf="AIRCRAFT INFANTRY SIEGE_WEAPON" AlwaysRelease="false" AlwaysRecruit="false"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="G_2_4_NodGarrison_Medium"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<IntervalHeuristic IntervalTime="600s" ActiveTime="30s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="GarrisonHeuristic" TargetType="Garrison"/>
+		<Tactic Tactic="GarrisonBuilding" TargetType="Garrison">
+			<TeamTemplate MinUnits="1" MaxUnits="1" IncludeKindOf="INFANTRY" ExcludeKindOf="SKIRMISH_AI_DONT_GARRISON" AlwaysRelease="false" AlwaysRecruit="false"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="G_2_4_NODOptimalEngineer"
+		UnitUpgradeMultiplier="0.0">
+	<Heuristic>
+		<PathToTargetHeuristic PathExists="true"/>
+		<ScriptedFlagHeuristic FlagName="N_N1_FLAG_Engineer_Recapture_Team_Create"/>
+	</Heuristic>
+	<TargetHeuristic TargetHeuristic="EngineerHeuristic" TargetType="Engineer"/>
+	<Tactic Tactic="Engineer" TargetType="Engineer">
+		<TeamTemplate MinUnits="1" MaxUnits="1" IncludeKindOf="" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false">
+			<CreateUnits UnitName="NODSaboteur"/>
+		</TeamTemplate>
+	</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="G_2_4_NODWeakVehicles_Easy"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<IntervalHeuristic IntervalTime="120s" ActiveTime="30s"/>
+			<ConstantHeuristic Weight="0.5"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="Structure"/>
+		<Tactic Tactic="SimpleAttack" TargetType="Structure">
+			<TeamTemplate MinUnits="4" MaxUnits="4" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT INFANTRY" AlwaysRelease="false" AlwaysRecruit="false">
+				<CreateUnits UnitName="NODScorpionBuggy"/>
+				<CreateUnits UnitName="NODScorpionBuggy"/>
+				<CreateUnits UnitName="NODFlameTank"/>
+			</TeamTemplate>
+		</Tactic>
+		<UnitModifierByName UnitName="NODScorpionBuggy" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODAttackBike" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODFlameTank" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODRaiderTank" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="0%"/>
+		<UnitModifierByName UnitName="NODBeamCannon" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="0%"/>
+		<UnitModifierByName UnitName="NODMilitantRocketSquad" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODMilitantSquad" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="100%"/>
+	</AIStrategicStateDefinition>
+	
+ 	<AIStrategicStateDefinition
+		id="G_2_4_NODAssault_Easy"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<ConstantHeuristic Weight="0.6"/>
+			<TimerHeuristic StartTime="210s" EndTime="-1s"/>
+			<IntervalHeuristic IntervalTime="120s" ActiveTime="30s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="Structure"/>
+		<Tactic Tactic="SimpleAttack" TargetType="Structure">
+			<TeamTemplate MinUnits="4" MaxUnits="4" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON" AlwaysRelease="false" AlwaysRecruit="false"/>
+		</Tactic>
+		<UnitModifierByName UnitName="NODScorpionBuggy" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODAttackBike" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODFlameTank" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODRaiderTank" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="0%"/>
+		<UnitModifierByName UnitName="NODBeamCannon" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="0%"/>
+		<UnitModifierByName UnitName="NODMilitantRocketSquad" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODMilitantSquad" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="100%"/>
+	</AIStrategicStateDefinition>
+  
+	<AIStrategicStateDefinition
+		id="G_2_4_NODAssaultInf_Easy"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<ConstantHeuristic Weight="0.6"/>
+			<TimerHeuristic StartTime="210s" EndTime="-1s"/>
+			<IntervalHeuristic IntervalTime="120s" ActiveTime="30s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="Structure"/>
+		<Tactic Tactic="SimpleAttack" TargetType="Structure">
+			<TeamTemplate MinUnits="4" MaxUnits="4" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON" AlwaysRelease="false" AlwaysRecruit="false"/>
+		</Tactic>
+		<UnitModifierByName UnitName="NODScorpionBuggy" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODAttackBike" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODFlameTank" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODRaiderTank" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="0%"/>
+		<UnitModifierByName UnitName="NODBeamCannon" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="0%"/>
+		<UnitModifierByName UnitName="NODMilitantRocketSquad" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODMilitantSquad" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="100%"/>
+	</AIStrategicStateDefinition>
+  
+  
+	<!-- For below: the TimerHeuristic just delays the starting of this heuristic.
+		 A negative end-time number means that it will run forever -->
+	<AIStrategicStateDefinition
+		id="G_2_4_NODAirStrike_Easy"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<ConstantHeuristic Weight="0.2"/>
+			<TimerHeuristic StartTime="600s" EndTime="-1s"/>
+			<IntervalHeuristic IntervalTime="360s" ActiveTime="30s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" TargetType="Structure"/>
+		<Tactic Tactic="FlankAttack" TargetType="Structure">
+			<TeamTemplate MinUnits="1" MaxUnits="1" IncludeKindOf="CAN_ATTACK AIRCRAFT" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="true"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="G_2_4_NODReactiveDefend_Easy"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<ConstantHeuristic Weight="0.75"/>
+			<TimerHeuristic StartTime="210s" EndTime="-1s"/>
+		</Heuristic>
+		<Tactic Tactic="ReactiveDefense" TargetType="Targetless">
+			<TeamTemplate MinUnits="1" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON" AlwaysRelease="true" AlwaysRecruit="true"/>
+		</Tactic>
+		<UnitModifierByName UnitName="NODScorpionBuggy" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="25%"/>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="G_2_4_NODOptimalSiege_Easy"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<ConstantHeuristic Weight="0.4"/>
+			<TimerHeuristic StartTime="420s" EndTime="-1s"/>
+			<IntervalHeuristic IntervalTime="300s" ActiveTime="30s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="SiegeTarget"/>
+		<Tactic Tactic="SimpleSiege" TargetType="SiegeTarget">
+			<TeamTemplate MinUnits="2" MaxUnits="2" IncludeKindOf="CAN_ATTACK SIEGE_WEAPON" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false">
+				<CreateUnits UnitName="NODBeamCannon"/>
+				<CreateUnits UnitName="NODBeamCannon"/>
+			</TeamTemplate>
+			<TeamTemplate MinUnits="2" MaxUnits="2" IncludeKindOf="CAN_ATTACK VEHICLE" ExcludeKindOf="AIRCRAFT INFANTRY SIEGE_WEAPON" AlwaysRelease="false" AlwaysRecruit="false"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="G_2_4_NodGarrison_Easy"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<IntervalHeuristic IntervalTime="600s" ActiveTime="30s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="GarrisonHeuristic" TargetType="Garrison"/>
+		<Tactic Tactic="GarrisonBuilding" TargetType="Garrison">
+			<TeamTemplate MinUnits="1" MaxUnits="1" IncludeKindOf="INFANTRY" ExcludeKindOf="SKIRMISH_AI_DONT_GARRISON" AlwaysRelease="false" AlwaysRecruit="false"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="G_2_4_NODOptimalEngineer_Easy"
+		UnitUpgradeMultiplier="0.0">
+	<Heuristic>
+		<PathToTargetHeuristic PathExists="true"/>
+		<ScriptedFlagHeuristic FlagName="N_N1_FLAG_Engineer_Recapture_Team_Create"/>
+		<IntervalHeuristic IntervalTime="60s" ActiveTime="30s"/>
+		<TimerHeuristic StartTime="420s" EndTime="-1s"/>
+	</Heuristic>
+	<TargetHeuristic TargetHeuristic="EngineerHeuristic" TargetType="Engineer"/>
+	<Tactic Tactic="Engineer" TargetType="Engineer">
+		<TeamTemplate MinUnits="1" MaxUnits="1" IncludeKindOf="" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false">
+			<CreateUnits UnitName="NODSaboteur"/>
+		</TeamTemplate>
+	</Tactic>
+	</AIStrategicStateDefinition>
+	
+		<AIStrategicStateDefinition
+		id="G_2_4_NODWeakVehicles_Hard"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<TimerHeuristic StartTime="1s" EndTime="210s"/>
+			<ConstantHeuristic Weight="1.0"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="Structure"/>
+		<Tactic Tactic="SimpleAttack" TargetType="Structure">
+			<TeamTemplate MinUnits="5" MaxUnits="5" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT INFANTRY" AlwaysRelease="false" AlwaysRecruit="false">
+				<CreateUnits UnitName="NODAttackBike"/>
+				<CreateUnits UnitName="NODAttackBike"/>
+				<CreateUnits UnitName="NODScorpionBuggy"/>
+				<CreateUnits UnitName="NODScorpionBuggy"/>
+				<CreateUnits UnitName="NODFlameTank"/>
+			</TeamTemplate>
+		</Tactic>
+		<UnitModifierByName UnitName="NODScorpionBuggy" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODAttackBike" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODFlameTank" UnitPreferenceOffensiveModifier="999%" UnitPreferenceDefensiveModifier="100%"/>
+		<UnitModifierByName UnitName="NODRaiderTank" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="0%"/>
+		<UnitModifierByName UnitName="NODBeamCannon" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="0%"/>
+	</AIStrategicStateDefinition>
+	
+ 	<AIStrategicStateDefinition
+		id="G_2_4_NODAssault_Hard"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+			<ConstantHeuristic Weight="1.0"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="Structure"/>
+		<Tactic Tactic="SimpleAttack" TargetType="Structure">
+			<TeamTemplate MinUnits="4" MaxUnits="6" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON" AlwaysRelease="false" AlwaysRecruit="false"/>
+		</Tactic>
+		<UnitModifierByName UnitName="NODBeamCannon" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="0%"/>
+	</AIStrategicStateDefinition>
+  
+  
+	<!-- For below: the TimerHeuristic just delays the starting of this heuristic.
+		 A negative end-time number means that it will run forever -->
+	<AIStrategicStateDefinition
+		id="G_2_4_NODAirStrike_Hard"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+			<IntervalHeuristic IntervalTime="300s" ActiveTime="30s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="SafestToAirStructureHeuristic" TargetType="Structure"/>
+		<TargetHeuristic TargetHeuristic="PowerKillHeuristic" TargetType="Structure"/>
+		<Tactic Tactic="FlankAttack" TargetType="Structure">
+			<TeamTemplate MinUnits="2" MaxUnits="4" IncludeKindOf="CAN_ATTACK AIRCRAFT" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="true"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="G_2_4_NODAirStrikeUnits_Hard"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+			<ConstantHeuristic Weight="0.75"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestAircraftHeuristic" TargetType="Unit"/>
+		<TargetHeuristic TargetHeuristic="ClosestOffensiveUnitHeuristic" TargetType="Unit"/>
+		<Tactic Tactic="SimpleAttack" TargetType="Unit">
+			<TeamTemplate MinUnits="2" MaxUnits="4" IncludeKindOf="CAN_ATTACK AIRCRAFT" ExcludeKindOf="" AlwaysRelease="false" AlwaysRecruit="true"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	       
+	<AIStrategicStateDefinition
+		id="G_2_4_NODReactiveDefend_Hard"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<ConstantHeuristic Weight="0.75"/>
+			<TimerHeuristic StartTime="120s" EndTime="-1s"/>
+		</Heuristic>
+		<Tactic Tactic="ReactiveDefense" TargetType="Targetless">
+			<TeamTemplate MinUnits="1" IncludeKindOf="CAN_ATTACK" ExcludeKindOf="AIRCRAFT SIEGE_WEAPON" AlwaysRelease="true" AlwaysRecruit="true"/>
+		</Tactic>
+		<UnitModifierByName UnitName="NODScorpionBuggy" UnitPreferenceOffensiveModifier="0%" UnitPreferenceDefensiveModifier="25%"/>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="G_2_4_NODOptimalSiege_Hard"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<TimerHeuristic StartTime="180s" EndTime="-1s"/>
+			<IntervalHeuristic IntervalTime="180s" ActiveTime="30s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="ClosestStructureHeuristic" TargetType="SiegeTarget"/>
+		<Tactic Tactic="SimpleSiege" TargetType="SiegeTarget">
+			<TeamTemplate MinUnits="2" MaxUnits="2" IncludeKindOf="CAN_ATTACK SIEGE_WEAPON" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false">
+				<CreateUnits UnitName="NODBeamCannon"/>
+				<CreateUnits UnitName="NODBeamCannon"/>
+			</TeamTemplate>
+			<TeamTemplate MinUnits="4" MaxUnits="4" IncludeKindOf="CAN_ATTACK VEHICLE" ExcludeKindOf="AIRCRAFT INFANTRY SIEGE_WEAPON" AlwaysRelease="false" AlwaysRecruit="false"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+	
+	<AIStrategicStateDefinition
+		id="G_2_4_NodGarrison_Hard"
+		UnitUpgradeMultiplier="0.0">
+		<Heuristic>
+			<IntervalHeuristic IntervalTime="300s" ActiveTime="30s"/>
+		</Heuristic>
+		<TargetHeuristic TargetHeuristic="GarrisonHeuristic" TargetType="Garrison"/>
+		<Tactic Tactic="GarrisonBuilding" TargetType="Garrison">
+			<TeamTemplate MinUnits="1" MaxUnits="2" IncludeKindOf="INFANTRY" ExcludeKindOf="SKIRMISH_AI_DONT_GARRISON" AlwaysRelease="false" AlwaysRecruit="false"/>
+		</Tactic>
+	</AIStrategicStateDefinition>
+
+	<AIStrategicStateDefinition
+		id="G_2_4_NODOptimalEngineer_Hard"
+		UnitUpgradeMultiplier="0.0">
+	<Heuristic>
+		<PathToTargetHeuristic PathExists="true"/>
+		<ScriptedFlagHeuristic FlagName="N_N1_FLAG_Engineer_Recapture_Team_Create"/>
+	</Heuristic>
+	<TargetHeuristic TargetHeuristic="EngineerHeuristic" TargetType="Engineer"/>
+	<Tactic Tactic="Engineer" TargetType="Engineer">
+		<TeamTemplate MinUnits="1" MaxUnits="1" IncludeKindOf="" ExcludeKindOf="AIRCRAFT" AlwaysRelease="false" AlwaysRecruit="false">
+			<CreateUnits UnitName="NODSaboteur"/>
+		</TeamTemplate>
+	</Tactic>
+	</AIStrategicStateDefinition>
+
+  	<!-- The Budget State determines how the AI spends its money,
+  		for Single-Player Alpha we set it to spend all its money in production -->
+  
+	<AIBudgetStateDefinition
+		id="G_2_4_FullProductionBudget">
+		<Heuristic>
+			<ConstantHeuristic Weight="1.0"/>
+		</Heuristic>
+		<Budget>
+			<AccountShare Account="INVESTMENT" Percent="0%"/>
+			<AccountShare Account="SPECIAL_OPERATIONS" Percent="0%"/>
+			<AccountShare Account="PRODUCTION" Percent="100%"/>
+			<AccountShare Account="DEFENSE" Percent="0%"/>
+			<AccountShare Account="TECHNOLOGY" Percent="0%"/>
+			<AccountShare Account="SLUSH_FUND" Percent="0%"/>
+		</Budget>
+	</AIBudgetStateDefinition>
+	
+	<AIBudgetStateDefinition
+		id="G_2_4_NotEASYBudget">
+		<Heuristic>
+			<ConstantHeuristic Weight="1.0"/>
+		</Heuristic>
+		<Budget>
+			<AccountShare Account="INVESTMENT" Percent="0%"/>
+			<AccountShare Account="SPECIAL_OPERATIONS" Percent="25%"/>
+			<AccountShare Account="PRODUCTION" Percent="75%"/>
+			<AccountShare Account="DEFENSE" Percent="0%"/>
+			<AccountShare Account="TECHNOLOGY" Percent="0%"/>
+			<AccountShare Account="SLUSH_FUND" Percent="0%"/>
+		</Budget>
+	</AIBudgetStateDefinition>
+
+	
+</AssetDeclaration>

@@ -1,0 +1,29 @@
+//////////////////////////////////////////////////////////////////////////////
+// ©2008 Electronic Arts Inc
+//
+// Applying deferred shading for rendering over underwater objects
+//////////////////////////////////////////////////////////////////////////////
+#ifndef SCRAPE_SCRIPT_UNDERWATER_DEFERRED_SCRAPEH
+#define SCRAPE_SCRIPT_UNDERWATER_DEFERRED_SCRAPEH
+
+var shader UnderwaterDeferredShader UnderwaterDeferred.fx
+
+var texture DepthLutTexture FXDepthLut
+var texture CausticsTexture FXCaustics
+
+proc renderUnderwaterDeferred
+	settexture Water DepthLutTexture DepthLutTexture
+	settexture Water CausticsTexture CausticsTexture
+
+	if Water IsReflectionVisible
+		setshader UnderwaterDeferredShader Tint
+		renderquad
+
+		if DebugToggle RenderCaustics.IsEnabled
+			setshader UnderwaterDeferredShader Caustics
+			renderquad
+		endif
+	endif
+endproc
+
+#endif // SCRAPE_SCRIPT_UNDERWATER_DEFERRED_SCRAPEH

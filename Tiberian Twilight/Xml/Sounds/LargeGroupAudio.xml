@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset">
+	<Tags />
+	<Includes />
+
+<!--	
+//////////////////////////////////////////////////////////////////////////////
+FILE: LargeGroupAudio.ini 
+This file controls the Large Group Audio system, which puts some extra looping 
+sounds under the noise of any big action. For instance, a big battle can extra rumble;
+a big group of horsemen moving can have a extra bunch of horse sounds. Any big group 
+of objects doing some particular thing can had extra sounds added using this system.
+You can override in map.ini if needed (same names to replace, different names to add)
+If you want to see the effects of your tweaks, use Shift-G to turn on graphical
+debugging information, or add "debug.add l + largegroupaudio" to your dbgcmd file
+for tons o' logging
+
+Keys are:
+RequiredModelConditionFlags - List of flags which must be ON for the unit to be counted
+ExcludedModelConditionFlags - List of flags which must be OFF for the unit to be counted
+RequiredObjectStatusBits    - List of status bits which must be ON for the unit to be counted
+ExcludedObjectStatusBits    - List of status bits which must be OFF for the unit to be counted
+IgnoreStealthedUnits        - Yes/no. If Yes, stealthed & undetected units are not counted at all. Defaults to *YES*
+Size						  					- How far apart units can be and still "count"
+StartThreshold			 			  - How many units must be within Size units of each other to start playing sound
+StopThreshold				  			- How many units must be within Size units of each other to STOP playing sound 
+								 							 e.g. below this number, sound will stop
+HandOffModeDuration		  		- How long (in milliseconds) sound has to get from one cell to another when a new cell gets ownership of sound
+MaximumAudioSpeed			  		- Maximum rate audio with move to match "center of group" at other times (world units / second)
+Sound <Name>                - Introduces a Sound block (Name is optional), with the following keys:
+Key					   				      - One or more keys. Only units with at least one of these keys in their LargeGroupAudioUpdate
+                                 module are counted towards starting the sound. There can be multiple Key statements in a Sound
+                                 block and / or multiple keys within a Key statement, so:
+									 									Key = Human
+									  								Key = Ent
+									  								Key = Elf
+							   								 is the same as
+								      							Key = Human Ent Elf
+							   								 Both mean that any object with the key Human OR the key Ent OR the key Elf will count.
+Sound                       - The sound to play when there are more than StartThreshold units within Size world units
+                                 of each other with the correct Key and the correct ModelConditions. Normally a 
+								   							 looping sound. If not looping, sound will play once when StartThreshold is first 
+								   							 exceeded. Only one Sound statement per Sound block.
+Duck					    					- This lowers the volume of another Sound block's sound when the current Sound block
+                                 is playing. All the other block's grid cells at least partly overlapping the playing
+                                 cell in the current block will have the volume of their playing sound multiplied
+                                 by the given multiplier. The format is 'AudioMap:name Sound:name Multiplier:##%',
+                                 where AudioMap and Sound indicate the Sound block to be ducked, and Multiplier gives
+                                 the percentage multiplier of the other Sound block's sounds. A Sound block
+                                 can have multiple Duck statements
+
+//////////////////////////////////////////////////////////////////////////////
+-->
+
+<!-- 
+	<LargeGroupAudioMap
+		id="Structure_Group_AmbientLoop"
+		IgnoreStealthedUnits="false"
+		ExcludedModelConditionFlags="MOVING ATTACKING DYING ENGAGED DECELERATE RECYCLED GARRISONED"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="400"
+		StartThreshold="6"
+		StopThreshold="5"
+		HandOffModeTime="2s"
+		MaximumAudioSpeed="100">
+		<Sound Sound="Structure_Group_AmbientLoop">
+			<Key>LargeGroupAudioKey_Structure</Key>
+		</Sound>
+	</LargeGroupAudioMap>
+ -->
+ 
+	<LargeGroupAudioMap
+		id="AirplaneLarge_Group_AmbientLoop"
+		ExcludedModelConditionFlags="DYING RECYCLED GARRISONED"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="300"
+		StartThreshold="3"
+		StopThreshold="3"
+		HandOffModeTime="1s"
+		MaximumAudioSpeed="100">
+		<Sound Sound="AirplaneLarge_Group_AmbientLoop">
+			<Key>LargeGroupAudioKey_AirplaneLarge</Key>
+		</Sound>
+	</LargeGroupAudioMap>
+
+<!-- 
+			<Duck
+				AudioMap="AirplaneLarge_Group_AmbientLoop"
+				SoundRef="AirplaneLarge_Group_AmbientLoop"
+				VolumeMultiplier="20"/>
+ -->
+ 
+ 	<LargeGroupAudioMap
+		id="TankLarge_Group_MoveLoop"
+		RequiredModelConditionFlags="MOVING"
+		ExcludedModelConditionFlags="DYING DECELERATE RECYCLED GARRISONED"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="400"
+		StartThreshold="3"
+		StopThreshold="3"
+		HandOffModeTime="1s"
+		MaximumAudioSpeed="100">
+		<Sound Sound="TankLarge_Group_MoveLoop">
+			<Key>LargeGroupAudioKey_TankLarge</Key>
+		</Sound>
+	</LargeGroupAudioMap>
+
+ 	<LargeGroupAudioMap
+		id="TankMedium_Group_MoveLoop"
+		RequiredModelConditionFlags="MOVING"
+		ExcludedModelConditionFlags="DYING DECELERATE RECYCLED GARRISONED"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="350"
+		StartThreshold="4"
+		StopThreshold="4"
+		HandOffModeTime="1s"
+		MaximumAudioSpeed="100">
+		<Sound Sound="TankMedium_Group_MoveLoop">
+			<Key>LargeGroupAudioKey_TankMedium</Key>
+		</Sound>
+	</LargeGroupAudioMap>
+
+	<LargeGroupAudioMap
+		id="Vehicle_Group_AmbientLoop"
+		ExcludedModelConditionFlags="DYING RECYCLED GARRISONED"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="300"
+		StartThreshold="3"
+		StopThreshold="2"
+		HandOffModeTime="1s"
+		MaximumAudioSpeed="100">
+		<Sound Sound="Vehicle_Group_AmbientLoop">
+			<Key>LargeGroupAudioKey_Vehicle</Key>
+		</Sound>
+	</LargeGroupAudioMap>
+
+ 	<LargeGroupAudioMap
+		id="Motorcycle_Group_MoveLoop"
+		RequiredModelConditionFlags="MOVING"
+		ExcludedModelConditionFlags="DYING DECELERATE RECYCLED GARRISONED"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="300"
+		StartThreshold="3"
+		StopThreshold="2"
+		HandOffModeTime="1s"
+		MaximumAudioSpeed="100">
+		<Sound Sound="NOD_AttackBike_GroupMoveLoop">
+			<Key>LargeGroupAudioKey_Motorcycle</Key>
+		</Sound>
+	</LargeGroupAudioMap>
+
+	<LargeGroupAudioMap
+		id="Infantry_GroupSmall_MoveLoop" 
+		RequiredModelConditionFlags="MOVING"
+		ExcludedModelConditionFlags="DYING ENGAGED DECELERATE RECYCLED GARRISONED"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="300"
+		StartThreshold="4"
+		StopThreshold="3"
+		HandOffModeTime="1s"
+		MaximumAudioSpeed="100">
+		<Sound
+			Sound="Infantry_GroupSmall_MoveLoop">
+			<Key>LargeGroupAudioKey_Infantry</Key>
+		</Sound>
+	</LargeGroupAudioMap>
+
+	<LargeGroupAudioMap
+		id="Infantry_GroupLarge_MoveLoop" 
+		RequiredModelConditionFlags="MOVING"
+		ExcludedModelConditionFlags="DYING ENGAGED DECELERATE RECYCLED GARRISONED"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="400"
+		StartThreshold="9"
+		StopThreshold="8"
+		HandOffModeTime="1s"
+		MaximumAudioSpeed="100">
+		<Sound
+			Sound="Infantry_GroupLarge_MoveLoop">
+			<Key>LargeGroupAudioKey_Infantry</Key>
+		</Sound>
+	</LargeGroupAudioMap>
+	
+	<LargeGroupAudioMap
+		id="NodRioters_CrowdYellingLoop" 
+		ExcludedModelConditionFlags="DYING RECYCLED GARRISONED"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="400"
+		StartThreshold="4"
+		StopThreshold="3"
+		HandOffModeTime="1s"
+		MaximumAudioSpeed="100">
+		<Sound
+			Sound="Amb_CrowdRiotingMenStereo1">
+			<Key>NodRioters_CrowdYellingLoop</Key>
+		</Sound>
+	</LargeGroupAudioMap>
+
+		<!-- <Sound 
+			Sound="ALI_RazorDrone_MoveLoop">
+			<Key>ALI_RazorDrone</Key>
+		</Sound>
+		<Sound 
+			Sound="ALI_ShockTrooper_MoveLoop">
+			<Key>ALI_ShockTrooper</Key>
+		</Sound>
+		<Sound
+			Sound="GDI_GrenadierSoldier_GroupSmall_MoveLoop">
+			<Key>GDI_GrenadierSoldier</Key>
+		</Sound>
+		<Sound
+			Sound="GDI_MissileSoldier_GroupSmall_MoveLoop">
+			<Key>GDI_MissileSoldier</Key>
+		</Sound>
+		<Sound
+			Sound="GDI_RifleSoldier_GroupSmall_MoveLoop">
+			<Key>GDI_RifleSoldier</Key>
+		</Sound>
+		<Sound 
+			Sound="GDI_GrenadierSoldier_GroupSmall_MoveLoop">
+			<Key>NOD_Shadow</Key>
+		</Sound> -->
+
+
+<!-- <LargeGroupAudioMap
+		id="GDI_Sniper_GroupSmall_MoveLoop" 
+		IgnoreStealthedUnits="false"
+		RequiredModelConditionFlags="MOVING"
+		ExcludedModelConditionFlags="DYING ENGAGED DECELERATE"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="150"
+		StartThreshold="2"
+		StopThreshold="2"
+		HandOffModeTime="1s"
+		MaximumAudioSpeed="100">
+		<Sound
+			Sound="GDI_Sniper_GroupSmall_MoveLoop">
+			<Key>GDI_Sniper</Key>
+			<Key>GDI_Spotter</Key>			
+		</Sound>
+	</LargeGroupAudioMap> -->
+
+<!-- <LargeGroupAudioMap
+		id="GDI_RifleSoldier_DiggingLoop" 
+		RequiredModelConditionFlags="PREPARING"
+		ExcludedModelConditionFlags="DYING ENGAGED DECELERATE MOVING"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="150"
+		StartThreshold="3"
+		StopThreshold="2"
+		HandOffModeTime="1s"
+		MaximumAudioSpeed="100">
+		<Sound Sound="GDI_RifleSoldier_DiggingLoop">
+			<Key>GDI_RifleSoldier</Key>
+		</Sound>
+	</LargeGroupAudioMap> -->
+
+<!-- <LargeGroupAudioMap
+		id="Shadow_GroupSmall_GlidingLoop" 
+		RequiredModelConditionFlags="FLYING"
+		ExcludedModelConditionFlags="DYING ENGAGED DECELERATE"
+		ExcludedObjectStatusBits="INSIDE_GARRISON"
+		Size="150"
+		StartThreshold="3"
+		StopThreshold="3"
+		HandOffModeTime="1s"
+		MaximumAudioSpeed="100">
+		<Sound 
+			Sound="NOD_ShadowSquad_IdleGliderLoop">
+			<Key>NOD_Shadow</Key>
+		</Sound>
+	</LargeGroupAudioMap> -->	
+</AssetDeclaration>

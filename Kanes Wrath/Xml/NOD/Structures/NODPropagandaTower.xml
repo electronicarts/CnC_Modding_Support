@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include
+			type="all"
+			source="ART:NBVoicKane.w3x" />	
+		<Include
+			type="all"
+			source="ART:NBVoicKane_A.w3x" />
+		<Include
+			type="all"
+			source="ART:NBVoicKaneD2_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBVoicKaneD2_ANM.w3x" />
+		<Include
+			type="all"
+			source="ART:NBVoicKaneD3_SKN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBVoicKaneD3_ANM.w3x" />
+		
+		<Include
+			type="all"
+			source="ART:NBDistTwr.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_ASN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_AAN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_D2SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_D2AN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_D3SN.w3x" />
+		<Include
+			type="all"
+			source="ART:NBDistTwr_D3AN.w3x" />
+		<Include
+			type="all"
+			source="ART:Decal_LeadershipBuff.xml" />
+		<Include
+			type="all"
+			source="DATA:GlobalData/GlobalDefines.xml" />
+		<!-- Base Object -->
+		<Include
+			type="instance"
+			source="DATA:BaseObjects/BaseStructure.xml" />
+	</Includes>
+	<GameObject
+		id="NODPropagandaTower"
+		inheritFrom="BaseStructure"
+		SelectPortrait="Portrait_VoiceOfKane"
+		ButtonImage="Portrait_VoiceOfKane"
+		Side="NOD"
+		EditorSorting="STRUCTURE"
+		TransportSlotCount="1"
+		BuildCost="1000"
+		BuildTime="10"
+		EnergyProduction="-5"
+		CommandSet="NODBaseDefenseCommandSet"
+		KindOf="STRUCTURE SELECTABLE IMMOBILE CAN_CAST_REFLECTIONS FS_BASE_DEFENSE POWERED UNIQUE_UNIT NOT_AUTOACQUIRABLE AUTO_ACQUIRABLE_BY_AI COVER BROADCASTS_INVISIBILITY"
+		RadarPriority="STRUCTURE"
+		PlacementViewAngle="45d"
+		CampnessValue="=$CAMPNESS_DEFENSIVE_STRUCTURE"
+		ProductionQueueType="OTHER_STRUCTURE"
+		BuildPlacementTypeFlag="OTHER_STRUCTURE"
+		EditorName="NODPropagandaTower"
+		Description="Desc:NODPropagandaTower"
+		TypeDescription="Type:NODPropagandaTower"
+    MaxSimultaneousOfType="1">
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODPropagandaTower</DisplayName>
+		<GameDependency>
+			<RequiredObject>NODOperationsCenter</RequiredObject>
+		</GameDependency>
+		<ArmorSet
+			Armor="NODBaseDefenceArmor"
+			DamageFX="FactionStructureDamageFX" />
+		<SkirmishAIInformation
+			BaseBuildingLocation="CENTER" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NBVoicKane" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Model
+						Name="NBVoicKane_A" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE">
+					<Model
+						Name="NBVoicKaneD3_SKN" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NBVoicKaneD2_SKN" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerDist"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NBVoicKane" />
+					<Texture
+						Original="NBVoicKane"
+						New="NBVoicKaneD" />
+					
+					<ParticleSysBone
+						BoneName="RootTransform"
+						FXParticleSystemTemplate="NODBunkerSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<!-- BUILDUP ANIMATION -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="STRUCTURE_UNPACKING">
+					<Animation
+						AnimationName="NBVoicKane_A"
+						AnimationMode="ONCE" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="Con_Small"
+						FollowBone="true" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RUBBLE"
+					StateName="STATE_Rubble"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBVoicKaneD3_ANM"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_Rubble" and Prev ~= "TRANS_IntoRubble" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoRubble")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED"
+					StateName="STATE_ReallyDamaged"
+					Flags="START_FRAME_LAST">
+					<Animation
+						AnimationName="NBVoicKaneD2_ANM"
+						AnimationMode="MANUAL" />
+					<Script>
+						Prev = CurDrawablePrevAnimationState();
+						if Prev ~= "STATE_ReallyDamaged" and Prev ~= "TRANS_IntoReallyDamaged" then
+						CurDrawableSetTransitionAnimState("TRANS_IntoReallyDamaged")
+						end
+					</Script>
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoReallyDamaged">
+					<Animation
+						AnimationName="NBVoicKaneD2_ANM"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+				<AnimationState
+					ParseCondStateType="PARSE_TRANSITION"
+					StateName="TRANS_IntoRubble">
+					<Animation
+						AnimationName="NBVoicKaneD3_ANM"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+			</ScriptedModelDraw>
+	<!-- buff radius draw -->		
+			<ScriptedModelDraw
+							id="ModuleTag_Draw_Selected_Repair_Decal"
+							OkToChangeModelColor="true">
+							<ModelConditionState
+								ParseCondStateType="PARSE_DEFAULT">
+								<Model Name="" />
+							</ModelConditionState>
+							<ModelConditionState
+								ParseCondStateType="PARSE_NORMAL"
+								ConditionsYes="SELECTED">
+								<Model Name="FXInvisBone" />
+								<ShadowInfo
+									Type="ADDITIVE_DECAL"
+									SizeX="825"
+									SizeY="825"
+									OverrideLODVisibility="true"
+									MaxHeight="350"
+									UseHouseColor="true"
+									Texture="Decal_LeadershipBuff" 
+								/>
+							</ModelConditionState>
+			</ScriptedModelDraw>			
+			
+		</Draws>
+		<Behaviors>
+			<SlowDeath
+				id="ModuleTag_Death"
+				SinkDelay="3.0s"
+				SinkRate="4.0"
+				DestructionDelay="8.0s">
+				<Sound Type="INITIAL" List="HumanFaction_MediumBuilding_DieMS" />
+				<DieMuxData
+					DeathTypes="ALL" />
+			</SlowDeath>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onTransitionToDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToReallyDamaged"
+					FX="FX_BuildDamaged_Medium" />
+				<Event
+					Index="onTransitionToRubble"
+					FX="FX_BuildDamaged_Medium" />
+				<!--
+				<Event
+					Index="onDeath"
+					ForceUseDoFXObj="true"
+					FX="FX_DisruptionTower_Die" />
+				-->
+				<Event
+					Index="onCreate"
+					ForceUseDoFXObj="true"
+					FX="FX_NOD_VoiceOfKane_Created" />
+			</FXListBehavior>
+			<StructureUnpackUpdate
+				id="ModuleTag_StructureUnpackUpdate"
+				UnpackTime="3.4s" />
+
+			<!-- <FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate">
+				<FireWeaponNugget
+					WeaponName="ConfessorSquadLeadershipBuff"
+					FireDelay="0s"
+					FireInterval="1s"
+				/>
+			</FireWeaponUpdate> -->
+
+			<AttributeModifierAuraUpdate
+					id="ModuleTag_AttributeModifierAuraUpdate"
+					AttributeModifierName="Confessor_Militant_AttributeModifier"
+			   		RefreshDelay="1.0s"
+			 		Range="400"
+					InitiallyActive="true">
+					<ObjectFilter
+       					Rule="ANY"
+       					Relationship="ALLIES"
+						Include="INFANTRY">                                     
+					</ObjectFilter>
+			</AttributeModifierAuraUpdate>
+	
+			<xi:include
+				href="../../Includes/GenericBuildingRepair.xml" />
+				
+		<!-- Illogical for units to hide in a statue		
+		
+			<xi:include
+				href="../../Includes/GenericNODBuildingDestruction.xml" />
+			<xi:include
+				href="../../Includes/GenericNODBuildingSuicide.xml" />
+		-->
+			
+			<xi:include
+				href="../../Includes/RepairAlliesEngineerContain.xml" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="NO"></AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="3000.0" />
+		</Body>
+		<!--	
+		<ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_NOD_VoiceOfKane_BeingBuilt">
+				<ModelConditionSound Sound="NOD_VoiceOfKane_BeingBuilt" ExcludedFlags="UNDERPOWERED" />
+			</ModelConditionAudioLoopClientBehavior>
+		</ClientBehaviors>
+		-->
+		<Geometry
+			IsSmall="false">
+			<Shape
+				Type="CYLINDER"
+				MajorRadius="20.0"
+				Height="55.0"
+				ContactPointGeneration="INFANTRY" />
+		</Geometry>
+		<AudioArrayVoice>
+			<AudioEntry
+				Sound="NOD_VoiceOfKane_SelectMS"
+				AudioType="voiceSelect" />
+		</AudioArrayVoice>
+		<AudioArraySound>
+			<AudioEntry Sound="HumanFaction_MediumBuilding_LightDamageMS" AudioType="soundOnDamaged" />
+			<AudioEntry Sound="HumanFaction_MediumBuilding_HeavyDamageMS" AudioType="soundOnReallyDamaged" />
+			<!-- <AudioEntry 
+				Sound="NOD_DisruptionTower_OnlineMS"
+				AudioType="soundReenabled" />
+			<AudioEntry 
+				Sound="NOD_DisruptionTower_OfflineMS"
+				AudioType="soundDisabled" />
+			<AudioEntry 
+				Sound="BuildingGenericPowerOffMS"
+				AudioType="soundDisabledOnCreation" /> -->
+		</AudioArraySound> 
+		<ShadowInfo
+			Type="VOLUME" />
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="400" />
+		<ProjectedBuildabilityInfo
+			Radius="10.0"
+			BuildPlacementTypes="MAIN_STRUCTURE OTHER_STRUCTURE" />
+	</GameObject>
+</AssetDeclaration>

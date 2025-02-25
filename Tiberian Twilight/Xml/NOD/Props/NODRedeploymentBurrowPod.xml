@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="NODBurrowPodBase.xml" />
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+		 <!-- Art Includes -->
+		<Include type="all" source="ART:NOD_CrawlerBurrowingPod_SKN.w3x" />
+		<Include type="all" source="ART:NOD_CrawlerBurrowingPod_MOVA.w3x" />
+
+	</Includes>
+	<GameObject
+		id="NODRedeploymentBurrowPod"
+		inheritFrom="NODBurrowPodBase" 
+		EditorName="NODRedeploymentBurrowPod">
+		<Draws>			
+			<!-- The NOD Crawler Replacement Pod Draw Module -->
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				xai:joinAction="Replace"
+				OkToChangeModelColor="true"
+				ExtraPublicBone="NOD_Tire5 NOD_Tire6 NOD_Tire7 NOD_Body02" >
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="NOD_CrawlerBurrowingPod_SKN" />
+					<ParticleSysBone
+						BoneName="ROOTTRANSFORM"
+						FXParticleSystemTemplate="DropPodSteam"
+						FollowBone="true" />	
+				</ModelConditionState>
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Animation
+						AnimationName="NOD_CrawlerBurrowingPod_MOVA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="0" />
+				</AnimationState>
+
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="0.0s"
+				MaxLifetime="0.0s"/>
+
+			<SlowDeath
+				id="ModuleTag_Death"
+				Fade="false" 
+				DestructionDelay="3.0s"/>
+
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie_CreateCrawler"
+				CreationList="OCL_NODRedeployment_Crawler" >
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onCreate"
+					FX="FX_NOD_BurrowB_Large" />
+
+				 <!-- <Event Index="onCreate" FX="FX_GDI_CrawlerDropPod_Descend_AudioOnly" /> no worky -->
+
+			</FXListBehavior>
+
+			<xi:include
+				href="DATA:Includes/PauseCrawlerRedeployPower.xml" />
+
+		</Behaviors>
+    <EvaEventArray>
+      <EvaEntry EvaEvent="EnemyCrawlerDeployed" EvaType="dieEnemy" />
+    </EvaEventArray>
+  </GameObject>
+</AssetDeclaration>

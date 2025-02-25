@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+	<Includes>
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+	</Includes>
+	<Defines>
+		<Define name="CRAWLER_DEATH_WEAPON_AOE_RADIUS" value="200" />
+	</Defines>
+
+	<GameObject
+		id="BaseCrawlerObject"
+		UnitCategory="CRAWLER"
+		CommandPoints="20"
+		KillPointsOverride="50"
+		KindOf="CRAWLER PRELOAD SELECTABLE CAN_CAST_REFLECTIONS SCORE FS_FACTORY EXPANSION_UNIT CAN_BE_FAVORITE_UNIT CRAWLER HAS_BUILDING_DESTRUCT_BEHAVIOR CONTROL_GROUP_ALLOWABLE MOVE_ENEMIES_AND_ALLIES NO_COMMANDPOINT_CONSUMPTION"
+		DefensiveBuffEffectiveDamagePercentage="0%">
+		<SkirmishAIInformation
+			OverrideValue="180.0" />
+		<Behaviors>
+			<ObjectDefectionHelper
+				id="ObjectDefectionHelper"/>
+			<ObjectSMCHelper
+				id="ObjectSMCHelper"/>
+			<DamageTrackingBehavior
+				id="CrawlerDamageTrackingHelper"/>
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+			<HealEffectManager
+				id="ModuleTag_HealEffectManager"
+				UpdateRate="0.25s" />
+			<RefreshPlayerPowerDie
+				id="ModuleTag_RefreshPlayerPowerDie"
+				RefreshTeam="false"
+				RefreshDamageDealer="false"
+				RefreshAllPowers="false">
+				<DieMuxData
+					DeathTypes="ALL"
+					DeathTypesForbidden="REDEPLOYED"/>
+				<SpecialPower>SpecialPower_Redeployment</SpecialPower>
+			</RefreshPlayerPowerDie>
+			<!--Can be disabled using the 'delete' key and thru the 'Self Destruct' button ability.-->
+			<RecycleLifetimeUpdate
+				xmlns="uri:ea.com:eala:asset"
+				id="ModuleTag_RecycleLifetimeUpdate"
+				MinLifetime="10s"
+				MaxLifetime="10s"
+				WaitForWakeUp="true"
+				DeathType="SUICIDED"
+				EvaEvent="CrawlerDecommissioned"
+				CountdownSound="GenericUnitDecommissionMS"
+				CountdownSoundPlayOnce="true"
+				ShaderOverride="ShaderOverride_EMP"/>
+			<StructureSellUpdate
+				id="ModuleTag_CrawlerSelfDestructUpdate"
+				SellTime="10.0s"
+				ActiveModelCondition="SOLD"
+				ShaderOverride="ShaderOverride_EMP"
+				Flags="DRAW_STRUCTURE_SELL_TIME_BAR"/>
+			<SellSpecialPower
+				id="ModuleTag_CrawlerSelfDestructSpecialPower"
+				DisabledTypesToIgnore="UNDERPOWERED"
+				SpecialPowerTemplate="SpecialPower_CrawlerSelfDestruct"/>
+			
+			<!-- fire the death weapon only when crawler explodes via self-destruct-->
+			<FireWeaponWhenDead
+				id="ModuleTag_FireWeaponWhenDead"
+				InitiallyActive="true"
+				FireAtGround="true"
+				DeathWeapon="CrawlerDeathWeapon">
+				<DieMuxData
+					DeathTypes="SUICIDED" />
+			</FireWeaponWhenDead>
+			<LUAEventList
+				id="ModuleTag_LUAEventList"
+				EventListName="CrawlerFunctions"
+			/>
+			<SubObjectsUpgrade
+				id="ModuleTag_UnhideTechPieces2">
+				<TriggeredBy>Upgrade_Tech_Up_Rank1</TriggeredBy>
+				<Nugget
+					ShowSubObjects="TECH2"
+					HideSubObjects="TECH3"
+					Upgrade="Upgrade_Tech_Up_Rank1"
+          FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>   
+			</SubObjectsUpgrade>
+			<SubObjectsUpgrade
+				id="ModuleTag_UnhideTechPieces3">
+				<TriggeredBy>Upgrade_Tech_Up_Rank2</TriggeredBy>
+				<Nugget
+					ShowSubObjects="TECH3 TECH2"
+					Upgrade="Upgrade_Tech_Up_Rank2"
+          FadeTime="0.0s"
+					SkipFlashOnCreate="false"
+					UpgradeFlashShader="ShaderOverride_UpgradeFlash"
+					FlashTime="1.5s"/>
+      </SubObjectsUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_Tech2"
+				Permanent="true"
+				AddConditionFlags="USER_1"
+				RemoveConditionFlags="USER_2">
+				<TriggeredBy>Upgrade_Tech_Up_Rank1</TriggeredBy>
+			</ModelConditionUpgrade>
+			<ModelConditionUpgrade
+				id="ModuleTag_Tech3"
+				Permanent="true"
+				AddConditionFlags="USER_2"
+				RemoveConditionFlags="USER_1">
+				<TriggeredBy>Upgrade_Tech_Up_Rank2</TriggeredBy>
+			</ModelConditionUpgrade>
+
+			<!-- This allows the AI to remember that a unit is guarding a target, and not keep throwing
+				   units towards that target unless it has enough forces to overcome said guard -->
+			<SkirmishAIGuardTrackingBehavior
+				id="ModuleTag_SkirmishAIGuardTrackingBehavior"
+			/>
+
+			<!-- provides support for units guarding this unit -->
+			<GuardManagerUpdate
+				id="ModuleTag_GuardManagerUpdate"
+				GuardModifier="Modifier_DefaultGuardObject"
+				SupportFilter="ObjectFilter_GuardManagerSupport"
+				RefreshDelay="0.25s">
+				<DefendOffset x="150" y="100" />
+				<DefendOffset x="150" y="-100" />
+				<DefendOffset x="100" y="150" />
+				<DefendOffset x="100" y="-150" />
+				<SupportOffset x="-100" y="100" />
+				<SupportOffset x="-100" y="-100" />
+				<SupportOffset x="-100" y="130" />
+				<SupportOffset x="-100" y="-130" />
+			</GuardManagerUpdate>
+
+			<PauseSpellbookSpecialPowerBehavior
+				id="Pause_RedeployPower"
+				SpecialPowerTemplate="SpecialPower_Redeployment"
+				ResetCooldownOnTrigger="true"
+				ForbiddenStatus="CLONED">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<CampaignHumanReadyFrames>
+					<SetReadyFrame
+						DeathTypes="ALL"
+						ReadyDelay="5s" />
+				</CampaignHumanReadyFrames>
+				<CampaignAIReadyFrames>
+					<SetReadyFrame
+						DeathTypes="ALL"
+						ReadyDelay="30s" />
+				</CampaignAIReadyFrames>
+				<SkirmishHumanReadyFrames>
+					<SetReadyFrame
+						DeathTypes="SUICIDED"
+						ReadyDelay="10s" />
+					<SetReadyFrame
+						DeathTypes="ALL"
+						ReadyDelay="30s" />
+				</SkirmishHumanReadyFrames>
+				<SkirmishAIReadyFrames>
+					<SetReadyFrame
+						DeathTypes="SUICIDED"
+						ReadyDelay="10s" />
+					<SetReadyFrame
+						DeathTypes="ALL"
+						ReadyDelay="30s" />
+				</SkirmishAIReadyFrames>
+			</PauseSpellbookSpecialPowerBehavior>
+
+			<ReactionFXOnDamage
+				 id="TestDamageReactionFX">
+			<DamageReactionFXTrigger
+              TriggerOnlyForOwner="true" 
+				PercentDamagedThreshold="50.0"
+				TimeBetweenTriggers="10.0s"
+				EvaEventToPlay="CrawlerHeavyDamaged"/>
+			<DamageReactionFXTrigger
+				TriggerOnlyForOwner="true"
+				PercentDamagedThreshold="33.0"
+				TimeBetweenTriggers="10.0s"
+				EvaEventToPlay="CrawlerCritical"/>
+			</ReactionFXOnDamage>
+
+			<xi:include	href="DATA:Includes/GenericDesperationBoostModules.xml"
+				xpointer="xmlns(n=uri:ea.com:eala:asset) xpointer(/n:ModuleList/child::*)"/>
+			
+		</Behaviors>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="=$CRAWLER_HEALTH_DEFAULT" />
+		</Body>
+		<ClientBehaviors>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_CrystallineShieldDisablesSelect">
+				<Override RequiredFlags="INVULNERABLE PARALYZED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="" AudioType="voiceSelect"/>
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+			<ModelConditionSoundSelectorClientBehavior
+				id="ModuleTag_RecycledSounds">
+				<Override
+					RequiredFlags="RECYCLED">
+					<AudioArrayVoice>
+						<AudioEntry Sound="" AudioType="voiceSelect" />
+					</AudioArrayVoice>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+		<EvaEventArray>
+			<EvaEntry EvaEvent="EnemyCrawlerDestroyed" EvaType="dieEnemy" />
+			<EvaEntry EvaEvent="AllyLostCrawler" EvaType="dieAlly" />
+			<EvaEntry EvaEvent="CrawlerUnderAttack" EvaType="damagedOwner" />
+			<EvaEntry EvaEvent="EnemyCrawlerDetected" EvaType="enemyObjectSighted" />
+			<EvaEntry EvaEvent="DeploymentSuccessful" EvaType="genericallyCreated" />
+		</EvaEventArray>
+    	<SchmevaEvents>
+			<Entry EventType="Damaged" LocalPlayerRelationToOwner="SAME_PLAYER" Event="CrawlerAttacked"/>
+			<Entry EventType="Die" LocalPlayerRelationToOwner="ALLIES" Event="AllyCrawlerLost"/>
+		</SchmevaEvents>
+	</GameObject>
+
+	<WeaponTemplate
+		id="CrawlerDeathWeapon"
+		AttackRange="999999.0"
+		WeaponSpeed="999999.0"
+		FireFX="FX_NodFlameTankDOT"
+		ClipSize="1"
+		RadiusDamageAffects="ENEMIES NEUTRALS"
+		Flags="ATTACK_NEEDS_LINE_OF_SIGHT"
+		RequiredAntiMask="ANTI_GROUND">
+		<Nuggets>
+			<!-- The AOE damage -->
+			<DamageNugget
+				id="Nugget_AOEEffect"
+				Damage="200.0"
+				Radius="=$CRAWLER_DEATH_WEAPON_AOE_RADIUS"
+				DamageType="BLAST"
+				DeathType="NORMAL"
+				PartitionFilterTestType="CIRCLE" >
+			</DamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+	
+</AssetDeclaration>

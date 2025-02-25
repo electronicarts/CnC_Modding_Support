@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance">
+	<Tags></Tags>
+
+	<Defines>
+		<Define name="NODVEHICLEAF_LOCAL_UNPACK_TIME" value="2.0s" />
+
+		<Define name="NODVEHICLEAF_EARTHQUAKE_RADIUS" value="150.0" />
+		<Define name="NODVEHICLEAF_EXPLOSION_RADIUS" value="150.0" />
+		<Define name="NODVEHICLEAF_CLOUD_RADIUS" value="150.0" />
+		<Define name="NODVEHICLEAF_CLOUD_EFFECTDURATION" value="10.0s" />
+
+		<!-- The timings used for the Deployed AOE attack -->
+		<Define name="NODVEHICLEAF_PRIMARY_AOE_DURATION" value="3.0" />
+		<Define name="NODVEHICLEAF_SECONDARY_AOE_DURATION" value="3.0" />
+		<Define name="NODVEHICLEAF_PRIMARY_AOE_DURATION_TIME" value="=($NODVEHICLEAF_PRIMARY_AOE_DURATION) + 's'" />
+		<Define name="NODVEHICLEAF_SECONDARY_AOE_DURATION_TIME" value="=($NODVEHICLEAF_SECONDARY_AOE_DURATION) + 's'" />
+		<Define name="NODVEHICLEAF_TOTAL_AOE_CYCLE_TIME" value="=($NODVEHICLEAF_PRIMARY_AOE_DURATION) + ($NODVEHICLEAF_SECONDARY_AOE_DURATION) + (0.1) + 's'" />
+		<Define name="NODVEHICLEAF_TIBCLOUD_LIFETIME" value="=($NODVEHICLEAF_PRIMARY_AOE_DURATION) + ($NODVEHICLEAF_SECONDARY_AOE_DURATION) + 's'" />
+	</Defines>
+
+	<!-- The NOD Vehicle AF / Nod Heavy Defense Tank T3 / Vien Extractor   Cloud Object AOE Attack -->
+	<GameObject
+		id="NODVehicleAFTiberiumCloudObject"
+		EditorName="NODVehicleAFTiberiumCloudObject"
+		Side="NOD"
+		EditorSorting="SYSTEM"
+		KindOf="UNATTACKABLE INERT NO_COLLIDE HIDE_IF_FOGGED PASS_EXPERIENCE_TO_PRODUCER GRANT_PLAYER_THREAT">
+		<ArmorSet
+			Armor="NoArmor" />
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="" />
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<AttributeModifierPoolUpdate
+				id="DefaultAttributeModifierPoolUpdate"/>
+			
+			<DestroyDie id="ModuleTag_Die">
+				<DieMuxData DeathTypes="ALL" />
+			</DestroyDie>
+			
+			<!-- This defines the duration of the Cloud Damage Effect -->
+			<LifetimeUpdate
+				id="ModuleTag_LifeTime"
+				MinLifetime="=$NODVEHICLEAF_TIBCLOUD_LIFETIME"
+				MaxLifetime="=$NODVEHICLEAF_TIBCLOUD_LIFETIME" />
+			
+			<!-- Attaches to myself -->
+			<AttachUpdate
+				id="ModuleTag_AttachUpdate"
+				Flags="TELEPORT STICK_TO_PARENT DIE_WHEN_DETACH_ALWAYS DIE_WHEN_PARENT_HAS_FORBIDDEN_STATUS DETACH_WHEN_MULTIPLE_ARE_ATTACHED"
+				ForbiddenParentStatus="GENERIC_TOGGLE_STATE DISABLED_FOR_RECYCLE"
+				ParentModifierToSet="AttributeModifier_NODVehicleAFDeployedAttacking">
+			</AttachUpdate>
+
+			<!-- two earthquake (phase 1) weapons. The timings of these weapons are tuned to match the anim -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdatePrimary_1"
+				FireDelay="1.56s">
+				<FireWeaponNugget
+					WeaponName="NODVehicleAFWeapon_Deployed"
+					OneShot="true"/>
+			</FireWeaponUpdate>
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdatePrimary_2"
+				FireDelay="3.12s">
+				<FireWeaponNugget
+					WeaponName="NODVehicleAFWeapon_Deployed"
+					OneShot="true"/>
+			</FireWeaponUpdate>
+
+
+			<!-- Deals the tib explosion damage -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdateExplosion"
+				FireDelay="=$NODVEHICLEAF_PRIMARY_AOE_DURATION_TIME">
+				<FireWeaponNugget
+					OneShot="true"
+					WeaponName="NODVehicleAFWeapon_Deployed_Explosion" />
+			</FireWeaponUpdate>
+			
+			<!-- Deals the tib cloud damage -->
+			<FireWeaponUpdate
+				id="ModuleTag_FireWeaponUpdate"
+				FireDelay="=$NODVEHICLEAF_PRIMARY_AOE_DURATION_TIME"
+				FireInterval="0.5s"
+				Flags="AFFECTED_BY_RATE_OF_FIRE_ATTRIBUTE_MODIFIER">
+				<FireWeaponNugget
+					WeaponName="NODVehicleAFWeapon_Deployed_Cloud" />
+			</FireWeaponUpdate>
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+		<Geometry IsSmall="true">
+			<Shape
+				Type="SPHERE"
+				MajorRadius="0.8"></Shape>
+		</Geometry>
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Aftershock_VehAF_TiberiumVeinWeaponCloudLoop2" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="0" />
+	</GameObject>
+
+
+</AssetDeclaration>

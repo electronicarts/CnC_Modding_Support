@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xai="uri:ea.com:eala:asset:instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	<Includes>
+		<Include type="all" source="DATA:GlobalData/GlobalDefines.xml" />
+
+		<Include
+			type="all"
+			source="ART:JUFortressShipHead.w3x" />
+	</Includes>
+	<GameObject
+		id="JapanFortressShipAirborne_Dying"
+		EditorName="JapanFortressShipAirborne_Dying"
+		Description="Desc:JapanFortressShipAirborne_Dying"
+		KindOf="PROJECTILE INERT NO_COLLIDE HIDE_IF_FOGGED UNATTACKABLE SELECTABLE">
+		<Draws>
+			<ScriptedModelDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="JUFortressShipHead" />
+          <Texture
+						Original="JUFortressShip"
+						New="JUFortressShip_D" />
+          <ParticleSysBone
+						BoneName="FX_Weapon_GunA_01"
+						FXParticleSystemTemplate="JapanVehicleDamagedFire"
+						FollowBone="true"
+						OnlyIfOnLand="true"/>
+					<ParticleSysBone
+						BoneName="FX_Weapon_GunA_01"
+						FXParticleSystemTemplate="JapanVehicleDamagedSparks"
+						FollowBone="true"
+						OnlyIfOnLand="true"/>
+					<ParticleSysBone
+						BoneName="FX_Weapon_GunA_01"
+						FXParticleSystemTemplate="JapanVehicleDamagedSmoke"
+						FollowBone="true"
+						OnlyIfOnLand="true"/>
+					<ParticleSysBone
+						BoneName="FX_Weapon_GunA_01"
+						FXParticleSystemTemplate="JapanVehicleDamagedLight"
+						FollowBone="true"
+						OnlyIfOnLand="true"/>
+					<ParticleSysBone
+						BoneName="FX_Weapon_GunA_01"
+						FXParticleSystemTemplate="AlliedCarrierDestructionDebrisBubbles"
+						FollowBone="true"
+						OnlyIfOnWater="true"/>
+
+					<ParticleSysBone
+						BoneName="FX_Weapon_GunA_02"
+						FXParticleSystemTemplate="JapanVehicleDamagedFire"
+						FollowBone="true"
+						OnlyIfOnLand="true"/>
+					<ParticleSysBone
+						BoneName="FX_Weapon_GunA_02"
+						FXParticleSystemTemplate="JapanVehicleDamagedSparks"
+						FollowBone="true"
+						OnlyIfOnLand="true"/>
+					<ParticleSysBone
+						BoneName="FX_Weapon_GunA_02"
+						FXParticleSystemTemplate="JapanVehicleDamagedSmoke"
+						FollowBone="true"
+						OnlyIfOnLand="true"/>
+					<ParticleSysBone
+						BoneName="FX_Weapon_GunA_02"
+						FXParticleSystemTemplate="JapanVehicleDamagedLight"
+						FollowBone="true"
+						OnlyIfOnLand="true"/>
+					<ParticleSysBone
+						BoneName="FX_Weapon_GunA_02"
+						FXParticleSystemTemplate="AlliedCarrierDestructionDebrisBubbles"
+						FollowBone="true"
+						OnlyIfOnWater="true"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+		</Draws>
+		<Behaviors>
+			<Physics
+				id="ModuleTag_Physics"
+				TumbleRandomly="true"
+				MaxXRotationVelocity="0"
+				MaxYRotationVelocity="50"
+				MaxZRotationVelocity="200"
+				KillWhenRestingOnGround="true"/>
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="JUFortressShipAirborne_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL"/>
+			</CreateObjectDie>
+      <FireWeaponWhenDead
+				id="ModuleTag_JapanFortressShipAirborneDeathWeapon"
+				DeathWeapon="JapanFortressShipAirborneDeathWeapon"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL"
+					ExemptStatus="PLAYER_POWER_1"/>
+			</FireWeaponWhenDead>
+
+			<!-- Enhanced Kamikaze player power death weapon -->
+			<FireWeaponWhenDead
+				id="ModuleTag_JapanFortressShipAirborneDeathWeapon_Upgraded"
+				DeathWeapon="JapanFortressShipAirborneDeathWeapon_Upgraded"
+				InitiallyActive="true">
+				<DieMuxData
+					DeathTypes="ALL"
+					RequiredStatus="PLAYER_POWER_1"/>
+			</FireWeaponWhenDead>
+			
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_JapanVehicleDie" />
+			</FXListBehavior>
+			<!-- Enhanced Kamikaze Player Power -->
+			<xi:include
+				href="DATA:Includes/JapanEnhancedKamikazeUpgradeStatus.xml" />
+			<!-- -->
+
+		</Behaviors>
+		<Body>
+			<PropBody
+				id="ModuleTag_PropBody" />
+		</Body>
+		<AudioArraySound>
+			<AudioEntry Sound="JAP_EmperorsPearl_DieStartMS" AudioType="soundAmbient" />
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="300"
+			ShroudClearingRange="300" />
+	</GameObject>
+
+	<ObjectCreationList
+		id="JUFortressShipAirborne_Die_OCL">
+		<CreateObject
+			Options="IGNORE_ALL_OBJECTS"
+			Disposition="LIKE_EXISTING INHERIT_VELOCITY SEND_IT_UP"
+			Count="1"
+			VelocityScale="20.0"
+			DispositionIntensity="100.0"
+			MinForceMagnitude="1.0"
+			MaxForceMagnitude="2.0"
+			MinForcePitch="90d"
+			MaxForcePitch="75d">
+			<CreateObject>JapanFortressShipAirborne_Collapse</CreateObject>
+		</CreateObject>
+	</ObjectCreationList>
+	<WeaponTemplate
+		id="JapanFortressShipAirborneDeathWeapon"
+		ProjectileCollidesWith="ALLIES ENEMIES NEUTRAL STRUCTURES WALLS"
+		RadiusDamageAffects="ALLIES ENEMIES NEUTRALS"
+    FireFX="FX_GigaFortressDeathWeapon" 
+    Flags="NOT_ATTRACTED_BY_MAGNETS"
+		RequiredAntiMask="ANTI_WATER ANTI_GROUND ANTI_STRUCTURE">
+		<Nuggets>
+			<DamageNugget
+				id="DamageNugget_Default" 
+				Damage="750.0"
+				Radius="110.0"
+				DamageTaperOff="100"
+				DamageType="EXPLOSIVE"
+				DeathType="NORMAL" >
+				<DamageScalarDetails Scalar= "50%">
+					<Filter
+						Rule="ALL"
+						Relationship="ALLIES" />
+				</DamageScalarDetails>
+			</DamageNugget>
+			<MetaImpactNugget
+				 ShockWaveAmount="50.0"
+				 ShockWaveRadius="110.0"
+				 ShockWaveTaperOff="1.0"/>
+		</Nuggets>
+	</WeaponTemplate>
+
+	<WeaponTemplate
+		id="JapanFortressShipAirborneDeathWeapon_Upgraded"
+		inheritFrom="JapanFortressShipAirborneDeathWeapon">
+		<Nuggets>
+			<DamageNugget
+				id="DamageNugget_Default"
+				Damage="1000.0"
+				Radius="120.0" />
+		</Nuggets>
+	</WeaponTemplate>
+		
+	
+</AssetDeclaration>

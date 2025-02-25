@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AssetDeclaration xmlns="uri:ea.com:eala:asset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<Tags></Tags>
+	
+	<!-- Nod Defense Medium Laser T2 / NOD Vehicle AH / Onslaught / Tyrant -->
+
+	<Includes>
+		<Include type="all" source="ART:NUM_VehicleAH_SKN.w3x" />
+		<Include type="all" source="ART:NUM_VehicleAH_SKL.w3x" />
+		<Include type="all" source="ART:NUM_VehicleAH_AIDA.w3x" />
+		<Include type="all" source="ART:NUM_VehicleAH_DIGA.w3x" />
+		<Include type="all" source="ART:NUM_VehicleAH_DIGB.w3x" />
+		<Include type="all" source="ART:NUM_VehicleAH_MOVA.w3x" />
+		<Include type="all" source="ART:Decal_Sensor_CO.xml" />
+		<Include type="instance" source="ART:NUM_VehicleAH_DMG.xml" />
+		<Include type="instance" source="ART:EXTnkTrack.xml" />
+		
+		<!-- Base Object -->
+		<Include type="instance" source="DATA:GlobalData/GlobalDefines.xml" />
+		<Include type="instance" source="DATA:BaseObjects/BaseMediumVehicle.xml" />
+		<Include type="instance" source="DATA:GlobalData/ExperienceLevels.xml" />
+		<Include type="instance" source="DATA:PlayerProgression/ParticipationValues.xml" />
+		<Include type="instance" source="DATA:GlobalData/Weapon.xml" />
+		<Include type="instance" source="DATA:GlobalData/AttributeModifier.xml" />
+
+	</Includes>
+	<Defines>
+		<Define name="NODVEHICLEAH_AURA_RADIUS" value="200" />
+		<Define name="NODVEHICLEAH_AURA_DECAL_RADIUS" value="=$NODVEHICLEAH_AURA_RADIUS * 2.2" />
+	</Defines>
+	<GameObject
+		id="NODVehicleAH"
+		inheritFrom="BaseMediumVehicle"
+		SubGroupPriority="236"
+		SelectPortrait="Portrait_NOD_Vehicle_H"
+		ButtonImage="Btn_NOD_Vehicle_H"
+		Side="NOD"
+		ParticipationValue="=$NODVEHICLEAH_PARTICIPATION_VALUE"
+		TransportSlotCount="1"
+		BuildTime="12"
+		CommandSet="NodVehicleAHCommandSet"
+		CommandPoints="=$NOD_VEHICLE_AH_COMMANDPOINT_COST" 
+		ThreatLevel="10"
+		WeaponCategory="LASER"
+		VoicePriority="184"
+		EditorName="NOD_S2_Medium_Laser(Onslaught)"
+		EditorSorting="UNIT"
+		HealthBoxHeightOffset="40"
+		ReinvisibilityDelay="0s"
+		Description="Desc:NODVehicleAH"
+		TypeDescription="Type:NODVehicleAH">
+		<ObjectResourceInfo>
+			<BuildCost Account="=$ACCOUNT_CREDIT" Amount="0"/>
+		</ObjectResourceInfo>
+		<DisplayName
+			xai:joinAction="Replace" xmlns:xai="uri:ea.com:eala:asset:instance">Name:NODVehicleAH</DisplayName>
+		<GameDependency>
+			<NeededUpgrade>Upgrade_Tech_Up_Rank1</NeededUpgrade>
+		</GameDependency>
+		<LocomotorSet
+			Locomotor="NODVehicleAHLocomotor"
+			Condition="NORMAL"
+			Speed="120.0" />
+		<LocomotorSet
+			id="NODVehicleAHBurrowingLocomotor"
+			Locomotor="NODVehicleAHBurrowingLocomotor"
+			Condition="BURROWING"
+			Speed="100.0" />
+		<SkirmishAIInformation
+			UnitBuilderStandardCombatUnit="true" />
+		<Draws>
+			<TruckDraw
+				id="ModuleTag_Draw"
+				OkToChangeModelColor="true"
+				InitialRecoilSpeed="10.0"
+				MaxRecoilDistance="4"
+				RecoilDamping="2.0"
+				RecoilSettleSpeed="0.7"
+				ExtraPublicBone="NAH_Laser01"
+				TrackMarks="EXTnkTrack"
+				TrackMarksLeftBone="NAH_LBWheel"
+				TrackMarksRightBone="NAH_RBWheel"
+				TireRotationMultiplier="2.5"
+				Options="RENDER_BUFF_EFFECTS">
+
+				<TireBoneGroup
+					TireGroupSettings="FRONT"
+					LeftTireBone="NAH_LFWheel"
+					RightTireBone="NAH_RFWheel"/>
+				<TireBoneGroup
+					TireGroupSettings="FRONT"
+					LeftTireBone="NAH_LMWheel"
+					RightTireBone="NAH_RMWheel"/>
+				<TireBoneGroup
+					TireGroupSettings="REAR"
+					LeftTireBone="NAH_LBWheel"
+					RightTireBone="NAH_RBWheel"/>
+				
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT"
+					RetainSubObjects="true">
+					<Model
+						Name="NUM_VehicleAH_SKN" />
+					<WeaponFireFXBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<WeaponRecoilBone
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<WeaponLaunchBone
+						WeaponSlotID="1"
+						WeaponSlotType="PRIMARY_WEAPON"
+						BoneName="FXWeapon01" />
+					<Turret
+						TurretNameKey="NAH_Laser01"
+						TurretID="1" />	
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="REALLYDAMAGED">
+					<Model
+						Name="NUM_VehicleAH_SKN" />
+					<Texture
+						Original="NUM_VehicleAH"
+						New="NUM_VehicleAH_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODVehicle_DamageFire"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODVehicle_DamageSmoke"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="FXDamage02"
+						FXParticleSystemTemplate="NODVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="DAMAGED">
+					<Model
+						Name="NUM_VehicleAH_SKN" />
+					<Texture
+						Original="NUM_VehicleAH"
+						New="NUM_VehicleAH_DMG" />
+					<ParticleSysBone
+						BoneName="FXDamage01"
+						FXParticleSystemTemplate="NODVehicle_DamageSmoke"
+						FollowBone="true" />
+				</ModelConditionState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="FORMATION_PREVIEW"
+					Flags="RESTART_ANIM_WHEN_COMPLETE">
+					<Animation
+						AnimationName="NUM_VehicleAH_AIDA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"	/>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_DEFAULT"
+					StateName="STATE_bored">
+					<Animation
+						AnimationName="NUM_VehicleAH_AIDA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="5"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BURROWING_TRANSITION_ENTER">
+					<Animation
+						AnimationName="NUM_VehicleAH_DIGA"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="BURROWING_TRANSITION_EXIT">
+					<Animation
+						AnimationName="NUM_VehicleAH_DIGB"
+						AnimationMode="ONCE"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+				
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING BURROWING">
+					<Animation
+						AnimationName="NUM_VehicleAH_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+				</AnimationState>
+
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="MOVING">
+					<Animation
+						AnimationName="NUM_VehicleAH_MOVA"
+						AnimationMode="LOOP"
+						AnimationBlendTime="15"/>
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TreadDustPred"
+						FollowBone="true" />
+					<ParticleSysBone
+						BoneName="NONE"
+						FXParticleSystemTemplate="TreadDirt"
+						FollowBone="true" />
+				</AnimationState>
+
+				<!-- LASER CHARGEUP -->
+				<AnimationState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="PREATTACK_A">
+					<Animation
+						AnimationName="NUM_VehicleAH_AIDA"
+						AnimationMode="MANUAL" />
+					<ParticleSysBone
+						BoneName="FXWeapon01"
+						FXParticleSystemTemplate="NODLaser_MedChargeup_Light" />
+					<ParticleSysBone
+						BoneName="FXWeapon01"
+						FXParticleSystemTemplate="NODLaser_MedChargeup_Rings" />
+					<ParticleSysBone
+						BoneName="FXWeapon01"
+						FXParticleSystemTemplate="NODLaser_MedChargeup_Sparks" />
+				</AnimationState>
+			</TruckDraw>
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw1"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="10"
+				LightMin="10"
+				LightMax="20"
+				CombatChainCounter="EQUAL WEAK"
+				LaserStateID="101">
+				<LightColor R="1.0" G="0.0" B="0.5" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+			<!-- Perfect Hit Laser Draw -->
+
+			<LaserDraw
+				id="ModuleTag_LaserDraw1_Strong"
+				Texture1_UTile="1"
+				Texture1_VTile=".5"
+				Texture1_UScrollRate="0"
+				Texture1_VScrollRate=".2"
+				Texture1_NumFrames="1"
+				Texture1_FrameRate="30"
+				Texture2_UTile="1"
+				Texture2_VTile=".01"
+				Texture2_UScrollRate="0"
+				Texture2_VScrollRate="1"
+				Texture2_NumFrames="1"
+				Texture2_FrameRate="1"
+				LaserWidth="10"
+				LightMin="10"
+				LightMax="20"
+				CombatChainCounter="STRONG"
+				LaserStateID="101">
+				<LightColor R="1.0" G="0.0" B="0.5" />
+				<FXShader
+					ShaderName="Laser.fx"
+					TechniqueIndex="0">
+					<Constants>
+						<Texture
+							Name="Texture1">
+							<Value>FXNodLaser_Veteran</Value>
+						</Texture>
+						<Texture
+							Name="Texture2">
+							<Value>FXEnergyBeam</Value>
+						</Texture>
+					</Constants>
+				</FXShader>
+			</LaserDraw>
+
+			<!-- temporary decal to represent ROF boost -->
+			<ScriptedModelDraw
+				id="ModuleTag_DrawStealthDecal"
+				OkToChangeModelColor="true"
+				Options="IGNORE_FLASH_SHADER">
+				<ModelConditionState
+					ParseCondStateType="PARSE_DEFAULT">
+					<Model
+						Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="RECYCLED">
+					<Model Name="FXInvisBone" />
+				</ModelConditionState>
+				<ModelConditionState
+					ParseCondStateType="PARSE_NORMAL"
+					ConditionsYes="SELECTED">
+					<Model
+						Name="FXInvisBone" />
+					<ShadowInfo
+						Type="ADDITIVE_DECAL"
+						SizeX="=$NODVEHICLEAH_AURA_DECAL_RADIUS"
+						SizeY="=$NODVEHICLEAH_AURA_DECAL_RADIUS"
+						OverrideLODVisibility="true"
+						MaxHeight="200"
+						UseHouseColor="true"
+						LocalPlayerOnly="true"
+						Texture="Decal_Sensor_CO"/>
+				</ModelConditionState>
+			</ScriptedModelDraw>
+			
+		</Draws>
+		<Behaviors>
+			<WeaponSetUpdate
+				id="ModuleTag_WeaponSetUpdate">
+				<WeaponSlotTurret
+					ID="1">
+					<Weapon
+						Ordering="PRIMARY_WEAPON"
+						Template="NODVehicleAHLaser"
+						ForbiddenObjectStatus="BURROWING"/>
+					<TurretSettings
+						TurretTurnRate="200"
+						AllowsPitch="false"
+						MinIdleScanTime="1.0s"
+						MaxIdleScanTime="5.0s"
+						MinIdleScanAngle="0.0"
+						MaxIdleScanAngle="90.0">
+						<TurretAITargetChooserData
+							CanAcquireDynamicIfAssignedOutOfRange="true" />
+					</TurretSettings>
+				</WeaponSlotTurret>
+			</WeaponSetUpdate>
+
+			<AttributeModifierUpgrade
+				id="Upgrade_NODVehicleAHReloadUpgrade"
+				AttributeModifier="Modifier_NODVehicleAHReloadUpgrade">
+				<TriggeredBy>Upgrade_Nod_Support_Reload</TriggeredBy>
+			</AttributeModifierUpgrade>
+			
+			<LaserState
+				id="ModuleTag_DefaultLaserState"
+				LaserId="101" />
+
+			<!-- Voice Of Kane -->
+			<AttributeModifierAuraUpdate
+				id="ModuleTag_NODVehicleAHAura"
+				Range="=$NODVEHICLEAH_AURA_RADIUS"
+				InitiallyActive="true"
+				AttributeModifierName="AttributeModifier_NODVehicleAHROFBoost"
+				RefreshDelay="1.0s"
+				AllowSelf="true">
+				<ObjectFilter
+					Rule="ALL"
+					Relationship="ALLIES"/>
+				<UpdateStatusValidation
+					ForbiddenStatus="BURROWING DISABLED_FOR_RECYCLE CLONED" />
+			</AttributeModifierAuraUpdate>
+
+			<!-- Burrowing related -->
+			<SpecialPower
+				id="ModuleTag_ToggleBurrowingTrigger"
+				SpecialPowerTemplate="SpecialPower_BurrowVehicle" />
+
+			<ToggleStatusSpecialAbilityUpdate
+				id="ModuleTag_ToggleBurrowing"
+				SpecialPowerTemplate="SpecialPower_BurrowVehicle">
+
+				<ToggleState
+					LocomotorSet="NORMAL"
+					InitiateIntentToExitStateSound="Burrow_VehicleMS"
+					EnterFX="FX_NOD_Burrow_Small"
+					TransitionModelConditions="BURROWING_TRANSITION_EXIT"
+					TransitionDuration="=$SHORT_BURROW_TRANSITION_DURATION"
+					ForbidTransitionRadius="28">
+					<ForbidTransitionNearFilter
+						Rule="ANY"
+						Include="VEHICLE INFANTRY CRAWLER"
+						StatusBitFlagsExclude="AIRBORNE_TARGET ENCLOSED">
+					</ForbidTransitionNearFilter>
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_DEFAULT"
+						NeverUseWhenClear="true">
+					</SkirmishAiInfo>
+				</ToggleState>
+				<ToggleState
+					LocomotorSet="BURROWING"
+					AttributeModifier="Modifier_BurrowingVehicle"
+					InitiateIntentToExitStateSound="UnBurrow_VehicleMS"
+					EnterFX="FX_NOD_Burrow_Small"
+					TransitionModelConditions="BURROWING_TRANSITION_ENTER"
+					Flags="SHADER_OVERRIDE_AFTER_TRANSITION"
+					ShaderOverride="ShaderOverride_Burrowing"
+					TransitionDuration="=$SHORT_BURROW_TRANSITION_DURATION">
+					<ObjectStatusValidation
+						ForbiddenStatus="STEALTH_AND_BURROW_FORBIDDEN UPGRADE_CRYSTAL_ATTACHED" />
+					<SkirmishAiInfo
+						ToggleHint="TOGGLE_TRANSFORM">
+					</SkirmishAiInfo>
+				</ToggleState>
+			</ToggleStatusSpecialAbilityUpdate>
+
+			<InvisibilityBehavior
+				id="ModuleTag_NODVehicleMInvisibility"
+				InvisibilityTemplate="NODVehicleBurrowInvisibilityTemplate" />
+
+			<!-- Death related -->
+			<CreateObjectDie
+				id="ModuleTag_CreateObjectDie"
+				CreationList="NOD_Generic_Small_Die_OCL">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</CreateObjectDie>
+			<DestroyDie
+				id="ModuleTag_Die">
+				<DieMuxData
+					DeathTypes="ALL" />
+			</DestroyDie>
+			<FXListBehavior
+				id="ModuleTag_FXList">
+				<DieMuxData
+					DeathTypes="ALL" />
+				<Event
+					Index="onDeath"
+					FX="FX_NODVehicleMED_Death" />
+				<Event Index="onDeath" FX="FX_VehicleMedium_DieExplosion_AudioOnly" />
+			</FXListBehavior>
+
+			<SelectiveVisibilityBehavior
+				id="ModuleTag_SelectiveVisibility"
+				DrawModuleId="ModuleTag_DrawStealthDecal"
+				AllowedPlayers="ALLIES"
+				UpdateRate="0.5s" />
+		</Behaviors>
+		<AI>
+			<AIUpdate
+				id="ModuleTag_AI"
+				AutoAcquireEnemiesWhenIdle="YES"
+				StateMachine="UnitAIStateMachine">
+				<UnitAITargetChooserData
+					CanPickDynamicTargets="false"/>
+			</AIUpdate>
+		</AI>
+		<Body>
+			<ActiveBody
+				id="ModuleTag_Body"
+				MaxHealth="800" />
+		</Body>
+		<ClientUpdates>
+			<LargeGroupAudioClientUpdate id="LargeGroupAudio">
+				<Key>LargeGroupAudioKey_Vehicle</Key>
+			</LargeGroupAudioClientUpdate>
+		</ClientUpdates>
+		<Geometry>
+			<!-- Shape used for contact point generation -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "27.5"
+					 MinorRadius = "20.0266"
+					 Height = "32.0"
+					 ContactPointGeneration = "VEHICLE" >
+			</Shape>
+			<!-- Shape used for pathfinding -->
+			<Shape
+					 Type= "BOX"
+					 MajorRadius = "30.0"
+					 MinorRadius = "30.0"
+					 Height = "22.0">
+			</Shape>
+
+		</Geometry>
+		
+		 <ClientBehaviors>
+			<ModelConditionAudioLoopClientBehavior id="ModuleTag_MoveLoop">
+				<ModelConditionSound Sound="GDI_VehicleV_MoveLoop" RequiredFlags="MOVING" ExcludedFlags="DECELERATE BURROWING RECYCLED DYING"/>
+			</ModelConditionAudioLoopClientBehavior>
+			<ModelConditionSoundSelectorClientBehavior id="ModuleTag_VoiceMoveBurrowed">
+				<Override RequiredFlags="BURROWING">
+					<AudioArrayVoice>
+						<AudioEntry Sound="NOD_VehAHTyrant_VoiceMoveBurrowed" AudioType="voiceMove" />
+					</AudioArrayVoice>
+					<AudioArraySound>
+						<AudioEntry Sound="" AudioType="soundMoveStart" />
+						<AudioEntry Sound="Burrowed_MoveLoop" AudioType="soundMoveLoop" />
+					</AudioArraySound>
+				</Override>
+			</ModelConditionSoundSelectorClientBehavior>
+		</ClientBehaviors>
+
+		<AudioArrayVoice>
+			<AudioEntry Sound="NOD_VehAHTyrant_VoiceAttack" AudioType="voiceAttack"/>
+			<AudioEntry Sound="NOD_VehAHTyrant_VoiceAttackMismatch" AudioType="voiceAttackMismatchLight"/>
+			<AudioEntry Sound="NOD_VehAHTyrant_VoiceCreate" AudioType="voiceCreated"/>
+			<AudioEntry Sound="NOD_VehAHTyrant_VoiceMove" AudioType="voiceMove"/>
+			<AudioEntry Sound="NOD_VehAHTyrant_VoiceMoveAttack" AudioType="voiceAttackAfterMoving"/>
+			<AudioEntry Sound="NOD_VehAHTyrant_VoiceRetreat" AudioType="voiceRetreatToCastle"/>
+			<AudioEntry Sound="NOD_VehAHTyrant_VoiceSelectMS" AudioType="voiceSelect"/>
+			<AudioEntry Sound="NOD_VehAHTyrant_VoiceSelectBattleMS" AudioType="voiceSelectBattle"/>
+			<AudioEntry Sound="NOD_VehAHTyrant_VoiceSelectUnderFireMS" AudioType="voiceSelectUnderFire"/>
+		</AudioArrayVoice>
+
+		<AudioArraySound>
+			<AudioEntry Sound="NOD_Tyrant_VehAH_MoveStart" AudioType="soundMoveStart"/>
+		</AudioArraySound>
+		<VisionInfo
+			VisionRange="350"
+			ShroudClearingRange="500" />
+		<DisplayUpgrade>Upgrade_Nod_Support_Reload</DisplayUpgrade>
+	</GameObject>
+
+	<LocomotorTemplate
+		id="NODVehicleAHLocomotor"
+		Surfaces="GROUND CRUSHABLE_OBSTACLE"
+		TurnTimeSeconds="0.7s"
+		TurnTimeDamagedSeconds="0.7s"
+		MaxSpeedDamaged="100%"
+		ReverseMoveSpeed="100%"
+		AccelerationSeconds="0.2s"
+		BrakingSeconds="0.15s"
+		SlowTurnRadius="0.0"
+		FastTurnRadius="20.0"
+		BehaviorZ="NO_MOTIVE_FORCE"
+		Appearance="TREADS"
+		AccelPitchLimit="3d"
+		UseTerrainSmoothing="true"
+		CanReverseMove="true"
+		BounceKick="0.8d"
+		PitchStiffness="0.4"
+		PitchDamping="0.3"
+		RollStiffness="0.5"
+		RollDamping="0.5"
+		LateralAccelerationRollFactor="0.0"
+		HasSuspension="true"
+		ClampOrientationToPathTangent="true"
+		ReorientIfTurnTooSharp="true"
+		PreferredHeightLerpDuration="=$SHORT_BURROW_TRANSITION_DURATION"/>
+
+	<LocomotorTemplate
+		id="NODVehicleAHBurrowingLocomotor"
+		inheritFrom="NODVehicleAHLocomotor"
+		Surfaces="GROUND CLIFF CRUSHABLE_OBSTACLE"
+		ActiveObjectStatus="BURROWING"
+		PreferredHeight="-40"
+	/>
+
+	<LogicCommandSet
+		id="NODVehicleAHCommandSet">
+		<Cmd>Command_AttackMove</Cmd>
+		<Cmd>Command_Burrow</Cmd>
+	</LogicCommandSet>
+
+	<AttributeModifier
+		id="Modifier_NODVehicleAHReloadUpgrade"
+		inheritFrom="Modifier_NODWeaponReloadUpgrade">
+		<Modifier Type="PREATTACK_DELAY" Value="50%"/>
+	</AttributeModifier>
+	
+	<!-- Voice of Kane -->
+	<AttributeModifier
+		id="AttributeModifier_NODVehicleAHROFBoost"
+		Category="NONE"
+		Duration="1.0s">
+		<BuffInfo Type="OFFENSE_POSITIVE" SourceString="Name:NODVehicleAH" />
+		<Modifier Type="RATE_OF_FIRE" Value="125%"/>
+	</AttributeModifier>
+	
+	<WeaponTemplate
+		id="NODVehicleAHLaser"
+		inheritFrom="BaseLaserWeapon" 
+		AttackRange="300.0"
+		MinTargetPitch="-50d"
+		MaxTargetPitch="50d"
+		FireSound="NOD_Tyrant_VehAH_LaserWeaponFire"
+		FireFX="FX_NODLaserMedium_Fire"
+		FireStrongCounterFX="FX_NODLaserMedium_Fire_Veteran"
+		AcceptableAimDelta="45d">
+		<PreAttackDelay
+			MinSeconds="1.0s"
+			MaxSeconds="1.0s" />
+		<FiringDuration
+			MinSeconds="3.0s"
+			MaxSeconds="3.0s" />
+		<WeaponAiHintInfo
+			UseLongLockOnTimeCode="true"/>
+		<Nuggets>
+			<ActivateLaserNugget
+				Lifetime="1.5s"
+				LaserId="101"
+				HitGroundFX="FX_NODLaser_Medium_Miss"
+				OverShootDistance="0.0"/>
+			<LineDamageNugget
+				Damage="45.0"
+				LineWidth="5.0"
+				DamageType="LASER"
+				DamageFXType="NOD_LASER"
+				DeathType="LASERED"
+				VictimObjectFilter="LaserLineDamageNuggetObjectFilter">
+			</LineDamageNugget>
+		</Nuggets>
+	</WeaponTemplate>
+
+
+	<!-- ////////////////////////////////////////	-->
+	<!--   EXPERIENCE LEVELS						-->
+	<!-- ////////////////////////////////////////	-->
+
+	<ExperienceLevelTemplate
+		id="NODVehicleAHExperienceLevel_1"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_01"
+		ExperienceAward="6">
+		<Target>NODVehicleAH</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAHExperienceLevel_2"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_02"
+		Prerequisite="NODVehicleAHExperienceLevel_1"
+		RequiredExperience="12"
+		ExperienceAward="7">
+		<Target>NODVehicleAH</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAHExperienceLevel_3"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_03"
+		Prerequisite="NODVehicleAHExperienceLevel_2"
+		RequiredExperience="30"
+		ExperienceAward="8">
+		<Target>NODVehicleAH</Target>
+	</ExperienceLevelTemplate>
+	<ExperienceLevelTemplate
+		id="NODVehicleAHExperienceLevel_4"
+		inheritFrom="ExperienceLevelTemplate_Nod_Rank_04"
+		Prerequisite="NODVehicleAHExperienceLevel_3"
+		RequiredExperience="54"
+		ExperienceAward="9">
+		<Target>NODVehicleAH</Target>
+	</ExperienceLevelTemplate>
+	
+</AssetDeclaration>
